@@ -5,5 +5,7 @@ parameters:
     paths:
         - src
     level: 8
-    checkMissingIterableValueType: false
     treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
