@@ -2,4 +2,143 @@
 
 declare(strict_types=1);
 
-return [];
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Lighthouse driver
+    |--------------------------------------------------------------------------
+    | One of: 'auto', 'local', 'browsershot', 'pagespeed'.
+    */
+    'driver' => env('VITALS_DRIVER', 'auto'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Driver configuration
+    |--------------------------------------------------------------------------
+    */
+    'drivers' => [
+        'local' => [
+            'node_binary'       => env('VITALS_NODE_BINARY', 'node'),
+            'lighthouse_binary' => env('VITALS_LIGHTHOUSE_BINARY', 'lighthouse'),
+            'chrome_flags'      => ['--headless', '--no-sandbox'],
+            'timeout_seconds'   => 120,
+        ],
+        'browsershot' => [
+            'chrome_path'     => env('VITALS_CHROME_PATH'),
+            'timeout_seconds' => 120,
+        ],
+        'pagespeed' => [
+            'api_key'  => env('VITALS_PAGESPEED_API_KEY'),
+            'endpoint' => 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database connection used by Vitals models
+    |--------------------------------------------------------------------------
+    | null = the default Laravel connection.
+    */
+    'database' => env('VITALS_DB_CONNECTION'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filesystem disk where raw Lighthouse JSON reports are stored
+    |--------------------------------------------------------------------------
+    */
+    'storage' => [
+        'disk' => env('VITALS_DISK', 'local'),
+        'path' => 'vitals',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Retention policy (used by Prunable)
+    |--------------------------------------------------------------------------
+    */
+    'retention' => [
+        'days' => (int) env('VITALS_RETENTION_DAYS', 90),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Backend telemetry capture
+    |--------------------------------------------------------------------------
+    */
+    'telemetry' => [
+        'auto_register'         => true,
+        'always_capture'        => false,
+        'sample_rate'           => 0.05,
+        'n_plus_one_threshold'  => 10,
+        'slow_query_threshold_ms' => 50,
+        'max_queries'           => 10_000,
+        'top_slow_queries'      => 10,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Static analyzer configuration
+    |--------------------------------------------------------------------------
+    */
+    'analyzers' => [
+        'scan_paths' => [
+            'resources',
+            'public',
+            'config',
+            'routes',
+            'composer.json',
+            'vite.config.js',
+            'vite.config.ts',
+            'vite.config.mjs',
+        ],
+        'custom' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Performance budgets
+    |--------------------------------------------------------------------------
+    */
+    'budgets' => [
+        'lcp_ms'              => ['warning' => 2500, 'critical' => 4000],
+        'cls'                 => ['warning' => 0.1,  'critical' => 0.25],
+        'inp_ms'              => ['warning' => 200,  'critical' => 500],
+        'tbt_ms'              => ['warning' => 200,  'critical' => 600],
+        'score_performance'   => ['warning' => 90,   'critical' => 70],
+        'score_accessibility' => ['warning' => 95,   'critical' => 85],
+        'per_url'             => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | UI toggles
+    |--------------------------------------------------------------------------
+    | charts: 'auto' | 'apex' | 'flux'
+    */
+    'ui' => [
+        'charts'              => 'auto',
+        'editor_url_template' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard
+    |--------------------------------------------------------------------------
+    */
+    'dashboard' => [
+        'enabled'    => true,
+        'path'       => 'vitals',
+        'middleware' => ['web'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Declared URLs (label => path) for v1
+    |--------------------------------------------------------------------------
+    */
+    'urls' => [
+        // 'home' => '/',
+    ],
+
+];
