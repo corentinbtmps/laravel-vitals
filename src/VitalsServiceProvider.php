@@ -19,8 +19,12 @@ final class VitalsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('laravel-vitals')
-            ->hasConfigFile('vitals');
-        // Migrations, views, routes, commands and translations are added
-        // in subsequent tasks of this plan as their files come into existence.
+            ->hasConfigFile('vitals')
+            ->hasMigrations([
+                'create_vitals_urls_table',
+                'create_vitals_audits_table',
+                'create_vitals_audit_recommendations_table',
+                'create_vitals_backend_telemetry_table',
+            ]);
     }
 }
