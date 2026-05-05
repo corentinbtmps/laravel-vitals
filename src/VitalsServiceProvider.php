@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelVitals;
 
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -25,12 +26,29 @@ final class VitalsServiceProvider extends PackageServiceProvider
                 'create_vitals_audits_table',
                 'create_vitals_audit_recommendations_table',
                 'create_vitals_backend_telemetry_table',
-            ]);
+            ])
+            ->hasViews()
+            ->hasTranslations()
+            ->hasRoute('web');
     }
 
     public function packageRegistered(): void
     {
         $this->app->singleton(Vitals::class);
         $this->app->alias(Vitals::class, 'vitals');
+    }
+
+    public function packageBooted(): void
+    {
+        Gate::define('viewVitals', function ($user = null): bool {
+            $callback = app(Vitals::class)->authorizeCallback();
+
+            if ($callback !== null) {
+                return (bool) $callback($user);
+            }
+
+            // Default: allow only in the local environment.
+            return app()->environment('local');
+        });
     }
 }

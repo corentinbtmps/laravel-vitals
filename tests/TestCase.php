@@ -36,6 +36,8 @@ abstract class TestCase extends BaseTestCase
         ]);
 
         $app['config']->set('app.key', 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=');
+        $app['config']->set('app.env', 'local');
+        $app['env'] = 'local';
     }
 
     /**
