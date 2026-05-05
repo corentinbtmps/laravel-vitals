@@ -11,6 +11,9 @@ final class PlaceholderController extends Controller
 {
     public function __invoke(): View
     {
-        return view('vitals::dashboard.placeholder');
+        /** @var view-string */
+        $view = 'vitals::dashboard.placeholder';
+
+        return view($view);
     }
 }

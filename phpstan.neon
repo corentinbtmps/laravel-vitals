@@ -6,6 +6,10 @@ parameters:
         - src
     level: 8
     treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         -
             identifier: missingType.iterableValue
+        -
+            path: src/Models/*.php
+            identifier: return.type

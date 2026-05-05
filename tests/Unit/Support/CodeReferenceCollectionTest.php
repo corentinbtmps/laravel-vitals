@@ -17,6 +17,6 @@ it('round-trips through array form', function (): void {
 });
 
 it('rejects non-CodeReference items at construction', function (): void {
-    expect(fn () => new CodeReferenceCollection([new stdClass()]))
+    expect(fn (): \LaravelVitals\Support\CodeReferenceCollection => new CodeReferenceCollection([new stdClass()]))
         ->toThrow(\InvalidArgumentException::class);
 });

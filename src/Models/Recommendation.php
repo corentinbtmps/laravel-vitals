@@ -49,14 +49,20 @@ final class Recommendation extends Model
         return config('vitals.database') ?? parent::getConnectionName();
     }
 
+    /**
+     * @return BelongsTo<Audit, Recommendation>
+     */
     public function audit(): BelongsTo
     {
         return $this->belongsTo(Audit::class, 'audit_id');
     }
 
+    /**
+     * @return Builder<Recommendation>
+     */
     public function prunable(): Builder
     {
-        return static::query()
+        return self::query()
             ->where('created_at', '<', now()->subDays((int) config('vitals.retention.days')));
     }
 }

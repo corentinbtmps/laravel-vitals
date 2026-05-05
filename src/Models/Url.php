@@ -47,6 +47,9 @@ final class Url extends Model
         return config('vitals.database') ?? parent::getConnectionName();
     }
 
+    /**
+     * @return HasMany<Audit, Url>
+     */
     public function audits(): HasMany
     {
         return $this->hasMany(Audit::class, 'url_id');
@@ -54,11 +57,13 @@ final class Url extends Model
 
     /**
      * Records that should be deleted by `model:prune`.
+     *
+     * @return Builder<Url>
      */
     public function prunable(): Builder
     {
         // Urls themselves are not pruned; they are the configuration. Audits
         // and telemetry rows below them have their own prune logic.
-        return static::query()->whereRaw('1 = 0');
+        return self::query()->whereRaw('1 = 0');
     }
 }

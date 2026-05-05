@@ -8,14 +8,14 @@ namespace LaravelVitals\Support;
  * A pointer to a region of code in the host application that motivates
  * a recommendation.
  */
-final class CodeReference
+final readonly class CodeReference
 {
     public function __construct(
-        public readonly string $file,
-        public readonly int $lineStart,
-        public readonly int $lineEnd,
-        public readonly string $snippet,
-        public readonly ?string $hint = null,
+        public string $file,
+        public int $lineStart,
+        public int $lineEnd,
+        public string $snippet,
+        public ?string $hint = null,
     ) {
     }
 

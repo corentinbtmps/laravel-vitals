@@ -9,7 +9,7 @@ namespace LaravelVitals\Support;
  *
  * Plan 2 populates the body and adds builders from each driver's raw output.
  */
-final class LighthouseReport
+final readonly class LighthouseReport
 {
     /**
      * @param array<string, int|null> $scores      keys: performance, accessibility, best_practices, seo
@@ -18,10 +18,10 @@ final class LighthouseReport
      * @param string $rawJson                        full Lighthouse JSON for archival on disk
      */
     public function __construct(
-        public readonly array $scores,
-        public readonly array $metrics,
-        public readonly array $audits,
-        public readonly string $rawJson,
+        public array $scores,
+        public array $metrics,
+        public array $audits,
+        public string $rawJson,
     ) {
     }
 }

@@ -61,14 +61,20 @@ final class BackendTelemetry extends Model
         return config('vitals.database') ?? parent::getConnectionName();
     }
 
+    /**
+     * @return BelongsTo<Audit, BackendTelemetry>
+     */
     public function audit(): BelongsTo
     {
         return $this->belongsTo(Audit::class, 'audit_id');
     }
 
+    /**
+     * @return Builder<BackendTelemetry>
+     */
     public function prunable(): Builder
     {
-        return static::query()
+        return self::query()
             ->where('created_at', '<', now()->subDays((int) config('vitals.retention.days')));
     }
 }

@@ -7,17 +7,17 @@ namespace LaravelVitals\Support;
 /**
  * Immutable options passed to a LighthouseDriver per audit run.
  */
-final class AuditOptions
+final readonly class AuditOptions
 {
     /**
      * @param array<int, string> $categories
      * @param array<string, string> $extraHeaders
      */
     public function __construct(
-        public readonly string $device,
-        public readonly array $categories,
-        public readonly array $extraHeaders,
-        public readonly int $timeoutSeconds,
+        public string $device,
+        public array $categories,
+        public array $extraHeaders,
+        public int $timeoutSeconds,
     ) {
     }
 

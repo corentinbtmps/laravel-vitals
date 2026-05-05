@@ -11,7 +11,7 @@ it('resolves the Vitals service through the container and the facade', function 
 });
 
 it('lets the host app override the dashboard authorize closure', function (): void {
-    VitalsFacade::authorize(fn ($user) => $user?->is_admin === true);
+    VitalsFacade::authorize(fn ($user): bool => $user?->is_admin === true);
 
     $closure = app(Vitals::class)->authorizeCallback();
 

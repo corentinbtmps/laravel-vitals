@@ -36,7 +36,7 @@ final class Audit extends Model
     /** @var string */
     protected $table = 'vitals_audits';
 
-    /** @var array<int, string> */
+    /** @var bool */
     public $incrementing = false;
 
     /** @var string */
@@ -65,16 +65,25 @@ final class Audit extends Model
         return config('vitals.database') ?? parent::getConnectionName();
     }
 
+    /**
+     * @return BelongsTo<Url, Audit>
+     */
     public function url(): BelongsTo
     {
         return $this->belongsTo(Url::class, 'url_id');
     }
 
+    /**
+     * @return HasMany<Recommendation, Audit>
+     */
     public function recommendations(): HasMany
     {
         return $this->hasMany(Recommendation::class, 'audit_id');
     }
 
+    /**
+     * @return HasOne<BackendTelemetry, Audit>
+     */
     public function telemetry(): HasOne
     {
         return $this->hasOne(BackendTelemetry::class, 'audit_id');
@@ -82,10 +91,12 @@ final class Audit extends Model
 
     /**
      * Audits older than the configured retention window.
+     *
+     * @return Builder<Audit>
      */
     public function prunable(): Builder
     {
-        return static::query()
+        return self::query()
             ->where('created_at', '<', now()->subDays((int) config('vitals.retention.days')));
     }
 }

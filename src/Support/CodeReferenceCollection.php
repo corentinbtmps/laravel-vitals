@@ -14,7 +14,7 @@ use Traversable;
  *
  * @implements IteratorAggregate<int, CodeReference>
  */
-final class CodeReferenceCollection implements Countable, IteratorAggregate
+final readonly class CodeReferenceCollection implements Countable, IteratorAggregate
 {
     /** @var array<int, CodeReference> */
     private array $items;
@@ -41,7 +41,7 @@ final class CodeReferenceCollection implements Countable, IteratorAggregate
     public static function fromArray(array $data): self
     {
         return new self(array_map(
-            static fn (array $item): CodeReference => CodeReference::fromArray($item),
+            CodeReference::fromArray(...),
             $data,
         ));
     }
