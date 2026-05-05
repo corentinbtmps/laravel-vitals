@@ -1,7 +1,14 @@
 {
     "name": "humantocomputer/laravel-vitals",
     "description": "GTMetrix-style Lighthouse audits combined with backend telemetry and host-app source pointers, for Laravel 11/12/13.",
-    "keywords": ["laravel", "lighthouse", "performance", "core-web-vitals", "audit", "pagespeed"],
+    "keywords": [
+        "laravel",
+        "lighthouse",
+        "performance",
+        "core-web-vitals",
+        "audit",
+        "pagespeed"
+    ],
     "license": "MIT",
     "type": "library",
     "require": {
