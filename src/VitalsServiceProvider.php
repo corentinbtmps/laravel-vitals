@@ -27,4 +27,10 @@ final class VitalsServiceProvider extends PackageServiceProvider
                 'create_vitals_backend_telemetry_table',
             ]);
     }
+
+    public function packageRegistered(): void
+    {
+        $this->app->singleton(Vitals::class);
+        $this->app->alias(Vitals::class, 'vitals');
+    }
 }
