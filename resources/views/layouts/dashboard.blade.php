@@ -7,33 +7,62 @@
     <link rel="stylesheet" href="{{ route('vitals.assets', 'dashboard.css') }}">
     <script defer src="{{ route('vitals.assets', 'dashboard.js') }}"></script>
     @livewireStyles
+    @fluxAppearance
 </head>
-<body class="h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-<div class="min-h-full">
-    <header class="border-b bg-white dark:bg-zinc-900 dark:border-zinc-800">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a href="{{ route('vitals.dashboard') }}" class="font-bold text-lg">
-                Laravel Vitals
-            </a>
-            <nav class="flex gap-4 text-sm">
-                @if(Route::has('vitals.urls'))
-                    <a href="{{ route('vitals.urls') }}" class="hover:underline">URLs</a>
-                @endif
-                @if(Route::has('vitals.recommendations'))
-                    <a href="{{ route('vitals.recommendations') }}" class="hover:underline">Recommendations</a>
-                @endif
-                @if(Route::has('vitals.budgets'))
-                    <a href="{{ route('vitals.budgets') }}" class="hover:underline">Budgets</a>
-                @endif
-            </nav>
-        </div>
-    </header>
+<body class="h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100" data-flux-appearance>
 
-    <main class="max-w-7xl mx-auto px-6 py-8">
-        {{ $slot ?? '' }}
-    </main>
-</div>
+<flux:header class="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+    <flux:brand href="{{ route('vitals.dashboard') }}" name="Laravel Vitals" class="text-rose-500">
+        <flux:icon.heart class="text-rose-500 size-5" />
+    </flux:brand>
+
+    <flux:navbar class="-mb-px max-lg:hidden">
+        <flux:navbar.item
+            href="{{ route('vitals.dashboard') }}"
+            icon="squares-2x2"
+            :current="request()->routeIs('vitals.dashboard')"
+        >Overview</flux:navbar.item>
+
+        @if(Route::has('vitals.urls'))
+        <flux:navbar.item
+            href="{{ route('vitals.urls') }}"
+            icon="link"
+            :current="request()->routeIs('vitals.url*')"
+        >URLs</flux:navbar.item>
+        @endif
+
+        @if(Route::has('vitals.recommendations'))
+        <flux:navbar.item
+            href="{{ route('vitals.recommendations') }}"
+            icon="light-bulb"
+            :current="request()->routeIs('vitals.recommendations')"
+        >Recommendations</flux:navbar.item>
+        @endif
+
+        @if(Route::has('vitals.budgets'))
+        <flux:navbar.item
+            href="{{ route('vitals.budgets') }}"
+            icon="chart-bar"
+            :current="request()->routeIs('vitals.budgets')"
+        >Budgets</flux:navbar.item>
+        @endif
+    </flux:navbar>
+
+    <flux:spacer />
+
+    <flux:button
+        variant="ghost"
+        icon="moon"
+        x-on:click="document.documentElement.classList.toggle('dark')"
+        tooltip="Toggle theme"
+    />
+</flux:header>
+
+<flux:main container>
+    {{ $slot ?? '' }}
+</flux:main>
 
 @livewireScripts
+@fluxScripts
 </body>
 </html>
