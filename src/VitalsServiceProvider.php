@@ -6,6 +6,8 @@ namespace LaravelVitals;
 
 use Illuminate\Support\Facades\Gate;
 use LaravelVitals\Commands\AuditCommand;
+use LaravelVitals\Commands\BoostDiffCommand;
+use LaravelVitals\Commands\BoostInstallCommand;
 use LaravelVitals\Commands\DiscoverCommand;
 use LaravelVitals\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -29,7 +31,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasViewComponents('vitals', \LaravelVitals\View\Components\CodeReference::class)
             ->hasRoute('web')
-            ->hasCommands([AuditCommand::class, DiscoverCommand::class, InstallCommand::class]);
+            ->hasCommands([AuditCommand::class, BoostDiffCommand::class, BoostInstallCommand::class, DiscoverCommand::class, InstallCommand::class]);
     }
 
     /**
