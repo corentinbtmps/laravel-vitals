@@ -12,17 +12,27 @@ use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Support\CodeReferenceCollection;
 use LaravelVitals\Support\LighthouseReport;
 
-final readonly class RecommendationBuilder
+final class RecommendationBuilder
 {
+    /** @var array<string, list<CodeAnalyzer>> */
+    private array $analyzersByKey = [];
+
     /**
      * @param iterable<int, CodeAnalyzer> $analyzers
      * @param iterable<int, TelemetrySource> $sources
      */
     public function __construct(
-        private RecommendationRegistry $registry,
-        private iterable $analyzers,
-        private iterable $sources = [],
+        private readonly RecommendationRegistry $registry,
+        iterable $analyzers,
+        private readonly iterable $sources = [],
     ) {
+        foreach ($analyzers as $analyzer) {
+            foreach ($this->registry->allKeys() as $key) {
+                if ($analyzer->supports($key)) {
+                    $this->analyzersByKey[$key][] = $analyzer;
+                }
+            }
+        }
     }
 
     public function buildFor(Audit $audit, LighthouseReport $report, ?BackendTelemetry $telemetry): void
@@ -89,12 +99,10 @@ final readonly class RecommendationBuilder
         }
 
         $refs = new CodeReferenceCollection();
-        foreach ($this->analyzers as $analyzer) {
-            if ($analyzer->supports($auditKey)) {
-                $additional = $analyzer->analyze($auditKey, $auditData, $ctx);
-                foreach ($additional->all() as $r) {
-                    $refs = new CodeReferenceCollection([...$refs->all(), $r]);
-                }
+        foreach ($this->analyzersByKey[$auditKey] ?? [] as $analyzer) {
+            $additional = $analyzer->analyze($auditKey, $auditData, $ctx);
+            foreach ($additional->all() as $r) {
+                $refs = new CodeReferenceCollection([...$refs->all(), $r]);
             }
         }
 
