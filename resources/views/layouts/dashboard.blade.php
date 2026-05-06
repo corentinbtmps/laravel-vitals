@@ -21,7 +21,7 @@
 </head>
 <body class="h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100" data-flux-appearance>
 
-<flux:header class="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+<flux:header class="border-b border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900">
     <flux:brand href="{{ route('vitals.dashboard') }}">
         <div class="flex items-center gap-2.5">
             <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 shadow-sm">

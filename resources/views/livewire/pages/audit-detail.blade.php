@@ -21,15 +21,14 @@
     </flux:breadcrumbs>
 
     {{-- Hero --}}
-    <flux:card class="relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent pointer-events-none"></div>
-        <div class="relative flex items-start justify-between gap-6">
+    <div class="rounded-3xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 p-8">
+        <div class="flex items-start justify-between gap-6">
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2 text-sm text-zinc-500">
                     <flux:icon.link class="size-4" />
                     <code class="text-zinc-700 dark:text-zinc-300">{{ $audit->url?->path }}</code>
                 </div>
-                <h1 class="mt-2 text-3xl font-bold tracking-tight">{{ $audit->url?->label }}</h1>
+                <h1 class="mt-2 text-2xl font-semibold tracking-tight">{{ $audit->url?->label }}</h1>
                 <div class="mt-2 flex flex-wrap items-center gap-3 text-sm text-zinc-500">
                     <span class="inline-flex items-center gap-1.5">
                         <flux:icon name="{{ $audit->device === 'mobile' ? 'device-phone-mobile' : 'computer-desktop' }}" class="size-4" />
@@ -45,11 +44,11 @@
                 </div>
             </div>
             <div class="text-right shrink-0">
-                <div class="text-7xl font-bold tracking-tight text-{{ $overallColor }}-500 leading-none">{{ $overallGrade }}</div>
-                <div class="mt-1 text-2xl font-semibold text-zinc-600 dark:text-zinc-400">{{ $overallScore }}</div>
+                <div class="text-6xl font-semibold tabular-nums text-{{ $overallColor }}-500 leading-none">{{ $overallGrade }}</div>
+                <div class="mt-1 text-2xl font-semibold tabular-nums text-zinc-500">{{ $overallScore }}<span class="text-base font-normal">/100</span></div>
             </div>
         </div>
-    </flux:card>
+    </div>
 
     {{-- Score breakdown: 4 cards --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -63,9 +62,9 @@
                 $value = $audit->{$col};
                 $color = \LaravelVitals\Support\Health::colorForScore($value);
             @endphp
-            <flux:card class="!p-4 relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-{{ $color }}-500"></div>
-                <div class="flex items-center gap-2 text-xs text-zinc-500">
+            <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-4 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-0.5 bg-{{ $color }}-500 rounded-t-2xl"></div>
+                <div class="flex items-center gap-2 text-xs text-zinc-500 mt-1">
                     <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
                     {{ $meta['label'] }}
                 </div>
@@ -109,17 +108,17 @@
                         </div>
                     @endif
                 @else
-                    <div class="mt-2 text-3xl font-bold text-zinc-400">—</div>
+                    <div class="mt-2 text-3xl font-semibold tabular-nums text-zinc-400">—</div>
                 @endif
-            </flux:card>
+            </div>
         @endforeach
     </div>
 
     {{-- Core Web Vitals --}}
-    <flux:card>
+    <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
         <div class="flex items-center gap-2 mb-4">
             <flux:icon.heart class="size-5 text-rose-500" />
-            <h2 class="font-semibold">Core Web Vitals</h2>
+            <h2 class="text-base font-semibold">Core Web Vitals</h2>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach ([
@@ -161,14 +160,14 @@
                 </div>
             @endforeach
         </div>
-    </flux:card>
+    </div>
 
     {{-- Front-end ↔ Back-end correlation panel --}}
     @if ($audit->telemetry && $breakdown['lcp_ms'] !== null && $breakdown['ttfb_ms'] !== null)
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.signal class="size-5 text-sky-500" />
-                <h2 class="font-semibold">Front-end ↔ Back-end breakdown</h2>
+                <h2 class="text-base font-semibold">Front-end ↔ Back-end breakdown</h2>
             </div>
 
             {{-- Stacked horizontal bar --}}
@@ -211,15 +210,15 @@
                     </flux:callout>
                 @endif
             </div>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Backend telemetry stats --}}
     @if ($audit->telemetry)
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="server-stack" class="size-5 text-violet-500" />
-                <h2 class="font-semibold">Backend telemetry</h2>
+                <h2 class="text-base font-semibold">Backend telemetry</h2>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                 <div>
@@ -264,16 +263,16 @@
                     </div>
                 </div>
             @endif
-        </flux:card>
+        </div>
     @endif
 
     {{-- Recommendations grouped by category --}}
     @if ($groupedRecos->isNotEmpty())
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <flux:icon.light-bulb class="size-5 text-amber-500" />
-                    <h2 class="font-semibold">Recommendations</h2>
+                    <h2 class="text-base font-semibold">Recommendations</h2>
                 </div>
                 <flux:badge color="amber">{{ $audit->recommendations->count() }}</flux:badge>
             </div>
@@ -305,7 +304,7 @@
                                                     <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_params ?? []) }}</h4>
                                                     <flux:badge color="{{ $sevColor }}" size="sm">{{ $reco->severity }}</flux:badge>
                                                 </div>
-                                                <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ __($reco->description_key, $reco->translation_params ?? []) }}</p>
+                                                <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ __($reco->description_key, $reco->translation_params ?? []) }}</p>
 
                                                 @php $docs = \LaravelVitals\Recommendations\RecommendationDocs::for($reco->audit_key); @endphp
 
@@ -368,7 +367,7 @@
                                                 {{-- Code references in user's app --}}
                                                 @if (! empty($reco->code_references))
                                                     <div class="mt-4">
-                                                        <div class="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2">
+                                                        <div class="flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">
                                                             <flux:icon name="code-bracket" class="size-3.5" />
                                                             Found in your application
                                                         </div>
@@ -388,15 +387,15 @@
                     @endif
                 @endforeach
             </div>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Panel A: Page details --}}
     @if ($audit->details)
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="document-magnifying-glass" class="size-5 text-violet-500" />
-                <h2 class="font-semibold">Page details</h2>
+                <h2 class="text-base font-semibold">Page details</h2>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
@@ -444,15 +443,15 @@
                     @endif
                 </div>
             @endif
-        </flux:card>
+        </div>
     @endif
 
     {{-- Panel B: Resource breakdown --}}
     @if (! empty($audit->details['resource_summary']))
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.archive-box class="size-5 text-sky-500" />
-                <h2 class="font-semibold">Resource breakdown</h2>
+                <h2 class="text-base font-semibold">Resource breakdown</h2>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
                 @php
@@ -499,21 +498,21 @@
                         <tr class="border-b border-zinc-100 dark:border-zinc-800/50">
                             <td class="py-2 capitalize">{{ $row['type'] }}</td>
                             <td class="py-2 text-right">{{ $row['count'] }}</td>
-                            <td class="py-2 text-right text-zinc-600 dark:text-zinc-400">{{ number_format($row['bytes'] / 1024, 0) }} KB</td>
+                            <td class="py-2 text-right text-zinc-500 dark:text-zinc-400">{{ number_format($row['bytes'] / 1024, 0) }} KB</td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
             </div>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Panel C: Third-party impact --}}
     @if (! empty($audit->details['third_parties']))
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.globe-alt class="size-5 text-pink-500" />
-                <h2 class="font-semibold">Third-party impact</h2>
+                <h2 class="text-base font-semibold">Third-party impact</h2>
                 <flux:badge color="pink" size="sm">{{ count($audit->details['third_parties']) }}</flux:badge>
             </div>
             <table class="w-full text-sm">
@@ -530,28 +529,28 @@
                     @php $blockingHigh = ($tp['blocking_ms'] ?? 0) > 250; @endphp
                     <tr class="border-b border-zinc-100 dark:border-zinc-800/50">
                         <td class="py-2 font-medium">{{ $tp['entity'] }}</td>
-                        <td class="py-2 text-right text-zinc-600 dark:text-zinc-400">{{ number_format(($tp['transfer_bytes'] ?? 0) / 1024, 0) }} KB</td>
+                        <td class="py-2 text-right text-zinc-500 dark:text-zinc-400">{{ number_format(($tp['transfer_bytes'] ?? 0) / 1024, 0) }} KB</td>
                         <td class="py-2 text-right">
                             @if ($blockingHigh)
                                 <flux:badge color="rose" size="sm">{{ (int) round($tp['blocking_ms']) }}ms</flux:badge>
                             @else
-                                <span class="text-zinc-600 dark:text-zinc-400">{{ (int) round($tp['blocking_ms']) }}ms</span>
+                                <span class="text-zinc-500 dark:text-zinc-400">{{ (int) round($tp['blocking_ms']) }}ms</span>
                             @endif
                         </td>
-                        <td class="py-2 text-right text-zinc-600 dark:text-zinc-400">{{ (int) round($tp['main_thread_ms']) }}ms</td>
+                        <td class="py-2 text-right text-zinc-500 dark:text-zinc-400">{{ (int) round($tp['main_thread_ms']) }}ms</td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Panel D: Main thread breakdown --}}
     @if (! empty($audit->details['main_thread']))
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.cpu-chip class="size-5 text-violet-500" />
-                <h2 class="font-semibold">Main thread breakdown</h2>
+                <h2 class="text-base font-semibold">Main thread breakdown</h2>
             </div>
             @php
                 $mtCategories = collect($audit->details['main_thread'])->pluck('category')->all();
@@ -572,15 +571,15 @@
                     }).render();
                 });
             </script>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Panel E: Slow requests (top 10) --}}
     @if (! empty($audit->details['slow_requests']))
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.clock class="size-5 text-amber-500" />
-                <h2 class="font-semibold">Slowest requests</h2>
+                <h2 class="text-base font-semibold">Slowest requests</h2>
             </div>
             <table class="w-full text-sm">
                 <thead>
@@ -605,7 +604,7 @@
                         <td class="py-2 text-right">
                             <flux:badge color="zinc" size="sm">{{ $req['resource_type'] ?? '?' }}</flux:badge>
                         </td>
-                        <td class="py-2 text-right text-zinc-600 dark:text-zinc-400">{{ number_format(($req['transfer_bytes'] ?? 0) / 1024, 0) }} KB</td>
+                        <td class="py-2 text-right text-zinc-500 dark:text-zinc-400">{{ number_format(($req['transfer_bytes'] ?? 0) / 1024, 0) }} KB</td>
                         <td class="py-2 text-right">
                             <flux:badge color="{{ $color }}" size="sm">{{ (int) round($req['duration_ms'] ?? 0) }}ms</flux:badge>
                         </td>
@@ -613,15 +612,15 @@
                 @endforeach
                 </tbody>
             </table>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Panel F: Cache policy --}}
     @if (! empty($audit->details['cache_policy']))
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="archive-box" class="size-5 text-amber-500" />
-                <h2 class="font-semibold">Cache policy issues</h2>
+                <h2 class="text-base font-semibold">Cache policy issues</h2>
                 <flux:badge color="amber" size="sm">{{ count($audit->details['cache_policy']) }} resource(s)</flux:badge>
             </div>
             <p class="text-sm text-zinc-500 mb-3">Resources with cache TTL under 30 days. Long-term caching reduces repeat-visit load times.</p>
@@ -644,21 +643,21 @@
                     </li>
                 @endforeach
             </ul>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Panel G: Diagnostics summary --}}
     @if ($audit->details && (! empty($audit->details['critical_chain_depth']) || ! empty($audit->details['bootup_time'])))
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="beaker" class="size-5 text-sky-500" />
-                <h2 class="font-semibold">Diagnostics</h2>
+                <h2 class="text-base font-semibold">Diagnostics</h2>
             </div>
             <dl class="space-y-3 text-sm">
                 @if (! empty($audit->details['critical_chain_depth']))
                     @php $depth = (int) $audit->details['critical_chain_depth']; @endphp
                     <div class="flex items-center justify-between">
-                        <dt class="text-zinc-600 dark:text-zinc-400">Critical request chain depth</dt>
+                        <dt class="text-zinc-500 dark:text-zinc-400">Critical request chain depth</dt>
                         <dd>
                             <flux:badge color="{{ $depth > 3 ? 'rose' : ($depth > 2 ? 'amber' : 'emerald') }}" size="sm">{{ $depth }} levels</flux:badge>
                         </dd>
@@ -667,7 +666,7 @@
 
                 @if (! empty($audit->details['bootup_time']))
                     <div>
-                        <dt class="text-zinc-600 dark:text-zinc-400 mb-1.5">Top JS execution costs</dt>
+                        <dt class="text-zinc-500 dark:text-zinc-400 mb-1.5">Top JS execution costs</dt>
                         <dd>
                             <ul class="space-y-1">
                                 @foreach (array_slice($audit->details['bootup_time'], 0, 5) as $b)
@@ -681,6 +680,6 @@
                     </div>
                 @endif
             </dl>
-        </flux:card>
+        </div>
     @endif
 </div>

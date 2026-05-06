@@ -1,17 +1,16 @@
 <div class="space-y-6">
-    <h1 class="text-3xl font-bold tracking-tight flex items-center gap-2">
-        <flux:icon.sparkles class="size-7 text-rose-500" />
-        Insights
-    </h1>
-
-    <p class="text-sm text-zinc-500">Cross-URL trends and opportunities aggregated from the last 7 days.</p>
+    <div>
+        <h1 class="text-2xl font-semibold">Insights</h1>
+        <p class="text-sm text-zinc-500 mt-1">Cross-URL trends and opportunities aggregated from the last 7 days</p>
+    </div>
 
     {{-- Quick wins --}}
-    <flux:card>
-        <div class="flex items-center gap-2 mb-4">
-            <flux:icon.bolt class="size-5 text-amber-500" />
-            <h2 class="font-semibold">Quick wins</h2>
-            <span class="text-xs text-zinc-500">— most impactful issues to fix first</span>
+    <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+        <div class="flex items-start justify-between mb-4">
+            <div>
+                <h3 class="text-base font-semibold">Quick wins</h3>
+                <p class="text-sm text-zinc-500 mt-1">Most impactful issues to fix first</p>
+            </div>
         </div>
         @if ($quickWins->isEmpty())
             <p class="text-sm text-zinc-500">No prioritized issues found in the last 7 days.</p>
@@ -25,7 +24,7 @@
                             default    => 'sky',
                         };
                     @endphp
-                    <li class="flex items-start gap-3 p-3 rounded-lg border border-{{ $sevColor }}-200 dark:border-{{ $sevColor }}-900/40 bg-{{ $sevColor }}-50/30 dark:bg-{{ $sevColor }}-900/5">
+                    <li class="flex items-start gap-3 p-3 rounded-2xl border border-{{ $sevColor }}-200/60 dark:border-{{ $sevColor }}-900/40 bg-{{ $sevColor }}-50/30 dark:bg-{{ $sevColor }}-900/5">
                         <flux:badge color="{{ $sevColor }}" size="sm">{{ $w->severity }}</flux:badge>
                         <div class="flex-1 min-w-0">
                             <div class="font-medium text-sm">{{ __($w->title_key) }}</div>
@@ -35,14 +34,16 @@
                 @endforeach
             </ul>
         @endif
-    </flux:card>
+    </div>
 
     {{-- Worsening / Improving --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.arrow-trending-down class="size-5 text-rose-500" />
-                <h2 class="font-semibold">Worsening URLs</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Worsening URLs</h3>
+                    <p class="text-sm text-zinc-500 mt-1">Regressions detected</p>
+                </div>
             </div>
             @if (empty($worsening))
                 <p class="text-sm text-zinc-500">No regressions detected.</p>
@@ -52,7 +53,7 @@
                         <li class="py-2 flex items-center gap-3">
                             <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 hover:text-rose-500">
                                 <div class="font-medium text-sm">{{ $w['url']->label }}</div>
-                                <div class="text-xs text-zinc-500">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
+                                <div class="text-xs text-zinc-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
                             <flux:badge color="rose" size="sm">{{ $w['delta'] }}</flux:badge>
                             <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
@@ -60,12 +61,14 @@
                     @endforeach
                 </ul>
             @endif
-        </flux:card>
+        </div>
 
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.arrow-trending-up class="size-5 text-emerald-500" />
-                <h2 class="font-semibold">Improving URLs</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Improving URLs</h3>
+                    <p class="text-sm text-zinc-500 mt-1">Positive score changes</p>
+                </div>
             </div>
             @if (empty($improving))
                 <p class="text-sm text-zinc-500">No improvements yet.</p>
@@ -75,7 +78,7 @@
                         <li class="py-2 flex items-center gap-3">
                             <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 hover:text-rose-500">
                                 <div class="font-medium text-sm">{{ $w['url']->label }}</div>
-                                <div class="text-xs text-zinc-500">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
+                                <div class="text-xs text-zinc-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
                             <flux:badge color="emerald" size="sm">+{{ $w['delta'] }}</flux:badge>
                             <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
@@ -83,15 +86,17 @@
                     @endforeach
                 </ul>
             @endif
-        </flux:card>
+        </div>
     </div>
 
     {{-- Top third parties --}}
     @if (! empty($topThirdParties))
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.globe-alt class="size-5 text-pink-500" />
-                <h2 class="font-semibold">Top third-party costs</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Top third-party costs</h3>
+                    <p class="text-sm text-zinc-500 mt-1">Scripts and resources from external domains</p>
+                </div>
             </div>
             <table class="w-full text-sm">
                 <thead>
@@ -105,7 +110,7 @@
                 @foreach ($topThirdParties as $tp)
                     <tr class="border-b border-zinc-100 dark:border-zinc-800/50">
                         <td class="py-2 font-medium">{{ $tp['name'] }}</td>
-                        <td class="py-2 text-right">{{ $tp['occurrences'] }}</td>
+                        <td class="py-2 text-right tabular-nums">{{ $tp['occurrences'] }}</td>
                         <td class="py-2 text-right">
                             <flux:badge color="pink" size="sm">{{ (int) round($tp['total_blocking_ms']) }}ms</flux:badge>
                         </td>
@@ -113,6 +118,6 @@
                 @endforeach
                 </tbody>
             </table>
-        </flux:card>
+        </div>
     @endif
 </div>

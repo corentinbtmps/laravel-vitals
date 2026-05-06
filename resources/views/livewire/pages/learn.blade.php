@@ -1,16 +1,14 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between flex-wrap gap-3">
-        <h1 class="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <flux:icon.book-open class="size-7 text-rose-500" />
-            Learn
-        </h1>
+        <div>
+            <h1 class="text-2xl font-semibold">Learn</h1>
+            <p class="text-sm text-zinc-500 mt-1">Reference for every issue Laravel Vitals can detect</p>
+        </div>
         <flux:badge color="zinc">{{ $allCount }} known issues</flux:badge>
     </div>
 
-    <p class="text-sm text-zinc-500">Reference for every issue Laravel Vitals can detect — what it means, why it matters, how to fix it.</p>
-
     {{-- Filter tabs --}}
-    <flux:card>
+    <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-4">
         <div class="flex flex-wrap gap-2">
             @foreach (['all' => 'All', 'performance' => 'Performance', 'accessibility' => 'Accessibility', 'best_practices' => 'Best Practices', 'seo' => 'SEO'] as $value => $label)
                 <flux:button
@@ -20,11 +18,11 @@
                 >{{ $label }}</flux:button>
             @endforeach
         </div>
-    </flux:card>
+    </div>
 
     @forelse ($grouped as $category => $items)
-        <flux:card>
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-zinc-500 mb-4">{{ str_replace('_', ' ', $category) }}</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <h2 class="text-xs font-semibold uppercase tracking-wide text-zinc-400 mb-4">{{ str_replace('_', ' ', $category) }}</h2>
             <div class="space-y-6">
                 @foreach ($items as $entry)
                     @php
@@ -40,7 +38,7 @@
                             <flux:badge color="{{ $sevColor }}" size="sm">{{ $entry['descriptor']->severity }}</flux:badge>
                             <code class="text-[11px] text-zinc-400 ml-auto">{{ $entry['key'] }}</code>
                         </div>
-                        <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ __($entry['descriptor']->descriptionKey) }}</p>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ __($entry['descriptor']->descriptionKey) }}</p>
 
                         @if ($entry['docs'])
                             <div class="mt-3 flex items-start gap-2 text-sm">
@@ -73,8 +71,8 @@
                             @if (! empty($entry['docs']['good']) || ! empty($entry['docs']['bad']))
                                 <div class="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-3">
                                     @if (! empty($entry['docs']['good']))
-                                        <div class="rounded border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-900/10 overflow-hidden">
-                                            <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border-b border-emerald-200 dark:border-emerald-900/40">
+                                        <div class="rounded-2xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-900/10 overflow-hidden">
+                                            <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border-b border-emerald-200/60 dark:border-emerald-900/40">
                                                 <flux:icon.check-circle class="size-3.5" />
                                                 Recommended
                                             </div>
@@ -82,8 +80,8 @@
                                         </div>
                                     @endif
                                     @if (! empty($entry['docs']['bad']))
-                                        <div class="rounded border border-rose-200 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-900/10 overflow-hidden">
-                                            <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 dark:text-rose-300 border-b border-rose-200 dark:border-rose-900/40">
+                                        <div class="rounded-2xl border border-rose-200/60 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-900/10 overflow-hidden">
+                                            <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 dark:text-rose-300 border-b border-rose-200/60 dark:border-rose-900/40">
                                                 <flux:icon.x-circle class="size-3.5" />
                                                 Avoid
                                             </div>
@@ -96,10 +94,10 @@
                     </div>
                 @endforeach
             </div>
-        </flux:card>
+        </div>
     @empty
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <p class="text-sm text-zinc-500">No items match this filter.</p>
-        </flux:card>
+        </div>
     @endforelse
 </div>

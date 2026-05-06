@@ -1,77 +1,65 @@
 <div class="space-y-6">
-    {{-- Hero: overall health card --}}
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <flux:card class="lg:col-span-1 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent pointer-events-none"></div>
-            <div class="relative">
-                <div class="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    <flux:icon.heart class="size-4 text-rose-500" />
-                    Overall health
-                </div>
-                @if ($overall !== null)
-                    <div class="mt-3 flex items-baseline gap-3">
-                        <span class="text-7xl font-bold tracking-tight text-{{ $overallColor }}-500">{{ $overallGrade }}</span>
-                        <span class="text-3xl font-semibold text-zinc-700 dark:text-zinc-300">{{ $overall }}</span>
-                    </div>
-                    @if (! empty($perfTrend))
-                        @php
-                            $sparkData = array_values($perfTrend);
-                            $sparkLabels = array_keys($perfTrend);
-                        @endphp
-                        <div id="vitals-perf-sparkline" class="mt-4 -mx-2"></div>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                new ApexCharts(document.querySelector('#vitals-perf-sparkline'), {
-                                    chart: { type: 'area', height: 80, sparkline: { enabled: true }, animations: { enabled: false } },
-                                    series: [{ name: 'Performance', data: @json($sparkData) }],
-                                    xaxis: { categories: @json($sparkLabels) },
-                                    stroke: { curve: 'smooth', width: 2 },
-                                    colors: ['#f43f5e'],
-                                    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.0 } },
-                                    tooltip: { x: { show: false }, marker: { show: false } },
-                                }).render();
-                            });
-                        </script>
-                    @endif
-                    <p class="mt-2 text-xs text-zinc-500">based on {{ $recent->count() }} audits in the last 7 days</p>
-                @else
-                    <div class="mt-3 text-2xl font-semibold text-zinc-500">No data</div>
-                    <p class="mt-2 text-xs text-zinc-500">Run <code class="text-rose-500">php artisan vitals:audit</code> to start</p>
-                @endif
-            </div>
-        </flux:card>
+    {{-- Page header + period control --}}
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-semibold">Vitals</h1>
+            <p class="text-sm text-zinc-500 mt-1">Performance health across all monitored URLs</p>
+        </div>
+        <div class="flex items-center gap-1 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-1">
+            @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $lbl)
+                <button
+                    wire:click="setPeriod('{{ $val }}')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                        {{ $period === $val
+                            ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                            : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100' }}"
+                >{{ $lbl }}</button>
+            @endforeach
+        </div>
+    </div>
 
-        {{-- Score breakdown: 4 mini cards --}}
-        <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+    {{-- Hero: activity rings + score chips --}}
+    <div class="rounded-3xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 p-8">
+        <div class="flex items-center gap-8">
+            <x-vitals::activity-rings :scores="$averages">
+                <div class="text-5xl font-semibold tabular-nums leading-none">{{ $overallGrade ?? '—' }}</div>
+                <div class="text-sm text-zinc-500 mt-1 tabular-nums">{{ $overall ?? '—' }}<span class="text-xs">/100</span></div>
+            </x-vitals::activity-rings>
+
+            <div class="flex-1">
+                <div class="text-sm text-zinc-500">{{ $periodLabel }}</div>
+                <h2 class="text-2xl font-semibold mt-1">Health overview</h2>
+                <p class="text-sm text-zinc-500 mt-2 max-w-md">Performance, accessibility, and SEO scores aggregated across {{ $urlsCount }} {{ Str::plural('URL', $urlsCount) }}.</p>
+            </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
             @foreach ([
-                'performance'    => ['label' => 'Performance',    'icon' => 'bolt'],
-                'accessibility'  => ['label' => 'Accessibility',  'icon' => 'eye'],
-                'best_practices' => ['label' => 'Best Practices', 'icon' => 'shield-check'],
-                'seo'            => ['label' => 'SEO',            'icon' => 'magnifying-glass'],
-            ] as $key => $meta)
-                @php
-                    $score = $averages[$key];
-                    $color = \LaravelVitals\Support\Health::colorForScore($score);
-                @endphp
-                <flux:card class="!p-4 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-{{ $color }}-500"></div>
-                    <div class="flex items-center gap-2 text-xs text-zinc-500">
-                        <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
-                        {{ $meta['label'] }}
+                ['key' => 'performance',    'label' => 'Performance',    'color' => 'rose'],
+                ['key' => 'accessibility',  'label' => 'Accessibility',  'color' => 'emerald'],
+                ['key' => 'best_practices', 'label' => 'Best Practices', 'color' => 'violet'],
+                ['key' => 'seo',            'label' => 'SEO',            'color' => 'sky'],
+            ] as $stat)
+                <div class="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2 w-2 rounded-full bg-{{ $stat['color'] }}-500"></span>
+                        <span class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ $stat['label'] }}</span>
                     </div>
-                    <div class="mt-2 text-3xl font-bold text-{{ $color }}-600 dark:text-{{ $color }}-400">{{ $score ?? '—' }}</div>
-                </flux:card>
+                    <div class="mt-3 text-3xl font-semibold tabular-nums">
+                        {{ $averages[$stat['key']] ?? '—' }}<span class="text-base font-normal text-zinc-500">/100</span>
+                    </div>
+                </div>
             @endforeach
         </div>
     </div>
 
     {{-- Active alerts --}}
     @if (count($activeAlerts) > 0)
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <flux:icon.bell class="size-5 text-rose-500" />
-                    <h2 class="font-semibold">Active alerts</h2>
+                    <h2 class="text-base font-semibold">Active alerts</h2>
                 </div>
                 <flux:badge color="rose">{{ count($activeAlerts) }}</flux:badge>
             </div>
@@ -91,15 +79,17 @@
                     </flux:callout>
                 @endforeach
             </div>
-        </flux:card>
+        </div>
     @endif
 
     {{-- Two-column: top recos + activity feed --}}
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.light-bulb class="size-5 text-amber-500" />
-                <h2 class="font-semibold">Top issues to fix</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Top issues to fix</h3>
+                    <p class="text-sm text-zinc-500 mt-1">Most impactful issues to fix first</p>
+                </div>
             </div>
             @if ($topRecommendations->isEmpty())
                 <p class="text-sm text-zinc-500">No recommendations yet. Run an audit to see suggestions.</p>
@@ -118,17 +108,19 @@
                     @endforeach
                 </ul>
             @endif
-        </flux:card>
+        </div>
 
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.clock class="size-5 text-sky-500" />
-                <h2 class="font-semibold">Recent audits</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Recent audits</h3>
+                    <p class="text-sm text-zinc-500 mt-1">{{ $periodLabel }}</p>
+                </div>
             </div>
             @if ($recent->isEmpty())
                 <div class="text-center py-6">
                     <flux:icon.signal class="size-10 text-zinc-300 mx-auto mb-2" />
-                    <p class="text-sm text-zinc-500 mb-3">No audits in the last 7 days.</p>
+                    <p class="text-sm text-zinc-500 mb-3">No audits in this period.</p>
                     <code class="text-xs bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded">php artisan vitals:audit</code>
                 </div>
             @else
@@ -149,6 +141,6 @@
                     @endforeach
                 </ul>
             @endif
-        </flux:card>
+        </div>
     </div>
 </div>

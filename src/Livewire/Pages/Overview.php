@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Livewire\Pages;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Recommendation;
@@ -12,14 +13,55 @@ use Livewire\Component;
 
 final class Overview extends Component
 {
+    public string $period = '7d';
+
+    public function setPeriod(string $period): void
+    {
+        if (! in_array($period, ['24h', '7d', '30d', '90d', '1y', 'all'], true)) {
+            return;
+        }
+        $this->period = $period;
+    }
+
+    private function periodCutoff(): ?Carbon
+    {
+        return match ($this->period) {
+            '24h'   => now()->subDay(),
+            '7d'    => now()->subDays(7),
+            '30d'   => now()->subDays(30),
+            '90d'   => now()->subDays(90),
+            '1y'    => now()->subYear(),
+            'all'   => null,
+            default => now()->subDays(7),
+        };
+    }
+
+    private function periodLabel(): string
+    {
+        return match ($this->period) {
+            '24h' => 'Last 24 hours',
+            '7d'  => 'Last 7 days',
+            '30d' => 'Last 30 days',
+            '90d' => 'Last 90 days',
+            '1y'  => 'Last year',
+            'all' => 'All time',
+            default => 'Last 7 days',
+        };
+    }
+
     public function render(): View
     {
-        $sevenDays = now()->subDays(7);
+        $cutoff = $this->periodCutoff();
 
-        $recent = Audit::query()
+        $recentQuery = Audit::query()
             ->with('url')
-            ->where('status', 'completed')
-            ->where('completed_at', '>=', $sevenDays)
+            ->where('status', 'completed');
+
+        if ($cutoff !== null) {
+            $recentQuery->where('completed_at', '>=', $cutoff);
+        }
+
+        $recent = $recentQuery
             ->orderByDesc('completed_at')
             ->limit(20)
             ->get();
@@ -50,10 +92,15 @@ final class Overview extends Component
         // URLs configured count
         $urlsCount = Url::query()->where('enabled', true)->count();
 
-        // 7-day perf trend (one data point per day, average across all URLs)
-        $perfTrend = Audit::query()
-            ->where('status', 'completed')
-            ->where('completed_at', '>=', $sevenDays)
+        // Perf trend (one data point per day, average across all URLs)
+        $perfTrendQuery = Audit::query()
+            ->where('status', 'completed');
+
+        if ($cutoff !== null) {
+            $perfTrendQuery->where('completed_at', '>=', $cutoff);
+        }
+
+        $perfTrend = $perfTrendQuery
             ->selectRaw('DATE(completed_at) as day, AVG(score_performance) as avg')
             ->groupBy('day')
             ->orderBy('day')
@@ -71,6 +118,7 @@ final class Overview extends Component
             'topRecommendations' => $topRecommendations,
             'urlsCount'          => $urlsCount,
             'perfTrend'          => $perfTrend,
+            'periodLabel'        => $this->periodLabel(),
         ])->layout('vitals::layouts.dashboard');
     }
 

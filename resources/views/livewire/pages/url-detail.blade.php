@@ -4,96 +4,141 @@
         <flux:breadcrumbs.item>{{ $urlModel->label }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    <flux:card class="relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent pointer-events-none"></div>
-        <div class="relative">
-            <div class="flex items-center gap-2 text-sm text-zinc-500 mb-2">
-                <flux:icon.link class="size-4" />
-                <code class="text-zinc-700 dark:text-zinc-300">{{ $urlModel->path }}</code>
+    {{-- URL hero card --}}
+    <div class="rounded-3xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 p-8">
+        <div class="flex items-start justify-between gap-6">
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 text-sm text-zinc-500 mb-2">
+                    <flux:icon.link class="size-4" />
+                    <code class="text-zinc-700 dark:text-zinc-300">{{ $urlModel->path }}</code>
+                </div>
+                <h1 class="text-2xl font-semibold tracking-tight">{{ $urlModel->label }}</h1>
+                <div class="mt-2">
+                    <flux:badge color="zinc" size="sm">{{ $urlModel->device }}</flux:badge>
+                </div>
             </div>
-            <h1 class="text-3xl font-bold tracking-tight">{{ $urlModel->label }}</h1>
-            <div class="mt-2 text-sm text-zinc-500">
-                <flux:badge color="zinc" size="sm">{{ $urlModel->device }}</flux:badge>
+            {{-- Period control --}}
+            <div class="flex items-center gap-1 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-1 shrink-0">
+                @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $lbl)
+                    <button
+                        wire:click="setPeriod('{{ $val }}')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                            {{ $period === $val
+                                ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100' }}"
+                    >{{ $lbl }}</button>
+                @endforeach
             </div>
         </div>
-    </flux:card>
+    </div>
 
     @if ($history->isEmpty())
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="text-center py-8">
                 <flux:icon name="clock" class="size-12 text-zinc-300 dark:text-zinc-700 mx-auto mb-3" />
                 <p class="text-sm text-zinc-500">No completed audits yet for this URL.</p>
             </div>
-        </flux:card>
+        </div>
     @else
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.chart-bar class="size-5 text-rose-500" />
-                <h2 class="font-semibold">Performance trend</h2>
+        {{-- Hero area chart --}}
+        <div class="rounded-3xl border border-zinc-200/60 dark:border-zinc-800/60 bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 p-8">
+            <div class="flex items-start justify-between mb-6">
+                <div>
+                    <h3 class="text-base font-semibold">Performance over time</h3>
+                    <p class="text-sm text-zinc-500 mt-1">{{ $periodLabel }}</p>
+                </div>
+                {{-- Metric toggle --}}
+                <div class="flex items-center gap-1 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-1">
+                    @foreach ([
+                        'performance' => 'Score',
+                        'lcp'         => 'LCP',
+                        'inp'         => 'INP',
+                        'cls'         => 'CLS',
+                        'ttfb'        => 'TTFB',
+                    ] as $val => $lbl)
+                        <button
+                            wire:click="setMetric('{{ $val }}')"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                                {{ $metric === $val
+                                    ? 'bg-rose-500 text-white'
+                                    : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100' }}"
+                        >{{ $lbl }}</button>
+                    @endforeach
+                </div>
             </div>
-            @php
-                $reversed = $history->reverse()->values();
-                $perfData = $reversed->pluck('score_performance')->map(fn ($v) => $v !== null ? (int) $v : null)->all();
-                $lcpData  = $reversed->pluck('lcp_ms')->map(fn ($v) => $v !== null ? (int) round((float) $v) : null)->all();
-                $labels   = $reversed->pluck('completed_at')->map(fn ($d) => $d?->format('M j H:i'))->all();
-            @endphp
-            <div id="url-trend-chart" class="-mx-2"></div>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    new ApexCharts(document.querySelector('#url-trend-chart'), {
-                        chart: { type: 'line', height: 280, toolbar: { show: false }, animations: { enabled: false } },
-                        series: [
-                            { name: 'Performance score', data: @json($perfData), yAxisIndex: 0 },
-                            { name: 'LCP (ms)', data: @json($lcpData), yAxisIndex: 1 },
-                        ],
-                        xaxis: { categories: @json($labels), labels: { style: { fontSize: '11px' } } },
-                        yaxis: [
-                            { seriesName: 'Performance score', max: 100, min: 0, title: { text: 'Score' } },
-                            { seriesName: 'LCP (ms)', opposite: true, title: { text: 'LCP (ms)' } },
-                        ],
-                        stroke: { curve: 'smooth', width: 2 },
-                        colors: ['#f43f5e', '#0ea5e9'],
-                        grid: { borderColor: '#e4e4e7', strokeDashArray: 3 },
-                        legend: { position: 'top', horizontalAlign: 'right' },
-                    }).render();
-                });
-            </script>
-        </flux:card>
+            <div wire:ignore>
+                <div
+                    id="url-area-chart"
+                    x-data="{
+                        chart: null,
+                        series: @js($chartSeries),
+                        init() {
+                            this.chart = new ApexCharts(this.$el, {
+                                chart: { type: 'area', height: 280, toolbar: { show: false }, sparkline: { enabled: false }, animations: { enabled: false } },
+                                series: [{ name: '{{ match($metric) { 'performance' => 'Score', 'lcp' => 'LCP (ms)', 'inp' => 'INP (ms)', 'cls' => 'CLS', 'ttfb' => 'TTFB (ms)', default => 'Value' } }}', data: this.series }],
+                                stroke: { curve: 'smooth', width: 2.5 },
+                                fill: {
+                                    type: 'gradient',
+                                    gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 100] }
+                                },
+                                colors: ['#f43f5e'],
+                                grid: { show: true, borderColor: 'rgba(161,161,170,0.1)', strokeDashArray: 4 },
+                                yaxis: { show: false },
+                                xaxis: {
+                                    type: 'datetime',
+                                    labels: { style: { colors: '#71717a' } },
+                                    axisBorder: { show: false },
+                                    axisTicks: { show: false }
+                                },
+                                tooltip: { theme: 'dark', x: { format: 'MMM d, h:mm tt' } },
+                            });
+                            this.chart.render();
+                        }
+                    }"
+                    x-init="init()"
+                ></div>
+            </div>
+        </div>
 
-        @if ($thirtyDayCount > 0)
-            <flux:card>
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <flux:icon name="chart-bar" class="size-5 text-rose-500" />
-                        <h2 class="font-semibold">30-day averages</h2>
+        @if ($periodCount > 0)
+            <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-base font-semibold">Average scores</h3>
+                        <p class="text-sm text-zinc-500 mt-1">{{ $periodLabel }} — {{ $periodCount }} audits</p>
                     </div>
-                    <flux:badge color="zinc" size="sm">{{ $thirtyDayCount }} audits</flux:badge>
                 </div>
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach ([
-                        'performance'    => 'Performance',
-                        'accessibility'  => 'Accessibility',
-                        'best_practices' => 'Best Practices',
-                        'seo'            => 'SEO',
-                    ] as $key => $label)
+                        'performance'    => ['label' => 'Performance',    'color' => 'rose'],
+                        'accessibility'  => ['label' => 'Accessibility',  'color' => 'emerald'],
+                        'best_practices' => ['label' => 'Best Practices', 'color' => 'violet'],
+                        'seo'            => ['label' => 'SEO',            'color' => 'sky'],
+                    ] as $key => $meta)
                         @php
                             $val = $avgScores[$key];
-                            $color = \LaravelVitals\Support\Health::colorForScore($val);
                         @endphp
-                        <div class="rounded-lg border border-{{ $color }}-200 dark:border-{{ $color }}-900/40 bg-{{ $color }}-50/40 dark:bg-{{ $color }}-900/10 p-4">
-                            <div class="text-xs text-zinc-500 mb-1">{{ $label }}</div>
-                            <div class="text-3xl font-bold text-{{ $color }}-700 dark:text-{{ $color }}-300">{{ $val ?? '—' }}</div>
+                        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 p-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="h-2 w-2 rounded-full bg-{{ $meta['color'] }}-500"></span>
+                                <span class="text-xs font-medium text-zinc-500 uppercase tracking-wide">{{ $meta['label'] }}</span>
+                            </div>
+                            <div class="text-3xl font-semibold tabular-nums">
+                                {{ $val ?? '—' }}<span class="text-base font-normal text-zinc-500">/100</span>
+                            </div>
                         </div>
                     @endforeach
                 </div>
-            </flux:card>
+            </div>
         @endif
 
         @if ($frequentRecos->isNotEmpty())
-            <flux:card>
-                <div class="flex items-center gap-2 mb-4">
-                    <flux:icon.light-bulb class="size-5 text-amber-500" />
-                    <h2 class="font-semibold">Most frequent issues on this URL</h2>
+            <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="text-base font-semibold">Most frequent issues</h3>
+                        <p class="text-sm text-zinc-500 mt-1">Recurring findings on this URL</p>
+                    </div>
                 </div>
                 <ul class="space-y-2">
                     @foreach ($frequentRecos as $r)
@@ -111,14 +156,13 @@
                         </li>
                     @endforeach
                 </ul>
-            </flux:card>
+            </div>
         @endif
 
         @if ($failedAudits->isNotEmpty())
-            <flux:card>
+            <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
                 <div class="flex items-center gap-2 mb-4">
-                    <flux:icon.exclamation-circle class="size-5 text-rose-500" />
-                    <h2 class="font-semibold">Recent failed audits</h2>
+                    <h3 class="text-base font-semibold">Recent failed audits</h3>
                     <flux:badge color="rose" size="sm">{{ $failedAudits->count() }}</flux:badge>
                 </div>
                 <ul class="space-y-2">
@@ -134,13 +178,15 @@
                         </li>
                     @endforeach
                 </ul>
-            </flux:card>
+            </div>
         @endif
 
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.clock class="size-5 text-sky-500" />
-                <h2 class="font-semibold">Audit history ({{ $history->count() }})</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Audit history</h3>
+                    <p class="text-sm text-zinc-500 mt-1">{{ $history->count() }} audits — {{ $periodLabel }}</p>
+                </div>
             </div>
             <table class="w-full text-sm">
                 <thead>
@@ -170,15 +216,15 @@
                             <flux:badge color="zinc" size="sm">{{ $a->device }}</flux:badge>
                         </td>
                         <td class="py-3 pr-4 text-right">
-                            <span class="inline-flex items-center gap-1.5 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold">
+                            <span class="inline-flex items-center gap-1.5 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold tabular-nums">
                                 {{ $score ?? '—' }}
                                 <span class="size-5 rounded bg-{{ $color }}-100 dark:bg-{{ $color }}-900/40 text-xs flex items-center justify-center font-bold">{{ $grade }}</span>
                             </span>
                         </td>
-                        <td class="py-3 pr-4 text-right text-zinc-700 dark:text-zinc-300">
-                            {{ $a->lcp_ms !== null ? (int) round((float) $a->lcp_ms) . 'ms' : '—' }}
+                        <td class="py-3 pr-4 text-right text-zinc-700 dark:text-zinc-300 tabular-nums">
+                            {{ $a->lcp_ms !== null ? (int) round((float) $a->lcp_ms) : '—' }}<span class="text-xs text-zinc-500">{{ $a->lcp_ms !== null ? 'ms' : '' }}</span>
                         </td>
-                        <td class="py-3 pr-4 text-right text-zinc-700 dark:text-zinc-300">
+                        <td class="py-3 pr-4 text-right text-zinc-700 dark:text-zinc-300 tabular-nums">
                             {{ $a->cls !== null ? number_format((float) $a->cls, 2) : '—' }}
                         </td>
                         <td class="py-3 pl-2 text-right">
@@ -188,6 +234,6 @@
                 @endforeach
                 </tbody>
             </table>
-        </flux:card>
+        </div>
     @endif
 </div>

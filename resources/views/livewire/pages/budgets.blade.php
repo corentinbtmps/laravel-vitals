@@ -1,13 +1,13 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <flux:icon.chart-bar class="size-7 text-rose-500" />
-            Performance budgets
-        </h1>
+        <div>
+            <h1 class="text-2xl font-semibold">Performance budgets</h1>
+            <p class="text-sm text-zinc-500 mt-1">Thresholds that trigger alerts when exceeded</p>
+        </div>
         <flux:badge color="zinc">{{ count($budgets) }} metrics</flux:badge>
     </div>
 
-    <flux:card>
+    <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left border-b border-zinc-200 dark:border-zinc-800">
@@ -32,16 +32,17 @@
             @endforeach
             </tbody>
         </table>
-    </flux:card>
+    </div>
 
     @if (! empty($perUrl))
-        <flux:card>
-            <div class="flex items-center gap-2 mb-4">
-                <flux:icon.link class="size-5 text-rose-500" />
-                <h2 class="font-semibold">Per-URL overrides</h2>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Per-URL overrides</h3>
+                </div>
             </div>
-            <pre class="text-xs bg-zinc-100 dark:bg-zinc-900 p-4 rounded overflow-x-auto"><code>{{ json_encode($perUrl, JSON_PRETTY_PRINT) }}</code></pre>
-        </flux:card>
+            <pre class="text-xs bg-zinc-50 dark:bg-zinc-950 p-4 rounded-2xl overflow-x-auto border border-zinc-200/60 dark:border-zinc-800/60"><code>{{ json_encode($perUrl, JSON_PRETTY_PRINT) }}</code></pre>
+        </div>
     @endif
 
     <p class="text-xs text-zinc-500 text-center">

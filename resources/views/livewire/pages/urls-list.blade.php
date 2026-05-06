@@ -1,14 +1,14 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <flux:icon.link class="size-7 text-rose-500" />
-            URLs
-        </h1>
+        <div>
+            <h1 class="text-2xl font-semibold">URLs</h1>
+            <p class="text-sm text-zinc-500 mt-1">Monitored pages and their latest scores</p>
+        </div>
         <flux:badge color="zinc">{{ $urls->count() }} configured</flux:badge>
     </div>
 
     @if ($urls->isEmpty())
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <div class="text-center py-8">
                 <flux:icon.link class="size-12 text-zinc-300 dark:text-zinc-700 mx-auto mb-3" />
                 <p class="text-sm text-zinc-500 mb-4">No URLs configured yet.</p>
@@ -16,9 +16,9 @@
                     Add entries to <code class="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800">config('vitals.urls')</code>
                 </p>
             </div>
-        </flux:card>
+        </div>
     @else
-        <flux:card>
+        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="text-left border-b border-zinc-200 dark:border-zinc-800">
@@ -27,7 +27,7 @@
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">A11y</th>
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">BP</th>
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">SEO</th>
-                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">7d trend</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">Trend</th>
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Last</th>
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Audits</th>
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Action</th>
@@ -53,7 +53,7 @@
                             @endphp
                             <td class="py-3 px-2 text-center">
                                 @if ($score !== null)
-                                    <span class="inline-flex items-center justify-center size-9 rounded-md bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-bold text-sm tabular-nums">
+                                    <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums">
                                         {{ $score }}
                                     </span>
                                 @else
@@ -108,6 +108,6 @@
                 @endforeach
                 </tbody>
             </table>
-        </flux:card>
+        </div>
     @endif
 </div>
