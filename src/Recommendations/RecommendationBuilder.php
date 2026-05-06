@@ -111,12 +111,14 @@ final readonly class RecommendationBuilder
             'title_key'          => $descriptor->titleKey,
             'description_key'    => $descriptor->descriptionKey,
             'translation_params' => $this->paramsFor($auditKey, $auditData),
-            'metrics'            => $this->paramsFor($auditKey, $auditData),
+            'metrics'            => $this->metricsFor($auditKey, $auditData),
             'code_references'    => $refs->toArray(),
         ]);
     }
 
     /**
+     * Translation parameters: only what we substitute into title/description strings.
+     *
      * @param array<string, mixed> $auditData
      * @return array<string, mixed>
      */
@@ -124,10 +126,38 @@ final readonly class RecommendationBuilder
     {
         return match ($key) {
             'unused-javascript', 'unused-css-rules' => [
-                'wasted_bytes' => $auditData['details']['items'][0]['wastedBytes'] ?? null,
+                'size' => isset($auditData['details']['items'][0]['wastedBytes'])
+                    ? round(((int) $auditData['details']['items'][0]['wastedBytes']) / 1024) . ' KB'
+                    : 'unknown',
             ],
             'n-plus-one-detected' => [
-                'queries_count' => $auditData['queries_count'] ?? null,
+                'count' => $auditData['queries_count'] ?? 0,
+            ],
+            default => [],
+        };
+    }
+
+    /**
+     * Raw measurable metrics: numeric values for charts and aggregations.
+     *
+     * @param array<string, mixed> $auditData
+     * @return array<string, mixed>
+     */
+    private function metricsFor(string $key, array $auditData): array
+    {
+        return match ($key) {
+            'unused-javascript', 'unused-css-rules' => [
+                'wasted_bytes' => $auditData['details']['items'][0]['wastedBytes'] ?? null,
+                'total_bytes'  => $auditData['details']['items'][0]['totalBytes'] ?? null,
+            ],
+            'n-plus-one-detected' => [
+                'queries_count'  => $auditData['queries_count'] ?? null,
+                'queries_unique' => $auditData['queries_unique'] ?? null,
+            ],
+            'real-world-perf-degraded' => [
+                'synthetic_ttfb_ms' => $auditData['synthetic_ttfb_ms'] ?? null,
+                'p95_ttfb_ms'       => $auditData['p95_ttfb_ms'] ?? null,
+                'sample_count'      => $auditData['sample_count'] ?? null,
             ],
             default => [],
         };
