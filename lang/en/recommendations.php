@@ -147,4 +147,28 @@ return [
         'title'       => 'Reduce JavaScript execution time',
         'description' => 'A single script takes :ms ms to evaluate. Code-split, lazy-load, or remove unused JavaScript.',
     ],
+    'unsized-images' => [
+        'title'       => 'Image elements have explicit width and height',
+        'description' => 'Set explicit width/height attributes on images to reserve layout space. Browsers can compute the aspect ratio early and avoid layout shifts when the image loads.',
+    ],
+    'font-display' => [
+        'title'       => 'Ensure text remains visible during webfont load',
+        'description' => 'Use `font-display: swap` so the browser shows a fallback font immediately and swaps to the webfont when ready. Avoids invisible text (FOIT).',
+    ],
+    'uses-rel-preload' => [
+        'title'       => 'Preload key requests',
+        'description' => 'Add `<link rel="preload">` for resources discovered late in the page (e.g. Vite-emitted modules, hero images, critical fonts). The browser fetches them earlier.',
+    ],
+    'uses-http2' => [
+        'title'       => 'Use HTTP/2 (or HTTP/3)',
+        'description' => 'HTTP/2 multiplexes requests over a single connection — faster than HTTP/1.1 for resource-heavy pages. Most modern hosts (Forge, Vapor, Cloudflare) enable it by default.',
+    ],
+    'octane-not-running' => [
+        'title'       => 'Consider Laravel Octane for lower TTFB',
+        'description' => 'Octane keeps the application bootstrapped between requests (Swoole / FrankenPHP / RoadRunner), eliminating the per-request bootstrap cost. Typical TTFB savings: 40-200ms.',
+    ],
+    'assets-not-hashed' => [
+        'title'       => 'Asset filenames are not content-hashed',
+        'description' => 'Without content hashes (`app-Df8gK3p2.js`), you cannot cache assets aggressively — every change requires invalidation. Vite generates hashed filenames by default; verify your build output.',
+    ],
 ];

@@ -129,6 +129,27 @@ it('emits large-payload when page_weight_bytes > 2MB', function (): void {
     expect(\LaravelVitals\Models\Recommendation::where('audit_key', 'large-payload')->count())->toBe(1);
 });
 
+it('emits octane-not-running when no Octane indicators exist', function (): void {
+    putenv('OCTANE_SERVER=');
+    unset($_ENV['OCTANE_SERVER']);
+
+    $audit = \LaravelVitals\Models\Audit::create([
+        'id' => \Illuminate\Support\Str::uuid()->toString(), 'url_id' => $this->url->id,
+        'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed',
+    ]);
+
+    $report = new \LaravelVitals\Support\LighthouseReport(
+        scores: ['performance' => 95, 'accessibility' => 95, 'best_practices' => 95, 'seo' => 100],
+        metrics: ['lcp_ms' => null, 'cls' => null, 'inp_ms' => null, 'ttfb_ms' => null, 'fcp_ms' => null, 'si_ms' => null, 'tbt_ms' => null],
+        audits: [],
+        rawJson: '{}',
+    );
+
+    app(\LaravelVitals\Recommendations\RecommendationBuilder::class)->buildFor($audit, $report, null);
+
+    expect(\LaravelVitals\Models\Recommendation::where('audit_key', 'octane-not-running')->count())->toBe(1);
+});
+
 it('does not flag view-cache-disabled when compiled views exist', function (): void {
     $tmp = sys_get_temp_dir() . '/vitals-view-cache-' . uniqid();
     mkdir($tmp, 0755, true);

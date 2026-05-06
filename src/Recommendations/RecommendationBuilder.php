@@ -147,6 +147,17 @@ final class RecommendationBuilder
                 ]);
             }
         }
+
+        // Octane not running (best-effort detection — the package probably running Vitals isn't using Octane)
+        $octaneRunning = $this->detectOctane();
+        if (! $octaneRunning) {
+            $this->persistDetail($audit, 'octane-not-running', []);
+        }
+
+        // Assets not hashed (Vite default produces hashed names; raw `app.js` without hash suggests no Vite or misconfig)
+        if ($this->detectUnhashedAssets($report)) {
+            $this->persistDetail($audit, 'assets-not-hashed', []);
+        }
     }
 
     /**
@@ -277,6 +288,87 @@ final class RecommendationBuilder
             'bootup-time-high'      => ['bootup_ms'       => $auditData['ms'] ?? null],
             default => [],
         };
+    }
+
+    /**
+     * Best-effort detection: Octane runs the same PHP process across requests,
+     * so we check the octane config key or the presence of the published config file.
+     *
+     * Most reliable: presence of octane.server config value or config/octane.php.
+     * Returns true if Octane is configured / detected, false otherwise.
+     */
+    private function detectOctane(): bool
+    {
+        // When config is cached, config('octane.server') resolves the OCTANE_SERVER env value.
+        $server = config('octane.server');
+        if (is_string($server) && $server !== '') {
+            return true;
+        }
+
+        // Check if octane config file exists (means it was at least published)
+        if (file_exists(base_path('config/octane.php'))) {
+            return true;
+        }
+
+        // Fall back to $_SERVER which is always available regardless of config caching
+        $serverEnv = $_SERVER['OCTANE_SERVER'] ?? '';
+        if (is_string($serverEnv) && $serverEnv !== '') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Heuristic: Vite-built assets contain a hash before extension (app.abc123.js).
+     * Lighthouse's network-requests details list every loaded resource.
+     * If JS/CSS files load without a hash pattern, likely no asset versioning.
+     */
+    private function detectUnhashedAssets(LighthouseReport $report): bool
+    {
+        // Use the raw audit data — already extracted in details by alpha.10's pipeline
+        // but we re-parse to access network-requests if not in details.
+        $detailRaw = $report->rawJson;
+        try {
+            /** @var array<string, mixed> $decoded */
+            $decoded = json_decode($detailRaw, true, flags: JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return false;
+        }
+
+        $items = $decoded['audits']['network-requests']['details']['items'] ?? [];
+        if (! is_array($items)) {
+            return false;
+        }
+
+        $jsCount = 0;
+        $unhashedJs = 0;
+
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+            $url = (string) ($item['url'] ?? '');
+            $type = (string) ($item['resourceType'] ?? '');
+
+            if ($type !== 'Script' || $url === '') {
+                continue;
+            }
+            if (str_starts_with($url, 'data:') || ! str_contains($url, '.js')) {
+                continue;
+            }
+
+            $jsCount++;
+
+            // Hashed assets have an 8+ hex/base64 sequence before .js (Vite default)
+            // Patterns: app-abc12345.js, app.abc12345.js, app-Df8gK3p2.js
+            if (! preg_match('/[a-zA-Z0-9_-]{8,}\.js(\?|$)/', basename(parse_url($url, PHP_URL_PATH) ?: ''))) {
+                $unhashedJs++;
+            }
+        }
+
+        // Flag only if at least 2 unhashed JS resources are loaded (1 might be intentional inline tag).
+        return $jsCount >= 2 && $unhashedJs >= 2;
     }
 
     private function buildContext(Audit $audit, LighthouseReport $report): AppContext

@@ -63,6 +63,16 @@ final class RecommendationRegistry
         $this->register('third-party-blocking',   'backend', 'performance',    'warning');
         $this->register('large-payload',          'static',  'performance',    'warning');
         $this->register('bootup-time-high',       'static',  'performance',    'warning');
+
+        // Lighthouse - additional CWV (alpha.14)
+        $this->register('unsized-images',          'lighthouse', 'performance',    'warning');
+        $this->register('font-display',            'lighthouse', 'performance',    'info');
+        $this->register('uses-rel-preload',        'lighthouse', 'performance',    'info');
+        $this->register('uses-http2',              'lighthouse', 'best_practices', 'info');
+
+        // Custom Laravel - alpha.14
+        $this->register('octane-not-running',      'config', 'performance',     'info');
+        $this->register('assets-not-hashed',       'static', 'best_practices',  'warning');
     }
 
     public function get(string $auditKey): ?RecommendationDescriptor

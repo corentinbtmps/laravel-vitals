@@ -147,4 +147,28 @@ return [
         'title'       => 'Réduire le temps d\'exécution JavaScript',
         'description' => 'Un script prend :ms ms à évaluer. Code-splittez, lazy-loadez, ou retirez le JS inutilisé.',
     ],
+    'unsized-images' => [
+        'title'       => 'Images avec largeur et hauteur explicites',
+        'description' => 'Définissez les attributs width/height sur les images pour réserver l\'espace de mise en page. Le navigateur calcule le ratio plus tôt et évite les sauts visuels au chargement.',
+    ],
+    'font-display' => [
+        'title'       => 'Texte visible pendant le chargement des webfonts',
+        'description' => 'Utilisez `font-display: swap` pour que le navigateur affiche immédiatement une police de secours puis bascule sur la webfont. Évite le FOIT (texte invisible).',
+    ],
+    'uses-rel-preload' => [
+        'title'       => 'Précharger les ressources critiques',
+        'description' => 'Ajoutez `<link rel="preload">` pour les ressources découvertes tardivement (modules Vite, images hero, polices critiques). Le navigateur les récupère plus tôt.',
+    ],
+    'uses-http2' => [
+        'title'       => 'Utiliser HTTP/2 (ou HTTP/3)',
+        'description' => 'HTTP/2 multiplexe les requêtes sur une seule connexion — bien plus rapide que HTTP/1.1 sur les pages riches. La plupart des hosts modernes (Forge, Vapor, Cloudflare) l\'activent par défaut.',
+    ],
+    'octane-not-running' => [
+        'title'       => 'Considérer Laravel Octane pour un TTFB plus bas',
+        'description' => 'Octane garde l\'application bootstrappée entre les requêtes (Swoole / FrankenPHP / RoadRunner), éliminant le coût du bootstrap par requête. Gains TTFB typiques : 40-200ms.',
+    ],
+    'assets-not-hashed' => [
+        'title'       => 'Les assets ne sont pas hashés',
+        'description' => 'Sans hash de contenu (`app-Df8gK3p2.js`), impossible de cacher agressivement — chaque changement nécessite une invalidation. Vite génère des noms hashés par défaut ; vérifiez votre build.',
+    ],
 ];

@@ -385,6 +385,70 @@ final class RecommendationDocs
                 ],
                 'good' => "// vite.config.js — split vendor chunks\nrollupOptions: {\n    output: {\n        manualChunks: { vendor: ['react', 'react-dom'] }\n    }\n}",
             ],
+
+            // ============================================================
+            // LARAVEL-SPECIFIC CWV (alpha.14)
+            // ============================================================
+
+            'unsized-images' => [
+                'why' => 'When the browser parses an <img> without explicit dimensions, it has to wait until the image downloads before knowing how much space to reserve. The result: visible content jumps when the image arrives — high CLS.',
+                'docs' => [
+                    ['label' => 'web.dev: Image dimensions', 'url' => 'https://web.dev/articles/optimize-cls#images_without_dimensions'],
+                    ['label' => 'CSS aspect-ratio', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio'],
+                ],
+                'good' => "<!-- Browser reserves space immediately -->\n<img src=\"hero.jpg\" width=\"1200\" height=\"600\" alt=\"...\">\n\n<!-- Or with CSS aspect-ratio -->\n<img src=\"hero.jpg\" style=\"aspect-ratio: 2/1; width: 100%;\" alt=\"...\">",
+                'bad' => "<img src=\"hero.jpg\" alt=\"...\"><!-- causes layout shift -->",
+                'impact' => 'Typical savings: cuts CLS from 0.2-0.4 to under 0.1',
+            ],
+
+            'font-display' => [
+                'why' => 'Without `font-display: swap`, browsers may show invisible text until the webfont loads (FOIT — Flash of Invisible Text). With `swap`, fallback text is visible immediately and the webfont swaps in when ready.',
+                'docs' => [
+                    ['label' => 'web.dev: Avoid invisible text during font load', 'url' => 'https://web.dev/articles/font-display'],
+                    ['label' => 'MDN: font-display', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display'],
+                ],
+                'good' => "@font-face {\n    font-family: 'Inter';\n    src: url('/fonts/inter.woff2') format('woff2');\n    font-display: swap;\n}",
+                'bad' => "@font-face {\n    font-family: 'Inter';\n    src: url('/fonts/inter.woff2') format('woff2');\n    /* no font-display => browser default 'block' = FOIT */\n}",
+            ],
+
+            'uses-rel-preload' => [
+                'why' => 'The browser discovers resources by parsing HTML and CSS in order. Late-discovered resources (e.g. fonts referenced inside @font-face) start downloading too late. `<link rel="preload">` tells the browser to fetch them in parallel with the initial HTML.',
+                'docs' => [
+                    ['label' => 'web.dev: Preload critical assets', 'url' => 'https://web.dev/articles/preload-critical-assets'],
+                    ['label' => 'Laravel Vite: Module Preloading', 'url' => 'https://laravel.com/docs/12.x/vite#asset-prefetching'],
+                ],
+                'good' => "{{-- In Blade layout --}}\n<head>\n    @vite(['resources/js/app.js'])\n    <link rel=\"preload\" as=\"font\" type=\"font/woff2\" href=\"/fonts/inter.woff2\" crossorigin>\n    <link rel=\"preload\" as=\"image\" href=\"/images/hero.webp\">\n</head>",
+                'impact' => 'Typical savings: 100-400ms LCP on font-heavy pages',
+            ],
+
+            'uses-http2' => [
+                'why' => 'HTTP/1.1 establishes one connection per resource. HTTP/2 multiplexes many requests over a single connection, drastically reducing handshake overhead. Most managed Laravel hosts (Forge, Vapor, Cloudflare) enable HTTP/2 by default — but a misconfigured custom server may not.',
+                'docs' => [
+                    ['label' => 'web.dev: HTTP/2 explained', 'url' => 'https://web.dev/articles/uses-http2'],
+                    ['label' => 'Cloudflare: HTTP/2 vs HTTP/3', 'url' => 'https://www.cloudflare.com/learning/performance/http2-vs-http1.1/'],
+                ],
+                'good' => "# nginx — enable HTTP/2\nlisten 443 ssl http2;\nssl_certificate /path/to/cert.pem;",
+            ],
+
+            'octane-not-running' => [
+                'why' => 'Each Laravel request bootstraps the framework: loading config, registering service providers, and parsing routes. Octane keeps the application in memory across requests via Swoole / FrankenPHP / RoadRunner, slashing bootstrap time. Most useful for high-traffic apps where TTFB matters.',
+                'docs' => [
+                    ['label' => 'Laravel Octane', 'url' => 'https://laravel.com/docs/12.x/octane'],
+                    ['label' => 'FrankenPHP — modern PHP server', 'url' => 'https://frankenphp.dev/'],
+                ],
+                'good' => "# .env\nOCTANE_SERVER=frankenphp\n\n# Install + run\ncomposer require laravel/octane\nphp artisan octane:install\nphp artisan octane:start",
+                'impact' => 'Typical savings: 40-200ms per request TTFB',
+            ],
+
+            'assets-not-hashed' => [
+                'why' => 'Hashed asset names (`app-Df8gK3p2.js`) let browsers cache assets forever — when content changes, the hash changes, the URL changes, the browser fetches the new version. Without hashes, you cannot use long cache TTLs without serving stale content. Vite\'s default config produces hashed filenames automatically.',
+                'docs' => [
+                    ['label' => 'Vite: Build options', 'url' => 'https://vitejs.dev/config/build-options.html'],
+                    ['label' => 'Laravel Vite directive', 'url' => 'https://laravel.com/docs/12.x/vite'],
+                ],
+                'good' => "{{-- Blade layout — Vite handles hashed filenames automatically --}}\n@vite(['resources/css/app.css', 'resources/js/app.js'])",
+                'bad' => "{{-- Hardcoded asset paths bypass Vite's hashing --}}\n<script src=\"/build/app.js\"></script>",
+            ],
         ];
     }
 }

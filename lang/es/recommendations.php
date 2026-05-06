@@ -147,4 +147,28 @@ return [
         'title'       => 'Reducir tiempo de ejecución JavaScript',
         'description' => 'Un script tarda :ms ms en evaluarse. Aplica code-splitting, lazy-load o elimina JS no utilizado.',
     ],
+    'unsized-images' => [
+        'title'       => 'Imágenes con ancho y alto explícitos',
+        'description' => 'Define atributos width/height en imágenes para reservar espacio en el layout. El navegador calcula el ratio antes y evita saltos al cargar.',
+    ],
+    'font-display' => [
+        'title'       => 'Texto visible durante carga de webfonts',
+        'description' => 'Usa `font-display: swap` para que el navegador muestre una fuente de respaldo inmediatamente y cambie a la webfont al cargar. Evita FOIT (texto invisible).',
+    ],
+    'uses-rel-preload' => [
+        'title'       => 'Precargar recursos críticos',
+        'description' => 'Añade `<link rel="preload">` para recursos descubiertos tarde (módulos Vite, imágenes hero, fuentes críticas). El navegador los obtiene antes.',
+    ],
+    'uses-http2' => [
+        'title'       => 'Usar HTTP/2 (o HTTP/3)',
+        'description' => 'HTTP/2 multiplexa requests en una sola conexión — más rápido que HTTP/1.1 en páginas con muchos recursos. La mayoría de hosts modernos lo activan por defecto.',
+    ],
+    'octane-not-running' => [
+        'title'       => 'Considerar Laravel Octane para TTFB más bajo',
+        'description' => 'Octane mantiene la aplicación bootstrapped entre requests (Swoole / FrankenPHP / RoadRunner), eliminando el coste de bootstrap por request. Ahorros típicos: 40-200ms.',
+    ],
+    'assets-not-hashed' => [
+        'title'       => 'Nombres de assets sin hash de contenido',
+        'description' => 'Sin hashes de contenido (`app-Df8gK3p2.js`) no se puede cachear agresivamente — cada cambio requiere invalidación. Vite genera nombres con hash por defecto; verifica tu build.',
+    ],
 ];
