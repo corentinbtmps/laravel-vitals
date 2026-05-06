@@ -165,9 +165,26 @@ final readonly class RecommendationBuilder
             'queue_default'   => (string) config('queue.default', 'sync'),
             'config_cached'   => app()->configurationIsCached(),
             'route_cached'    => app()->routesAreCached(),
-            'view_cached'     => false,
+            'view_cached'     => $this->detectViewsCached(),
             'opcache_enabled' => function_exists('opcache_get_status') && (bool) @opcache_get_status(false),
             'slow_views'      => [],
         ];
+    }
+
+    private function detectViewsCached(): bool
+    {
+        $compiledPath = (string) config('view.compiled', '');
+        if ($compiledPath === '' || ! is_dir($compiledPath)) {
+            return false;
+        }
+
+        $files = @scandir($compiledPath) ?: [];
+        foreach ($files as $file) {
+            if (str_ends_with($file, '.php')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

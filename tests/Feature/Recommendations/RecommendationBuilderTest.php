@@ -90,3 +90,29 @@ it('skips audit keys with no descriptor in the registry', function (): void {
 
     expect(Recommendation::where('audit_key', 'imaginary-audit')->count())->toBe(0);
 });
+
+it('does not flag view-cache-disabled when compiled views exist', function (): void {
+    $tmp = sys_get_temp_dir() . '/vitals-view-cache-' . uniqid();
+    mkdir($tmp, 0755, true);
+    file_put_contents($tmp . '/abc.php', '<?php // compiled');
+    config()->set('view.compiled', $tmp);
+
+    $newAudit = Audit::create([
+        'id' => Str::uuid()->toString(), 'url_id' => $this->url->id, 'driver' => 'stub',
+        'device' => 'mobile', 'status' => 'completed',
+    ]);
+
+    $report = new LighthouseReport(
+        scores: ['performance' => 95, 'accessibility' => 95, 'best_practices' => 95, 'seo' => 100],
+        metrics: ['lcp_ms' => 1500.0, 'cls' => 0.02, 'inp_ms' => 100.0, 'ttfb_ms' => 200.0, 'fcp_ms' => 800.0, 'si_ms' => 1200.0, 'tbt_ms' => 50.0],
+        audits: [],
+        rawJson: '{}',
+    );
+
+    app(RecommendationBuilder::class)->buildFor($newAudit, $report, null);
+
+    expect(Recommendation::where('audit_key', 'view-cache-disabled')->count())->toBe(0);
+
+    unlink($tmp . '/abc.php');
+    rmdir($tmp);
+});
