@@ -18,6 +18,11 @@ into the host source code.
 - `php artisan vitals:audit --all --sync` — audit every URL inline
 - `php artisan vitals:audit --all --fail-on-budget --format=junit > vitals.xml` — CI usage
 - `php artisan vitals:discover --routes` — list parameter-less GET routes as URL candidates
+- `php artisan vitals:doctor` — diagnostic check (drivers, storage, notifications, sources)
+- `php artisan vitals:demo` — seed fictional data for screenshots and exploration
+- `php artisan vitals:check-regressions` — alert on score regressions vs baseline
+- `php artisan vitals:digest:send` — send weekly digest summary
+- `php artisan vitals:purge --demo` — remove demo data
 
 Configured URLs live in `config('vitals.urls')` as a `label => path` map.
 

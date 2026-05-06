@@ -43,7 +43,7 @@ This skill helps you work effectively with the `humantocomputer/laravel-vitals` 
 
 ## Backend telemetry quirks
 
-- The `pagespeed` driver CANNOT capture backend telemetry (the X-Vitals-Audit-Id header isn't injectable through Google's API). The dashboard tags such audits as `frontend-only`.
+- The `pagespeed` driver CANNOT capture backend telemetry (the X-Vitals-Audit-Id header isn't injectable through Google's API).
 - N+1 detection is heuristic: if the same SQL pattern repeats above the configured threshold, it flags. Verify with `slow_queries` JSON before refactoring.
 - `always_capture` mode in `vitals.telemetry` opts every web request into telemetry sampling. It has a non-zero overhead — recommend leaving it off unless the user wants Pulse-like continuous monitoring.
 
@@ -52,6 +52,9 @@ This skill helps you work effectively with the `humantocomputer/laravel-vitals` 
 - `vitals:audit` runs sync by default for a single URL. For batches use `--all`. Add `--sync` to force inline execution.
 - Migration filenames in this package end with `.php` (not `.php.stub`) because Spatie's `discoversMigrations()->runsMigrations()` requires plain `.php`.
 - `Vitals::authorize(fn ($user) => ...)` controls dashboard access. By default the gate allows only `local` environment.
+- The `playwright` driver is the recommended choice when `node` and the `playwright-lighthouse` npm package are available — more stable than the legacy local Lighthouse CLI.
+- `vitals:doctor` is the first command to run on a fresh install — it verifies drivers, storage, notifications and telemetry sources.
+- `vitals:demo` seeds 4 fictional URLs with 14 days of audit history; cleanup with `vitals:purge --demo`.
 
 ## Running and reading audits
 
