@@ -47,10 +47,8 @@ final class InstallCommand extends Command
         $src  = $packageRoot . '/stubs/ai-guidelines/vitals.blade.php';
         $dest = $base . '/.ai/guidelines/vitals.blade.php';
 
-        if ($files->exists($dest) && ! $this->option('force')) {
-            if (! $this->confirm("Publish Boost guidelines to .ai/guidelines/vitals.blade.php?", true)) {
-                return;
-            }
+        if ($files->exists($dest) && !$this->option('force') && ! $this->confirm("Publish Boost guidelines to .ai/guidelines/vitals.blade.php?", true)) {
+            return;
         }
 
         $files->ensureDirectoryExists(dirname($dest));
@@ -63,10 +61,8 @@ final class InstallCommand extends Command
         $src  = $packageRoot . '/stubs/claude-skills/SKILL.md';
         $dest = $base . '/.claude/skills/laravel-vitals/SKILL.md';
 
-        if ($files->exists($dest) && ! $this->option('force')) {
-            if (! $this->confirm("Publish Claude skill to .claude/skills/laravel-vitals/SKILL.md?", true)) {
-                return;
-            }
+        if ($files->exists($dest) && !$this->option('force') && ! $this->confirm("Publish Claude skill to .claude/skills/laravel-vitals/SKILL.md?", true)) {
+            return;
         }
 
         $files->ensureDirectoryExists(dirname($dest));

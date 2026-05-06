@@ -10,7 +10,7 @@ use LaravelVitals\Models\Url;
 use Livewire\Livewire;
 
 beforeEach(function (): void {
-    Vitals::authorize(fn () => true);
+    Vitals::authorize(fn (): true => true);
 });
 
 it('renders the overview page with average scores when audits exist', function (): void {

@@ -7,7 +7,7 @@ use LaravelVitals\Livewire\Pages\UrlsList;
 use LaravelVitals\Models\Url;
 use Livewire\Livewire;
 
-beforeEach(fn () => Vitals::authorize(fn () => true));
+beforeEach(fn () => Vitals::authorize(fn (): true => true));
 
 it('lists configured URLs', function (): void {
     Url::create(['label' => 'home', 'path' => '/']);

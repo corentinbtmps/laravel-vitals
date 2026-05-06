@@ -13,3 +13,7 @@ parameters:
         -
             path: src/Models/*.php
             identifier: return.type
+        -
+            # Package views are registered at runtime; view-string cannot be validated statically
+            message: '/Parameter .* of function view expects view-string\|null, string given\./'
+            identifier: argument.type

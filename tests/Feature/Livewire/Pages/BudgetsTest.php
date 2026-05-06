@@ -6,7 +6,7 @@ use LaravelVitals\Facades\Vitals;
 use LaravelVitals\Livewire\Pages\Budgets;
 use Livewire\Livewire;
 
-beforeEach(fn () => Vitals::authorize(fn () => true));
+beforeEach(fn () => Vitals::authorize(fn (): true => true));
 
 it('renders the configured budgets', function (): void {
     config()->set('vitals.budgets', [

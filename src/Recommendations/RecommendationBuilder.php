@@ -24,7 +24,7 @@ final readonly class RecommendationBuilder
 
     public function buildFor(Audit $audit, LighthouseReport $report, ?BackendTelemetry $telemetry): void
     {
-        $ctx = $this->buildContext($audit, $report, $telemetry);
+        $ctx = $this->buildContext($audit, $report);
 
         foreach ($report->audits as $entry) {
             $key = $entry['id'] ?? null;
@@ -112,7 +112,7 @@ final readonly class RecommendationBuilder
         };
     }
 
-    private function buildContext(Audit $audit, LighthouseReport $report, ?BackendTelemetry $telemetry): AppContext
+    private function buildContext(Audit $audit, LighthouseReport $report): AppContext
     {
         $assetUrls = [];
         foreach ($report->audits as $entry) {

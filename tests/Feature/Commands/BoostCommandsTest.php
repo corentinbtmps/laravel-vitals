@@ -9,7 +9,7 @@ beforeEach(function (): void {
 });
 
 afterEach(function (): void {
-    if (isset($this->tmp) && is_dir($this->tmp)) {
+    if (property_exists($this, 'tmp') && $this->tmp !== null && is_dir($this->tmp)) {
         \Illuminate\Support\Facades\File::deleteDirectory($this->tmp);
     }
 });

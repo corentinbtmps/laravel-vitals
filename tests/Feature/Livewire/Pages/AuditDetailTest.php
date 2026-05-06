@@ -10,7 +10,7 @@ use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Models\Url;
 use Livewire\Livewire;
 
-beforeEach(fn () => Vitals::authorize(fn () => true));
+beforeEach(fn () => Vitals::authorize(fn (): true => true));
 
 it('renders audit details with scores, metrics, and recommendations', function (): void {
     $url = Url::create(['label' => 'home', 'path' => '/']);

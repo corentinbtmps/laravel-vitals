@@ -28,7 +28,7 @@ it('renders a gauge chart', function (): void {
 });
 
 it('throws on an unknown chart type', function (): void {
-    expect(fn () => (new ApexChartsRenderer())->render('imaginary', []))
+    expect(fn (): \Illuminate\Support\HtmlString => (new ApexChartsRenderer())->render('imaginary', []))
         ->toThrow(\InvalidArgumentException::class);
 });
 
