@@ -1,4 +1,9 @@
 <div class="space-y-6">
+    <flux:breadcrumbs class="mb-4">
+        <flux:breadcrumbs.item href="{{ route('vitals.urls') }}">URLs</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>{{ $urlModel->label }}</flux:breadcrumbs.item>
+    </flux:breadcrumbs>
+
     <flux:card class="relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent pointer-events-none"></div>
         <div class="relative">

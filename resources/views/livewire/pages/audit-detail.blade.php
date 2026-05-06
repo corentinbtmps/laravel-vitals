@@ -5,6 +5,14 @@
 @endphp
 
 <div class="space-y-6">
+    <flux:breadcrumbs class="mb-4">
+        <flux:breadcrumbs.item href="{{ route('vitals.urls') }}">URLs</flux:breadcrumbs.item>
+        @if ($audit->url)
+            <flux:breadcrumbs.item href="{{ route('vitals.url', $audit->url->id) }}">{{ $audit->url->label }}</flux:breadcrumbs.item>
+        @endif
+        <flux:breadcrumbs.item>audit · {{ $audit->completed_at?->format('M j, H:i') }}</flux:breadcrumbs.item>
+    </flux:breadcrumbs>
+
     {{-- Hero --}}
     <flux:card class="relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent pointer-events-none"></div>

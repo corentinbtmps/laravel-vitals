@@ -8,6 +8,14 @@
     <script defer src="{{ route('vitals.assets', 'dashboard.js') }}"></script>
     @livewireStyles
     @fluxAppearance
+    <style>
+        [data-flux-navbar-items][data-current] {
+            color: rgb(244 63 94) !important;
+        }
+        [data-flux-navbar-items][data-current]::after {
+            background-color: rgb(244 63 94) !important;
+        }
+    </style>
 </head>
 <body class="h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100" data-flux-appearance>
 
