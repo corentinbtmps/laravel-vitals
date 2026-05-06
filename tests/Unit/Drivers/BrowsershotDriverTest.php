@@ -78,9 +78,14 @@ it('throws AuditException when Browsershot raises', function (): void {
         ->toThrow(AuditException::class);
 });
 
-it('reports available when the Browsershot class is loaded', function (): void {
+it('reports unavailable on a stock install of Browsershot v5 (no lighthouseAudit method)', function (): void {
     $driver = new BrowsershotDriver();
-    expect($driver->isAvailable())->toBe(class_exists(Browsershot::class));
+
+    // Stock Browsershot v5 does not provide lighthouseAudit() — the driver should report unavailable
+    // so the auto-resolution chain skips it unless the user provides a custom bridge.
+    expect($driver->isAvailable())->toBe(
+        method_exists(\Spatie\Browsershot\Browsershot::class, 'lighthouseAudit'),
+    );
 });
 
 it('throws AuditException with a clear message when Browsershot class is missing', function (): void {

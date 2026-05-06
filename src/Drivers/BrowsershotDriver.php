@@ -14,19 +14,16 @@ use Spatie\Browsershot\Browsershot;
 use Throwable;
 
 /**
- * Drives Lighthouse via spatie/browsershot. Calls lighthouseAudit() on the
- * Browsershot instance, which must be available on the installed version or
- * provided via a custom makeBrowsershot() subclass override.
+ * Drives Lighthouse via spatie/browsershot.
  *
- * NOTE: spatie/browsershot v5 does not include a built-in lighthouseAudit()
- * method — that feature was present in v4 and removed in v5. If you need
- * Lighthouse support with Browsershot v5 you should either:
- *   (a) extend this class and override makeBrowsershot() to return a custom
- *       subclass of Browsershot that adds lighthouseAudit(), or
- *   (b) use the LocalLighthouseDriver instead (recommended for v5+).
+ * IMPORTANT: spatie/browsershot ^5.0 does NOT ship a built-in Lighthouse
+ * helper. This driver is intentionally non-final so users can subclass it
+ * and override makeBrowsershot() to return a Browsershot subclass that
+ * implements lighthouseAudit() (e.g. via a custom Puppeteer Node script).
  *
- * Non-final so tests can subclass to inject a Browsershot mock via the
- * makeBrowsershot() seam without touching the real Browsershot::url() factory.
+ * isAvailable() returns false on a stock install of Browsershot ^5, so the
+ * LighthouseDriverManager auto-resolution chain will skip this driver
+ * unless a user has wired up a working bridge.
  */
 class BrowsershotDriver implements LighthouseDriver
 {
@@ -78,7 +75,12 @@ class BrowsershotDriver implements LighthouseDriver
 
     public function isAvailable(): bool
     {
-        return class_exists(Browsershot::class);
+        // The class must exist AND expose a real lighthouseAudit() method.
+        // Browsershot v5 does not ship with built-in Lighthouse support; users
+        // must subclass BrowsershotDriver and override makeBrowsershot() to
+        // return a Browsershot subclass that provides the method.
+        return class_exists(Browsershot::class)
+            && method_exists(Browsershot::class, 'lighthouseAudit');
     }
 
     /**
