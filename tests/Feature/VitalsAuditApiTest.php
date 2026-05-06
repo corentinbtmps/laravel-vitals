@@ -33,7 +33,7 @@ it('Vitals::auditAll dispatches a Bus batch of RunAuditJobs', function (): void 
 
     VitalsFacade::auditAll();
 
-    Bus::assertBatched(fn(\Illuminate\Bus\PendingBatch $batch) => $batch->jobs->count() === 2);
+    Bus::assertBatched(fn(\Illuminate\Bus\PendingBatch $batch): bool => $batch->jobs->count() === 2);
 });
 
 it('Vitals::driver overrides the resolved driver for the next call', function (): void {

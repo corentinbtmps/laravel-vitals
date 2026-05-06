@@ -15,11 +15,11 @@ beforeEach(function (): void {
     config()->set('app.key', 'base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=');
 
     Route::middleware(CaptureVitalsTelemetry::class)
-        ->get('/_telemetry-test', fn () => 'ok')
+        ->get('/_telemetry-test', fn (): string => 'ok')
         ->name('telemetry-test');
 
     Route::middleware(CaptureVitalsTelemetry::class)
-        ->get('/_telemetry-test-q', function () {
+        ->get('/_telemetry-test-q', function (): string {
             \LaravelVitals\Models\Url::query()->where('label', 'home')->get();
             return 'ok';
         })
@@ -56,11 +56,9 @@ it('dispatches PersistTelemetryJob when a valid signed header is present', funct
         ->get('/_telemetry-test-q')
         ->assertOk();
 
-    Bus::assertDispatched(PersistTelemetryJob::class, function (PersistTelemetryJob $job) use ($audit) {
-        return $job->snapshot->auditId === $audit->id
-            && $job->snapshot->httpStatus === 200
-            && $job->snapshot->queriesCount >= 1;
-    });
+    Bus::assertDispatched(PersistTelemetryJob::class, fn(PersistTelemetryJob $job) => $job->snapshot->auditId === $audit->id
+        && $job->snapshot->httpStatus === 200
+        && $job->snapshot->queriesCount >= 1);
 });
 
 it('does NOT dispatch when the header signature is invalid', function (): void {
@@ -83,8 +81,6 @@ it('dispatches a sampled telemetry job when always_capture is on and dice rolls 
 
     $this->get('/_telemetry-test')->assertOk();
 
-    Bus::assertDispatched(PersistTelemetryJob::class, function (PersistTelemetryJob $job) {
-        return $job->snapshot->auditId === null
-            && $job->snapshot->sampledRequest === true;
-    });
+    Bus::assertDispatched(PersistTelemetryJob::class, fn(PersistTelemetryJob $job) => $job->snapshot->auditId === null
+        && $job->snapshot->sampledRequest);
 });

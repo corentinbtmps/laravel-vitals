@@ -22,7 +22,7 @@ beforeEach(function (): void {
 
     // Register the workbench /vitals-test route (mirrors workbench/routes/web.php).
     Route::middleware(['web', CaptureVitalsTelemetry::class])
-        ->get('/vitals-test', function () {
+        ->get('/vitals-test', function (): \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response {
             SampleRecord::create(['name' => 'a']);
             SampleRecord::create(['name' => 'b']);
             SampleRecord::create(['name' => 'c']);

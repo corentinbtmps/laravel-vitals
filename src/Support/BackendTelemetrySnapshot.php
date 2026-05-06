@@ -11,7 +11,7 @@ namespace LaravelVitals\Support;
 final readonly class BackendTelemetrySnapshot
 {
     /**
-     * @param array<int, array{sql: string, count: int, time_ms: float}> $slowQueries
+     * @param array<int, array{sql: string, time_ms: float}> $slowQueries
      */
     public function __construct(
         public ?string $auditId,

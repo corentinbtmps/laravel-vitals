@@ -103,9 +103,8 @@ final class QueryAccumulator
     {
         $sql = preg_replace("/'[^']*'/", '?', $sql) ?? $sql;
         $sql = preg_replace('/"[^"]*"/', '?', $sql) ?? $sql;
-        $sql = preg_replace('/\b\d+(\.\d+)?\b/', '?', $sql) ?? $sql;
 
-        return $sql;
+        return preg_replace('/\b\d+(\.\d+)?\b/', '?', $sql) ?? $sql;
     }
 
     private function insertSlow(string $pattern, float $timeMs): void

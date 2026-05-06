@@ -30,7 +30,7 @@ it('calls the PSI endpoint with the expected query string and parses the respons
 
     expect($report->scores['performance'])->toBe(92);
 
-    Http::assertSent(fn($request) => str_contains((string) $request->url(), 'url=https%3A%2F%2Fexample.test%2F')
+    Http::assertSent(fn($request): bool => str_contains((string) $request->url(), 'url=https%3A%2F%2Fexample.test%2F')
         && str_contains((string) $request->url(), 'strategy=mobile')
         && str_contains((string) $request->url(), 'key=k_test'));
 });
