@@ -21,15 +21,32 @@ final class VitalsServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-vitals')
             ->hasConfigFile('vitals')
-            ->hasMigrations([
-                'create_vitals_urls_table',
-                'create_vitals_audits_table',
-                'create_vitals_audit_recommendations_table',
-                'create_vitals_backend_telemetry_table',
-            ])
+            ->discoversMigrations()
+            ->runsMigrations()
             ->hasViews()
-            ->hasTranslations()
             ->hasRoute('web');
+    }
+
+    /**
+     * Register translations from the package's lang/ directory.
+     *
+     * spatie/laravel-package-tools's hasTranslations() hard-codes resources/lang/,
+     * so we wire the lang/ path in ourselves and skip that helper entirely.
+     */
+    protected function bootPackageTranslations(): static
+    {
+        $langPath = __DIR__ . '/../lang';
+
+        $this->loadTranslationsFrom($langPath, 'vitals');
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes(
+                [$langPath => lang_path('vendor/vitals')],
+                'vitals-translations',
+            );
+        }
+
+        return $this;
     }
 
     public function packageRegistered(): void
