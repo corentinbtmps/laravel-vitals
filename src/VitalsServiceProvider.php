@@ -74,7 +74,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
 
         $this->app->singleton(\LaravelVitals\Recommendations\RecommendationRegistry::class);
 
-        $this->app->singleton(\LaravelVitals\Recommendations\RecommendationBuilder::class, function ($app): \LaravelVitals\Recommendations\RecommendationBuilder {
+        $this->app->singleton(\LaravelVitals\Recommendations\RecommendationBuilder::class, function ($app) {
             $analyzers = [
                 $app->make(\LaravelVitals\Analyzers\BladeAssetAnalyzer::class),
                 $app->make(\LaravelVitals\Analyzers\ImageAnalyzer::class),
@@ -91,9 +91,18 @@ final class VitalsServiceProvider extends PackageServiceProvider
                 }
             }
 
+            // Resolve sources: container override wins (used in tests).
+            $sources = $app->bound('vitals.telemetry-sources')
+                ? (array) $app->make('vitals.telemetry-sources')
+                : [
+                    $app->make(\LaravelVitals\Telemetry\Sources\PulseSource::class),
+                    $app->make(\LaravelVitals\Telemetry\Sources\TelescopeSource::class),
+                ];
+
             return new \LaravelVitals\Recommendations\RecommendationBuilder(
                 $app->make(\LaravelVitals\Recommendations\RecommendationRegistry::class),
                 $analyzers,
+                $sources,
             );
         });
 

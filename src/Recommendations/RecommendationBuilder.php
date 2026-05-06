@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Recommendations;
 
 use LaravelVitals\Contracts\CodeAnalyzer;
+use LaravelVitals\Contracts\TelemetrySource;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
 use LaravelVitals\Models\Recommendation;
@@ -15,10 +16,12 @@ final readonly class RecommendationBuilder
 {
     /**
      * @param iterable<int, CodeAnalyzer> $analyzers
+     * @param iterable<int, TelemetrySource> $sources
      */
     public function __construct(
         private RecommendationRegistry $registry,
         private iterable $analyzers,
+        private iterable $sources = [],
     ) {
     }
 
@@ -54,6 +57,24 @@ final readonly class RecommendationBuilder
 
         foreach (['session-driver-file', 'cache-driver-file', 'queue-driver-sync-prod'] as $key) {
             $this->persist($audit, $key, [], $ctx);
+        }
+
+        foreach ($this->sources as $source) {
+            if (! $source->isAvailable()) {
+                continue;
+            }
+
+            $stats = $source->getTrendsFor($audit->url?->label ?? '');
+
+            $syntheticTtfb = (float) ($audit->ttfb_ms ?? 0);
+            if ($syntheticTtfb > 0 && $stats->p95Ttfb !== null && $stats->p95Ttfb > ($syntheticTtfb * 3)) {
+                $this->persist($audit, 'real-world-perf-degraded', [
+                    'synthetic_ttfb_ms' => $syntheticTtfb,
+                    'p95_ttfb_ms'       => $stats->p95Ttfb,
+                    'sample_count'      => $stats->sampleCount,
+                ], $ctx);
+                break; // one source's signal is enough
+            }
         }
     }
 

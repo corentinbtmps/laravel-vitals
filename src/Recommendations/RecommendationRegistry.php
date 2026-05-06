@@ -56,6 +56,7 @@ final class RecommendationRegistry
         $this->register('n-plus-one-detected', 'backend', 'performance', 'warning');
         $this->register('slow-queries-detected', 'backend', 'performance', 'warning');
         $this->register('slow-views', 'backend', 'performance', 'info');
+        $this->register('real-world-perf-degraded', 'backend', 'performance', 'warning');
     }
 
     public function get(string $auditKey): ?RecommendationDescriptor

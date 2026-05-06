@@ -127,4 +127,8 @@ return [
         'title'       => 'Slow Blade views detected',
         'description' => 'A rendered view took longer than the configured threshold.',
     ],
+    'real-world-perf-degraded' => [
+        'title'       => 'Real-world performance worse than synthetic',
+        'description' => 'Real-traffic telemetry (Pulse / Telescope) shows P95 metrics significantly above the synthetic Lighthouse audit. Investigate production-only conditions: load, third-party scripts, geography.',
+    ],
 ];
