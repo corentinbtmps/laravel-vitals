@@ -7,6 +7,7 @@ namespace LaravelVitals\Drivers;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use LaravelVitals\Contracts\LighthouseDriver;
+use LaravelVitals\Drivers\PlaywrightDriver;
 
 /**
  * Resolves a LighthouseDriver by name or via auto-detection.
@@ -25,12 +26,13 @@ final readonly class LighthouseDriverManager
     /** @var array<string, class-string<LighthouseDriver>> */
     private const MAP = [
         'local'       => LocalLighthouseDriver::class,
+        'playwright'  => PlaywrightDriver::class,
         'browsershot' => BrowsershotDriver::class,
         'pagespeed'   => PageSpeedApiDriver::class,
     ];
 
     /** @var array<int, string> */
-    private const AUTO_ORDER = ['local', 'browsershot', 'pagespeed'];
+    private const AUTO_ORDER = ['local', 'playwright', 'browsershot', 'pagespeed'];
 
     public function __construct(
         private Container $container,

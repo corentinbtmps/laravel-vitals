@@ -7,12 +7,14 @@ use LaravelVitals\Drivers\BrowsershotDriver;
 use LaravelVitals\Drivers\LighthouseDriverManager;
 use LaravelVitals\Drivers\LocalLighthouseDriver;
 use LaravelVitals\Drivers\PageSpeedApiDriver;
+use LaravelVitals\Drivers\PlaywrightDriver;
 use LaravelVitals\Drivers\Stubs\StubLighthouseDriver;
 
 it('resolves a driver by name from the registered map', function (): void {
     $manager = app(LighthouseDriverManager::class);
 
     expect($manager->driver('local'))->toBeInstanceOf(LocalLighthouseDriver::class)
+        ->and($manager->driver('playwright'))->toBeInstanceOf(PlaywrightDriver::class)
         ->and($manager->driver('pagespeed'))->toBeInstanceOf(PageSpeedApiDriver::class)
         ->and($manager->driver('browsershot'))->toBeInstanceOf(BrowsershotDriver::class);
 });
@@ -48,16 +50,17 @@ it('auto-resolves to the first available driver in priority order', function ():
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
 
     // Browsershot v5 stock is unavailable (no lighthouseAudit), local is unavailable
-    // (binary missing). pagespeed is the only one available.
+    // (binary missing). playwright is available (node is in PATH).
     $manager = app(LighthouseDriverManager::class);
 
-    expect($manager->resolve())->toBeInstanceOf(PageSpeedApiDriver::class);
+    expect($manager->resolve())->toBeInstanceOf(PlaywrightDriver::class);
 });
 
 it('falls back to a stub-bound driver when one is wired into the container', function (): void {
     config()->set('vitals.driver', 'auto');
     config()->set('vitals.drivers.pagespeed.api_key');
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
+    config()->set('vitals.drivers.playwright.node_binary', '/nonexistent/node');
 
     // Inject a stub for browsershot so it returns isAvailable() = true.
     app()->bind(BrowsershotDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
@@ -71,9 +74,16 @@ it('throws when no driver is available in auto mode', function (): void {
     config()->set('vitals.driver', 'auto');
     config()->set('vitals.drivers.pagespeed.api_key');
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
+    config()->set('vitals.drivers.playwright.node_binary', '/nonexistent/node');
     // Browsershot v5 stock is already unavailable.
 
     $manager = app(LighthouseDriverManager::class);
 
     expect(fn () => $manager->resolve())->toThrow(InvalidArgumentException::class);
+});
+
+it('resolves playwright by name', function (): void {
+    $manager = app(LighthouseDriverManager::class);
+
+    expect($manager->driver('playwright'))->toBeInstanceOf(PlaywrightDriver::class);
 });
