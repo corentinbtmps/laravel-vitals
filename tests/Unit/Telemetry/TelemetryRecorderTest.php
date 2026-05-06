@@ -34,11 +34,13 @@ it('starts inactive and becomes active after start()', function (): void {
 it('captures query count and timing via DB::listen', function (): void {
     $recorder = new TelemetryRecorder();
     $recorder->start('audit-uuid-1');
+    app()->instance('vitals.active-recorder', $recorder);
 
     Url::query()->where('label', 'home')->get();
     Url::query()->where('label', 'home')->get();
 
     $snapshot = $recorder->snapshot(httpStatus: 200, routeName: 'home');
+    app()->forgetInstance('vitals.active-recorder');
 
     expect($snapshot->queriesCount)->toBeGreaterThanOrEqual(2)
         ->and($snapshot->queriesUnique)->toBeGreaterThanOrEqual(1)
@@ -48,12 +50,14 @@ it('captures query count and timing via DB::listen', function (): void {
 it('counts cache hits and misses via Laravel Cache events', function (): void {
     $recorder = new TelemetryRecorder();
     $recorder->start('audit-uuid-1');
+    app()->instance('vitals.active-recorder', $recorder);
 
     event(new CacheHit('default', 'foo', 'bar'));
     event(new CacheHit('default', 'baz', 'qux'));
     event(new CacheMissed('default', 'missing'));
 
     $snapshot = $recorder->snapshot(200, 'home');
+    app()->forgetInstance('vitals.active-recorder');
 
     expect($snapshot->cacheHits)->toBe(2)
         ->and($snapshot->cacheMisses)->toBe(1);
@@ -74,12 +78,14 @@ it('reports n_plus_one_suspect when same pattern repeats above threshold', funct
 
     $recorder = new TelemetryRecorder();
     $recorder->start('audit-uuid-1');
+    app()->instance('vitals.active-recorder', $recorder);
 
     for ($i = 0; $i < 7; $i++) {
         Url::query()->where('label', 'home')->get();
     }
 
     $snapshot = $recorder->snapshot(200, 'home');
+    app()->forgetInstance('vitals.active-recorder');
 
     expect($snapshot->nPlusOneSuspect)->toBeTrue();
 });
@@ -98,11 +104,13 @@ it('can be reused across two start() cycles without leaking state', function ():
     $recorder = new TelemetryRecorder();
 
     $recorder->start('first');
+    app()->instance('vitals.active-recorder', $recorder);
     Url::query()->where('label', 'home')->get();
     $first = $recorder->snapshot(200, 'home');
 
     $recorder->start('second');
     $second = $recorder->snapshot(200, 'home');
+    app()->forgetInstance('vitals.active-recorder');
 
     expect($first->queriesCount)->toBeGreaterThanOrEqual(1)
         ->and($second->queriesCount)->toBe(0)

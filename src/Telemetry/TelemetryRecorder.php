@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Telemetry;
 
-use Illuminate\Cache\Events\CacheHit;
-use Illuminate\Cache\Events\CacheMissed;
 use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use LaravelVitals\Support\BackendTelemetrySnapshot;
 
 /**
@@ -61,30 +56,34 @@ final class TelemetryRecorder
         $this->cacheMisses = 0;
         $this->jobsDispatched = 0;
 
-        DB::listen(function (QueryExecuted $event): void {
-            if (! $this->active) {
-                return;
-            }
+    }
+
+    public function recordQuery(QueryExecuted $event): void
+    {
+        if ($this->active) {
             $this->queries->record($event);
-        });
+        }
+    }
 
-        Event::listen(CacheHit::class, function (): void {
-            if ($this->active) {
-                $this->cacheHits++;
-            }
-        });
+    public function incrementCacheHits(): void
+    {
+        if ($this->active) {
+            $this->cacheHits++;
+        }
+    }
 
-        Event::listen(CacheMissed::class, function (): void {
-            if ($this->active) {
-                $this->cacheMisses++;
-            }
-        });
+    public function incrementCacheMisses(): void
+    {
+        if ($this->active) {
+            $this->cacheMisses++;
+        }
+    }
 
-        Event::listen(JobProcessing::class, function (): void {
-            if ($this->active) {
-                $this->jobsDispatched++;
-            }
-        });
+    public function incrementJobsDispatched(): void
+    {
+        if ($this->active) {
+            $this->jobsDispatched++;
+        }
     }
 
     public function isActive(): bool

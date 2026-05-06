@@ -147,6 +147,33 @@ final class VitalsServiceProvider extends PackageServiceProvider
             $router->pushMiddlewareToGroup('web', \LaravelVitals\Http\Middleware\CaptureVitalsTelemetry::class);
         }
 
+        // Register telemetry listeners ONCE at boot so they do not accumulate
+        // across requests in long-running workers (Octane). Each listener
+        // delegates to the currently active recorder bound in the container.
+        \Illuminate\Support\Facades\DB::listen(function (\Illuminate\Database\Events\QueryExecuted $event): void {
+            if (app()->bound('vitals.active-recorder')) {
+                app('vitals.active-recorder')->recordQuery($event);
+            }
+        });
+
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Cache\Events\CacheHit::class, function (): void {
+            if (app()->bound('vitals.active-recorder')) {
+                app('vitals.active-recorder')->incrementCacheHits();
+            }
+        });
+
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Cache\Events\CacheMissed::class, function (): void {
+            if (app()->bound('vitals.active-recorder')) {
+                app('vitals.active-recorder')->incrementCacheMisses();
+            }
+        });
+
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Queue\Events\JobQueued::class, function (): void {
+            if (app()->bound('vitals.active-recorder')) {
+                app('vitals.active-recorder')->incrementJobsDispatched();
+            }
+        });
+
         $this->publishes([
             dirname(__DIR__) . '/dist' => public_path('vendor/vitals'),
         ], 'vitals-assets');
