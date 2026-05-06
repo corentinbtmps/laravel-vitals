@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && cp resources/svg/logo-mark.svg dist/favicon.svg",
         "dev": "vite build --watch"
     },
     "devDependencies": {

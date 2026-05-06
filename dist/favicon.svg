@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="vitals-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#e11d48"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#vitals-bg)"/>
+  <path d="M8 34 H20 L24 24 L32 46 L38 18 L42 34 H56"
+        stroke="white" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

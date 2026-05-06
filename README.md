@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="resources/svg/logo.svg" alt="Laravel Vitals" width="280">
+</p>
+
 # Laravel Vitals
 
 Lighthouse-powered performance audits for Laravel apps, with backend telemetry

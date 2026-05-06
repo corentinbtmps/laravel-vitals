@@ -34,5 +34,23 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/{file}', \LaravelVitals\Http\Controllers\AssetController::class)
                 ->where('file', '[a-zA-Z0-9.\-]+')
                 ->name('vitals.assets');
+
+            Route::get('/favicon.svg', function (): \Symfony\Component\HttpFoundation\Response {
+                $path = dirname(__DIR__) . '/dist/favicon.svg';
+                abort_unless(is_file($path), 404);
+
+                return response(file_get_contents($path))
+                    ->header('Content-Type', 'image/svg+xml')
+                    ->header('Cache-Control', 'public, max-age=86400');
+            })->name('vitals.favicon.svg');
+
+            Route::get('/favicon.ico', function (): \Symfony\Component\HttpFoundation\Response {
+                $path = dirname(__DIR__) . '/dist/favicon.ico';
+                abort_unless(is_file($path), 404);
+
+                return response(file_get_contents($path))
+                    ->header('Content-Type', 'image/x-icon')
+                    ->header('Cache-Control', 'public, max-age=86400');
+            })->name('vitals.favicon.ico');
         });
 }

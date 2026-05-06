@@ -23,6 +23,8 @@ final class AssetController extends Controller
     private const ALLOWED = [
         'dashboard.css' => 'text/css; charset=utf-8',
         'dashboard.js'  => 'application/javascript; charset=utf-8',
+        'favicon.svg'   => 'image/svg+xml',
+        'favicon.ico'   => 'image/x-icon',
     ];
 
     public function __invoke(string $file): Response
