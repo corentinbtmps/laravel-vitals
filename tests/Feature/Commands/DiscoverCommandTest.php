@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 it('lists GET routes without parameters when --routes is set', function (): void {
-    Route::get('/about', fn () => 'about')->name('about');
-    Route::get('/users/{id}', fn () => 'show')->name('users.show');
-    Route::post('/contact', fn () => 'sent')->name('contact');
+    Route::get('/about', fn (): string => 'about')->name('about');
+    Route::get('/users/{id}', fn (): string => 'show')->name('users.show');
+    Route::post('/contact', fn (): string => 'sent')->name('contact');
 
     $this->artisan('vitals:discover', ['--routes' => true])
         ->expectsOutputToContain('/about')

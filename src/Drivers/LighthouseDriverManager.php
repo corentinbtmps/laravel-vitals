@@ -20,7 +20,7 @@ use LaravelVitals\Contracts\LighthouseDriver;
  * install of spatie/browsershot ^5, BrowsershotDriver reports unavailable
  * because Browsershot v5 dropped the built-in lighthouseAudit() helper.
  */
-final class LighthouseDriverManager
+final readonly class LighthouseDriverManager
 {
     /** @var array<string, class-string<LighthouseDriver>> */
     private const MAP = [
@@ -33,7 +33,7 @@ final class LighthouseDriverManager
     private const AUTO_ORDER = ['local', 'browsershot', 'pagespeed'];
 
     public function __construct(
-        private readonly Container $container,
+        private Container $container,
     ) {
     }
 

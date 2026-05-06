@@ -34,5 +34,5 @@ it('throws when reading a missing report', function (): void {
 
     $repo = new ReportRepository();
 
-    expect(fn () => $repo->read('reports/missing.json'))->toThrow(RuntimeException::class);
+    expect(fn (): string => $repo->read('reports/missing.json'))->toThrow(RuntimeException::class);
 });

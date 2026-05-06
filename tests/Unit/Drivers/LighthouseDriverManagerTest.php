@@ -35,7 +35,7 @@ it('honours an explicit driver setting in config', function (): void {
 
 it('throws when the explicit driver is unavailable', function (): void {
     config()->set('vitals.driver', 'pagespeed');
-    config()->set('vitals.drivers.pagespeed.api_key', null);
+    config()->set('vitals.drivers.pagespeed.api_key');
 
     $manager = app(LighthouseDriverManager::class);
 
@@ -56,11 +56,11 @@ it('auto-resolves to the first available driver in priority order', function ():
 
 it('falls back to a stub-bound driver when one is wired into the container', function (): void {
     config()->set('vitals.driver', 'auto');
-    config()->set('vitals.drivers.pagespeed.api_key', null);
+    config()->set('vitals.drivers.pagespeed.api_key');
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
 
     // Inject a stub for browsershot so it returns isAvailable() = true.
-    app()->bind(BrowsershotDriver::class, fn () => new StubLighthouseDriver());
+    app()->bind(BrowsershotDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 
     $manager = app(LighthouseDriverManager::class);
 
@@ -69,7 +69,7 @@ it('falls back to a stub-bound driver when one is wired into the container', fun
 
 it('throws when no driver is available in auto mode', function (): void {
     config()->set('vitals.driver', 'auto');
-    config()->set('vitals.drivers.pagespeed.api_key', null);
+    config()->set('vitals.drivers.pagespeed.api_key');
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
     // Browsershot v5 stock is already unavailable.
 

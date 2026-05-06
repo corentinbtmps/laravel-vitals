@@ -74,7 +74,7 @@ it('throws AuditException when Browsershot raises', function (): void {
 
     $url = Url::create(['label' => 'home', 'path' => '/']);
 
-    expect(fn () => $driver->audit($url, AuditOptions::default()))
+    expect(fn (): \LaravelVitals\Support\LighthouseReport => $driver->audit($url, AuditOptions::default()))
         ->toThrow(AuditException::class);
 });
 

@@ -13,7 +13,7 @@ use LaravelVitals\Models\Url;
 beforeEach(function (): void {
     Storage::fake('vitals');
     config()->set('vitals.storage', ['disk' => 'vitals', 'path' => 'reports']);
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 });
 
 it('Vitals::audit creates an Audit row and runs synchronously when sync is true', function (): void {
@@ -33,9 +33,7 @@ it('Vitals::auditAll dispatches a Bus batch of RunAuditJobs', function (): void 
 
     VitalsFacade::auditAll();
 
-    Bus::assertBatched(function (\Illuminate\Bus\PendingBatch $batch) {
-        return $batch->jobs->count() === 2;
-    });
+    Bus::assertBatched(fn(\Illuminate\Bus\PendingBatch $batch) => $batch->jobs->count() === 2);
 });
 
 it('Vitals::driver overrides the resolved driver for the next call', function (): void {
@@ -53,7 +51,7 @@ it('Vitals::driver overrides the resolved driver for the next call', function ()
         public function isAvailable(): bool { return true; }
     };
 
-    $this->app->bind(LighthouseDriver::class, fn () => $spy);
+    $this->app->bind(LighthouseDriver::class, fn (): object => $spy);
 
     VitalsFacade::audit('home');
 

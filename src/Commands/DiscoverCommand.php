@@ -35,8 +35,9 @@ final class DiscoverCommand extends Command
             $this->fromRoutes($router);
         }
 
-        if ($sitemap = $this->option('sitemap')) {
-            $this->fromSitemap((string) $sitemap);
+        $sitemap = $this->option('sitemap');
+        if (is_string($sitemap) && $sitemap !== '') {
+            $this->fromSitemap($sitemap);
         }
 
         $this->newLine();
@@ -52,7 +53,7 @@ final class DiscoverCommand extends Command
     {
         $candidates = [];
 
-        foreach ($router->getRoutes() as $route) {
+        foreach ($router->getRoutes()->getRoutes() as $route) {
             if (! in_array('GET', $route->methods(), true)) {
                 continue;
             }

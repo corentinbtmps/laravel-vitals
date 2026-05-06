@@ -17,10 +17,10 @@ use LaravelVitals\Support\LighthouseReport;
  *
  *     $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
  */
-final class StubLighthouseDriver implements LighthouseDriver
+final readonly class StubLighthouseDriver implements LighthouseDriver
 {
     public function __construct(
-        private readonly ?LighthouseReport $report = null,
+        private ?LighthouseReport $report = null,
     ) {
     }
 

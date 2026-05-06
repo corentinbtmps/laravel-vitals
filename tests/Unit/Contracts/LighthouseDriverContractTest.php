@@ -13,7 +13,7 @@ it('declares the LighthouseDriver contract with audit and isAvailable methods', 
 
     $audit = $reflection->getMethod('audit');
     expect($audit->getNumberOfParameters())->toBe(2)
-        ->and($audit->getReturnType()?->__toString())->toBe('LaravelVitals\\Support\\LighthouseReport');
+        ->and($audit->getReturnType()?->__toString())->toBe(\LaravelVitals\Support\LighthouseReport::class);
 
     $isAvailable = $reflection->getMethod('isAvailable');
     expect($isAvailable->getReturnType()?->__toString())->toBe('bool');

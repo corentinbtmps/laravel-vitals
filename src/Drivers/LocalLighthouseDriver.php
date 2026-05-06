@@ -18,10 +18,10 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
  *
  * Configuration: config('vitals.drivers.local').
  */
-final class LocalLighthouseDriver implements LighthouseDriver
+final readonly class LocalLighthouseDriver implements LighthouseDriver
 {
     public function __construct(
-        private readonly ProcessFactory $processes,
+        private ProcessFactory $processes,
     ) {
     }
 
@@ -88,7 +88,7 @@ final class LocalLighthouseDriver implements LighthouseDriver
         $target = $appUrl . '/' . ltrim($url->path, '/');
 
         $chromeFlags = implode(' ', array_map(
-            'escapeshellarg',
+            escapeshellarg(...),
             (array) ($config['chrome_flags'] ?? ['--headless', '--no-sandbox']),
         ));
 

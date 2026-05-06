@@ -52,9 +52,9 @@ final class AuditCommand extends Command
 
     private function handleSingle(Vitals $vitals): int
     {
-        $label = (string) $this->argument('label');
+        $label = $this->argument('label');
 
-        if ($label === '') {
+        if (! is_string($label) || $label === '') {
             $this->error('Provide a URL label or use --all.');
             return self::FAILURE;
         }
@@ -65,7 +65,8 @@ final class AuditCommand extends Command
             return self::FAILURE;
         }
 
-        $device = (string) $this->option('device');
+        $device = $this->option('device');
+        $device = is_string($device) ? $device : 'mobile';
 
         try {
             $audit = $vitals->audit($label, $device, sync: true);
@@ -84,7 +85,8 @@ final class AuditCommand extends Command
 
     private function handleAll(Vitals $vitals): int
     {
-        $device = (string) $this->option('device');
+        $rawDevice = $this->option('device');
+        $device = is_string($rawDevice) ? $rawDevice : 'mobile';
 
         if ($this->option('sync')) {
             // Synchronous mode: build one audit per URL ourselves and run them inline.
@@ -94,7 +96,7 @@ final class AuditCommand extends Command
                 $audits[] = $vitals->audit($url, $device, sync: true);
             }
 
-            $this->renderAudits(array_map(static fn (Audit $a): Audit => $a->fresh(), $audits));
+            $this->renderAudits(array_map(static fn (Audit $a): Audit => $a->fresh() ?? $a, $audits));
             return self::SUCCESS;
         }
 
@@ -134,7 +136,8 @@ final class AuditCommand extends Command
                 ], $audits),
             ];
 
-            $this->line(json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $encoded = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            $this->line($encoded !== false ? $encoded : '{}');
             return;
         }
 

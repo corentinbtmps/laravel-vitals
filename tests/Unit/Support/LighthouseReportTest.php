@@ -58,6 +58,6 @@ it('survives missing categories or metrics gracefully', function (): void {
 });
 
 it('throws on malformed JSON', function (): void {
-    expect(fn () => LighthouseReport::fromLighthouseJson('{not json'))
+    expect(fn (): \LaravelVitals\Support\LighthouseReport => LighthouseReport::fromLighthouseJson('{not json'))
         ->toThrow(\JsonException::class);
 });

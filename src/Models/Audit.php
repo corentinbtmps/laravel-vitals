@@ -23,6 +23,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int|null $score_accessibility
  * @property int|null $score_best_practices
  * @property int|null $score_seo
+ * @property int|null $lcp_ms
+ * @property float|null $cls
+ * @property int|null $inp_ms
+ * @property int|null $ttfb_ms
+ * @property int|null $fcp_ms
+ * @property int|null $si_ms
+ * @property int|null $tbt_ms
  * @property string|null $report_path
  * @property string|null $error
  * @property \Illuminate\Support\Carbon|null $started_at

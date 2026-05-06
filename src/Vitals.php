@@ -71,10 +71,12 @@ final class Vitals
             throw new InvalidArgumentException("Device must be 'mobile' or 'desktop'.");
         }
 
+        $driverName = $this->driverOverride;
+
         $audit = Audit::create([
             'id'     => Str::uuid()->toString(),
             'url_id' => $url->id,
-            'driver' => $this->driverOverride ?? (string) config('vitals.driver', 'auto'),
+            'driver' => $driverName ?? (string) config('vitals.driver', 'auto'),
             'device' => $device,
             'status' => 'pending',
         ]);
@@ -84,8 +86,12 @@ final class Vitals
         $job = new RunAuditJob($audit->id);
 
         if ($sync) {
+            $driver = $driverName !== null
+                ? $this->drivers->driver($driverName)
+                : app(LighthouseDriver::class);
+
             $job->handle(
-                app(LighthouseDriver::class),
+                $driver,
                 app(ReportRepository::class),
             );
         } else {

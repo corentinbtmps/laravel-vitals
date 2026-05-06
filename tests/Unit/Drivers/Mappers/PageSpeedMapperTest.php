@@ -17,11 +17,11 @@ it('extracts the lighthouseResult from a PSI response and parses it', function (
 it('throws AuditException when the response has no lighthouseResult', function (): void {
     $json = json_encode(['kind' => 'pagespeedonline#result']);
 
-    expect(fn () => PageSpeedMapper::fromPageSpeedJson($json))
+    expect(fn (): \LaravelVitals\Support\LighthouseReport => PageSpeedMapper::fromPageSpeedJson($json))
         ->toThrow(AuditException::class);
 });
 
 it('throws AuditException on invalid JSON', function (): void {
-    expect(fn () => PageSpeedMapper::fromPageSpeedJson('{not json'))
+    expect(fn (): \LaravelVitals\Support\LighthouseReport => PageSpeedMapper::fromPageSpeedJson('{not json'))
         ->toThrow(AuditException::class);
 });

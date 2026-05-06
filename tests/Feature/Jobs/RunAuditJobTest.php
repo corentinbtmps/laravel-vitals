@@ -14,7 +14,7 @@ use LaravelVitals\Storage\ReportRepository;
 beforeEach(function (): void {
     Storage::fake('vitals');
     config()->set('vitals.storage', ['disk' => 'vitals', 'path' => 'reports']);
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 });
 
 it('runs the audit, persists raw JSON, and updates the audit row', function (): void {
@@ -83,7 +83,7 @@ it('injects the X-Vitals-Audit-Id header into AuditOptions passed to the driver'
 
     $captured = null;
     $spy = new class($captured) implements LighthouseDriver {
-        public ?\LaravelVitals\Support\AuditOptions $captured;
+        public ?\LaravelVitals\Support\AuditOptions $captured = null;
 
         public function __construct(?\LaravelVitals\Support\AuditOptions &$captured)
         {

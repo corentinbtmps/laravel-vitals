@@ -51,8 +51,23 @@ final class RunAuditJob implements ShouldQueue
             ->withDevice($audit->device)
             ->withExtraHeader('X-Vitals-Audit-Id', $headerValue);
 
+        $url = $audit->url;
+
+        if ($url === null) {
+            $audit->update([
+                'status' => 'failed',
+                'error'  => 'Associated URL record not found.',
+                'completed_at' => now(),
+            ]);
+            throw new AuditException(
+                "Audit {$audit->id}: associated URL record not found.",
+                auditId: $audit->id,
+                driver: $audit->driver,
+            );
+        }
+
         try {
-            $report = $driver->audit($audit->url, $options);
+            $report = $driver->audit($url, $options);
 
             $path = $reports->store($audit->id, $report->rawJson);
 

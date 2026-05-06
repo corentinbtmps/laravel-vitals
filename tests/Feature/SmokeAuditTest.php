@@ -10,7 +10,7 @@ use LaravelVitals\Models\Audit;
 it('runs a full happy-path audit end-to-end via the artisan command', function (): void {
     Storage::fake('vitals');
     config()->set('vitals.storage', ['disk' => 'vitals', 'path' => 'reports']);
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 
     config()->set('vitals.urls', ['home' => '/']);
 

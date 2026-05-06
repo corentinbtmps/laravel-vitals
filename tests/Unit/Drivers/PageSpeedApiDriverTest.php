@@ -30,11 +30,9 @@ it('calls the PSI endpoint with the expected query string and parses the respons
 
     expect($report->scores['performance'])->toBe(92);
 
-    Http::assertSent(function ($request) {
-        return str_contains($request->url(), 'url=https%3A%2F%2Fexample.test%2F')
-            && str_contains($request->url(), 'strategy=mobile')
-            && str_contains($request->url(), 'key=k_test');
-    });
+    Http::assertSent(fn($request) => str_contains((string) $request->url(), 'url=https%3A%2F%2Fexample.test%2F')
+        && str_contains((string) $request->url(), 'strategy=mobile')
+        && str_contains((string) $request->url(), 'key=k_test'));
 });
 
 it('throws AuditException on non-2xx responses', function (): void {
@@ -45,12 +43,12 @@ it('throws AuditException on non-2xx responses', function (): void {
     $driver = new PageSpeedApiDriver();
     $url = Url::create(['label' => 'home', 'path' => '/']);
 
-    expect(fn () => $driver->audit($url, AuditOptions::default()))
+    expect(fn (): \LaravelVitals\Support\LighthouseReport => $driver->audit($url, AuditOptions::default()))
         ->toThrow(AuditException::class);
 });
 
 it('reports unavailable when the API key is missing', function (): void {
-    config()->set('vitals.drivers.pagespeed.api_key', null);
+    config()->set('vitals.drivers.pagespeed.api_key');
 
     expect((new PageSpeedApiDriver())->isAvailable())->toBeFalse();
 });
