@@ -18,7 +18,7 @@ correlation and host-application source code pointers for every recommendation.
 - Laravel 11, 12, or 13
 - Livewire 3 + Flux Free 2 (auto-installed)
 - For the local Lighthouse driver: Node 18+ and the `lighthouse` npm package on `$PATH`
-- For the Playwright driver: Node 18+ on `$PATH`
+- For the Playwright driver: Node 18+ + the `playwright` and `playwright-lighthouse` npm packages
 - For the PageSpeed driver: a Google PSI API key (`VITALS_PAGESPEED_API_KEY`)
 
 ## Installation
@@ -32,6 +32,20 @@ php artisan vitals:install
 
 The last command publishes Boost guidelines (`.ai/guidelines/vitals.blade.php`)
 and the Claude Code skill (`.claude/skills/laravel-vitals/SKILL.md`).
+
+## Asset compilation
+
+The dashboard ships pre-built CSS and JS in `dist/`. Consumers don't need Node — running `vitals:install` already publishes them.
+
+To regenerate the assets (for maintainers):
+
+```bash
+npm install
+npm run build
+php artisan vendor:publish --tag=vitals-assets --force
+```
+
+The published assets land in `public/vendor/vitals/`.
 
 ## Configuration
 
@@ -71,6 +85,15 @@ Exit codes when `--fail-on-budget` is set:
 - `0` — no violation
 - `1` — at least one warning violation
 - `2` — at least one critical violation
+
+## Diagnostics & demos
+
+- `php artisan vitals:doctor` — verify drivers, storage, notifications, telemetry sources are correctly wired
+- `php artisan vitals:demo` — seed 4 fictional URLs with 14 days of audit history (perfect for screenshots and onboarding)
+- `php artisan vitals:purge --demo` — remove demo data only
+- `php artisan vitals:purge` — remove ALL vitals data (asks for confirmation)
+- `php artisan vitals:check-regressions` — alert on score drops vs 7-day baseline
+- `php artisan vitals:digest:send` — send weekly digest summary
 
 ## Dashboard
 
@@ -114,6 +137,21 @@ $schedule->command('model:prune', [
 ```
 
 Retention defaults to 90 days; configure via `VITALS_RETENTION_DAYS`.
+
+## Translations
+
+Translations are available out of the box in:
+
+- English (`en`, default)
+- French (`fr`)
+- German (`de`)
+- Spanish (`es`)
+
+The active locale follows `app()->getLocale()`. To customize a translation, publish the package's lang files and edit them:
+
+```bash
+php artisan vendor:publish --tag=vitals-translations
+```
 
 ## License
 

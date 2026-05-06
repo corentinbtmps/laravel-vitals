@@ -141,7 +141,7 @@ final class DemoSeeder
      */
     private function metricsForProfile(string $profile, Carbon $when): array
     {
-        $daysAgo = (int) max(0, (int) round($when->diffInDays(now())));
+        $daysAgo = max(0, (int) round($when->diffInDays(now())));
 
         return match ($profile) {
             'stable_high' => [

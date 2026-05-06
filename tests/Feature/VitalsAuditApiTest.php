@@ -37,7 +37,7 @@ it('Vitals::auditAll dispatches a Bus batch of RunAuditJobs', function (): void 
 });
 
 it('Vitals::audit dispatches two audits when URL device is "both" and no device specified', function (): void {
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 
     Url::create(['label' => 'home', 'path' => '/', 'device' => 'both']);
 
