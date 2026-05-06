@@ -19,7 +19,7 @@
                 <tbody>
                 @foreach ($urls as $u)
                     <tr class="border-b dark:border-zinc-800/50">
-                        <td class="py-2"><a href="#" class="hover:underline font-medium">{{ $u->label }}</a></td>
+                        <td class="py-2"><a href="{{ route('vitals.url', $u->id) }}" class="hover:underline font-medium">{{ $u->label }}</a></td>
                         <td><code>{{ $u->path }}</code></td>
                         <td>{{ $u->device }}</td>
                         <td>{{ $u->audits_count }}</td>

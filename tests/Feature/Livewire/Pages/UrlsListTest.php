@@ -24,3 +24,11 @@ it('renders a CTA when no URLs exist', function (): void {
     Livewire::test(UrlsList::class)
         ->assertSee('No URLs configured');
 });
+
+it('renders a link to the url-detail page for each Url', function (): void {
+    $url = Url::create(['label' => 'home', 'path' => '/']);
+
+    Livewire::test(UrlsList::class)
+        ->assertOk()
+        ->assertSee("/vitals/urls/{$url->id}");
+});
