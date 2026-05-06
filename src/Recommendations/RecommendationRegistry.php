@@ -46,7 +46,6 @@ final class RecommendationRegistry
         $this->register('debug-on-prod', 'config', 'best_practices', 'critical');
         $this->register('opcache-disabled', 'config', 'best_practices', 'warning');
 
-        $this->register('outdated-deps', 'static', 'best_practices', 'info');
         $this->register('missing-php-version', 'static', 'best_practices', 'info');
 
         $this->register('session-driver-file', 'config', 'best_practices', 'info');

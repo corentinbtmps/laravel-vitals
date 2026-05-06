@@ -13,7 +13,7 @@ it('returns no references when composer.json looks healthy', function (): void {
         configSnapshot: [],
     );
 
-    $refs = (new ComposerAnalyzer())->analyze('outdated-deps', [], $ctx);
+    $refs = (new ComposerAnalyzer())->analyze('missing-php-version', [], $ctx);
 
     expect($refs)->toHaveCount(0);
 });
@@ -40,7 +40,7 @@ it('flags missing PHP constraint', function (): void {
 
 it('supports its custom keys', function (): void {
     $a = new ComposerAnalyzer();
-    expect($a->supports('outdated-deps'))->toBeTrue()
+    expect($a->supports('outdated-deps'))->toBeFalse()
         ->and($a->supports('missing-php-version'))->toBeTrue()
         ->and($a->supports('imaginary'))->toBeFalse();
 });

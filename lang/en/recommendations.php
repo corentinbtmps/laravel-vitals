@@ -95,10 +95,6 @@ return [
         'title'       => 'Enable OPcache',
         'description' => 'OPcache caches the compiled PHP bytecode and is essential for production performance.',
     ],
-    'outdated-deps' => [
-        'title'       => 'Some dependencies are outdated',
-        'description' => 'Run `composer outdated` to review updates.',
-    ],
     'missing-php-version' => [
         'title'       => 'Pin a PHP version',
         'description' => 'Add an explicit php constraint in composer.json so deploys reject incompatible versions.',

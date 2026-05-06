@@ -13,7 +13,7 @@ final class ComposerAnalyzer implements CodeAnalyzer
 {
     public function supports(string $auditKey): bool
     {
-        return in_array($auditKey, ['outdated-deps', 'missing-php-version'], true);
+        return $auditKey === 'missing-php-version';
     }
 
     public function analyze(string $auditKey, array $auditData, AppContext $ctx): CodeReferenceCollection
@@ -32,7 +32,6 @@ final class ComposerAnalyzer implements CodeAnalyzer
 
         return match ($auditKey) {
             'missing-php-version' => $this->checkPhp($decoded),
-            'outdated-deps'       => new CodeReferenceCollection(),
             default               => new CodeReferenceCollection(),
         };
     }
