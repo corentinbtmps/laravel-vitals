@@ -32,6 +32,10 @@ return [
             'api_key'  => env('VITALS_PAGESPEED_API_KEY'),
             'endpoint' => 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed',
         ],
+        'playwright' => [
+            'node_binary'     => env('VITALS_NODE_BINARY', 'node'),
+            'timeout_seconds' => 120,
+        ],
     ],
 
     /*
