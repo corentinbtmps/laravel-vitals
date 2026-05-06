@@ -22,6 +22,7 @@ return new class extends Migration
             $table->json('translation_params')->nullable();
             $table->json('metrics')->nullable();
             $table->json('code_references')->nullable();
+            $table->boolean('is_demo')->default(false)->index();
             $table->timestamps();
 
             $table->index(['audit_id', 'severity']);

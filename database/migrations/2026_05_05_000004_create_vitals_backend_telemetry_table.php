@@ -30,6 +30,7 @@ return new class extends Migration
             $table->unsignedInteger('cache_misses');
             $table->json('slow_queries')->nullable();
             $table->boolean('truncated')->default(false);
+            $table->boolean('is_demo')->default(false)->index();
             $table->timestamps();
 
             $table->index(['audit_id']);

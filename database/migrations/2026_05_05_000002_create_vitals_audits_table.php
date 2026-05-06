@@ -29,9 +29,11 @@ return new class extends Migration
             $table->decimal('si_ms', 10, 2)->nullable();
             $table->decimal('tbt_ms', 10, 2)->nullable();
             $table->string('report_path')->nullable();
+            $table->json('details')->nullable();
             $table->text('error')->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
+            $table->boolean('is_demo')->default(false)->index();
             $table->timestamps();
 
             $table->index(['url_id', 'completed_at']);

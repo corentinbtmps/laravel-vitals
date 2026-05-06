@@ -33,6 +33,8 @@ php artisan vitals:install
 The last command publishes Boost guidelines (`.ai/guidelines/vitals.blade.php`)
 and the Claude Code skill (`.claude/skills/laravel-vitals/SKILL.md`).
 
+> **Upgrading from alpha < 0.15**: schema migrations were consolidated into the original `create_*_table` files. Run `php artisan vitals:purge` (with `--demo` if you only seeded demo data), then drop the four `vitals_*` tables and re-run `php artisan migrate`. Production data should be exported first.
+
 ## Asset compilation
 
 The dashboard ships pre-built CSS and JS in `dist/`. The package serves them automatically via routes — **users don't need to publish anything**.
