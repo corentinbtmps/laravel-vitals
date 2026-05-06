@@ -1,0 +1,95 @@
+{
+    "lighthouseVersion": "12.2.1",
+    "requestedUrl": "https://example.test/",
+    "finalDisplayedUrl": "https://example.test/",
+    "fetchTime": "2026-05-06T08:00:00.000Z",
+    "categories": {
+        "performance": {
+            "id": "performance",
+            "title": "Performance",
+            "score": 0.92
+        },
+        "accessibility": {
+            "id": "accessibility",
+            "title": "Accessibility",
+            "score": 0.88
+        },
+        "best-practices": {
+            "id": "best-practices",
+            "title": "Best Practices",
+            "score": 0.96
+        },
+        "seo": {
+            "id": "seo",
+            "title": "SEO",
+            "score": 1
+        }
+    },
+    "audits": {
+        "largest-contentful-paint": {
+            "id": "largest-contentful-paint",
+            "title": "Largest Contentful Paint",
+            "score": 0.85,
+            "numericValue": 1850.4,
+            "numericUnit": "millisecond"
+        },
+        "cumulative-layout-shift": {
+            "id": "cumulative-layout-shift",
+            "title": "Cumulative Layout Shift",
+            "score": 0.95,
+            "numericValue": 0.03,
+            "numericUnit": "unitless"
+        },
+        "interaction-to-next-paint": {
+            "id": "interaction-to-next-paint",
+            "title": "Interaction to Next Paint",
+            "score": 0.99,
+            "numericValue": 120,
+            "numericUnit": "millisecond"
+        },
+        "server-response-time": {
+            "id": "server-response-time",
+            "title": "Server response time",
+            "score": 1,
+            "numericValue": 220,
+            "numericUnit": "millisecond"
+        },
+        "first-contentful-paint": {
+            "id": "first-contentful-paint",
+            "title": "First Contentful Paint",
+            "score": 0.97,
+            "numericValue": 980,
+            "numericUnit": "millisecond"
+        },
+        "speed-index": {
+            "id": "speed-index",
+            "title": "Speed Index",
+            "score": 0.93,
+            "numericValue": 1450,
+            "numericUnit": "millisecond"
+        },
+        "total-blocking-time": {
+            "id": "total-blocking-time",
+            "title": "Total Blocking Time",
+            "score": 0.95,
+            "numericValue": 80,
+            "numericUnit": "millisecond"
+        },
+        "unused-javascript": {
+            "id": "unused-javascript",
+            "title": "Reduce unused JavaScript",
+            "score": 0.4,
+            "scoreDisplayMode": "metricSavings",
+            "details": {
+                "type": "opportunity",
+                "items": [
+                    {
+                        "url": "https://example.test/build/assets/app-abc.js",
+                        "totalBytes": 184320,
+                        "wastedBytes": 110000
+                    }
+                ]
+            }
+        }
+    }
+}
