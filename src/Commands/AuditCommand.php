@@ -82,13 +82,12 @@ final class AuditCommand extends Command
         $this->renderAudits([$fresh]);
 
         if ($this->option('fail-on-budget')) {
-            $auditFresh = $audit->fresh() ?? $audit;
-            $violations = \LaravelVitals\Budgets\PerfBudget::evaluate($auditFresh);
+            $violations = \LaravelVitals\Budgets\PerfBudget::evaluate($fresh);
             $worst = $violations->worstSeverity();
 
             if (! $violations->isEmpty()) {
                 app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class)
-                    ->send('budget_violation', new \LaravelVitals\Notifications\BudgetViolated($auditFresh, $violations));
+                    ->send('budget_violation', new \LaravelVitals\Notifications\BudgetViolated($fresh, $violations));
             }
 
             if ($worst === 'critical') {
