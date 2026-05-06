@@ -6,14 +6,16 @@
             <p class="text-sm text-ink-500 mt-1">Performance health across all monitored URLs</p>
         </div>
         <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1">
-            @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $lbl)
-                <button
-                    wire:click="setPeriod('{{ $val }}')"
-                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                        {{ $period === $val
-                            ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                            : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                >{{ $lbl }}</button>
+            @foreach (['24h' => ['label' => '24h', 'desc' => 'Show audits from the last 24 hours'], '7d' => ['label' => '7d', 'desc' => 'Show audits from the last 7 days'], '30d' => ['label' => '30d', 'desc' => 'Show audits from the last 30 days'], '90d' => ['label' => '90d', 'desc' => 'Show audits from the last 90 days'], '1y' => ['label' => '1y', 'desc' => 'Show audits from the last year'], 'all' => ['label' => 'All', 'desc' => 'Show all audits']] as $val => $meta)
+                <flux:tooltip content="{{ $meta['desc'] }}">
+                    <button
+                        wire:click="setPeriod('{{ $val }}')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                            {{ $period === $val
+                                ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
+                                : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                    >{{ $meta['label'] }}</button>
+                </flux:tooltip>
             @endforeach
         </div>
     </div>
@@ -22,8 +24,10 @@
     <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-8">
         <div class="flex items-center gap-8">
             <x-vitals::activity-rings :scores="$averages">
-                <div class="text-5xl font-semibold tabular-nums leading-none">{{ $overallGrade ?? '—' }}</div>
-                <div class="text-sm text-ink-500 mt-1 tabular-nums">{{ $overall ?? '—' }}<span class="text-xs">/100</span></div>
+                <flux:tooltip content="Overall health score across all monitored URLs">
+                    <div class="text-5xl font-semibold tabular-nums leading-none cursor-default">{{ $overallGrade ?? '—' }}</div>
+                    <div class="text-sm text-ink-500 mt-1 tabular-nums">{{ $overall ?? '—' }}<span class="text-xs">/100</span></div>
+                </flux:tooltip>
             </x-vitals::activity-rings>
 
             <div class="flex-1">
@@ -73,7 +77,9 @@
                         <flux:callout.text>
                             {{ $alert['when']->diffForHumans() }} —
                             @if ($alert['link'])
-                                <a href="{{ $alert['link'] }}" class="underline">View audit</a>
+                                <flux:tooltip content="Open audit detail">
+                                    <a href="{{ $alert['link'] }}" class="underline">View audit</a>
+                                </flux:tooltip>
                             @endif
                         </flux:callout.text>
                     </flux:callout>

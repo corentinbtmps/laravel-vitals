@@ -19,14 +19,16 @@
             </div>
             {{-- Period control --}}
             <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 shrink-0">
-                @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $lbl)
-                    <button
-                        wire:click="setPeriod('{{ $val }}')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                            {{ $period === $val
-                                ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                                : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                    >{{ $lbl }}</button>
+                @foreach (['24h' => ['label' => '24h', 'desc' => 'Show audits from the last 24 hours'], '7d' => ['label' => '7d', 'desc' => 'Show audits from the last 7 days'], '30d' => ['label' => '30d', 'desc' => 'Show audits from the last 30 days'], '90d' => ['label' => '90d', 'desc' => 'Show audits from the last 90 days'], '1y' => ['label' => '1y', 'desc' => 'Show audits from the last year'], 'all' => ['label' => 'All', 'desc' => 'Show all audits']] as $val => $meta)
+                    <flux:tooltip content="{{ $meta['desc'] }}">
+                        <button
+                            wire:click="setPeriod('{{ $val }}')"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                                {{ $period === $val
+                                    ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
+                                    : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                        >{{ $meta['label'] }}</button>
+                    </flux:tooltip>
                 @endforeach
             </div>
         </div>
@@ -50,19 +52,21 @@
                 {{-- Metric toggle --}}
                 <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1">
                     @foreach ([
-                        'performance' => 'Score',
-                        'lcp'         => 'LCP',
-                        'inp'         => 'INP',
-                        'cls'         => 'CLS',
-                        'ttfb'        => 'TTFB',
-                    ] as $val => $lbl)
-                        <button
-                            wire:click="setMetric('{{ $val }}')"
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                                {{ $metric === $val
-                                    ? 'bg-accent-500 text-white'
-                                    : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                        >{{ $lbl }}</button>
+                        'performance' => ['label' => 'Score', 'desc' => 'Composite Lighthouse Performance score (0-100)'],
+                        'lcp'         => ['label' => 'LCP',   'desc' => 'Largest Contentful Paint — time until the largest visible content renders. Good < 2.5s'],
+                        'inp'         => ['label' => 'INP',   'desc' => 'Interaction to Next Paint — input latency. Good < 200ms'],
+                        'cls'         => ['label' => 'CLS',   'desc' => 'Cumulative Layout Shift — visual stability. Good < 0.1'],
+                        'ttfb'        => ['label' => 'TTFB',  'desc' => 'Time to First Byte — server response time. Good < 800ms'],
+                    ] as $val => $meta)
+                        <flux:tooltip content="{{ $meta['desc'] }}">
+                            <button
+                                wire:click="setMetric('{{ $val }}')"
+                                class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                                    {{ $metric === $val
+                                        ? 'bg-accent-500 text-white'
+                                        : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                            >{{ $meta['label'] }}</button>
+                        </flux:tooltip>
                     @endforeach
                 </div>
             </div>

@@ -48,12 +48,13 @@
                             <tr class="border-b border-ink-100 dark:border-ink-800/50 hover:bg-ink-50 dark:hover:bg-ink-900/40 transition-colors">
                                 {{-- Star / pin button --}}
                                 <td class="py-3 pr-2">
-                                    <button wire:click="togglePin({{ $u->id }})"
-                                            type="button"
-                                            title="{{ $u->pinned_at ? 'Unpin' : 'Pin to favorites' }}"
-                                            class="text-amber-500 hover:text-amber-600 transition-colors duration-150">
-                                        <flux:icon.star variant="solid" class="size-4" />
-                                    </button>
+                                    <flux:tooltip content="{{ $u->pinned_at ? 'Unpin from favorites' : 'Pin to favorites' }}">
+                                        <button wire:click="togglePin({{ $u->id }})"
+                                                type="button"
+                                                class="text-amber-500 hover:text-amber-600 transition-colors duration-150">
+                                            <flux:icon.star variant="solid" class="size-4" />
+                                        </button>
+                                    </flux:tooltip>
                                 </td>
 
                                 {{-- URL column --}}
@@ -65,16 +66,18 @@
                                 </td>
 
                                 {{-- Score cells --}}
-                                @foreach (['score_performance', 'score_accessibility', 'score_best_practices', 'score_seo'] as $col)
+                                @foreach (['score_performance' => 'Performance', 'score_accessibility' => 'Accessibility', 'score_best_practices' => 'Best Practices', 'score_seo' => 'SEO'] as $col => $colLabel)
                                     @php
                                         $score = $last?->{$col};
                                         $color = \LaravelVitals\Support\Health::colorForScore($score);
                                     @endphp
                                     <td class="py-3 px-2 text-center">
                                         @if ($score !== null)
-                                            <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums">
-                                                {{ $score }}
-                                            </span>
+                                            <flux:tooltip content="Lighthouse {{ $colLabel }} score">
+                                                <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums cursor-default">
+                                                    {{ $score }}
+                                                </span>
+                                            </flux:tooltip>
                                         @else
                                             <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
                                         @endif
@@ -108,9 +111,11 @@
                                 {{-- Last audit time --}}
                                 <td class="py-3 px-2 text-right text-xs text-ink-500">
                                     @if ($last !== null && $last->completed_at !== null)
-                                        <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline" title="{{ $last->completed_at->toDayDateTimeString() }}">
-                                            {{ $last->completed_at->diffForHumans(short: true) }}
-                                        </a>
+                                        <flux:tooltip content="{{ $last->completed_at->toDayDateTimeString() }}">
+                                            <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline">
+                                                {{ $last->completed_at->diffForHumans(short: true) }}
+                                            </a>
+                                        </flux:tooltip>
                                     @else
                                         —
                                     @endif
@@ -121,7 +126,9 @@
 
                                 {{-- Action --}}
                                 <td class="py-3 pl-2 text-right">
-                                    <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
+                                    <flux:tooltip content="Open URL detail">
+                                        <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
+                                    </flux:tooltip>
                                 </td>
                             </tr>
                         @endforeach
@@ -161,16 +168,17 @@
                         <tr class="border-b border-ink-100 dark:border-ink-800/50 hover:bg-ink-50 dark:hover:bg-ink-900/40 transition-colors">
                             {{-- Star / pin button --}}
                             <td class="py-3 pr-2">
-                                <button wire:click="togglePin({{ $u->id }})"
-                                        type="button"
-                                        title="{{ $u->pinned_at ? 'Unpin' : 'Pin to favorites' }}"
-                                        class="transition-colors duration-150 {{ $u->pinned_at ? 'text-amber-500 hover:text-amber-600' : 'text-ink-300 hover:text-amber-500' }}">
-                                    @if ($u->pinned_at)
-                                        <flux:icon.star variant="solid" class="size-4" />
-                                    @else
-                                        <flux:icon.star class="size-4" />
-                                    @endif
-                                </button>
+                                <flux:tooltip content="{{ $u->pinned_at ? 'Unpin from favorites' : 'Pin to favorites' }}">
+                                    <button wire:click="togglePin({{ $u->id }})"
+                                            type="button"
+                                            class="transition-colors duration-150 {{ $u->pinned_at ? 'text-amber-500 hover:text-amber-600' : 'text-ink-300 hover:text-amber-500' }}">
+                                        @if ($u->pinned_at)
+                                            <flux:icon.star variant="solid" class="size-4" />
+                                        @else
+                                            <flux:icon.star class="size-4" />
+                                        @endif
+                                    </button>
+                                </flux:tooltip>
                             </td>
 
                             {{-- URL column --}}
@@ -182,16 +190,18 @@
                             </td>
 
                             {{-- Score cells --}}
-                            @foreach (['score_performance', 'score_accessibility', 'score_best_practices', 'score_seo'] as $col)
+                            @foreach (['score_performance' => 'Performance', 'score_accessibility' => 'Accessibility', 'score_best_practices' => 'Best Practices', 'score_seo' => 'SEO'] as $col => $colLabel)
                                 @php
                                     $score = $last?->{$col};
                                     $color = \LaravelVitals\Support\Health::colorForScore($score);
                                 @endphp
                                 <td class="py-3 px-2 text-center">
                                     @if ($score !== null)
-                                        <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums">
-                                            {{ $score }}
-                                        </span>
+                                        <flux:tooltip content="Lighthouse {{ $colLabel }} score">
+                                            <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums cursor-default">
+                                                {{ $score }}
+                                            </span>
+                                        </flux:tooltip>
                                     @else
                                         <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
                                     @endif
@@ -225,9 +235,11 @@
                             {{-- Last audit time --}}
                             <td class="py-3 px-2 text-right text-xs text-ink-500">
                                 @if ($last !== null && $last->completed_at !== null)
-                                    <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline" title="{{ $last->completed_at->toDayDateTimeString() }}">
-                                        {{ $last->completed_at->diffForHumans(short: true) }}
-                                    </a>
+                                    <flux:tooltip content="{{ $last->completed_at->toDayDateTimeString() }}">
+                                        <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline">
+                                            {{ $last->completed_at->diffForHumans(short: true) }}
+                                        </a>
+                                    </flux:tooltip>
                                 @else
                                     —
                                 @endif
@@ -238,7 +250,9 @@
 
                             {{-- Action --}}
                             <td class="py-3 pl-2 text-right">
-                                <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
+                                <flux:tooltip content="Open URL detail">
+                                    <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
+                                </flux:tooltip>
                             </td>
                         </tr>
                     @endforeach

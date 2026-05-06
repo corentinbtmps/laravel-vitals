@@ -22,18 +22,20 @@
 <body class="h-full bg-ink-50 text-ink-900 dark:bg-ink-950 dark:text-ink-100" data-flux-appearance>
 
 <flux:header class="border-b border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900">
-    <flux:brand href="{{ route('vitals.dashboard') }}">
-        <div class="flex items-center gap-2.5">
-            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 shadow-sm">
-                <svg viewBox="0 0 64 64" class="h-5 w-5" fill="none">
-                    <path d="M8 34 H20 L24 24 L32 46 L38 18 L42 34 H56"
-                          stroke="white" stroke-width="4"
-                          stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+    <flux:tooltip content="Laravel Vitals dashboard">
+        <flux:brand href="{{ route('vitals.dashboard') }}">
+            <div class="flex items-center gap-2.5">
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 shadow-sm">
+                    <svg viewBox="0 0 64 64" class="h-5 w-5" fill="none">
+                        <path d="M8 34 H20 L24 24 L32 46 L38 18 L42 34 H56"
+                              stroke="white" stroke-width="4"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-base font-semibold text-ink-900 dark:text-ink-100">Laravel Vitals</span>
             </div>
-            <span class="text-base font-semibold text-ink-900 dark:text-ink-100">Laravel Vitals</span>
-        </div>
-    </flux:brand>
+        </flux:brand>
+    </flux:tooltip>
 
     <flux:navbar class="-mb-px max-lg:hidden">
         <flux:navbar.item

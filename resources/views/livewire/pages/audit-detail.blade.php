@@ -66,7 +66,9 @@
                 <div class="absolute top-0 left-0 right-0 h-0.5 bg-{{ $color }}-500 rounded-t-2xl"></div>
                 <div class="flex items-center gap-2 text-xs text-ink-500 mt-1">
                     <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
-                    {{ $meta['label'] }}
+                    <flux:tooltip content="Lighthouse {{ $meta['label'] }} score{{ $value !== null ? ': ' . $value . '/100' : '' }}">
+                        <span class="cursor-help underline decoration-dotted decoration-ink-300 dark:decoration-ink-700 underline-offset-2">{{ $meta['label'] }}</span>
+                    </flux:tooltip>
                 </div>
                 @if ($value !== null)
                     @php $chartId = 'score-' . $col . '-' . uniqid(); @endphp
