@@ -64,6 +64,7 @@ final class Audit extends Model
             'score_seo'            => 'integer',
             'started_at'           => 'datetime',
             'completed_at'         => 'datetime',
+            'is_demo'              => 'boolean',
         ];
     }
 

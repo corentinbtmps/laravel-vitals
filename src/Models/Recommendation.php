@@ -41,6 +41,7 @@ final class Recommendation extends Model
             'translation_params' => 'array',
             'metrics'            => 'array',
             'code_references'    => 'array',
+            'is_demo'            => 'boolean',
         ];
     }
 

@@ -39,6 +39,7 @@ final class Url extends Model
         return [
             'options' => 'array',
             'enabled' => 'boolean',
+            'is_demo' => 'boolean',
         ];
     }
 

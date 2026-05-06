@@ -53,6 +53,7 @@ final class BackendTelemetry extends Model
             'n_plus_one_suspect' => 'boolean',
             'truncated'          => 'boolean',
             'slow_queries'       => 'array',
+            'is_demo'            => 'boolean',
         ];
     }
 
