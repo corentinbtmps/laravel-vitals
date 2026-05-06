@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Laravel Vitals' }}</title>
-    <link rel="stylesheet" href="{{ asset('vendor/vitals/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ route('vitals.assets', 'dashboard.css') }}">
     @livewireStyles
     @fluxAppearance
 </head>
@@ -36,6 +36,6 @@
 
 @livewireScripts
 @fluxScripts
-<script src="{{ asset('vendor/vitals/dashboard.js') }}"></script>
+<script src="{{ route('vitals.assets', 'dashboard.js') }}"></script>
 </body>
 </html>

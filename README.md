@@ -35,17 +35,22 @@ and the Claude Code skill (`.claude/skills/laravel-vitals/SKILL.md`).
 
 ## Asset compilation
 
-The dashboard ships pre-built CSS and JS in `dist/`. Consumers don't need Node — running `vitals:install` already publishes them.
+The dashboard ships pre-built CSS and JS in `dist/`. The package serves them automatically via routes — **users don't need to publish anything**.
 
-To regenerate the assets (for maintainers):
+For maintainers regenerating the assets:
 
 ```bash
 npm install
 npm run build
+```
+
+Power users wanting to serve assets via the webserver (slightly faster, recommended for high-traffic prod) can publish them:
+
+```bash
 php artisan vendor:publish --tag=vitals-assets --force
 ```
 
-The published assets land in `public/vendor/vitals/`.
+Then override the layout to use `asset('vendor/vitals/dashboard.css')` instead of `route('vitals.assets', ...)`.
 
 ## Configuration
 

@@ -22,4 +22,13 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/budgets',               Budgets::class)             ->name('vitals.budgets');
             Route::get('/recommendations',       RecommendationsIndex::class)->name('vitals.recommendations');
         });
+
+    // Public asset routes (no auth gate — needed for the dashboard layout to work for any visitor whose Authorize gate denied)
+    Route::middleware(config('vitals.dashboard.middleware', ['web']))
+        ->prefix(config('vitals.dashboard.path', 'vitals') . '/_assets')
+        ->group(function (): void {
+            Route::get('/{file}', \LaravelVitals\Http\Controllers\AssetController::class)
+                ->where('file', '[a-zA-Z0-9.\-]+')
+                ->name('vitals.assets');
+        });
 }
