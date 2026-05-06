@@ -11,7 +11,7 @@ export default {
         { pattern: /^(bg|text|border|ring|divide|from|to|via)-(emerald|amber|accent|ink)-(50|100|200|300|400|500|600|700|800|900|950)$/ },
         { pattern: /^(bg|border|text)-(emerald|amber|accent|ink)-(50|100|200|300|400|500|600|700|800|900|950)\/(10|20|30|40|50|60|70|80|90)$/ },
         // Static accent scale
-        { pattern: /^(bg|text|border|ring)-accent-(50|100|500|600|700)$/ },
+        { pattern: /^(bg|text|border|ring|from|to|via)-accent-(50|100|200|300|400|500|600|700|800|900|950)$/ },
         // Static ink scale
         { pattern: /^(bg|text|border|ring|divide)-ink-(50|100|200|300|400|500|600|700|800|900|950)$/ },
         // Static decorative colors (sky, violet — used as icon tints)
@@ -48,9 +48,15 @@ export default {
                 accent: {
                     50:  'oklch(97% 0.018 12)',
                     100: 'oklch(94% 0.040 12)',
+                    200: 'oklch(88% 0.075 12)',
+                    300: 'oklch(80% 0.120 12)',
+                    400: 'oklch(72% 0.180 12)',
                     500: 'oklch(64% 0.220 12)',
                     600: 'oklch(57% 0.240 12)',
                     700: 'oklch(50% 0.220 12)',
+                    800: 'oklch(40% 0.180 12)',
+                    900: 'oklch(30% 0.150 12)',
+                    950: 'oklch(20% 0.100 12)',
                 },
             },
             fontFamily: {
