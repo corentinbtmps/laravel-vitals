@@ -1,0 +1,26 @@
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+
+export default defineConfig({
+    build: {
+        outDir: 'dist',
+        emptyOutDir: true,
+        cssCodeSplit: false,
+        manifest: false,
+        rollupOptions: {
+            input: {
+                dashboard: resolve(__dirname, 'resources/js/dashboard.js'),
+            },
+            output: {
+                entryFileNames: '[name].js',
+                chunkFileNames: '[name].js',
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name === 'style.css' || (assetInfo.name && assetInfo.name.endsWith('.css'))) {
+                        return 'dashboard.css';
+                    }
+                    return '[name].[ext]';
+                },
+            },
+        },
+    },
+});

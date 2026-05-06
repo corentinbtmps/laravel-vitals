@@ -1,5 +1,4 @@
 <div id="{{ $id }}" wire:ignore></div>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 (function () {
     new ApexCharts(document.querySelector('#{{ $id }}'), {

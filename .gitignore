@@ -10,3 +10,4 @@
 /.phpstan-cache/
 /workbench/database/database.sqlite
 .DS_Store
+/.vite/

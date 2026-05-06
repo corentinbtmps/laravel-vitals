@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Laravel Vitals' }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('vendor/vitals/dashboard.css') }}">
     @livewireStyles
     @fluxAppearance
 </head>
@@ -36,5 +36,6 @@
 
 @livewireScripts
 @fluxScripts
+<script src="{{ asset('vendor/vitals/dashboard.js') }}"></script>
 </body>
 </html>

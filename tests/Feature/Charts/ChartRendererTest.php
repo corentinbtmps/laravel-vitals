@@ -17,7 +17,7 @@ it('renders a line chart with ApexCharts', function (): void {
     ]);
 
     expect($html)->toBeInstanceOf(HtmlString::class)
-        ->and((string) $html)->toContain('apexcharts')
+        ->and((string) $html)->toContain('ApexCharts')
         ->and((string) $html)->toContain('LCP');
 });
 

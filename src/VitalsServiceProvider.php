@@ -146,5 +146,9 @@ final class VitalsServiceProvider extends PackageServiceProvider
             $router = $this->app->make(\Illuminate\Routing\Router::class);
             $router->pushMiddlewareToGroup('web', \LaravelVitals\Http\Middleware\CaptureVitalsTelemetry::class);
         }
+
+        $this->publishes([
+            dirname(__DIR__) . '/dist' => public_path('vendor/vitals'),
+        ], 'vitals-assets');
     }
 }
