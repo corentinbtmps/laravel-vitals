@@ -30,21 +30,29 @@ final class CheckRegressionsCommand extends Command
     {
         $threshold = (float) (config('vitals.notifications.triggers.regression.threshold_percent') ?? 10);
         $baselineDays = (int) $this->option('baseline-days');
+        $baselineCutoff = now()->subDays($baselineDays);
 
-        foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $baseline = Audit::query()
-                ->where('url_id', $url->id)
-                ->where('status', 'completed')
-                ->where('completed_at', '<=', now()->subDays($baselineDays))
-                ->orderByDesc('completed_at')
-                ->first();
+        $urls = Url::query()->where('enabled', true)->get();
 
-            $current = Audit::query()
-                ->where('url_id', $url->id)
-                ->where('status', 'completed')
-                ->where('completed_at', '>', now()->subDays($baselineDays))
-                ->orderByDesc('completed_at')
-                ->first();
+        if ($urls->isEmpty()) {
+            return self::SUCCESS;
+        }
+
+        $urlIds = $urls->pluck('id')->all();
+
+        $audits = Audit::query()
+            ->whereIn('url_id', $urlIds)
+            ->where('status', 'completed')
+            ->orderByDesc('completed_at')
+            ->get(['id', 'url_id', 'score_performance', 'completed_at']);
+
+        $byUrl = $audits->groupBy('url_id');
+
+        foreach ($urls as $url) {
+            $group = $byUrl->get($url->id, collect());
+
+            $current  = $group->first(fn ($a) => $a->completed_at?->greaterThan($baselineCutoff));
+            $baseline = $group->first(fn ($a) => $a->completed_at?->lessThanOrEqualTo($baselineCutoff));
 
             if ($baseline === null || $current === null) {
                 continue;
