@@ -74,5 +74,15 @@ final class VitalsServiceProvider extends PackageServiceProvider
             // Default: allow only in the local environment.
             return app()->environment('local');
         });
+
+        // Provide a sensible default for the "vitals" filesystem disk if the host
+        // app has not declared one. Hosts can override by editing config/filesystems.php.
+        if (! config()->has('filesystems.disks.vitals')) {
+            config()->set('filesystems.disks.vitals', [
+                'driver' => 'local',
+                'root'   => storage_path('app/vitals'),
+                'throw'  => false,
+            ]);
+        }
     }
 }
