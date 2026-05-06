@@ -28,19 +28,19 @@ final class Health
     }
 
     /**
-     * Flux color name corresponding to a score range.
-     * Returns one of: emerald, amber, rose, zinc.
+     * Tailwind color name corresponding to a score range.
+     * Returns one of: emerald, amber, accent, ink.
      */
     public static function colorForScore(?int $score): string
     {
         if ($score === null) {
-            return 'zinc';
+            return 'ink';
         }
 
         return match (true) {
             $score >= 90 => 'emerald',
             $score >= 70 => 'amber',
-            default      => 'rose',
+            default      => 'accent',
         };
     }
 
@@ -80,15 +80,16 @@ final class Health
     }
 
     /**
-     * Flux color for a CWV status.
+     * Tailwind color for a CWV status.
+     * Returns one of: emerald, amber, accent, ink.
      */
     public static function colorForStatus(string $status): string
     {
         return match ($status) {
             'good'              => 'emerald',
             'needs_improvement' => 'amber',
-            'poor'              => 'rose',
-            default             => 'zinc',
+            'poor'              => 'accent',
+            default             => 'ink',
         };
     }
 

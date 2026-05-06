@@ -28,6 +28,7 @@ final class UrlDetail extends Component
             return;
         }
         $this->period = $period;
+        $this->dispatchChartUpdate();
     }
 
     public function setMetric(string $metric): void
@@ -36,6 +37,12 @@ final class UrlDetail extends Component
             return;
         }
         $this->metric = $metric;
+        $this->dispatchChartUpdate();
+    }
+
+    private function dispatchChartUpdate(): void
+    {
+        $this->dispatch('chartUpdated', metric: $this->metric, series: $this->metricSeries());
     }
 
     private function periodCutoff(): ?Carbon

@@ -13,11 +13,11 @@ it('grades scores correctly', function (): void {
         ->and(Health::grade(null))->toBe('?');
 });
 
-it('maps scores to flux colors', function (): void {
+it('maps scores to tailwind colors', function (): void {
     expect(Health::colorForScore(95))->toBe('emerald')
         ->and(Health::colorForScore(80))->toBe('amber')
-        ->and(Health::colorForScore(50))->toBe('rose')
-        ->and(Health::colorForScore(null))->toBe('zinc');
+        ->and(Health::colorForScore(50))->toBe('accent')
+        ->and(Health::colorForScore(null))->toBe('ink');
 });
 
 it('classifies LCP per Google thresholds', function (): void {

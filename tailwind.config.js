@@ -7,17 +7,19 @@ export default {
         './vendor/livewire/flux/src/**/*.php',
     ],
     safelist: [
-        // Status colors — keep emerald/amber for semantic meaning only
-        { pattern: /^(bg|text|border|ring)-(emerald|amber)-(50|100|200|300|400|500|600|700|800|900|950)$/ },
-        { pattern: /^(bg|border)-(emerald|amber)-(50|100|200|400|500|900|950)\/(\d{1,2})$/ },
-        // ink tinted-neutral scale — used for text/bg/border throughout
-        { pattern: /^(bg|text|border|ring)-ink-(50|100|200|300|400|500|600|700|800|900|950)$/ },
-        { pattern: /^(bg|text|border)-ink-(100|200|800|900)\/\d{1,2}$/ },
-        // accent (rose-tinted) — primary interactive color
+        // Status colors (dynamic $color from Health::colorForScore/colorForStatus)
+        { pattern: /^(bg|text|border|ring|divide|from|to|via)-(emerald|amber|accent|ink)-(50|100|200|300|400|500|600|700|800|900|950)$/ },
+        { pattern: /^(bg|border|text)-(emerald|amber|accent|ink)-(50|100|200|300|400|500|600|700|800|900|950)\/(10|20|30|40|50|60|70|80|90)$/ },
+        // Static accent scale
         { pattern: /^(bg|text|border|ring)-accent-(50|100|500|600|700)$/ },
-        { pattern: /^(bg|text|border)-accent-(50|100|500|600)\/\d{1,2}$/ },
+        // Static ink scale
+        { pattern: /^(bg|text|border|ring|divide)-ink-(50|100|200|300|400|500|600|700|800|900|950)$/ },
+        // Static decorative colors (sky, violet — used as icon tints)
+        { pattern: /^(bg|text|border|ring)-(sky|violet)-(50|100|200|300|400|500|600|700|800|900|950)$/ },
         // paper / canvas surface tokens
         { pattern: /^bg-(paper|canvas)$/ },
+        { pattern: /^text-(paper|canvas)$/ },
+        { pattern: /^border-(paper|canvas)$/ },
     ],
     darkMode: 'class',
     theme: {

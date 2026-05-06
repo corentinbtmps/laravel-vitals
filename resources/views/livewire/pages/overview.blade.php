@@ -1,154 +1,145 @@
-<div class="space-y-10">
-    {{-- Page header --}}
-    <div class="flex items-start justify-between gap-6">
+<div class="space-y-6">
+    {{-- Page header + period control --}}
+    <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-3xl font-semibold tracking-[-0.02em] text-ink-900 dark:text-ink-100">Vitals</h1>
-            <p class="mt-1 text-sm text-ink-500">Performance health for {{ $urlsCount }} {{ Str::plural('URL', $urlsCount) }}</p>
+            <h1 class="text-2xl font-semibold">Vitals</h1>
+            <p class="text-sm text-ink-500 mt-1">Performance health across all monitored URLs</p>
         </div>
-        {{-- Period control --}}
-        <div class="flex items-center gap-0.5 rounded-lg border border-ink-200 dark:border-ink-800 bg-canvas dark:bg-ink-900 p-0.5 shrink-0">
+        <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1">
             @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $lbl)
                 <button
                     wire:click="setPeriod('{{ $val }}')"
-                    class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors duration-150
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
                         {{ $period === $val
-                            ? 'bg-ink-900 text-ink-50 dark:bg-ink-100 dark:text-ink-950'
-                            : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100 hover:bg-ink-100 dark:hover:bg-ink-800' }}"
+                            ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
+                            : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
                 >{{ $lbl }}</button>
             @endforeach
         </div>
     </div>
 
-    {{-- Main content: Health panel (60%) + Activity feed (40%) --}}
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
+    {{-- Hero: activity rings + score chips --}}
+    <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-8">
+        <div class="flex items-center gap-8">
+            <x-vitals::activity-rings :scores="$averages">
+                <div class="text-5xl font-semibold tabular-nums leading-none">{{ $overallGrade ?? '—' }}</div>
+                <div class="text-sm text-ink-500 mt-1 tabular-nums">{{ $overall ?? '—' }}<span class="text-xs">/100</span></div>
+            </x-vitals::activity-rings>
 
-        {{-- Health panel — 3 cols of 5 --}}
-        <div class="lg:col-span-3 border border-ink-200 dark:border-ink-800 rounded-xl bg-canvas dark:bg-ink-900 p-6">
-            <p class="label-caps text-ink-400 mb-5">Health</p>
-
-            {{-- Rings + score side by side --}}
-            <div class="flex items-start gap-6">
-                <x-vitals::activity-rings :scores="$averages">
-                    <div class="text-2xl font-semibold tabular-nums leading-none text-ink-900 dark:text-ink-100">{{ $overall ?? '—' }}</div>
-                </x-vitals::activity-rings>
-
-                {{-- Vertical score list --}}
-                <div class="flex-1 divide-y divide-ink-100 dark:divide-ink-800">
-                    @foreach ([
-                        ['key' => 'performance',    'label' => 'Performance'],
-                        ['key' => 'accessibility',  'label' => 'Accessibility'],
-                        ['key' => 'best_practices', 'label' => 'Best Practices'],
-                        ['key' => 'seo',            'label' => 'SEO'],
-                    ] as $stat)
-                        @php
-                            $val = $averages[$stat['key']] ?? null;
-                            $color = \LaravelVitals\Support\Health::colorForScore($val);
-                            $colorClass = match($color) {
-                                'emerald' => 'text-emerald-600 dark:text-emerald-400',
-                                'amber'   => 'text-amber-600 dark:text-amber-400',
-                                default   => 'text-accent-600 dark:text-accent-500',
-                            };
-                        @endphp
-                        <div class="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
-                            <span class="text-sm text-ink-600 dark:text-ink-400">{{ $stat['label'] }}</span>
-                            <span class="text-sm font-semibold tabular-nums {{ $colorClass }}">{{ $val ?? '—' }}</span>
-                        </div>
-                    @endforeach
-                </div>
+            <div class="flex-1">
+                <div class="text-sm text-ink-500">{{ $periodLabel }}</div>
+                <h2 class="text-2xl font-semibold mt-1">Health overview</h2>
+                <p class="text-sm text-ink-500 mt-2 max-w-md">Performance, accessibility, and SEO scores aggregated across {{ $urlsCount }} {{ Str::plural('URL', $urlsCount) }}.</p>
             </div>
         </div>
 
-        {{-- Activity feed — 2 cols of 5 --}}
-        <div class="lg:col-span-2 border border-ink-200 dark:border-ink-800 rounded-xl bg-canvas dark:bg-ink-900 p-6">
-            <p class="label-caps text-ink-400 mb-5">Recent audits</p>
-
-            @if ($recent->isEmpty())
-                <div class="py-6 text-center">
-                    <flux:icon.signal class="size-8 text-ink-300 dark:text-ink-700 mx-auto mb-2" />
-                    <p class="text-sm text-ink-500 mb-3">No audits in this period.</p>
-                    <code class="text-xs bg-ink-100 dark:bg-ink-800 px-2 py-1 rounded text-ink-600 dark:text-ink-400">php artisan vitals:audit</code>
-                </div>
-            @else
-                <ul class="divide-y divide-ink-100 dark:divide-ink-800">
-                    @foreach ($recent->take(7) as $audit)
-                        @php
-                            $color = \LaravelVitals\Support\Health::colorForScore($audit->score_performance);
-                            $grade = \LaravelVitals\Support\Health::grade($audit->score_performance);
-                            $scoreColorClass = match($color) {
-                                'emerald' => 'text-emerald-600 dark:text-emerald-400',
-                                'amber'   => 'text-amber-600 dark:text-amber-400',
-                                default   => 'text-accent-600 dark:text-accent-500',
-                            };
-                        @endphp
-                        <li class="py-2 flex items-center gap-3 first:pt-0 last:pb-0">
-                            <a href="{{ route('vitals.audit', $audit) }}" class="flex-1 min-w-0 group">
-                                <div class="text-sm font-medium text-ink-800 dark:text-ink-200 truncate group-hover:text-accent-600 dark:group-hover:text-accent-500 transition-colors duration-150">{{ $audit->url?->label }}</div>
-                                <div class="text-xs text-ink-400">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>
-                            </a>
-                            <span class="text-sm font-semibold tabular-nums shrink-0 {{ $scoreColorClass }}">{{ $audit->score_performance ?? '—' }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-                @if ($recent->count() > 7)
-                    <div class="mt-4 pt-3 border-t border-ink-100 dark:border-ink-800">
-                        <a href="{{ route('vitals.urls') }}" class="text-xs text-ink-500 hover:text-accent-600 dark:hover:text-accent-500 transition-colors duration-150">View all URLs →</a>
+        <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            @foreach ([
+                ['key' => 'performance',    'label' => 'Performance',    'color' => 'accent'],
+                ['key' => 'accessibility',  'label' => 'Accessibility',  'color' => 'emerald'],
+                ['key' => 'best_practices', 'label' => 'Best Practices', 'color' => 'violet'],
+                ['key' => 'seo',            'label' => 'SEO',            'color' => 'sky'],
+            ] as $stat)
+                <div class="rounded-2xl bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2 w-2 rounded-full bg-{{ $stat['color'] }}-500"></span>
+                        <span class="text-xs font-medium text-ink-500 uppercase tracking-wide">{{ $stat['label'] }}</span>
                     </div>
-                @endif
-            @endif
+                    <div class="mt-3 text-3xl font-semibold tabular-nums">
+                        {{ $averages[$stat['key']] ?? '—' }}<span class="text-base font-normal text-ink-500">/100</span>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 
-    {{-- Active alerts — flat section, no card --}}
+    {{-- Active alerts --}}
     @if (count($activeAlerts) > 0)
-        <div>
-            <div class="flex items-center gap-2 mb-3">
-                <p class="label-caps text-ink-400">Active alerts</p>
-                <span class="inline-flex items-center justify-center rounded-full bg-accent-100 dark:bg-accent-700/30 text-accent-600 dark:text-accent-400 text-[10px] font-semibold h-4 min-w-4 px-1.5">{{ count($activeAlerts) }}</span>
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <flux:icon.bell class="size-5 text-accent-500" />
+                    <h2 class="text-base font-semibold">Active alerts</h2>
+                </div>
+                <flux:badge color="rose">{{ count($activeAlerts) }}</flux:badge>
             </div>
-            <div class="border-t border-ink-200 dark:border-ink-800">
+            <div class="space-y-2">
                 @foreach ($activeAlerts as $alert)
-                    <div class="flex items-start gap-3 py-3 border-b border-ink-100 dark:border-ink-800/60 last:border-0">
-                        <span class="mt-0.5 shrink-0 {{ $alert['severity'] === 'danger' ? 'text-accent-500' : 'text-amber-500' }}">
-                            @if ($alert['severity'] === 'danger')
-                                <flux:icon.exclamation-circle class="size-4" />
-                            @else
-                                <flux:icon.exclamation-triangle class="size-4" />
+                    <flux:callout
+                        variant="{{ $alert['severity'] === 'danger' ? 'danger' : 'warning' }}"
+                        icon="{{ $alert['severity'] === 'danger' ? 'exclamation-circle' : 'exclamation-triangle' }}"
+                    >
+                        <flux:callout.heading>{{ $alert['title'] }}</flux:callout.heading>
+                        <flux:callout.text>
+                            {{ $alert['when']->diffForHumans() }} —
+                            @if ($alert['link'])
+                                <a href="{{ $alert['link'] }}" class="underline">View audit</a>
                             @endif
-                        </span>
-                        <div class="flex-1 min-w-0">
-                            <span class="text-sm text-ink-800 dark:text-ink-200">{{ $alert['title'] }}</span>
-                            <span class="text-sm text-ink-400 ml-2">{{ $alert['when']->diffForHumans() }}</span>
-                        </div>
-                        @if ($alert['link'])
-                            <a href="{{ $alert['link'] }}" class="shrink-0 text-xs text-ink-400 hover:text-accent-500 transition-colors duration-150">View →</a>
-                        @endif
-                    </div>
+                        </flux:callout.text>
+                    </flux:callout>
                 @endforeach
             </div>
         </div>
     @endif
 
-    {{-- Top recommendations — flat section --}}
-    <div>
-        <p class="label-caps text-ink-400 mb-3">Top recommendations</p>
-        <div class="border-t border-ink-200 dark:border-ink-800">
+    {{-- Two-column: top recos + activity feed --}}
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Top issues to fix</h3>
+                    <p class="text-sm text-ink-500 mt-1">Most impactful issues to fix first</p>
+                </div>
+            </div>
             @if ($topRecommendations->isEmpty())
-                <p class="py-4 text-sm text-ink-500">No recommendations yet. Run an audit to see suggestions.</p>
+                <p class="text-sm text-ink-500">No recommendations yet. Run an audit to see suggestions.</p>
             @else
-                @foreach ($topRecommendations as $reco)
-                    @php
-                        $sevColorClass = match ($reco->severity) {
-                            'critical' => 'text-accent-500',
-                            'warning'  => 'text-amber-500',
-                            default    => 'text-emerald-500',
-                        };
-                    @endphp
-                    <div class="flex items-baseline gap-3 py-2.5 border-b border-ink-100 dark:border-ink-800/60 last:border-0">
-                        <span class="shrink-0 mt-1 size-1.5 rounded-full {{ $reco->severity === 'critical' ? 'bg-accent-500' : ($reco->severity === 'warning' ? 'bg-amber-500' : 'bg-emerald-500') }}"></span>
-                        <span class="flex-1 text-sm text-ink-700 dark:text-ink-300">{{ __($reco->title_key) }}</span>
-                        <span class="shrink-0 text-xs text-ink-400 tabular-nums">{{ $reco->occurrences }} {{ Str::plural('audit', $reco->occurrences) }}</span>
-                    </div>
-                @endforeach
+                <ul class="space-y-3">
+                    @foreach ($topRecommendations as $reco)
+                        <li class="flex items-start gap-3">
+                            <flux:badge color="{{ $reco->severity === 'critical' ? 'rose' : ($reco->severity === 'warning' ? 'amber' : 'sky') }}" size="sm">
+                                {{ $reco->severity }}
+                            </flux:badge>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-medium">{{ __($reco->title_key) }}</div>
+                                <div class="text-xs text-ink-500">{{ $reco->occurrences }} occurrence(s)</div>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-semibold">Recent audits</h3>
+                    <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }}</p>
+                </div>
+            </div>
+            @if ($recent->isEmpty())
+                <div class="text-center py-6">
+                    <flux:icon.signal class="size-10 text-ink-300 mx-auto mb-2" />
+                    <p class="text-sm text-ink-500 mb-3">No audits in this period.</p>
+                    <code class="text-xs bg-ink-100 dark:bg-ink-800 px-2 py-1 rounded">php artisan vitals:audit</code>
+                </div>
+            @else
+                <ul class="divide-y divide-ink-100 dark:divide-ink-800">
+                    @foreach ($recent->take(8) as $audit)
+                        @php
+                            $color = \LaravelVitals\Support\Health::colorForScore($audit->score_performance);
+                            $grade = \LaravelVitals\Support\Health::grade($audit->score_performance);
+                        @endphp
+                        <li class="py-2.5 flex items-center gap-3">
+                            <span class="size-9 rounded-full bg-{{ $color }}-100 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 flex items-center justify-center font-bold text-sm">{{ $grade }}</span>
+                            <div class="flex-1 min-w-0">
+                                <a href="{{ route('vitals.audit', $audit) }}" class="text-sm font-medium hover:underline truncate block">{{ $audit->url?->label }}</a>
+                                <div class="text-xs text-ink-500">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>
+                            </div>
+                            <flux:button href="{{ route('vitals.audit', $audit) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View audit" />
+                        </li>
+                    @endforeach
+                </ul>
             @endif
         </div>
     </div>

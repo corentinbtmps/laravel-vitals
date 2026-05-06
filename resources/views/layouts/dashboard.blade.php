@@ -10,20 +10,28 @@
     <script defer src="{{ route('vitals.assets', 'dashboard.js') }}"></script>
     @livewireStyles
     @fluxAppearance
+    <style>
+        [data-flux-navbar-items][data-current] {
+            color: rgb(244 63 94) !important;
+        }
+        [data-flux-navbar-items][data-current]::after {
+            background-color: rgb(244 63 94) !important;
+        }
+    </style>
 </head>
-<body class="h-full bg-paper text-ink-900 dark:bg-ink-950 dark:text-ink-100" data-flux-appearance>
+<body class="h-full bg-ink-50 text-ink-900 dark:bg-ink-950 dark:text-ink-100" data-flux-appearance>
 
-<flux:header class="border-b border-ink-200 dark:border-ink-800 bg-canvas dark:bg-ink-900">
+<flux:header class="border-b border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900">
     <flux:brand href="{{ route('vitals.dashboard') }}">
         <div class="flex items-center gap-2.5">
-            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-500">
-                <svg viewBox="0 0 64 64" class="h-4 w-4" fill="none">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 shadow-sm">
+                <svg viewBox="0 0 64 64" class="h-5 w-5" fill="none">
                     <path d="M8 34 H20 L24 24 L32 46 L38 18 L42 34 H56"
-                          stroke="white" stroke-width="4.5"
+                          stroke="white" stroke-width="4"
                           stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <span class="text-sm font-semibold tracking-[-0.01em] text-ink-900 dark:text-ink-100">Laravel Vitals</span>
+            <span class="text-base font-semibold text-ink-900 dark:text-ink-100">Laravel Vitals</span>
         </div>
     </flux:brand>
 
