@@ -1,8 +1,120 @@
 # Laravel Vitals
 
-Lighthouse-powered performance audits for Laravel apps, with backend telemetry correlation
-and host-application source code pointers for every recommendation.
+Lighthouse-powered performance audits for Laravel apps, with backend telemetry
+correlation and host-application source code pointers for every recommendation.
 
-> Status: pre-release. v1 in active development.
+## What it does
 
-Documentation will be filled in alongside the release in plan 5.
+- Runs Lighthouse against URLs of your Laravel app via three drivers (`local`, `browsershot`, `pagespeed`)
+- Captures backend telemetry during the audit (queries, memory, views, jobs, cache, N+1)
+- Surfaces actionable recommendations with `file:line` references in your own source code
+- Ships a Livewire dashboard at `/vitals`
+- Supports performance budgets with CI exit codes and JUnit XML output
+- Auto-installs Laravel Boost guidelines and a Claude Code skill so AI agents understand the package
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 11, 12, or 13
+- Livewire 3 + Flux Free 2 (auto-installed)
+- For the local Lighthouse driver: Node 18+ and the `lighthouse` npm package on `$PATH`
+- For the Browsershot driver: a custom Lighthouse bridge (Browsershot v5 dropped the built-in helper)
+- For the PageSpeed driver: a Google PSI API key (`VITALS_PAGESPEED_API_KEY`)
+
+## Installation
+
+```bash
+composer require humantocomputer/laravel-vitals
+php artisan vendor:publish --tag=vitals-config
+php artisan migrate
+php artisan vitals:install
+```
+
+The last command publishes Boost guidelines (`.ai/guidelines/vitals.blade.php`)
+and the Claude Code skill (`.claude/skills/laravel-vitals/SKILL.md`).
+
+## Configuration
+
+Edit `config/vitals.php`:
+
+```php
+'urls' => [
+    'home'    => '/',
+    'product' => '/products/42',
+],
+
+'budgets' => [
+    'lcp_ms'              => ['warning' => 2500, 'critical' => 4000],
+    'cls'                 => ['warning' => 0.1,  'critical' => 0.25],
+    'score_performance'   => ['warning' => 90,   'critical' => 70],
+    'per_url' => [
+        'admin' => ['lcp_ms' => ['warning' => 4000]], // looser budget for an internal page
+    ],
+],
+```
+
+## Running audits
+
+```bash
+# audit one URL synchronously
+php artisan vitals:audit home --sync
+
+# audit all enabled URLs (Bus::batch)
+php artisan vitals:audit --all
+
+# CI usage with budgets
+php artisan vitals:audit --all --sync --fail-on-budget --format=junit > vitals-results.xml
+```
+
+Exit codes when `--fail-on-budget` is set:
+
+- `0` — no violation
+- `1` — at least one warning violation
+- `2` — at least one critical violation
+
+## Dashboard
+
+By default the dashboard is mounted at `/vitals` and is accessible only in the
+`local` environment. Override the gate in your `AppServiceProvider`:
+
+```php
+use LaravelVitals\Facades\Vitals;
+
+public function boot(): void
+{
+    Vitals::authorize(fn ($user) => $user?->is_admin ?? false);
+}
+```
+
+## Backend telemetry
+
+A middleware `CaptureVitalsTelemetry` is auto-registered on the `web` group.
+On the fast path (no audit header, no opt-in) it returns immediately with
+sub-microsecond overhead.
+
+When you run `vitals:audit`, the package signs an `X-Vitals-Audit-Id` header
+with your `APP_KEY` and injects it into every Lighthouse navigation. The
+middleware validates the HMAC and records query/cache/job activity for that
+single request, persisting it to `vitals_backend_telemetry`.
+
+To enable continuous (Pulse-like) sampling, set `vitals.telemetry.always_capture = true`.
+
+## Pruning
+
+All package models implement Eloquent's `Prunable`. Add to your scheduler:
+
+```php
+$schedule->command('model:prune', [
+    '--model' => [
+        \LaravelVitals\Models\Audit::class,
+        \LaravelVitals\Models\Recommendation::class,
+        \LaravelVitals\Models\BackendTelemetry::class,
+    ],
+])->daily();
+```
+
+Retention defaults to 90 days; configure via `VITALS_RETENTION_DAYS`.
+
+## License
+
+MIT.
