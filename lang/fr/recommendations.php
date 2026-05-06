@@ -127,4 +127,24 @@ return [
         'title'       => 'Performance réelle pire que synthetic',
         'description' => 'La télémétrie de trafic réel (Pulse / Telescope) montre des P95 significativement au-dessus de l\'audit Lighthouse synthetic. Investiguez les conditions production : charge, scripts tiers, géographie.',
     ],
+    'excessive-dom-size' => [
+        'title'       => 'Réduire la taille du DOM',
+        'description' => 'La page a :count éléments DOM. Un DOM trop large ralentit le rendu et les interactions JS. Visez moins de 1500 éléments.',
+    ],
+    'cache-policy-short' => [
+        'title'       => 'Améliorer la politique de cache',
+        'description' => ':count resource(s) ont un TTL < 30 jours. Un cache long terme accélère les visites répétées.',
+    ],
+    'third-party-blocking' => [
+        'title'       => 'Scripts tiers bloquant le main thread',
+        'description' => ':count origine(s) tierce(s) (:entities) bloquent le main thread > 250ms. Différez ou self-hostez si possible.',
+    ],
+    'large-payload' => [
+        'title'       => 'Réduire le poids de la page',
+        'description' => 'Le poids total est :mb MB. Cela dégrade le LCP sur connexions lentes. Compressez les images et découpez les bundles JS.',
+    ],
+    'bootup-time-high' => [
+        'title'       => 'Réduire le temps d\'exécution JavaScript',
+        'description' => 'Un script prend :ms ms à évaluer. Code-splittez, lazy-loadez, ou retirez le JS inutilisé.',
+    ],
 ];

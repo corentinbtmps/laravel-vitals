@@ -60,6 +60,83 @@
             </script>
         </flux:card>
 
+        @if ($thirtyDayCount > 0)
+            <flux:card>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <flux:icon name="chart-bar" class="size-5 text-rose-500" />
+                        <h2 class="font-semibold">30-day averages</h2>
+                    </div>
+                    <flux:badge color="zinc" size="sm">{{ $thirtyDayCount }} audits</flux:badge>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    @foreach ([
+                        'performance'    => 'Performance',
+                        'accessibility'  => 'Accessibility',
+                        'best_practices' => 'Best Practices',
+                        'seo'            => 'SEO',
+                    ] as $key => $label)
+                        @php
+                            $val = $avgScores[$key];
+                            $color = \LaravelVitals\Support\Health::colorForScore($val);
+                        @endphp
+                        <div class="rounded-lg border border-{{ $color }}-200 dark:border-{{ $color }}-900/40 bg-{{ $color }}-50/40 dark:bg-{{ $color }}-900/10 p-4">
+                            <div class="text-xs text-zinc-500 mb-1">{{ $label }}</div>
+                            <div class="text-3xl font-bold text-{{ $color }}-700 dark:text-{{ $color }}-300">{{ $val ?? '—' }}</div>
+                        </div>
+                    @endforeach
+                </div>
+            </flux:card>
+        @endif
+
+        @if ($frequentRecos->isNotEmpty())
+            <flux:card>
+                <div class="flex items-center gap-2 mb-4">
+                    <flux:icon.light-bulb class="size-5 text-amber-500" />
+                    <h2 class="font-semibold">Most frequent issues on this URL</h2>
+                </div>
+                <ul class="space-y-2">
+                    @foreach ($frequentRecos as $r)
+                        @php
+                            $sevColor = match ($r->severity) {
+                                'critical' => 'rose',
+                                'warning'  => 'amber',
+                                default    => 'sky',
+                            };
+                        @endphp
+                        <li class="flex items-center gap-3">
+                            <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
+                            <span class="flex-1 text-sm">{{ __($r->title_key) }}</span>
+                            <span class="text-xs text-zinc-500">{{ $r->occurrences }}×</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </flux:card>
+        @endif
+
+        @if ($failedAudits->isNotEmpty())
+            <flux:card>
+                <div class="flex items-center gap-2 mb-4">
+                    <flux:icon.exclamation-circle class="size-5 text-rose-500" />
+                    <h2 class="font-semibold">Recent failed audits</h2>
+                    <flux:badge color="rose" size="sm">{{ $failedAudits->count() }}</flux:badge>
+                </div>
+                <ul class="space-y-2">
+                    @foreach ($failedAudits as $f)
+                        <li class="text-sm">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-zinc-700 dark:text-zinc-300">{{ $f->driver }} / {{ $f->device }}</span>
+                                <span class="text-xs text-zinc-500">{{ $f->created_at?->diffForHumans() }}</span>
+                            </div>
+                            @if ($f->error)
+                                <code class="block text-xs text-rose-600 dark:text-rose-400 mt-1 truncate">{{ $f->error }}</code>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </flux:card>
+        @endif
+
         <flux:card>
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.clock class="size-5 text-sky-500" />

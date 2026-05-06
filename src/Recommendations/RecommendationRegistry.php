@@ -56,6 +56,13 @@ final class RecommendationRegistry
         $this->register('slow-queries-detected', 'backend', 'performance', 'warning');
         $this->register('slow-views', 'backend', 'performance', 'info');
         $this->register('real-world-perf-degraded', 'backend', 'performance', 'warning');
+
+        // Detail-driven (alpha.12)
+        $this->register('excessive-dom-size',     'static',  'best_practices', 'warning');
+        $this->register('cache-policy-short',     'static',  'best_practices', 'info');
+        $this->register('third-party-blocking',   'backend', 'performance',    'warning');
+        $this->register('large-payload',          'static',  'performance',    'warning');
+        $this->register('bootup-time-high',       'static',  'performance',    'warning');
     }
 
     public function get(string $auditKey): ?RecommendationDescriptor

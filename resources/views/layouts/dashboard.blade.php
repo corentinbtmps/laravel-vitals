@@ -47,6 +47,14 @@
         >Recommendations</flux:navbar.item>
         @endif
 
+        @if(Route::has('vitals.insights'))
+        <flux:navbar.item
+            href="{{ route('vitals.insights') }}"
+            icon="sparkles"
+            :current="request()->routeIs('vitals.insights')"
+        >Insights</flux:navbar.item>
+        @endif
+
         @if(Route::has('vitals.budgets'))
         <flux:navbar.item
             href="{{ route('vitals.budgets') }}"

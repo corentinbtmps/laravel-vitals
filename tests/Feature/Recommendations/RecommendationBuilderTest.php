@@ -91,6 +91,44 @@ it('skips audit keys with no descriptor in the registry', function (): void {
     expect(Recommendation::where('audit_key', 'imaginary-audit')->count())->toBe(0);
 });
 
+it('emits excessive-dom-size when dom_size > 1500', function (): void {
+    $audit = \LaravelVitals\Models\Audit::create([
+        'id' => \Illuminate\Support\Str::uuid()->toString(), 'url_id' => $this->url->id,
+        'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed',
+        'details' => ['dom_size' => 2000],
+    ]);
+
+    $report = new \LaravelVitals\Support\LighthouseReport(
+        scores: ['performance' => 95, 'accessibility' => 95, 'best_practices' => 95, 'seo' => 100],
+        metrics: ['lcp_ms' => 1500.0, 'cls' => 0.02, 'inp_ms' => 100.0, 'ttfb_ms' => 200.0, 'fcp_ms' => 800.0, 'si_ms' => 1200.0, 'tbt_ms' => 50.0],
+        audits: [],
+        rawJson: '{}',
+    );
+
+    app(\LaravelVitals\Recommendations\RecommendationBuilder::class)->buildFor($audit, $report, null);
+
+    expect(\LaravelVitals\Models\Recommendation::where('audit_key', 'excessive-dom-size')->count())->toBe(1);
+});
+
+it('emits large-payload when page_weight_bytes > 2MB', function (): void {
+    $audit = \LaravelVitals\Models\Audit::create([
+        'id' => \Illuminate\Support\Str::uuid()->toString(), 'url_id' => $this->url->id,
+        'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed',
+        'details' => ['page_weight_bytes' => 3_000_000],
+    ]);
+
+    $report = new \LaravelVitals\Support\LighthouseReport(
+        scores: ['performance' => 95, 'accessibility' => 95, 'best_practices' => 95, 'seo' => 100],
+        metrics: ['lcp_ms' => null, 'cls' => null, 'inp_ms' => null, 'ttfb_ms' => null, 'fcp_ms' => null, 'si_ms' => null, 'tbt_ms' => null],
+        audits: [],
+        rawJson: '{}',
+    );
+
+    app(\LaravelVitals\Recommendations\RecommendationBuilder::class)->buildFor($audit, $report, null);
+
+    expect(\LaravelVitals\Models\Recommendation::where('audit_key', 'large-payload')->count())->toBe(1);
+});
+
 it('does not flag view-cache-disabled when compiled views exist', function (): void {
     $tmp = sys_get_temp_dir() . '/vitals-view-cache-' . uniqid();
     mkdir($tmp, 0755, true);

@@ -86,6 +86,93 @@ final class RecommendationBuilder
                 break; // one source's signal is enough
             }
         }
+
+        $details = is_array($audit->details) ? $audit->details : [];
+
+        if ($details !== []) {
+            // 1. Excessive DOM size (> 1500 elements is Lighthouse's threshold for "warning")
+            $domSize = (int) ($details['dom_size'] ?? 0);
+            if ($domSize > 1500) {
+                $this->persistDetail($audit, 'excessive-dom-size', [
+                    'dom_size' => $domSize,
+                ]);
+            }
+
+            // 2. Cache policy issues (any resource with TTL < 30 days)
+            $shortCache = array_filter(
+                $details['cache_policy'] ?? [],
+                fn ($r) => is_array($r) && (int) ($r['ttl_seconds'] ?? 0) < 30 * 86400,
+            );
+            if (count($shortCache) > 0) {
+                $this->persistDetail($audit, 'cache-policy-short', [
+                    'count'    => count($shortCache),
+                    'examples' => array_slice(array_map(fn ($r) => $r['url'], array_values($shortCache)), 0, 3),
+                ]);
+            }
+
+            // 3. Third-party with significant blocking time (> 250ms)
+            $heavyTp = array_filter(
+                $details['third_parties'] ?? [],
+                fn ($t) => is_array($t) && (float) ($t['blocking_ms'] ?? 0) > 250,
+            );
+            if (count($heavyTp) > 0) {
+                $entities = array_slice(array_map(fn ($t) => $t['entity'], array_values($heavyTp)), 0, 3);
+                $this->persistDetail($audit, 'third-party-blocking', [
+                    'count'    => count($heavyTp),
+                    'entities' => $entities,
+                ]);
+            }
+
+            // 4. Large payload (> 2 MB total)
+            $payload = (int) ($details['page_weight_bytes'] ?? 0);
+            if ($payload > 2_000_000) {
+                $this->persistDetail($audit, 'large-payload', [
+                    'mb' => round($payload / 1_048_576, 1),
+                ]);
+            }
+
+            // 5. High JS bootup time (any single script > 500ms)
+            $heavyScripts = array_filter(
+                $details['bootup_time'] ?? [],
+                fn ($s) => is_array($s) && (float) ($s['total_ms'] ?? 0) > 500,
+            );
+            if (count($heavyScripts) > 0) {
+                $worst = array_reduce(
+                    $heavyScripts,
+                    fn ($carry, $item) => is_array($carry) && (float) ($carry['total_ms'] ?? 0) > (float) ($item['total_ms'] ?? 0) ? $carry : $item,
+                );
+                $this->persistDetail($audit, 'bootup-time-high', [
+                    'ms'  => (int) round((float) ($worst['total_ms'] ?? 0)),
+                    'url' => (string) ($worst['url'] ?? '?'),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Persist a detail-driven recommendation directly (bypasses analyzer code-ref checks).
+     *
+     * @param array<string, mixed> $auditData
+     */
+    private function persistDetail(Audit $audit, string $auditKey, array $auditData): void
+    {
+        $descriptor = $this->registry->get($auditKey);
+        if (! $descriptor instanceof RecommendationDescriptor) {
+            return;
+        }
+
+        Recommendation::create([
+            'audit_id'           => $audit->id,
+            'source'             => $descriptor->source,
+            'audit_key'          => $auditKey,
+            'category'           => $descriptor->category,
+            'severity'           => $descriptor->severity,
+            'title_key'          => $descriptor->titleKey,
+            'description_key'    => $descriptor->descriptionKey,
+            'translation_params' => $this->paramsFor($auditKey, $auditData),
+            'metrics'            => $this->metricsFor($auditKey, $auditData),
+            'code_references'    => [],
+        ]);
     }
 
     /**
@@ -141,6 +228,22 @@ final class RecommendationBuilder
             'n-plus-one-detected' => [
                 'count' => $auditData['queries_count'] ?? 0,
             ],
+            'excessive-dom-size' => [
+                'count' => $auditData['dom_size'] ?? 0,
+            ],
+            'cache-policy-short' => [
+                'count' => $auditData['count'] ?? 0,
+            ],
+            'third-party-blocking' => [
+                'count'    => $auditData['count'] ?? 0,
+                'entities' => is_array($auditData['entities'] ?? null) ? implode(', ', $auditData['entities']) : '',
+            ],
+            'large-payload' => [
+                'mb' => $auditData['mb'] ?? 0,
+            ],
+            'bootup-time-high' => [
+                'ms' => $auditData['ms'] ?? 0,
+            ],
             default => [],
         };
     }
@@ -167,6 +270,11 @@ final class RecommendationBuilder
                 'p95_ttfb_ms'       => $auditData['p95_ttfb_ms'] ?? null,
                 'sample_count'      => $auditData['sample_count'] ?? null,
             ],
+            'excessive-dom-size'    => ['dom_size'        => $auditData['dom_size'] ?? null],
+            'cache-policy-short'    => ['count'           => $auditData['count'] ?? null],
+            'third-party-blocking'  => ['count'           => $auditData['count'] ?? null],
+            'large-payload'         => ['page_weight_mb'  => $auditData['mb'] ?? null],
+            'bootup-time-high'      => ['bootup_ms'       => $auditData['ms'] ?? null],
             default => [],
         };
     }

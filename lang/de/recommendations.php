@@ -127,4 +127,24 @@ return [
         'title'       => 'Real-World-Performance schlechter als Synthetic',
         'description' => 'Real-Traffic-Telemetrie (Pulse / Telescope) zeigt P95-Metriken signifikant über dem Synthetic-Lighthouse-Audit. Untersuche Production-Bedingungen: Last, Third-Party-Skripte, Geografie.',
     ],
+    'excessive-dom-size' => [
+        'title'       => 'DOM-Größe reduzieren',
+        'description' => 'Die Seite hat :count DOM-Elemente. Große DOMs verlangsamen Rendering und JS-Interaktionen. Ziel: unter 1500 Elemente.',
+    ],
+    'cache-policy-short' => [
+        'title'       => 'Cache-Policy verbessern',
+        'description' => ':count Ressource(n) haben TTL unter 30 Tagen. Langzeit-Caching beschleunigt Folgebesuche.',
+    ],
+    'third-party-blocking' => [
+        'title'       => 'Third-Party-Skripte blockieren Main Thread',
+        'description' => ':count Third-Party-Origin(s) (:entities) blockieren den Main Thread > 250ms. Verzögern oder selbst hosten wo möglich.',
+    ],
+    'large-payload' => [
+        'title'       => 'Seitengewicht reduzieren',
+        'description' => 'Gesamtseitengewicht ist :mb MB. Große Payloads verschlechtern LCP bei langsamen Verbindungen. Bilder komprimieren und JS-Bundles aufteilen.',
+    ],
+    'bootup-time-high' => [
+        'title'       => 'JavaScript-Ausführungszeit reduzieren',
+        'description' => 'Ein einzelnes Skript braucht :ms ms zur Auswertung. Code-Splitting, Lazy-Loading oder ungenutztes JS entfernen.',
+    ],
 ];

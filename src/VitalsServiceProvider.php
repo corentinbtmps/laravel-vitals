@@ -123,6 +123,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         \Livewire\Livewire::addNamespace('vitals', classNamespace: 'LaravelVitals\\Livewire');
+        \Livewire\Livewire::component('vitals::pages.insights', \LaravelVitals\Livewire\Pages\Insights::class);
 
         Gate::define('viewVitals', function ($user = null): bool {
             $callback = app(Vitals::class)->authorizeCallback();
