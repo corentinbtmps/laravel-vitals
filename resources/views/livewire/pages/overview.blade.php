@@ -13,6 +13,26 @@
                         <span class="text-7xl font-bold tracking-tight text-{{ $overallColor }}-500">{{ $overallGrade }}</span>
                         <span class="text-3xl font-semibold text-zinc-700 dark:text-zinc-300">{{ $overall }}</span>
                     </div>
+                    @if (! empty($perfTrend))
+                        @php
+                            $sparkData = array_values($perfTrend);
+                            $sparkLabels = array_keys($perfTrend);
+                        @endphp
+                        <div id="vitals-perf-sparkline" class="mt-4 -mx-2"></div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                new ApexCharts(document.querySelector('#vitals-perf-sparkline'), {
+                                    chart: { type: 'area', height: 80, sparkline: { enabled: true }, animations: { enabled: false } },
+                                    series: [{ name: 'Performance', data: @json($sparkData) }],
+                                    xaxis: { categories: @json($sparkLabels) },
+                                    stroke: { curve: 'smooth', width: 2 },
+                                    colors: ['#f43f5e'],
+                                    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.0 } },
+                                    tooltip: { x: { show: false }, marker: { show: false } },
+                                }).render();
+                            });
+                        </script>
+                    @endif
                     <p class="mt-2 text-xs text-zinc-500">based on {{ $recent->count() }} audits in the last 7 days</p>
                 @else
                     <div class="mt-3 text-2xl font-semibold text-zinc-500">No data</div>

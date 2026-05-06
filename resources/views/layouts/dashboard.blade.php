@@ -53,7 +53,8 @@
     <flux:button
         variant="ghost"
         icon="moon"
-        x-on:click="document.documentElement.classList.toggle('dark')"
+        x-data
+        x-on:click="$flux.dark = ! $flux.dark"
         tooltip="Toggle theme"
     />
 </flux:header>

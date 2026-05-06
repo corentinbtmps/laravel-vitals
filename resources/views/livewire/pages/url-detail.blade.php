@@ -23,6 +23,40 @@
     @else
         <flux:card>
             <div class="flex items-center gap-2 mb-4">
+                <flux:icon.chart-bar class="size-5 text-rose-500" />
+                <h2 class="font-semibold">Performance trend</h2>
+            </div>
+            @php
+                $reversed = $history->reverse()->values();
+                $perfData = $reversed->pluck('score_performance')->map(fn ($v) => $v !== null ? (int) $v : null)->all();
+                $lcpData  = $reversed->pluck('lcp_ms')->map(fn ($v) => $v !== null ? (int) round((float) $v) : null)->all();
+                $labels   = $reversed->pluck('completed_at')->map(fn ($d) => $d?->format('M j H:i'))->all();
+            @endphp
+            <div id="url-trend-chart" class="-mx-2"></div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    new ApexCharts(document.querySelector('#url-trend-chart'), {
+                        chart: { type: 'line', height: 280, toolbar: { show: false }, animations: { enabled: false } },
+                        series: [
+                            { name: 'Performance score', data: @json($perfData), yAxisIndex: 0 },
+                            { name: 'LCP (ms)', data: @json($lcpData), yAxisIndex: 1 },
+                        ],
+                        xaxis: { categories: @json($labels), labels: { style: { fontSize: '11px' } } },
+                        yaxis: [
+                            { seriesName: 'Performance score', max: 100, min: 0, title: { text: 'Score' } },
+                            { seriesName: 'LCP (ms)', opposite: true, title: { text: 'LCP (ms)' } },
+                        ],
+                        stroke: { curve: 'smooth', width: 2 },
+                        colors: ['#f43f5e', '#0ea5e9'],
+                        grid: { borderColor: '#e4e4e7', strokeDashArray: 3 },
+                        legend: { position: 'top', horizontalAlign: 'right' },
+                    }).render();
+                });
+            </script>
+        </flux:card>
+
+        <flux:card>
+            <div class="flex items-center gap-2 mb-4">
                 <flux:icon.clock class="size-5 text-sky-500" />
                 <h2 class="font-semibold">Audit history ({{ $history->count() }})</h2>
             </div>

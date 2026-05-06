@@ -54,11 +54,31 @@
                     <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
                     {{ $meta['label'] }}
                 </div>
-                <div class="mt-2 text-3xl font-bold text-{{ $color }}-600 dark:text-{{ $color }}-400">{{ $value ?? '—' }}</div>
                 @if ($value !== null)
-                    <div class="mt-3 h-1 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-{{ $color }}-500 rounded-full" style="width: {{ $value }}%"></div>
-                    </div>
+                    @php $chartId = 'score-' . $col . '-' . uniqid(); @endphp
+                    <div id="{{ $chartId }}" class="mt-1 -mx-1"></div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            new ApexCharts(document.querySelector('#{{ $chartId }}'), {
+                                chart: { type: 'radialBar', height: 140, sparkline: { enabled: true }, animations: { enabled: false } },
+                                series: [{{ (int) $value }}],
+                                labels: [@json($meta['label'])],
+                                colors: ['{{ $color === 'emerald' ? '#10b981' : ($color === 'amber' ? '#f59e0b' : ($color === 'rose' ? '#f43f5e' : '#71717a')) }}'],
+                                plotOptions: {
+                                    radialBar: {
+                                        hollow: { size: '62%' },
+                                        track: { background: '{{ $color === 'emerald' ? '#d1fae5' : ($color === 'amber' ? '#fef3c7' : ($color === 'rose' ? '#ffe4e6' : '#e4e4e7')) }}' },
+                                        dataLabels: {
+                                            name: { show: false },
+                                            value: { show: true, fontSize: '24px', fontWeight: 700, offsetY: 8, color: '{{ $color === 'emerald' ? '#059669' : ($color === 'amber' ? '#d97706' : ($color === 'rose' ? '#e11d48' : '#52525b')) }}' },
+                                        },
+                                    },
+                                },
+                            }).render();
+                        });
+                    </script>
+                @else
+                    <div class="mt-2 text-3xl font-bold text-zinc-400">—</div>
                 @endif
             </flux:card>
         @endforeach

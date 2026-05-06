@@ -1,7 +1,7 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <flux:icon.gauge class="size-7 text-rose-500" />
+            <flux:icon.chart-bar class="size-7 text-rose-500" />
             Performance budgets
         </h1>
         <flux:badge color="zinc">{{ count($budgets) }} metrics</flux:badge>
