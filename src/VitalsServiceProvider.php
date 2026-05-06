@@ -68,7 +68,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
 
         $this->app->singleton(\LaravelVitals\Recommendations\RecommendationRegistry::class);
 
-        $this->app->singleton(\LaravelVitals\Recommendations\RecommendationBuilder::class, function ($app) {
+        $this->app->singleton(\LaravelVitals\Recommendations\RecommendationBuilder::class, function ($app): \LaravelVitals\Recommendations\RecommendationBuilder {
             $analyzers = [
                 $app->make(\LaravelVitals\Analyzers\BladeAssetAnalyzer::class),
                 $app->make(\LaravelVitals\Analyzers\ImageAnalyzer::class),

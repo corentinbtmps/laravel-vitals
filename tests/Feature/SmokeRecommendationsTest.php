@@ -22,7 +22,7 @@ it('produces enriched recommendations rows after a full audit run', function ():
         rawJson: '{"lighthouseVersion":"12.0.0"}',
     );
 
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver($report));
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver($report));
 
     Url::create(['label' => 'home', 'path' => '/']);
 

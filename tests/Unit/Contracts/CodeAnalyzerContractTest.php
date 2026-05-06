@@ -16,5 +16,5 @@ it('declares the CodeAnalyzer contract', function (): void {
 
     $analyze = $reflection->getMethod('analyze');
     expect($analyze->getReturnType()?->__toString())
-        ->toBe('LaravelVitals\\Support\\CodeReferenceCollection');
+        ->toBe(\LaravelVitals\Support\CodeReferenceCollection::class);
 });

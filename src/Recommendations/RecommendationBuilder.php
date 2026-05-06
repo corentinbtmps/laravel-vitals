@@ -11,14 +11,14 @@ use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Support\CodeReferenceCollection;
 use LaravelVitals\Support\LighthouseReport;
 
-final class RecommendationBuilder
+final readonly class RecommendationBuilder
 {
     /**
      * @param iterable<int, CodeAnalyzer> $analyzers
      */
     public function __construct(
-        private readonly RecommendationRegistry $registry,
-        private readonly iterable $analyzers,
+        private RecommendationRegistry $registry,
+        private iterable $analyzers,
     ) {
     }
 
@@ -34,7 +34,7 @@ final class RecommendationBuilder
             $this->persist($audit, $key, $entry, $ctx);
         }
 
-        if ($telemetry !== null) {
+        if ($telemetry instanceof \LaravelVitals\Models\BackendTelemetry) {
             if ($telemetry->n_plus_one_suspect) {
                 $this->persist($audit, 'n-plus-one-detected', [
                     'queries_count'  => $telemetry->queries_count,
@@ -63,7 +63,7 @@ final class RecommendationBuilder
     private function persist(Audit $audit, string $auditKey, array $auditData, AppContext $ctx): void
     {
         $descriptor = $this->registry->get($auditKey);
-        if ($descriptor === null) {
+        if (!$descriptor instanceof \LaravelVitals\Recommendations\RecommendationDescriptor) {
             return;
         }
 
@@ -125,16 +125,16 @@ final class RecommendationBuilder
 
         return new AppContext(
             basePath: base_path(),
-            auditedPath: $audit->url?->path ?? '/',
+            auditedPath: $audit->url->path ?? '/',
             assetUrls: array_values(array_unique($assetUrls)),
-            configSnapshot: $this->configSnapshot($telemetry),
+            configSnapshot: $this->configSnapshot(),
         );
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function configSnapshot(?BackendTelemetry $telemetry): array
+    private function configSnapshot(): array
     {
         return [
             'app_env'         => (string) config('app.env', 'production'),
@@ -145,7 +145,7 @@ final class RecommendationBuilder
             'config_cached'   => app()->configurationIsCached(),
             'route_cached'    => app()->routesAreCached(),
             'view_cached'     => false,
-            'opcache_enabled' => function_exists('opcache_get_status') ? (bool) @opcache_get_status(false) : false,
+            'opcache_enabled' => function_exists('opcache_get_status') && (bool) @opcache_get_status(false),
             'slow_views'      => [],
         ];
     }

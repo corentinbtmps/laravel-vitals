@@ -82,7 +82,7 @@ final class AuditCommand extends Command
         $this->renderAudits([$fresh]);
 
         if ($this->option('fail-on-budget')) {
-            $worst = \LaravelVitals\Budgets\PerfBudget::evaluate($audit->fresh())->worstSeverity();
+            $worst = \LaravelVitals\Budgets\PerfBudget::evaluate($fresh)->worstSeverity();
             if ($worst === 'critical') {
                 return 2;
             }
@@ -112,12 +112,13 @@ final class AuditCommand extends Command
             if ($this->option('fail-on-budget')) {
                 $worst = null;
                 foreach ($audits as $a) {
-                    $sev = \LaravelVitals\Budgets\PerfBudget::evaluate($a->fresh())->worstSeverity();
+                    $fresh = $a->fresh() ?? $a;
+                    $sev = \LaravelVitals\Budgets\PerfBudget::evaluate($fresh)->worstSeverity();
                     if ($sev === 'critical') {
                         $worst = 'critical';
                         break;
                     }
-                    if ($sev === 'warning' && $worst !== 'critical') {
+                    if ($sev === 'warning') {
                         $worst = 'warning';
                     }
                 }

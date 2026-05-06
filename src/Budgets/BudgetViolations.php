@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Budgets;
 
-final class BudgetViolations
+final readonly class BudgetViolations
 {
     /**
      * @param array<int, array{metric: string, severity: string, threshold: float|int, actual: float|int|null}> $items
      */
     public function __construct(
-        private readonly array $items,
+        private array $items,
     ) {
     }
 

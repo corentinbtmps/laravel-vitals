@@ -56,7 +56,7 @@ it('dispatches PersistTelemetryJob when a valid signed header is present', funct
         ->get('/_telemetry-test-q')
         ->assertOk();
 
-    Bus::assertDispatched(PersistTelemetryJob::class, fn(PersistTelemetryJob $job) => $job->snapshot->auditId === $audit->id
+    Bus::assertDispatched(PersistTelemetryJob::class, fn(PersistTelemetryJob $job): bool => $job->snapshot->auditId === $audit->id
         && $job->snapshot->httpStatus === 200
         && $job->snapshot->queriesCount >= 1);
 });
@@ -81,6 +81,6 @@ it('dispatches a sampled telemetry job when always_capture is on and dice rolls 
 
     $this->get('/_telemetry-test')->assertOk();
 
-    Bus::assertDispatched(PersistTelemetryJob::class, fn(PersistTelemetryJob $job) => $job->snapshot->auditId === null
+    Bus::assertDispatched(PersistTelemetryJob::class, fn(PersistTelemetryJob $job): bool => $job->snapshot->auditId === null
         && $job->snapshot->sampledRequest);
 });

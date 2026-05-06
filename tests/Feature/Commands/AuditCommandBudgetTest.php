@@ -17,7 +17,7 @@ it('exits 0 when no budget is violated', function (): void {
         'score_performance' => ['warning' => 50, 'critical' => 30],
         'per_url'           => [],
     ]);
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 
     $this->artisan('vitals:audit', ['label' => 'home', '--sync' => true, '--fail-on-budget' => true])
         ->assertExitCode(0);
@@ -29,7 +29,7 @@ it('exits 1 on a warning violation', function (): void {
         'score_performance' => ['warning' => 99, 'critical' => 30],
         'per_url'           => [],
     ]);
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 
     $this->artisan('vitals:audit', ['label' => 'home', '--sync' => true, '--fail-on-budget' => true])
         ->assertExitCode(1);
@@ -41,7 +41,7 @@ it('exits 2 on a critical violation', function (): void {
         'score_performance' => ['warning' => 99, 'critical' => 50],
         'per_url'           => [],
     ]);
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 
     $this->artisan('vitals:audit', ['label' => 'home', '--sync' => true, '--fail-on-budget' => true])
         ->assertExitCode(2);

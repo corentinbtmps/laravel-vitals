@@ -27,20 +27,20 @@ final class JUnitFormatter
             $violations = $row['violations'];
 
             $suite = $doc->createElement('testsuite');
-            $suite->setAttribute('name', $audit->url?->label ?? 'unknown');
+            $suite->setAttribute('name', $audit->url->label ?? 'unknown');
             $suite->setAttribute('tests', (string) max(count($violations->all()), 1));
             $suite->setAttribute('failures', (string) count($violations->all()));
 
             if ($violations->isEmpty()) {
                 $tc = $doc->createElement('testcase');
                 $tc->setAttribute('name', 'all-budgets-pass');
-                $tc->setAttribute('classname', $audit->url?->label ?? 'unknown');
+                $tc->setAttribute('classname', $audit->url->label ?? 'unknown');
                 $suite->appendChild($tc);
             } else {
                 foreach ($violations->all() as $v) {
                     $tc = $doc->createElement('testcase');
                     $tc->setAttribute('name', $v['metric']);
-                    $tc->setAttribute('classname', $audit->url?->label ?? 'unknown');
+                    $tc->setAttribute('classname', $audit->url->label ?? 'unknown');
 
                     $failure = $doc->createElement('failure');
                     $failure->setAttribute('type', $v['severity']);

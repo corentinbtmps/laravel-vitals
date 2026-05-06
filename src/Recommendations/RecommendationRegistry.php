@@ -7,12 +7,10 @@ namespace LaravelVitals\Recommendations;
 final class RecommendationRegistry
 {
     /** @var array<string, RecommendationDescriptor> */
-    private array $map;
+    private array $map = [];
 
     public function __construct()
     {
-        $this->map = [];
-
         foreach ([
             'unused-javascript'         => 'warning',
             'unused-css-rules'          => 'warning',
