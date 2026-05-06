@@ -87,6 +87,10 @@ final class RunAuditJob implements ShouldQueue
                 'report_path'          => $path,
                 'completed_at'         => now(),
             ]);
+
+            $telemetry = \LaravelVitals\Models\BackendTelemetry::where('audit_id', $audit->id)->first();
+            app(\LaravelVitals\Recommendations\RecommendationBuilder::class)
+                ->buildFor($audit, $report, $telemetry);
         } catch (AuditException $e) {
             $audit->update([
                 'status' => 'failed',

@@ -65,6 +65,31 @@ final class VitalsServiceProvider extends PackageServiceProvider
         );
 
         $this->app->bind(\LaravelVitals\Telemetry\TelemetryRecorder::class);
+
+        $this->app->singleton(\LaravelVitals\Recommendations\RecommendationRegistry::class);
+
+        $this->app->singleton(\LaravelVitals\Recommendations\RecommendationBuilder::class, function ($app) {
+            $analyzers = [
+                $app->make(\LaravelVitals\Analyzers\BladeAssetAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\ImageAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\LaravelConfigAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\ComposerAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\ViteConfigAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\BladeViewAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\EnvironmentAnalyzer::class),
+            ];
+
+            foreach ((array) config('vitals.analyzers.custom', []) as $class) {
+                if (is_string($class) && class_exists($class)) {
+                    $analyzers[] = $app->make($class);
+                }
+            }
+
+            return new \LaravelVitals\Recommendations\RecommendationBuilder(
+                $app->make(\LaravelVitals\Recommendations\RecommendationRegistry::class),
+                $analyzers,
+            );
+        });
     }
 
     public function packageBooted(): void
