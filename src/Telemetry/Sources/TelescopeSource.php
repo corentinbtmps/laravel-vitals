@@ -32,7 +32,8 @@ final class TelescopeSource implements TelemetrySource
             ->where('type', 'request')
             ->where('content', 'like', '%/' . ltrim($routeName, '/') . '%')
             ->where('created_at', '>=', now()->subDays(7))
-            ->limit(5000)
+            ->orderByDesc('created_at')
+            ->limit(1000)
             ->get(['content']);
 
         if ($rows->isEmpty()) {
