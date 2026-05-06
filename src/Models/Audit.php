@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int|null $si_ms
  * @property int|null $tbt_ms
  * @property string|null $report_path
+ * @property array<string, mixed>|null $details
  * @property string|null $error
  * @property \Illuminate\Support\Carbon|null $started_at
  * @property \Illuminate\Support\Carbon|null $completed_at
@@ -62,6 +63,7 @@ final class Audit extends Model
             'score_accessibility'  => 'integer',
             'score_best_practices' => 'integer',
             'score_seo'            => 'integer',
+            'details'              => 'array',
             'started_at'           => 'datetime',
             'completed_at'         => 'datetime',
             'is_demo'              => 'boolean',

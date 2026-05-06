@@ -1,0 +1,53 @@
+{
+    "lighthouseVersion": "12.2.1",
+    "requestedUrl": "https://example.test/",
+    "finalDisplayedUrl": "https://example.test/",
+    "fetchTime": "2026-05-06T08:00:00.000Z",
+    "categories": {
+        "performance":    {"score": 0.85},
+        "accessibility":  {"score": 0.9},
+        "best-practices": {"score": 0.95},
+        "seo":            {"score": 1}
+    },
+    "audits": {
+        "total-byte-weight": {"numericValue": 1234567},
+        "network-requests": {"details": {"items": [
+            {"url": "https://example.test/",          "startTime": 0,   "endTime": 200, "transferSize": 50000,  "resourceType": "Document"},
+            {"url": "https://example.test/app.js",    "startTime": 100, "endTime": 800, "transferSize": 250000, "resourceType": "Script"},
+            {"url": "https://example.test/style.css", "startTime": 100, "endTime": 300, "transferSize": 80000,  "resourceType": "Stylesheet"}
+        ]}},
+        "dom-size": {"numericValue": 1450},
+        "render-blocking-resources": {"numericValue": 450},
+        "largest-contentful-paint-element": {"details": {"items": [
+            {"node": {"snippet": "<img src=\"hero.jpg\">", "selector": "img.hero"}}
+        ]}},
+        "resource-summary": {"details": {"items": [
+            {"resourceType": "script",     "label": "Script",     "requestCount": 8,  "transferSize": 600000},
+            {"resourceType": "stylesheet", "label": "Stylesheet", "requestCount": 3,  "transferSize": 120000},
+            {"resourceType": "image",      "label": "Image",      "requestCount": 12, "transferSize": 480000},
+            {"resourceType": "font",       "label": "Font",       "requestCount": 2,  "transferSize": 90000},
+            {"resourceType": "total",      "label": "Total",      "requestCount": 25, "transferSize": 1290000}
+        ]}},
+        "third-party-summary": {"details": {"items": [
+            {"entity": {"text": "Google Analytics"},   "transferSize": 45000, "blockingTime": 120, "mainThreadTime": 180},
+            {"entity": {"text": "Google Tag Manager"}, "transferSize": 28000, "blockingTime": 80,  "mainThreadTime": 100}
+        ]}},
+        "mainthread-work-breakdown": {"details": {"items": [
+            {"groupLabel": "Script Evaluation", "duration": 850.5},
+            {"groupLabel": "Style & Layout",    "duration": 320.0},
+            {"groupLabel": "Rendering",         "duration": 180.5},
+            {"groupLabel": "Parse HTML & CSS",  "duration": 90.0}
+        ]}},
+        "bootup-time": {"details": {"items": [
+            {"url": "https://example.test/app.js",    "total": 540.5},
+            {"url": "https://example.test/vendor.js", "total": 180.0}
+        ]}},
+        "uses-long-cache-ttl": {"details": {"items": [
+            {"url": "https://example.test/old.js",   "cacheLifetimeMs": 3600000},
+            {"url": "https://example.test/style.css","cacheLifetimeMs": 86400000}
+        ]}},
+        "critical-request-chains": {"details": {"chains": {
+            "abc": {"children": {"def": {"children": {"ghi": {}}}}}
+        }}}
+    }
+}

@@ -73,6 +73,7 @@ final class DemoSeeder
             'started_at'        => $when,
             'completed_at'      => $when->copy()->addSeconds(mt_rand(30, 90)),
             'is_demo'           => true,
+            'details'           => $this->fakeDetails($profile, $perf),
         ]);
 
         BackendTelemetry::create([
@@ -134,6 +135,58 @@ final class DemoSeeder
                 'is_demo'          => true,
             ]);
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function fakeDetails(string $profile, int $perf): array
+    {
+        $sizeMul = $profile === 'bad' ? 2.5 : ($profile === 'improving' ? 1.5 : 1.0);
+
+        return [
+            'page_weight_bytes'       => (int) (mt_rand(800_000, 1_500_000) * $sizeMul),
+            'request_count'           => mt_rand(20, 60) + ($profile === 'bad' ? 30 : 0),
+            'dom_size'                => mt_rand(800, 1200) + ($profile === 'bad' ? 800 : 0),
+            'render_blocking_time_ms' => $profile === 'bad' ? mt_rand(400, 800) : mt_rand(100, 300),
+            'lcp_element'             => [
+                'snippet'  => '<img src="/images/hero.jpg" loading="eager">',
+                'selector' => 'main > section.hero > img',
+            ],
+            'resource_summary' => [
+                ['type' => 'script',     'count' => mt_rand(6, 14),  'bytes' => mt_rand(300_000, 800_000)],
+                ['type' => 'stylesheet', 'count' => mt_rand(2, 5),   'bytes' => mt_rand(60_000, 180_000)],
+                ['type' => 'image',      'count' => mt_rand(8, 24),  'bytes' => mt_rand(200_000, 800_000)],
+                ['type' => 'font',       'count' => mt_rand(1, 4),   'bytes' => mt_rand(40_000, 120_000)],
+                ['type' => 'document',   'count' => 1,               'bytes' => mt_rand(10_000, 40_000)],
+            ],
+            'third_parties' => $profile === 'bad' ? [
+                ['entity' => 'Google Tag Manager', 'transfer_bytes' => 56000, 'blocking_ms' => 320.0, 'main_thread_ms' => 410.0],
+                ['entity' => 'Facebook Pixel',     'transfer_bytes' => 38000, 'blocking_ms' => 180.0, 'main_thread_ms' => 220.0],
+                ['entity' => 'Google Analytics',   'transfer_bytes' => 24000, 'blocking_ms' => 90.0,  'main_thread_ms' => 140.0],
+            ] : [
+                ['entity' => 'Google Analytics',   'transfer_bytes' => 24000, 'blocking_ms' => 60.0,  'main_thread_ms' => 100.0],
+            ],
+            'main_thread' => [
+                ['category' => 'Script Evaluation', 'duration_ms' => $profile === 'bad' ? mt_rand(800, 1500) : mt_rand(200, 500)],
+                ['category' => 'Style & Layout',     'duration_ms' => mt_rand(150, 400)],
+                ['category' => 'Rendering',          'duration_ms' => mt_rand(80, 250)],
+                ['category' => 'Parse HTML & CSS',   'duration_ms' => mt_rand(40, 120)],
+            ],
+            'bootup_time' => [
+                ['url' => 'https://example.test/build/assets/app.js',    'total_ms' => mt_rand(200, 600)],
+                ['url' => 'https://example.test/build/assets/vendor.js', 'total_ms' => mt_rand(100, 300)],
+            ],
+            'cache_policy' => $profile === 'bad' ? [
+                ['url' => 'https://example.test/old.js',     'ttl_seconds' => 3600],
+                ['url' => 'https://example.test/font.woff2', 'ttl_seconds' => 0],
+            ] : [],
+            'slow_requests' => [
+                ['url' => 'https://example.test/build/assets/vendor.js', 'transfer_bytes' => 380_000, 'duration_ms' => $profile === 'bad' ? mt_rand(800, 1500) : mt_rand(300, 600), 'resource_type' => 'Script'],
+                ['url' => 'https://example.test/api/products',           'transfer_bytes' => 25_000,  'duration_ms' => mt_rand(150, 400),  'resource_type' => 'XHR'],
+            ],
+            'critical_chain_depth' => $profile === 'bad' ? mt_rand(4, 7) : mt_rand(2, 3),
+        ];
     }
 
     /**

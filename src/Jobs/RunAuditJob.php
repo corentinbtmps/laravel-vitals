@@ -74,7 +74,8 @@ final class RunAuditJob implements ShouldQueue
         try {
             $report = $driver->audit($url, $options);
 
-            $path = $reports->store($audit->id, $report->rawJson);
+            $path    = $reports->store($audit->id, $report->rawJson);
+            $details = \LaravelVitals\Support\LighthouseReport::extractDetails($report->rawJson);
 
             $audit->update([
                 'status'               => 'completed',
@@ -91,6 +92,7 @@ final class RunAuditJob implements ShouldQueue
                 'tbt_ms'               => $report->metrics['tbt_ms'],
                 'report_path'          => $path,
                 'completed_at'         => now(),
+                'details'              => $details,
             ]);
 
             $telemetry = \LaravelVitals\Models\BackendTelemetry::where('audit_id', $audit->id)->first();
