@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('device', ['mobile', 'desktop', 'both'])->default('both');
             $table->json('options')->nullable();
             $table->boolean('enabled')->default(true);
+            $table->timestamp('pinned_at')->nullable()->index();
             $table->boolean('is_demo')->default(false)->index();
             $table->timestamps();
         });

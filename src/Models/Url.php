@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $device
  * @property array<string, mixed>|null $options
  * @property bool $enabled
+ * @property \Illuminate\Support\Carbon|null $pinned_at
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */
@@ -37,10 +38,20 @@ final class Url extends Model
     protected function casts(): array
     {
         return [
-            'options' => 'array',
-            'enabled' => 'boolean',
-            'is_demo' => 'boolean',
+            'options'   => 'array',
+            'enabled'   => 'boolean',
+            'is_demo'   => 'boolean',
+            'pinned_at' => 'datetime',
         ];
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<Url>  $q
+     * @return \Illuminate\Database\Eloquent\Builder<Url>
+     */
+    public function scopePinned(Builder $q): Builder
+    {
+        return $q->whereNotNull('pinned_at')->orderByDesc('pinned_at');
     }
 
     public function getConnectionName(): ?string

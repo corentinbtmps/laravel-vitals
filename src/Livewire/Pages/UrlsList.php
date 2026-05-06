@@ -11,22 +11,35 @@ use Livewire\Component;
 
 final class UrlsList extends Component
 {
+    public function togglePin(int $id): void
+    {
+        $url = Url::findOrFail($id);
+        $url->pinned_at = $url->pinned_at ? null : now();
+        $url->save();
+    }
+
     public function render(): View
     {
-        $urls = Url::query()
+        $allUrls = Url::query()
             ->withCount('audits')
             ->orderBy('label')
             ->get();
 
-        if ($urls->isEmpty()) {
+        $pinnedUrls = $allUrls->filter(fn (Url $u): bool => $u->pinned_at !== null)
+            ->sortByDesc('pinned_at')
+            ->values();
+
+        if ($allUrls->isEmpty()) {
             return view('vitals::livewire.pages.urls-list', [
-                'urls'        => $urls,
+                'urls'        => $allUrls,
+                'allUrls'     => $allUrls,
+                'pinnedUrls'  => $pinnedUrls,
                 'lastAudits'  => collect(),
                 'sparklines'  => [],
             ])->layout('vitals::layouts.dashboard');
         }
 
-        $urlIds = $urls->pluck('id')->all();
+        $urlIds = $allUrls->pluck('id')->all();
 
         // Latest completed audit per url_id, regardless of device.
         $lastAudits = Audit::query()
@@ -58,7 +71,9 @@ final class UrlsList extends Component
         }
 
         return view('vitals::livewire.pages.urls-list', [
-            'urls'        => $urls,
+            'urls'        => $allUrls,
+            'allUrls'     => $allUrls,
+            'pinnedUrls'  => $pinnedUrls,
             'lastAudits'  => $lastAudits,
             'sparklines'  => $sparklines,
         ])->layout('vitals::layouts.dashboard');

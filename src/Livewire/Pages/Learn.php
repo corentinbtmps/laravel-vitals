@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Recommendations\RecommendationDocs;
 use LaravelVitals\Recommendations\RecommendationRegistry;
 use Livewire\Component;
@@ -21,6 +22,49 @@ final class Learn extends Component
         if (in_array($filter, $this->availableFilters, true)) {
             $this->filter = $filter;
         }
+    }
+
+    /**
+     * @return array<string, array{label: string, count: int, active: int, color: string, icon: string}>
+     */
+    public function categoryTiles(): array
+    {
+        $registry = new RecommendationRegistry();
+        $allKeys = $registry->allKeys();
+
+        // Active = how many distinct audit_keys of this category exist in the recommendations table
+        $activeCounts = Recommendation::query()
+            ->selectRaw('audit_key, count(*) as occurrences')
+            ->groupBy('audit_key')
+            ->pluck('occurrences', 'audit_key')
+            ->all();
+
+        /** @var array<string, array{label: string, color: string, icon: string}> $definitions */
+        $definitions = [
+            'performance'    => ['label' => 'Performance',    'color' => 'accent',  'icon' => 'bolt'],
+            'accessibility'  => ['label' => 'Accessibility',  'color' => 'emerald', 'icon' => 'eye'],
+            'best_practices' => ['label' => 'Best Practices', 'color' => 'sky',     'icon' => 'shield-check'],
+            'seo'            => ['label' => 'SEO',            'color' => 'violet',  'icon' => 'magnifying-glass'],
+        ];
+
+        $tiles = [];
+        foreach ($definitions as $cat => $def) {
+            $keysInCat = array_values(array_filter($allKeys, function (string $k) use ($registry, $cat): bool {
+                $descriptor = $registry->get($k);
+
+                return $descriptor !== null && $descriptor->category === $cat;
+            }));
+
+            $tiles[$cat] = [
+                'label'  => $def['label'],
+                'color'  => $def['color'],
+                'icon'   => $def['icon'],
+                'count'  => count($keysInCat),
+                'active' => (int) array_sum(array_intersect_key($activeCounts, array_flip($keysInCat))),
+            ];
+        }
+
+        return $tiles;
     }
 
     public function render(): View

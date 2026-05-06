@@ -7,6 +7,36 @@
         <flux:badge color="zinc">{{ $allCount }} known issues</flux:badge>
     </div>
 
+    {{-- Browse tile grid (shown when filter = all) --}}
+    @if ($filter === 'all')
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            @foreach ($this->categoryTiles() as $key => $tile)
+                <button type="button"
+                        wire:click="setFilter('{{ $key }}')"
+                        class="group rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5 text-left transition-colors duration-150 hover:border-{{ $tile['color'] }}-500/40 hover:bg-{{ $tile['color'] }}-50/30 dark:hover:bg-{{ $tile['color'] }}-900/10">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-{{ $tile['color'] }}-100 dark:bg-{{ $tile['color'] }}-900/30">
+                            <flux:icon name="{{ $tile['icon'] }}" class="size-4 text-{{ $tile['color'] }}-600 dark:text-{{ $tile['color'] }}-400" />
+                        </span>
+                        @if ($tile['active'] > 0)
+                            <span class="text-xs font-semibold tabular-nums text-{{ $tile['color'] }}-600 dark:text-{{ $tile['color'] }}-400">
+                                {{ $tile['active'] }} active
+                            </span>
+                        @endif
+                    </div>
+                    <div class="text-base font-semibold text-ink-900 dark:text-ink-100 group-hover:text-{{ $tile['color'] }}-700 dark:group-hover:text-{{ $tile['color'] }}-300 transition-colors">{{ $tile['label'] }}</div>
+                    <div class="text-xs text-ink-500 mt-0.5">{{ $tile['count'] }} {{ Str::plural('issue', $tile['count']) }}</div>
+                </button>
+            @endforeach
+        </div>
+    @else
+        {{-- Back to browse link --}}
+        <div class="flex items-center gap-3">
+            <flux:button wire:click="setFilter('all')" variant="ghost" size="sm" icon="arrow-left">All categories</flux:button>
+            <span class="text-sm text-ink-500">Showing {{ ucfirst(str_replace('_', ' ', $filter)) }}</span>
+        </div>
+    @endif
+
     {{-- Filter tabs --}}
     <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4">
         <div class="flex flex-wrap gap-2">
@@ -21,9 +51,18 @@
     </div>
 
     @forelse ($grouped as $category => $items)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-            <h2 class="text-xs font-semibold uppercase tracking-wide text-ink-400 mb-4">{{ str_replace('_', ' ', $category) }}</h2>
-            <div class="space-y-6">
+        <div class="mt-10 first:mt-0">
+            {{-- Category label --}}
+            <div class="flex items-baseline gap-3 mb-4">
+                <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-400">
+                    {{ str_replace('_', ' ', $category) }}
+                </h2>
+                <span class="text-xs text-ink-500">{{ count($items) }} {{ Str::plural('item', count($items)) }}</span>
+                <div class="flex-1 h-px bg-ink-200/60 dark:bg-ink-800/60"></div>
+            </div>
+
+            {{-- Cards grid --}}
+            <div class="space-y-4">
                 @foreach ($items as $entry)
                     @php
                         $sevColor = match ($entry['descriptor']->severity) {
@@ -37,29 +76,37 @@
                             default    => 'sky',
                         };
                     @endphp
-                    <div id="{{ $entry['key'] }}" class="border-l-4 border-{{ $sevColor }}-500 pl-4 py-1">
-                        <div class="flex items-center gap-2 flex-wrap mb-1">
-                            <h3 class="font-semibold text-base">{{ __($entry['descriptor']->titleKey) }}</h3>
+                    <article id="{{ $entry['key'] }}"
+                             class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 scroll-mt-24">
+                        {{-- Header --}}
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="size-2 rounded-full bg-{{ $sevColor }}-500"></span>
+                            <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
                             <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $entry['descriptor']->severity }}</flux:badge>
-                            <code class="text-[11px] text-ink-400 ml-auto">{{ $entry['key'] }}</code>
+                            <code class="ml-auto text-[11px] font-mono text-ink-400">{{ $entry['key'] }}</code>
                         </div>
-                        <p class="text-sm text-ink-500 dark:text-ink-400">{{ __($entry['descriptor']->descriptionKey) }}</p>
+
+                        {{-- Description --}}
+                        <p class="mt-2 text-sm text-ink-600 dark:text-ink-400">{{ __($entry['descriptor']->descriptionKey) }}</p>
 
                         @if ($entry['docs'])
-                            <div class="mt-3 flex items-start gap-2 text-sm">
-                                <flux:icon.information-circle class="size-4 text-sky-500 shrink-0 mt-0.5" />
-                                <p class="text-ink-700 dark:text-ink-300">{{ $entry['docs']['why'] }}</p>
+                            {{-- Why --}}
+                            <div class="mt-4 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-canvas dark:bg-ink-950 p-4">
+                                <div class="flex items-start gap-2">
+                                    <flux:icon.information-circle class="size-4 text-sky-500 shrink-0 mt-0.5" />
+                                    <p class="text-sm text-ink-700 dark:text-ink-300">{{ $entry['docs']['why'] }}</p>
+                                </div>
+                                @if (! empty($entry['docs']['impact']))
+                                    <div class="mt-3 flex items-center gap-2 text-xs pt-3 border-t border-ink-200/60 dark:border-ink-800/60">
+                                        <flux:icon.bolt class="size-3.5 text-amber-500" />
+                                        <span class="text-amber-700 dark:text-amber-400 font-medium">{{ $entry['docs']['impact'] }}</span>
+                                    </div>
+                                @endif
                             </div>
 
-                            @if (! empty($entry['docs']['impact']))
-                                <div class="mt-2 flex items-center gap-2 text-xs">
-                                    <flux:icon.bolt class="size-3.5 text-amber-500" />
-                                    <span class="text-amber-700 dark:text-amber-400 font-medium">{{ $entry['docs']['impact'] }}</span>
-                                </div>
-                            @endif
-
+                            {{-- Doc links --}}
                             @if (! empty($entry['docs']['docs']))
-                                <div class="mt-3 flex flex-wrap gap-2">
+                                <div class="mt-4 flex flex-wrap gap-2">
                                     @foreach ($entry['docs']['docs'] as $doc)
                                         <flux:button
                                             href="{{ $doc['url'] }}"
@@ -73,8 +120,9 @@
                                 </div>
                             @endif
 
+                            {{-- Good / Bad code blocks --}}
                             @if (! empty($entry['docs']['good']) || ! empty($entry['docs']['bad']))
-                                <div class="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                                <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
                                     @if (! empty($entry['docs']['good']))
                                         <div class="rounded-2xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-900/10 overflow-hidden">
                                             <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border-b border-emerald-200/60 dark:border-emerald-900/40">
@@ -96,7 +144,7 @@
                                 </div>
                             @endif
                         @endif
-                    </div>
+                    </article>
                 @endforeach
             </div>
         </div>

@@ -14,8 +14,10 @@ export default {
         { pattern: /^(bg|text|border|ring|from|to|via)-accent-(50|100|200|300|400|500|600|700|800|900|950)$/ },
         // Static ink scale
         { pattern: /^(bg|text|border|ring|divide)-ink-(50|100|200|300|400|500|600|700|800|900|950)$/ },
-        // Static decorative colors (sky, violet — used as icon tints)
-        { pattern: /^(bg|text|border|ring)-(sky|violet)-(50|100|200|300|400|500|600|700|800|900|950)$/ },
+        // Static decorative colors (sky, violet, emerald — used as icon tints and Browse tile accents)
+        { pattern: /^(bg|text|border|ring)-(sky|violet|emerald)-(50|100|200|300|400|500|600|700|800|900|950)$/ },
+        // Browse tile opacity variants (bg-{color}-50/30, bg-{color}-900/10 etc)
+        { pattern: /^(bg|border|text)-(sky|violet|emerald|accent)-(50|100|200|300|400|500|600|700|800|900|950)\/(10|20|30|40|50|60|70|80|90)$/ },
         // paper / canvas surface tokens
         { pattern: /^bg-(paper|canvas)$/ },
         { pattern: /^text-(paper|canvas)$/ },
