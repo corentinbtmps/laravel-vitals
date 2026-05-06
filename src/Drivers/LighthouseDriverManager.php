@@ -12,27 +12,24 @@ use LaravelVitals\Drivers\PlaywrightDriver;
 /**
  * Resolves a LighthouseDriver by name or via auto-detection.
  *
- * Configuration: config('vitals.driver') — 'auto' | 'local' | 'browsershot' | 'pagespeed'.
+ * Configuration: config('vitals.driver') — 'auto' | 'local' | 'playwright' | 'pagespeed'.
  *
  * The auto chain probes drivers in this order:
- *     local -> browsershot -> pagespeed
+ *     local -> playwright -> pagespeed
  *
- * The first one whose isAvailable() returns true wins. Note that on a stock
- * install of spatie/browsershot ^5, BrowsershotDriver reports unavailable
- * because Browsershot v5 dropped the built-in lighthouseAudit() helper.
+ * The first one whose isAvailable() returns true wins.
  */
 final readonly class LighthouseDriverManager
 {
     /** @var array<string, class-string<LighthouseDriver>> */
     private const MAP = [
-        'local'       => LocalLighthouseDriver::class,
-        'playwright'  => PlaywrightDriver::class,
-        'browsershot' => BrowsershotDriver::class,
-        'pagespeed'   => PageSpeedApiDriver::class,
+        'local'      => LocalLighthouseDriver::class,
+        'playwright' => PlaywrightDriver::class,
+        'pagespeed'  => PageSpeedApiDriver::class,
     ];
 
     /** @var array<int, string> */
-    private const AUTO_ORDER = ['local', 'playwright', 'browsershot', 'pagespeed'];
+    private const AUTO_ORDER = ['local', 'playwright', 'pagespeed'];
 
     public function __construct(
         private Container $container,
@@ -77,7 +74,7 @@ final readonly class LighthouseDriverManager
         }
 
         throw new InvalidArgumentException(
-            'No LighthouseDriver is available. Install lighthouse + node, or spatie/browsershot with a Lighthouse bridge, or set VITALS_PAGESPEED_API_KEY.',
+            'No LighthouseDriver is available. Install lighthouse + node (local or playwright driver), or set VITALS_PAGESPEED_API_KEY.',
         );
     }
 }

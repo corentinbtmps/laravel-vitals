@@ -76,8 +76,8 @@ violations (1 = warning, 2 = critical).
 ## Drivers
 
 `config('vitals.driver')` selects the Lighthouse runner: `auto` (default,
-tries local → browsershot → pagespeed), `local` (requires `node` + `lighthouse`
-CLI), `browsershot` (requires custom Lighthouse bridge on Browsershot v5),
+tries local → playwright → pagespeed), `local` (requires `node` + `lighthouse`
+CLI), `playwright` (requires `node` in PATH; runs Lighthouse via Playwright),
 or `pagespeed` (requires `VITALS_PAGESPEED_API_KEY`; URL must be public; no
 backend telemetry).
 

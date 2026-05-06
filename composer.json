@@ -28,11 +28,9 @@
         "orchestra/testbench": "^9.0|^10.0",
         "pestphp/pest": "^3.0",
         "pestphp/pest-plugin-laravel": "^3.0",
-        "rector/rector": "^2.0",
-        "spatie/browsershot": "^5.0"
+        "rector/rector": "^2.0"
     },
     "suggest": {
-        "spatie/browsershot": "Required when using the Browsershot Lighthouse driver (^5.0)",
         "livewire/flux-pro": "Enables richer chart components in the dashboard (^3.0)"
     },
     "autoload": {

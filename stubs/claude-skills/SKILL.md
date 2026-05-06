@@ -51,7 +51,6 @@ This skill helps you work effectively with the `humantocomputer/laravel-vitals` 
 
 - `vitals:audit` runs sync by default for a single URL. For batches use `--all`. Add `--sync` to force inline execution.
 - Migration filenames in this package end with `.php` (not `.php.stub`) because Spatie's `discoversMigrations()->runsMigrations()` requires plain `.php`.
-- The `BrowsershotDriver` only `isAvailable()` when `lighthouseAudit()` is a real method on `Browsershot`; on stock Browsershot v5 it correctly reports unavailable.
 - `Vitals::authorize(fn ($user) => ...)` controls dashboard access. By default the gate allows only `local` environment.
 
 ## Running and reading audits

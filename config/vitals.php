@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     | Default Lighthouse driver
     |--------------------------------------------------------------------------
-    | One of: 'auto', 'local', 'browsershot', 'pagespeed'.
+    | One of: 'auto', 'local', 'playwright', 'pagespeed'.
     */
     'driver' => env('VITALS_DRIVER', 'auto'),
 
@@ -23,10 +23,6 @@ return [
             'lighthouse_binary' => env('VITALS_LIGHTHOUSE_BINARY', 'lighthouse'),
             'chrome_flags'      => ['--headless', '--no-sandbox'],
             'timeout_seconds'   => 120,
-        ],
-        'browsershot' => [
-            'chrome_path'     => env('VITALS_CHROME_PATH'),
-            'timeout_seconds' => 120,
         ],
         'pagespeed' => [
             'api_key'  => env('VITALS_PAGESPEED_API_KEY'),

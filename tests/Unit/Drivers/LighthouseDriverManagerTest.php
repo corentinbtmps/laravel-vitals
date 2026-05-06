@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use LaravelVitals\Contracts\LighthouseDriver;
-use LaravelVitals\Drivers\BrowsershotDriver;
 use LaravelVitals\Drivers\LighthouseDriverManager;
 use LaravelVitals\Drivers\LocalLighthouseDriver;
 use LaravelVitals\Drivers\PageSpeedApiDriver;
@@ -15,8 +14,7 @@ it('resolves a driver by name from the registered map', function (): void {
 
     expect($manager->driver('local'))->toBeInstanceOf(LocalLighthouseDriver::class)
         ->and($manager->driver('playwright'))->toBeInstanceOf(PlaywrightDriver::class)
-        ->and($manager->driver('pagespeed'))->toBeInstanceOf(PageSpeedApiDriver::class)
-        ->and($manager->driver('browsershot'))->toBeInstanceOf(BrowsershotDriver::class);
+        ->and($manager->driver('pagespeed'))->toBeInstanceOf(PageSpeedApiDriver::class);
 });
 
 it('throws when an unknown driver name is requested', function (): void {
@@ -49,8 +47,7 @@ it('auto-resolves to the first available driver in priority order', function ():
     config()->set('vitals.drivers.pagespeed.api_key', 'k_present');
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
 
-    // Browsershot v5 stock is unavailable (no lighthouseAudit), local is unavailable
-    // (binary missing). playwright is available (node is in PATH).
+    // local is unavailable (binary missing). playwright is available (node is in PATH).
     $manager = app(LighthouseDriverManager::class);
 
     expect($manager->resolve())->toBeInstanceOf(PlaywrightDriver::class);
@@ -60,10 +57,9 @@ it('falls back to a stub-bound driver when one is wired into the container', fun
     config()->set('vitals.driver', 'auto');
     config()->set('vitals.drivers.pagespeed.api_key');
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
-    config()->set('vitals.drivers.playwright.node_binary', '/nonexistent/node');
 
-    // Inject a stub for browsershot so it returns isAvailable() = true.
-    app()->bind(BrowsershotDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
+    // Inject a stub for playwright so it returns isAvailable() = true.
+    app()->bind(PlaywrightDriver::class, fn (): StubLighthouseDriver => new StubLighthouseDriver());
 
     $manager = app(LighthouseDriverManager::class);
 
@@ -75,7 +71,6 @@ it('throws when no driver is available in auto mode', function (): void {
     config()->set('vitals.drivers.pagespeed.api_key');
     config()->set('vitals.drivers.local.lighthouse_binary', '/nonexistent/lighthouse');
     config()->set('vitals.drivers.playwright.node_binary', '/nonexistent/node');
-    // Browsershot v5 stock is already unavailable.
 
     $manager = app(LighthouseDriverManager::class);
 

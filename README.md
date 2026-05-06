@@ -5,7 +5,7 @@ correlation and host-application source code pointers for every recommendation.
 
 ## What it does
 
-- Runs Lighthouse against URLs of your Laravel app via three drivers (`local`, `browsershot`, `pagespeed`)
+- Runs Lighthouse against URLs of your Laravel app via three drivers (`local`, `playwright`, `pagespeed`)
 - Captures backend telemetry during the audit (queries, memory, views, jobs, cache, N+1)
 - Surfaces actionable recommendations with `file:line` references in your own source code
 - Ships a Livewire dashboard at `/vitals`
@@ -18,7 +18,7 @@ correlation and host-application source code pointers for every recommendation.
 - Laravel 11, 12, or 13
 - Livewire 3 + Flux Free 2 (auto-installed)
 - For the local Lighthouse driver: Node 18+ and the `lighthouse` npm package on `$PATH`
-- For the Browsershot driver: a custom Lighthouse bridge (Browsershot v5 dropped the built-in helper)
+- For the Playwright driver: Node 18+ on `$PATH`
 - For the PageSpeed driver: a Google PSI API key (`VITALS_PAGESPEED_API_KEY`)
 
 ## Installation
