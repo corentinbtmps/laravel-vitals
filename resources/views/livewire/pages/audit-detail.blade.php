@@ -123,10 +123,18 @@
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach ([
-                ['col' => 'lcp_ms',  'label' => 'LCP',  'unit' => 'ms', 'desc' => 'Largest Contentful Paint'],
-                ['col' => 'cls',     'label' => 'CLS',  'unit' => '',   'desc' => 'Cumulative Layout Shift'],
-                ['col' => 'inp_ms',  'label' => 'INP',  'unit' => 'ms', 'desc' => 'Interaction to Next Paint'],
-                ['col' => 'ttfb_ms', 'label' => 'TTFB', 'unit' => 'ms', 'desc' => 'Time to First Byte'],
+                ['col' => 'lcp_ms',  'label' => 'LCP',  'unit' => 'ms', 'desc' => 'Largest Contentful Paint',
+                 'tooltip' => 'Time until the largest visible content element is rendered. Good = under 2.5s.',
+                 'doc' => 'https://web.dev/articles/lcp'],
+                ['col' => 'cls',     'label' => 'CLS',  'unit' => '',   'desc' => 'Cumulative Layout Shift',
+                 'tooltip' => 'How much visible content unexpectedly shifts during page load. Good = under 0.1.',
+                 'doc' => 'https://web.dev/articles/cls'],
+                ['col' => 'inp_ms',  'label' => 'INP',  'unit' => 'ms', 'desc' => 'Interaction to Next Paint',
+                 'tooltip' => 'Latency between user input and the next paint. Good = under 200ms.',
+                 'doc' => 'https://web.dev/articles/inp'],
+                ['col' => 'ttfb_ms', 'label' => 'TTFB', 'unit' => 'ms', 'desc' => 'Time to First Byte',
+                 'tooltip' => 'How long the server takes to respond with the first byte. Good = under 800ms.',
+                 'doc' => 'https://web.dev/articles/ttfb'],
             ] as $cwv)
                 @php
                     $val = $audit->{$cwv['col']};
@@ -137,7 +145,9 @@
                 @endphp
                 <div class="rounded-lg border border-{{ $color }}-200 dark:border-{{ $color }}-900/40 bg-{{ $color }}-50/40 dark:bg-{{ $color }}-900/10 p-4">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold text-zinc-500">{{ $cwv['label'] }}</span>
+                        <flux:tooltip content="{{ $cwv['desc'] }} — {{ $cwv['tooltip'] ?? '' }}">
+                            <span class="text-xs font-semibold text-zinc-500 cursor-help underline decoration-dotted decoration-zinc-300 dark:decoration-zinc-700 underline-offset-2">{{ $cwv['label'] }}</span>
+                        </flux:tooltip>
                         <flux:icon name="{{ $icon }}" class="size-4 text-{{ $color }}-500" />
                     </div>
                     <div class="text-2xl font-bold text-{{ $color }}-700 dark:text-{{ $color }}-300">

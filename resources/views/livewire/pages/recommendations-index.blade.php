@@ -26,6 +26,7 @@
                         <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Category</th>
                         <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Severity</th>
                         <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Occurrences</th>
+                        <th class="py-3 pl-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,6 +47,9 @@
                             <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
                         </td>
                         <td class="py-3 pr-4 text-right font-semibold">{{ $r->occurrences }}</td>
+                        <td class="py-3 pl-2 text-right">
+                            <flux:button href="{{ route('vitals.learn') . '#' . $r->audit_key }}" variant="ghost" size="sm" icon="book-open" tooltip="Learn more" />
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

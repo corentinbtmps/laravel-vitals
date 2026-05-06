@@ -55,6 +55,14 @@
         >Insights</flux:navbar.item>
         @endif
 
+        @if(Route::has('vitals.learn'))
+        <flux:navbar.item
+            href="{{ route('vitals.learn') }}"
+            icon="book-open"
+            :current="request()->routeIs('vitals.learn')"
+        >Learn</flux:navbar.item>
+        @endif
+
         @if(Route::has('vitals.budgets'))
         <flux:navbar.item
             href="{{ route('vitals.budgets') }}"

@@ -55,6 +55,7 @@
                                 <div class="text-xs text-zinc-500">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
                             <flux:badge color="rose" size="sm">{{ $w['delta'] }}</flux:badge>
+                            <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
                         </li>
                     @endforeach
                 </ul>
@@ -77,6 +78,7 @@
                                 <div class="text-xs text-zinc-500">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
                             <flux:badge color="emerald" size="sm">+{{ $w['delta'] }}</flux:badge>
+                            <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
                         </li>
                     @endforeach
                 </ul>

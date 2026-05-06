@@ -144,7 +144,7 @@
                                 <a href="{{ route('vitals.audit', $audit) }}" class="text-sm font-medium hover:underline truncate block">{{ $audit->url?->label }}</a>
                                 <div class="text-xs text-zinc-500">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>
                             </div>
-                            <flux:icon.chevron-right class="size-4 text-zinc-300" />
+                            <flux:button href="{{ route('vitals.audit', $audit) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View audit" />
                         </li>
                     @endforeach
                 </ul>

@@ -30,6 +30,7 @@
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">7d trend</th>
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Last</th>
                         <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Audits</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,6 +99,11 @@
 
                         {{-- Audit count --}}
                         <td class="py-3 px-2 text-right text-zinc-700 dark:text-zinc-300 tabular-nums">{{ $u->audits_count }}</td>
+
+                        {{-- Action --}}
+                        <td class="py-3 pl-2 text-right">
+                            <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

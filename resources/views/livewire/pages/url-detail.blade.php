@@ -150,6 +150,7 @@
                         <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Score</th>
                         <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">LCP</th>
                         <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">CLS</th>
+                        <th class="py-3 pl-2 text-right font-semibold text-zinc-500 text-xs uppercase tracking-wide">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -179,6 +180,9 @@
                         </td>
                         <td class="py-3 pr-4 text-right text-zinc-700 dark:text-zinc-300">
                             {{ $a->cls !== null ? number_format((float) $a->cls, 2) : '—' }}
+                        </td>
+                        <td class="py-3 pl-2 text-right">
+                            <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View audit" />
                         </td>
                     </tr>
                 @endforeach

@@ -7,6 +7,7 @@ use LaravelVitals\Http\Middleware\Authorize;
 use LaravelVitals\Livewire\Pages\AuditDetail;
 use LaravelVitals\Livewire\Pages\Budgets;
 use LaravelVitals\Livewire\Pages\Insights;
+use LaravelVitals\Livewire\Pages\Learn;
 use LaravelVitals\Livewire\Pages\Overview;
 use LaravelVitals\Livewire\Pages\RecommendationsIndex;
 use LaravelVitals\Livewire\Pages\UrlDetail;
@@ -23,6 +24,7 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/budgets',               Budgets::class)             ->name('vitals.budgets');
             Route::get('/insights',              Insights::class)            ->name('vitals.insights');
             Route::get('/recommendations',       RecommendationsIndex::class)->name('vitals.recommendations');
+            Route::get('/learn',                 Learn::class)               ->name('vitals.learn');
         });
 
     // Public asset routes (no auth gate — needed for the dashboard layout to work for any visitor whose Authorize gate denied)
