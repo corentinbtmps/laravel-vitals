@@ -29,7 +29,7 @@ it('returns TrendStats from pulse_aggregates when available', function (): void 
         ['type' => 'slow_request', 'aggregate' => 'p50', 'key_hash' => 'h', 'key' => '"GET /home"', 'value' => 200.0, 'count' => 100, 'period' => 86400],
     ]);
 
-    $stats = (new PulseSource())->getTrendsFor('home');
+    $stats = (new PulseSource())->getTrendsFor('/home');
 
     expect($stats)->toBeInstanceOf(TrendStats::class)
         ->and($stats->sampleCount)->toBeGreaterThan(0)

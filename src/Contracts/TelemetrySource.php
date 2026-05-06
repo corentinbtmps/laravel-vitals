@@ -19,9 +19,9 @@ interface TelemetrySource
     public function isAvailable(): bool;
 
     /**
-     * Aggregated trends for the given route name (e.g. 'home').
+     * Aggregated trends for the given URL path (e.g. '/', '/products/42').
      * Implementations should return TrendStats::empty() when they have no data
      * rather than throwing.
      */
-    public function getTrendsFor(string $routeName): TrendStats;
+    public function getTrendsFor(string $routePath): TrendStats;
 }

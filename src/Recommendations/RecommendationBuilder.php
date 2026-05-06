@@ -64,7 +64,7 @@ final readonly class RecommendationBuilder
                 continue;
             }
 
-            $stats = $source->getTrendsFor($audit->url->label ?? '');
+            $stats = $source->getTrendsFor($audit->url->path ?? '/');
 
             $syntheticTtfb = (float) ($audit->ttfb_ms ?? 0);
             if ($syntheticTtfb > 0 && $stats->p95Ttfb !== null && $stats->p95Ttfb > ($syntheticTtfb * 3)) {

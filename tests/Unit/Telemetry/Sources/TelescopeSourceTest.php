@@ -29,7 +29,7 @@ it('aggregates request durations from telescope_entries', function (): void {
         ]);
     }
 
-    $stats = (new TelescopeSource())->getTrendsFor('home');
+    $stats = (new TelescopeSource())->getTrendsFor('/home');
 
     expect($stats->sampleCount)->toBe(10)
         ->and($stats->p50Ttfb)->not->toBeNull()
