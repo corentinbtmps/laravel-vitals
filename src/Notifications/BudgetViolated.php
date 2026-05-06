@@ -6,6 +6,8 @@ namespace LaravelVitals\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
+use Illuminate\Notifications\Slack\SlackMessage;
 use LaravelVitals\Budgets\BudgetViolations;
 use LaravelVitals\Models\Audit;
 
@@ -41,10 +43,7 @@ final class BudgetViolated extends Notification
         return $msg;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function toVitalsSlack(object $notifiable): array
+    public function toSlack(object $notifiable): SlackMessage
     {
         $worst = $this->violations->worstSeverity() ?? 'warning';
         $emoji = $worst === 'critical' ? '🚨' : '⚠️';
@@ -54,8 +53,10 @@ final class BudgetViolated extends Notification
             ->map(fn ($v): string => "{$v['metric']}={$v['actual']} (>{$v['threshold']})")
             ->implode(', ');
 
-        return [
-            'text' => "{$emoji} {$label}: {$list}",
-        ];
+        return (new SlackMessage())
+            ->headerBlock("{$emoji} Budget violation")
+            ->sectionBlock(function (SectionBlock $block) use ($label, $list): void {
+                $block->text("`{$label}`: {$list}");
+            });
     }
 }

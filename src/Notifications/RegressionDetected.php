@@ -6,6 +6,8 @@ namespace LaravelVitals\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
+use Illuminate\Notifications\Slack\SlackMessage;
 use LaravelVitals\Models\Url;
 
 final class RegressionDetected extends Notification
@@ -35,13 +37,12 @@ final class RegressionDetected extends Notification
             ->line('Investigate recent deploys or content changes.');
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function toVitalsSlack(object $notifiable): array
+    public function toSlack(object $notifiable): SlackMessage
     {
-        return [
-            'text' => "📉 `{$this->url->label}` perf regressed: {$this->baselineScore} → {$this->currentScore} (-{$this->dropPercent}%)",
-        ];
+        return (new SlackMessage())
+            ->headerBlock('📉 Performance regression')
+            ->sectionBlock(function (SectionBlock $block): void {
+                $block->text("`{$this->url->label}` perf regressed: {$this->baselineScore} → {$this->currentScore} (-{$this->dropPercent}%)");
+            });
     }
 }

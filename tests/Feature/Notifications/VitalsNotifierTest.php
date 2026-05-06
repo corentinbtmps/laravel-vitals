@@ -17,7 +17,9 @@ it('dispatches notifications to all configured channels with the configured reci
 
     Notification::fake();
 
-    $notification = new class extends \Illuminate\Notifications\Notification {};
+    $notification = new class extends \Illuminate\Notifications\Notification {
+        public function via(object $notifiable): array { return ['mail']; }
+    };
 
     app(VitalsNotifier::class)->send('budget_violation', $notification);
 

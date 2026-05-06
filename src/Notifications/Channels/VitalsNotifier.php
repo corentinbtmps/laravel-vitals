@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Notifications\Channels;
 
-use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
@@ -42,25 +41,13 @@ final class VitalsNotifier
             }
         }
 
-        $slackWebhook = null;
         if (in_array('slack', $channels, true)) {
             $webhook = $config['slack']['webhook_url'] ?? null;
             if (is_string($webhook) && $webhook !== '') {
-                $slackWebhook = $webhook;
-                $notifiable->route('vitals_slack', $webhook);
+                $notifiable->route('slack', $webhook);
             }
         }
 
-        // Only dispatch via Laravel's notification dispatcher for non-slack channels;
-        // Slack is handled separately through our custom webhook channel.
-        $laravelChannels = array_values(array_filter($channels, fn (string $c): bool => $c !== 'slack'));
-
-        if ($laravelChannels !== []) {
-            app(Dispatcher::class)->sendNow($notifiable, $notification, $laravelChannels);
-        }
-
-        if ($slackWebhook !== null) {
-            app(VitalsSlackChannel::class)->send($notifiable, $notification);
-        }
+        $notifiable->notify($notification);
     }
 }

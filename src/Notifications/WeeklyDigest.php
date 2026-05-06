@@ -6,6 +6,8 @@ namespace LaravelVitals\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
+use Illuminate\Notifications\Slack\SlackMessage;
 
 final class WeeklyDigest extends Notification
 {
@@ -39,18 +41,17 @@ final class WeeklyDigest extends Notification
         return $msg;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function toVitalsSlack(object $notifiable): array
+    public function toSlack(object $notifiable): SlackMessage
     {
         $list = collect($this->rows)
             ->map(fn ($r): string => "{$r['label']} (avg perf {$r['avg_perf']})")
             ->take(10)
             ->implode(' • ');
 
-        return [
-            'text' => "📊 Weekly Vitals digest — {$this->totalAudits} audits — {$list}",
-        ];
+        return (new SlackMessage())
+            ->headerBlock('📊 Weekly Vitals digest')
+            ->sectionBlock(function (SectionBlock $block) use ($list): void {
+                $block->text("{$this->totalAudits} audits — {$list}");
+            });
     }
 }
