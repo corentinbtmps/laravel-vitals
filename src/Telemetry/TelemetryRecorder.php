@@ -48,7 +48,7 @@ final class TelemetryRecorder
         $this->queries = $this->makeAccumulator();
     }
 
-    public function start(string $auditId, bool $sampled = false): void
+    public function start(?string $auditId, bool $sampled = false): void
     {
         // Reset all state so a recorder instance can be reused across requests
         // (defence in depth for Octane workers).

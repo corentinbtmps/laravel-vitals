@@ -63,6 +63,8 @@ final class VitalsServiceProvider extends PackageServiceProvider
             \LaravelVitals\Contracts\LighthouseDriver::class,
             fn ($app) => $app->make(\LaravelVitals\Drivers\LighthouseDriverManager::class)->resolve(),
         );
+
+        $this->app->bind(\LaravelVitals\Telemetry\TelemetryRecorder::class);
     }
 
     public function packageBooted(): void
@@ -86,6 +88,11 @@ final class VitalsServiceProvider extends PackageServiceProvider
                 'root'   => storage_path('app/vitals'),
                 'throw'  => false,
             ]);
+        }
+
+        if ((bool) config('vitals.telemetry.auto_register', true)) {
+            $router = $this->app->make(\Illuminate\Routing\Router::class);
+            $router->pushMiddlewareToGroup('web', \LaravelVitals\Http\Middleware\CaptureVitalsTelemetry::class);
         }
     }
 }
