@@ -1,0 +1,31 @@
+{
+    "id": "https://example.test/",
+    "kind": "pagespeedonline#result",
+    "loadingExperience": {
+        "metrics": {
+            "LARGEST_CONTENTFUL_PAINT_MS": { "percentile": 1850 },
+            "CUMULATIVE_LAYOUT_SHIFT_SCORE": { "percentile": 3 }
+        }
+    },
+    "lighthouseResult": {
+        "lighthouseVersion": "12.2.1",
+        "requestedUrl": "https://example.test/",
+        "finalDisplayedUrl": "https://example.test/",
+        "fetchTime": "2026-05-06T08:00:00.000Z",
+        "categories": {
+            "performance":   { "id": "performance",   "title": "Performance",   "score": 0.92 },
+            "accessibility": { "id": "accessibility", "title": "Accessibility", "score": 0.88 },
+            "best-practices":{ "id": "best-practices","title": "Best Practices","score": 0.96 },
+            "seo":           { "id": "seo",           "title": "SEO",           "score": 1 }
+        },
+        "audits": {
+            "largest-contentful-paint":   { "id": "largest-contentful-paint",   "score": 0.85, "numericValue": 1850.4, "numericUnit": "millisecond" },
+            "cumulative-layout-shift":    { "id": "cumulative-layout-shift",    "score": 0.95, "numericValue": 0.03,   "numericUnit": "unitless"   },
+            "interaction-to-next-paint":  { "id": "interaction-to-next-paint",  "score": 0.99, "numericValue": 120,    "numericUnit": "millisecond" },
+            "server-response-time":       { "id": "server-response-time",       "score": 1,    "numericValue": 220,    "numericUnit": "millisecond" },
+            "first-contentful-paint":     { "id": "first-contentful-paint",     "score": 0.97, "numericValue": 980,    "numericUnit": "millisecond" },
+            "speed-index":                { "id": "speed-index",                "score": 0.93, "numericValue": 1450,   "numericUnit": "millisecond" },
+            "total-blocking-time":        { "id": "total-blocking-time",        "score": 0.95, "numericValue": 80,     "numericUnit": "millisecond" }
+        }
+    }
+}
