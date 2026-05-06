@@ -105,6 +105,8 @@ final class VitalsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        \Livewire\Livewire::component('vitals::pages.overview', \LaravelVitals\Livewire\Pages\Overview::class);
+
         Gate::define('viewVitals', function ($user = null): bool {
             $callback = app(Vitals::class)->authorizeCallback();
 

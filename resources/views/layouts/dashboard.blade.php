@@ -16,9 +16,15 @@
                 Laravel Vitals
             </a>
             <nav class="flex gap-4 text-sm">
+                @if(Route::has('vitals.urls'))
                 <a href="{{ route('vitals.urls') }}" class="hover:underline">URLs</a>
+                @endif
+                @if(Route::has('vitals.recommendations'))
                 <a href="{{ route('vitals.recommendations') }}" class="hover:underline">Recommendations</a>
+                @endif
+                @if(Route::has('vitals.budgets'))
                 <a href="{{ route('vitals.budgets') }}" class="hover:underline">Budgets</a>
+                @endif
             </nav>
         </div>
     </header>
