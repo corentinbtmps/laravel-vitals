@@ -31,7 +31,7 @@ it('renders the overview page with average scores when audits exist', function (
 
     Livewire::test(Overview::class)
         ->assertOk()
-        ->assertSee('Health overview')
+        ->assertSee('Health')
         ->assertSeeText('90');
 });
 

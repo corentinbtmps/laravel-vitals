@@ -12,6 +12,7 @@
         "vite": "^6.0"
     },
     "dependencies": {
+        "@fontsource-variable/geist": "^5.2.8",
         "apexcharts": "^3.45"
     }
 }

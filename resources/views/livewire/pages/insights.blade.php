@@ -1,123 +1,108 @@
-<div class="space-y-6">
+<div class="space-y-10">
     <div>
-        <h1 class="text-2xl font-semibold">Insights</h1>
-        <p class="text-sm text-zinc-500 mt-1">Cross-URL trends and opportunities aggregated from the last 7 days</p>
+        <h1 class="text-3xl font-semibold tracking-[-0.02em] text-ink-900 dark:text-ink-100">Insights</h1>
+        <p class="mt-1 text-sm text-ink-500">Cross-URL trends and opportunities from the last 7 days</p>
     </div>
 
-    {{-- Quick wins --}}
-    <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
-        <div class="flex items-start justify-between mb-4">
-            <div>
-                <h3 class="text-base font-semibold">Quick wins</h3>
-                <p class="text-sm text-zinc-500 mt-1">Most impactful issues to fix first</p>
-            </div>
-        </div>
-        @if ($quickWins->isEmpty())
-            <p class="text-sm text-zinc-500">No prioritized issues found in the last 7 days.</p>
-        @else
-            <ul class="space-y-3">
+    {{-- Quick wins — flat section --}}
+    <div>
+        <p class="label-caps text-ink-400 mb-3">Quick wins</p>
+        <div class="border-t border-ink-200 dark:border-ink-800">
+            @if ($quickWins->isEmpty())
+                <p class="py-4 text-sm text-ink-500">No prioritized issues found in the last 7 days.</p>
+            @else
                 @foreach ($quickWins as $w)
                     @php
-                        $sevColor = match ($w->severity) {
-                            'critical' => 'rose',
-                            'warning'  => 'amber',
-                            default    => 'sky',
+                        $dot = match ($w->severity) {
+                            'critical' => 'bg-accent-500',
+                            'warning'  => 'bg-amber-500',
+                            default    => 'bg-emerald-500',
+                        };
+                        $sevTextClass = match ($w->severity) {
+                            'critical' => 'text-accent-600 dark:text-accent-500',
+                            'warning'  => 'text-amber-600 dark:text-amber-400',
+                            default    => 'text-emerald-600 dark:text-emerald-400',
                         };
                     @endphp
-                    <li class="flex items-start gap-3 p-3 rounded-2xl border border-{{ $sevColor }}-200/60 dark:border-{{ $sevColor }}-900/40 bg-{{ $sevColor }}-50/30 dark:bg-{{ $sevColor }}-900/5">
-                        <flux:badge color="{{ $sevColor }}" size="sm">{{ $w->severity }}</flux:badge>
+                    <div class="flex items-baseline gap-3 py-2.5 border-b border-ink-100 dark:border-ink-800/60 last:border-0">
+                        <span class="mt-1.5 shrink-0 size-1.5 rounded-full {{ $dot }}"></span>
                         <div class="flex-1 min-w-0">
-                            <div class="font-medium text-sm">{{ __($w->title_key) }}</div>
-                            <div class="text-xs text-zinc-500 mt-0.5">{{ $w->occurrences }} occurrence(s) across {{ $w->audit_count }} audit(s)</div>
+                            <span class="text-sm text-ink-700 dark:text-ink-300">{{ __($w->title_key) }}</span>
                         </div>
-                    </li>
+                        <span class="shrink-0 text-xs text-ink-400 tabular-nums">{{ $w->occurrences }} occ. / {{ $w->audit_count }} audits</span>
+                    </div>
                 @endforeach
-            </ul>
-        @endif
+            @endif
+        </div>
     </div>
 
     {{-- Worsening / Improving --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
-            <div class="flex items-start justify-between mb-4">
-                <div>
-                    <h3 class="text-base font-semibold">Worsening URLs</h3>
-                    <p class="text-sm text-zinc-500 mt-1">Regressions detected</p>
-                </div>
-            </div>
-            @if (empty($worsening))
-                <p class="text-sm text-zinc-500">No regressions detected.</p>
-            @else
-                <ul class="divide-y divide-zinc-100 dark:divide-zinc-800">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div>
+            <p class="label-caps text-ink-400 mb-3">Worsening URLs</p>
+            <div class="border-t border-ink-200 dark:border-ink-800">
+                @if (empty($worsening))
+                    <p class="py-4 text-sm text-ink-500">No regressions detected.</p>
+                @else
                     @foreach ($worsening as $w)
-                        <li class="py-2 flex items-center gap-3">
-                            <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 hover:text-rose-500">
-                                <div class="font-medium text-sm">{{ $w['url']->label }}</div>
-                                <div class="text-xs text-zinc-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
+                        <div class="flex items-center gap-3 py-2.5 border-b border-ink-100 dark:border-ink-800/60 last:border-0">
+                            <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 group">
+                                <div class="text-sm font-medium text-ink-800 dark:text-ink-200 group-hover:text-accent-500 transition-colors duration-150">{{ $w['url']->label }}</div>
+                                <div class="text-xs text-ink-400 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
-                            <flux:badge color="rose" size="sm">{{ $w['delta'] }}</flux:badge>
+                            <span class="text-sm font-semibold tabular-nums text-accent-500">{{ $w['delta'] }}</span>
                             <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
-                        </li>
+                        </div>
                     @endforeach
-                </ul>
-            @endif
+                @endif
+            </div>
         </div>
 
-        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
-            <div class="flex items-start justify-between mb-4">
-                <div>
-                    <h3 class="text-base font-semibold">Improving URLs</h3>
-                    <p class="text-sm text-zinc-500 mt-1">Positive score changes</p>
-                </div>
-            </div>
-            @if (empty($improving))
-                <p class="text-sm text-zinc-500">No improvements yet.</p>
-            @else
-                <ul class="divide-y divide-zinc-100 dark:divide-zinc-800">
+        <div>
+            <p class="label-caps text-ink-400 mb-3">Improving URLs</p>
+            <div class="border-t border-ink-200 dark:border-ink-800">
+                @if (empty($improving))
+                    <p class="py-4 text-sm text-ink-500">No improvements yet.</p>
+                @else
                     @foreach ($improving as $w)
-                        <li class="py-2 flex items-center gap-3">
-                            <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 hover:text-rose-500">
-                                <div class="font-medium text-sm">{{ $w['url']->label }}</div>
-                                <div class="text-xs text-zinc-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
+                        <div class="flex items-center gap-3 py-2.5 border-b border-ink-100 dark:border-ink-800/60 last:border-0">
+                            <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 group">
+                                <div class="text-sm font-medium text-ink-800 dark:text-ink-200 group-hover:text-accent-500 transition-colors duration-150">{{ $w['url']->label }}</div>
+                                <div class="text-xs text-ink-400 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
-                            <flux:badge color="emerald" size="sm">+{{ $w['delta'] }}</flux:badge>
+                            <span class="text-sm font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">+{{ $w['delta'] }}</span>
                             <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
-                        </li>
+                        </div>
                     @endforeach
-                </ul>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
 
     {{-- Top third parties --}}
     @if (! empty($topThirdParties))
-        <div class="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-6">
-            <div class="flex items-start justify-between mb-4">
-                <div>
-                    <h3 class="text-base font-semibold">Top third-party costs</h3>
-                    <p class="text-sm text-zinc-500 mt-1">Scripts and resources from external domains</p>
-                </div>
+        <div>
+            <p class="label-caps text-ink-400 mb-3">Top third-party costs</p>
+            <div class="border border-ink-200 dark:border-ink-800 rounded-xl bg-canvas dark:bg-ink-900 overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-ink-200 dark:border-ink-800">
+                            <th class="py-3 pl-5 pr-4 text-left label-caps text-ink-400">Entity</th>
+                            <th class="py-3 pr-4 label-caps text-ink-400 text-right">Audits</th>
+                            <th class="py-3 pr-5 label-caps text-ink-400 text-right">Total blocking</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($topThirdParties as $tp)
+                        <tr class="border-b border-ink-100 dark:border-ink-800/50 last:border-0">
+                            <td class="py-2.5 pl-5 pr-4 font-medium text-ink-700 dark:text-ink-300">{{ $tp['name'] }}</td>
+                            <td class="py-2.5 pr-4 text-right text-ink-500 tabular-nums">{{ $tp['occurrences'] }}</td>
+                            <td class="py-2.5 pr-5 text-right font-semibold tabular-nums text-amber-600 dark:text-amber-400">{{ (int) round($tp['total_blocking_ms']) }}ms</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
             </div>
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left border-b border-zinc-200 dark:border-zinc-800">
-                        <th class="py-2 text-xs uppercase tracking-wide text-zinc-500">Entity</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-zinc-500">Audits with</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-zinc-500">Total blocking</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach ($topThirdParties as $tp)
-                    <tr class="border-b border-zinc-100 dark:border-zinc-800/50">
-                        <td class="py-2 font-medium">{{ $tp['name'] }}</td>
-                        <td class="py-2 text-right tabular-nums">{{ $tp['occurrences'] }}</td>
-                        <td class="py-2 text-right">
-                            <flux:badge color="pink" size="sm">{{ (int) round($tp['total_blocking_ms']) }}ms</flux:badge>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
         </div>
     @endif
 </div>

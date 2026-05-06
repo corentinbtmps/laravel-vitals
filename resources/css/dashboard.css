@@ -1,3 +1,111 @@
+/* Geist Variable — self-hosted via @fontsource-variable, no external CDN */
+@import '@fontsource-variable/geist';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Base resets ──────────────────────────────────────────────────────────── */
+@layer base {
+    html {
+        font-family: 'Geist Variable', system-ui, -apple-system, sans-serif;
+        font-feature-settings: 'ss01', 'cv01';
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Tabular nums on all metric / numeric contexts */
+    .metric,
+    [data-metric],
+    .tabular-nums,
+    code,
+    pre {
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum', 'ss01';
+    }
+
+    /* Section labels: uppercase editorial style */
+    .label-caps {
+        font-size: 0.6875rem;         /* 11px */
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+}
+
+/* ─── Component utilities ──────────────────────────────────────────────────── */
+@layer components {
+    /* Flat section separator — replaces cards for section breaks */
+    .section-divider {
+        @apply border-t border-ink-200 dark:border-ink-800 pt-6 mt-6;
+    }
+
+    /* Standard card — only for truly bounded interactive units */
+    .vitals-card {
+        @apply border border-ink-200 dark:border-ink-800 rounded-xl bg-canvas dark:bg-ink-900;
+    }
+
+    /* Navigation active left-edge indicator */
+    .nav-item-active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 60%;
+        border-radius: 0 2px 2px 0;
+        background-color: oklch(64% 0.220 12); /* accent-500 */
+    }
+}
+
+/* ─── ApexCharts theming ───────────────────────────────────────────────────── */
+/* Override ApexCharts defaults to match our ink palette */
+.apexcharts-tooltip {
+    background: oklch(15% 0.008 17) !important;  /* ink-900 */
+    color: oklch(95% 0.005 17) !important;        /* ink-100 */
+    border: 1px solid oklch(22% 0.010 17) !important; /* ink-800 */
+    border-radius: 8px !important;
+    font-family: 'Geist Variable', system-ui, sans-serif !important;
+}
+
+.apexcharts-tooltip-title {
+    background: oklch(22% 0.010 17) !important; /* ink-800 */
+    border-bottom: 1px solid oklch(32% 0.012 17) !important; /* ink-700 */
+}
+
+/* Light mode tooltip override */
+html:not(.dark) .apexcharts-tooltip {
+    background: oklch(99.2% 0.003 17) !important; /* paper */
+    color: oklch(15% 0.008 17) !important;         /* ink-900 */
+    border-color: oklch(90% 0.007 17) !important;  /* ink-200 */
+}
+
+html:not(.dark) .apexcharts-tooltip-title {
+    background: oklch(97.8% 0.005 17) !important; /* canvas */
+    border-bottom-color: oklch(90% 0.007 17) !important; /* ink-200 */
+}
+
+/* ─── View transitions ─────────────────────────────────────────────────────── */
+@supports (view-transition-name: main) {
+    main {
+        view-transition-name: main;
+    }
+
+    ::view-transition-old(main),
+    ::view-transition-new(main) {
+        animation-duration: 150ms;
+        animation-timing-function: ease-out;
+    }
+}
+
+/* ─── Reduced motion ───────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
