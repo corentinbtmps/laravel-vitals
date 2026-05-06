@@ -104,6 +104,9 @@ final class Overview extends Component
             ->get();
 
         foreach ($criticalAudits as $a) {
+            if ($a->completed_at === null) {
+                continue;
+            }
             $alerts[] = [
                 'type'     => 'critical',
                 'severity' => 'danger',
@@ -121,7 +124,7 @@ final class Overview extends Component
                 ->where('completed_at', '<=', now()->subDays(7))
                 ->orderByDesc('completed_at')->first();
 
-            if ($latest === null || $baseline === null) {
+            if ($latest === null || $baseline === null || $latest->completed_at === null) {
                 continue;
             }
 
@@ -140,7 +143,7 @@ final class Overview extends Component
         }
 
         // Sort by recency
-        usort($alerts, fn ($a, $b) => $b['when']->getTimestamp() <=> $a['when']->getTimestamp());
+        usort($alerts, fn (array $a, array $b): int => $b['when']->getTimestamp() <=> $a['when']->getTimestamp());
 
         return array_slice($alerts, 0, 5);
     }

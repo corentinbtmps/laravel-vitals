@@ -3,9 +3,9 @@
     <p class="text-sm text-zinc-500 mb-6"><code>{{ $urlModel->path }}</code></p>
 
     @if ($history->isEmpty())
-        <flux:card><p class="text-zinc-600 dark:text-zinc-400">No completed audits yet.</p></flux:card>
+        <div class="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"><p class="text-zinc-600 dark:text-zinc-400">No completed audits yet.</p></div>
     @else
-        <flux:card>
+        <div class="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <h2 class="text-lg font-semibold mb-3">Recent audits</h2>
             <table class="w-full text-sm">
                 <thead>
@@ -29,6 +29,6 @@
                 @endforeach
                 </tbody>
             </table>
-        </flux:card>
+        </div>
     @endif
 </div>

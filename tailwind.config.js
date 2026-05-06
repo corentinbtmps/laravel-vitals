@@ -7,8 +7,8 @@ export default {
         './vendor/livewire/flux/src/**/*.php',
     ],
     safelist: [
-        { pattern: /^(bg|text|border|ring)-(rose|emerald|amber|sky|zinc)-(100|200|300|400|500|600|700|800|900)$/ },
-        { pattern: /^bg-(rose|emerald|amber|sky)-(100|900)\/(30|10|20)$/ },
+        { pattern: /^(bg|text|border|ring)-(rose|emerald|amber|sky|violet|zinc)-(50|100|200|300|400|500|600|700|800|900)$/ },
+        { pattern: /^(bg|border)-(rose|emerald|amber|sky|violet|zinc)-(50|100|200|400|500|900)\/(\d{1,2})$/ },
     ],
     darkMode: 'class',
     theme: { extend: {} },
