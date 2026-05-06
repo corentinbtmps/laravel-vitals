@@ -91,6 +91,9 @@ final class RunAuditJob implements ShouldQueue
             $telemetry = \LaravelVitals\Models\BackendTelemetry::where('audit_id', $audit->id)->first();
             app(\LaravelVitals\Recommendations\RecommendationBuilder::class)
                 ->buildFor($audit, $report, $telemetry);
+
+            app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class)
+                ->send('audit_completed', new \LaravelVitals\Notifications\AuditCompleted($audit->refresh()));
         } catch (AuditException $e) {
             $audit->update([
                 'status' => 'failed',
