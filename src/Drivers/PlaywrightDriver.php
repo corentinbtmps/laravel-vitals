@@ -23,10 +23,10 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
  *
  * Configuration: config('vitals.drivers.playwright').
  */
-final class PlaywrightDriver implements LighthouseDriver
+final readonly class PlaywrightDriver implements LighthouseDriver
 {
     public function __construct(
-        private readonly ProcessFactory $processes,
+        private ProcessFactory $processes,
     ) {
     }
 

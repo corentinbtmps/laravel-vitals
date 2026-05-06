@@ -133,7 +133,7 @@ final class AuditCommand extends Command
                         $worst = 'critical';
                         break;
                     }
-                    if ($sev === 'warning' && $worst !== 'critical') {
+                    if ($sev === 'warning') {
                         $worst = 'warning';
                     }
                 }

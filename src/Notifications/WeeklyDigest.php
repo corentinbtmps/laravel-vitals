@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LaravelVitals\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 
 final class WeeklyDigest extends Notification
@@ -40,14 +39,18 @@ final class WeeklyDigest extends Notification
         return $msg;
     }
 
-    public function toSlack(object $notifiable): SlackMessage
+    /**
+     * @return array<string, mixed>
+     */
+    public function toVitalsSlack(object $notifiable): array
     {
         $list = collect($this->rows)
-            ->map(fn ($r) => "{$r['label']} (avg perf {$r['avg_perf']})")
+            ->map(fn ($r): string => "{$r['label']} (avg perf {$r['avg_perf']})")
             ->take(10)
             ->implode(' • ');
 
-        return (new SlackMessage())
-            ->content("📊 Weekly Vitals digest — {$this->totalAudits} audits — {$list}");
+        return [
+            'text' => "📊 Weekly Vitals digest — {$this->totalAudits} audits — {$list}",
+        ];
     }
 }

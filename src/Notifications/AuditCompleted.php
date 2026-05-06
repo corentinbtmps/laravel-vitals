@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LaravelVitals\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 use LaravelVitals\Models\Audit;
 
@@ -33,11 +32,16 @@ final class AuditCompleted extends Notification
             ->line("LCP: " . ($this->audit->lcp_ms !== null ? round((float) $this->audit->lcp_ms) . ' ms' : 'n/a'));
     }
 
-    public function toSlack(object $notifiable): SlackMessage
+    /**
+     * @return array<string, mixed>
+     */
+    public function toVitalsSlack(object $notifiable): array
     {
-        return (new SlackMessage())
-            ->success()
-            ->content("✅ Audit `{$this->audit->url?->label}` completed — perf {$this->audit->score_performance}, LCP "
-                . ($this->audit->lcp_ms !== null ? round((float) $this->audit->lcp_ms) . 'ms' : 'n/a'));
+        $label = $this->audit->url->label ?? 'unknown';
+        $lcp   = $this->audit->lcp_ms !== null ? round((float) $this->audit->lcp_ms) . 'ms' : 'n/a';
+
+        return [
+            'text' => "✅ Audit `{$label}` completed — perf {$this->audit->score_performance}, LCP {$lcp}",
+        ];
     }
 }

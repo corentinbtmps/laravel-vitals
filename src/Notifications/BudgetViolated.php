@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LaravelVitals\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 use LaravelVitals\Budgets\BudgetViolations;
 use LaravelVitals\Models\Audit;
@@ -42,17 +41,21 @@ final class BudgetViolated extends Notification
         return $msg;
     }
 
-    public function toSlack(object $notifiable): SlackMessage
+    /**
+     * @return array<string, mixed>
+     */
+    public function toVitalsSlack(object $notifiable): array
     {
         $worst = $this->violations->worstSeverity() ?? 'warning';
         $emoji = $worst === 'critical' ? '🚨' : '⚠️';
+        $label = $this->audit->url->label ?? 'unknown';
 
         $list = collect($this->violations->all())
-            ->map(fn ($v) => "{$v['metric']}={$v['actual']} (>{$v['threshold']})")
+            ->map(fn ($v): string => "{$v['metric']}={$v['actual']} (>{$v['threshold']})")
             ->implode(', ');
 
-        return (new SlackMessage())
-            ->error()
-            ->content("{$emoji} {$this->audit->url?->label}: {$list}");
+        return [
+            'text' => "{$emoji} {$label}: {$list}",
+        ];
     }
 }

@@ -11,7 +11,7 @@ use LaravelVitals\Notifications\BudgetViolated;
 beforeEach(function (): void {
     Storage::fake('vitals');
     config()->set('vitals.urls', ['home' => '/']);
-    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+    $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 
     config()->set('vitals.notifications', [
         'enabled'  => true,

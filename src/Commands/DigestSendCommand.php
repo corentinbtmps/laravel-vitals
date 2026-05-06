@@ -39,8 +39,8 @@ final class DigestSendCommand extends Command
         }
 
         $rows = $audits
-            ->groupBy(fn ($a) => $a->url?->label ?? 'unknown')
-            ->map(fn ($group, $label) => [
+            ->groupBy(fn ($a) => $a->url->label ?? 'unknown')
+            ->map(fn ($group, $label): array => [
                 'label'    => (string) $label,
                 'audits'   => $group->count(),
                 'avg_perf' => (int) round((float) $group->avg('score_performance')),

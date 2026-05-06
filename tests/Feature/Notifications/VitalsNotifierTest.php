@@ -21,9 +21,7 @@ it('dispatches notifications to all configured channels with the configured reci
 
     app(VitalsNotifier::class)->send('budget_violation', $notification);
 
-    Notification::assertSentOnDemand(get_class($notification), function ($n, $channels, AnonymousNotifiable $notifiable) {
-        return $notifiable->routes['mail'] === 'team@example.com';
-    });
+    Notification::assertSentOnDemand($notification::class, fn($n, $channels, AnonymousNotifiable $notifiable) => $notifiable->routes['mail'] === 'team@example.com');
 });
 
 it('does nothing when the trigger is disabled', function (): void {

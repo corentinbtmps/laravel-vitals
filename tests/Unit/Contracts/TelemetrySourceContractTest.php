@@ -16,7 +16,7 @@ it('declares the TelemetrySource contract', function (): void {
     expect($isAvailable->getReturnType()?->__toString())->toBe('bool');
 
     $getTrends = $r->getMethod('getTrendsFor');
-    expect($getTrends->getReturnType()?->__toString())->toBe('LaravelVitals\\Telemetry\\TrendStats');
+    expect($getTrends->getReturnType()?->__toString())->toBe(\LaravelVitals\Telemetry\TrendStats::class);
 });
 
 it('produces a TrendStats with named accessors', function (): void {

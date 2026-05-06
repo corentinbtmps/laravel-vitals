@@ -23,7 +23,7 @@ function makePlaywrightFakeFactory(string $stdout, int $exitCode = 0): ProcessFa
     return new class($stdout, $exitCode) extends ProcessFactory {
         public string $lastCommand = '';
 
-        public function __construct(private string $stdout, private int $exitCode)
+        public function __construct(private readonly string $stdout, private readonly int $exitCode)
         {
         }
 
@@ -73,7 +73,7 @@ it('throws AuditException when the script exits non-zero', function (): void {
 
     $url = Url::create(['label' => 'home', 'path' => '/']);
 
-    expect(fn () => $driver->audit($url, AuditOptions::default()))
+    expect(fn (): \LaravelVitals\Support\LighthouseReport => $driver->audit($url, AuditOptions::default()))
         ->toThrow(AuditException::class);
 });
 
