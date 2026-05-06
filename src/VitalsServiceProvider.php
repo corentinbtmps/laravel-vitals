@@ -90,6 +90,16 @@ final class VitalsServiceProvider extends PackageServiceProvider
                 $analyzers,
             );
         });
+
+        $this->app->singleton(\LaravelVitals\Contracts\ChartRenderer::class, function () {
+            $configured = (string) config('vitals.ui.charts', 'auto');
+
+            if ($configured === 'flux' || ($configured === 'auto' && class_exists('\\Flux\\Pro\\Charts\\Chart'))) {
+                return new \LaravelVitals\Charts\FluxProChartsRenderer();
+            }
+
+            return new \LaravelVitals\Charts\ApexChartsRenderer();
+        });
     }
 
     public function packageBooted(): void
