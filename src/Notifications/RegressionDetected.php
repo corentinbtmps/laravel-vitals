@@ -33,8 +33,12 @@ final class RegressionDetected extends Notification
         return (new MailMessage())
             ->error()
             ->subject("Performance regression: {$this->url->label}")
-            ->line("Performance score for {$this->url->label} dropped from {$this->baselineScore} to {$this->currentScore} (-{$this->dropPercent}%).")
-            ->line('Investigate recent deploys or content changes.');
+            ->markdown('vitals::mail.regression-detected', [
+                'url' => $this->url,
+                'baselineScore' => $this->baselineScore,
+                'currentScore' => $this->currentScore,
+                'dropPercent' => $this->dropPercent,
+            ]);
     }
 
     public function toSlack(object $notifiable): SlackMessage

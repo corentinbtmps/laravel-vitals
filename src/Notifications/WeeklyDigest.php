@@ -30,15 +30,12 @@ final class WeeklyDigest extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $msg = (new MailMessage())
+        return (new MailMessage())
             ->subject('Laravel Vitals — weekly digest')
-            ->line("Total audits this week: {$this->totalAudits}");
-
-        foreach ($this->rows as $r) {
-            $msg->line("- {$r['label']}: {$r['audits']} audit(s), avg perf {$r['avg_perf']}");
-        }
-
-        return $msg;
+            ->markdown('vitals::mail.weekly-digest', [
+                'totalAudits' => $this->totalAudits,
+                'rows' => $this->rows,
+            ]);
     }
 
     public function toSlack(object $notifiable): SlackMessage

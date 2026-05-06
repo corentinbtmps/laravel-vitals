@@ -29,9 +29,7 @@ final class AuditCompleted extends Notification
     {
         return (new MailMessage())
             ->subject("Audit completed: {$this->audit->url?->label}")
-            ->line("Audit completed for {$this->audit->url?->label} ({$this->audit->device}).")
-            ->line("Performance: {$this->audit->score_performance}")
-            ->line("LCP: " . ($this->audit->lcp_ms !== null ? round((float) $this->audit->lcp_ms) . ' ms' : 'n/a'));
+            ->markdown('vitals::mail.audit-completed', ['audit' => $this->audit]);
     }
 
     public function toSlack(object $notifiable): SlackMessage

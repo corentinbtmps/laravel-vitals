@@ -31,16 +31,13 @@ final class BudgetViolated extends Notification
     {
         $worst = $this->violations->worstSeverity() ?? 'warning';
 
-        $msg = (new MailMessage())
+        return (new MailMessage())
             ->error()
             ->subject("Budget violation ({$worst}): {$this->audit->url?->label}")
-            ->line("The audit for {$this->audit->url?->label} violated " . count($this->violations->all()) . ' budget(s).');
-
-        foreach ($this->violations->all() as $v) {
-            $msg->line("- {$v['metric']} = {$v['actual']} (>{$v['severity']} threshold {$v['threshold']})");
-        }
-
-        return $msg;
+            ->markdown('vitals::mail.budget-violated', [
+                'audit' => $this->audit,
+                'violations' => $this->violations,
+            ]);
     }
 
     public function toSlack(object $notifiable): SlackMessage

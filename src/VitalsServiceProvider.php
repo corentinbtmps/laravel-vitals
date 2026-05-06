@@ -180,5 +180,9 @@ final class VitalsServiceProvider extends PackageServiceProvider
         $this->publishes([
             dirname(__DIR__) . '/dist' => public_path('vendor/vitals'),
         ], 'vitals-assets');
+
+        $this->publishes([
+            dirname(__DIR__) . '/resources/views/mail' => resource_path('views/vendor/vitals/mail'),
+        ], 'vitals-mail-views');
     }
 }
