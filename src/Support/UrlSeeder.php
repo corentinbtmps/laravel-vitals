@@ -20,11 +20,17 @@ final class UrlSeeder
     {
         $configured = (array) config('vitals.urls', []);
 
-        foreach ($configured as $label => $path) {
-            Url::updateOrCreate(
-                ['label' => (string) $label],
-                ['path'  => (string) $path],
-            );
+        if ($configured === []) {
+            return;
         }
+
+        \Illuminate\Support\Facades\Cache::lock('vitals:url-seeder', 30)->block(10, function () use ($configured): void {
+            foreach ($configured as $label => $path) {
+                Url::updateOrCreate(
+                    ['label' => (string) $label],
+                    ['path'  => (string) $path],
+                );
+            }
+        });
     }
 }
