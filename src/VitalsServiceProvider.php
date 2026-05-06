@@ -26,6 +26,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ->discoversMigrations()
             ->runsMigrations()
             ->hasViews()
+            ->hasViewComponents('vitals', \LaravelVitals\View\Components\CodeReference::class)
             ->hasRoute('web')
             ->hasCommands([AuditCommand::class, DiscoverCommand::class]);
     }
