@@ -145,4 +145,26 @@ return [
         // 'home' => '/',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    */
+    'notifications' => [
+        'enabled'  => env('VITALS_NOTIFICATIONS_ENABLED', true),
+        'channels' => ['mail'],
+        'mail'     => [
+            'to' => env('VITALS_NOTIFICATIONS_MAIL_TO'),
+        ],
+        'slack' => [
+            'webhook_url' => env('VITALS_NOTIFICATIONS_SLACK_WEBHOOK'),
+        ],
+        'triggers' => [
+            'audit_completed'  => false,
+            'budget_violation' => true,
+            'regression'       => ['threshold_percent' => 10],
+            'weekly_digest'    => true,
+        ],
+    ],
+
 ];
