@@ -21,6 +21,7 @@ final class Overview extends Component
             return;
         }
         $this->period = $period;
+        $this->dispatch('sparklineUpdated', trends: $this->metricTrends());
     }
 
     private function periodCutoff(): ?Carbon
@@ -92,21 +93,8 @@ final class Overview extends Component
         // URLs configured count
         $urlsCount = Url::query()->where('enabled', true)->count();
 
-        // Perf trend (one data point per day, average across all URLs)
-        $perfTrendQuery = Audit::query()
-            ->where('status', 'completed');
-
-        if ($cutoff !== null) {
-            $perfTrendQuery->where('completed_at', '>=', $cutoff);
-        }
-
-        $perfTrend = $perfTrendQuery
-            ->selectRaw('DATE(completed_at) as day, AVG(score_performance) as avg')
-            ->groupBy('day')
-            ->orderBy('day')
-            ->pluck('avg', 'day')
-            ->map(fn ($v) => (int) round((float) $v))
-            ->all();
+        $metricTrends = $this->metricTrends();
+        $metricDeltas = $this->metricDeltas($averages);
 
         return view('vitals::livewire.pages.overview', [
             'recent'             => $recent,
@@ -117,9 +105,87 @@ final class Overview extends Component
             'activeAlerts'       => $activeAlerts,
             'topRecommendations' => $topRecommendations,
             'urlsCount'          => $urlsCount,
-            'perfTrend'          => $perfTrend,
+            'metricTrends'       => $metricTrends,
+            'metricDeltas'       => $metricDeltas,
             'periodLabel'        => $this->periodLabel(),
         ])->layout('vitals::layouts.dashboard');
+    }
+
+    /**
+     * Returns sparkline trend data for all 4 score metrics over the current period.
+     *
+     * @return array<string, array<int, int>>
+     */
+    private function metricTrends(): array
+    {
+        $cutoff = $this->periodCutoff();
+
+        $query = Audit::query()
+            ->where('status', 'completed');
+
+        if ($cutoff !== null) {
+            $query->where('completed_at', '>=', $cutoff);
+        }
+
+        $rows = $query
+            ->selectRaw('DATE(completed_at) as day, AVG(score_performance) as p, AVG(score_accessibility) as a, AVG(score_best_practices) as b, AVG(score_seo) as s')
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        /** @var array<int, int> $perf */
+        $perf = $rows->pluck('p')->map(fn ($v) => (int) round((float) $v))->values()->all();
+        /** @var array<int, int> $access */
+        $access = $rows->pluck('a')->map(fn ($v) => (int) round((float) $v))->values()->all();
+        /** @var array<int, int> $bp */
+        $bp = $rows->pluck('b')->map(fn ($v) => (int) round((float) $v))->values()->all();
+        /** @var array<int, int> $seo */
+        $seo = $rows->pluck('s')->map(fn ($v) => (int) round((float) $v))->values()->all();
+
+        return [
+            'performance'    => $perf,
+            'accessibility'  => $access,
+            'best_practices' => $bp,
+            'seo'            => $seo,
+        ];
+    }
+
+    /**
+     * @param  array<string, int|null>  $averages
+     * @return array<string, int|null>
+     */
+    private function metricDeltas(array $averages): array
+    {
+        $cutoff = $this->periodCutoff();
+
+        if ($cutoff === null) {
+            return ['performance' => null, 'accessibility' => null, 'best_practices' => null, 'seo' => null];
+        }
+
+        $periodSeconds = now()->getTimestamp() - $cutoff->getTimestamp();
+        $previousStart = $cutoff->copy()->subSeconds($periodSeconds);
+
+        $previous = Audit::query()
+            ->where('status', 'completed')
+            ->whereBetween('completed_at', [$previousStart, $cutoff])
+            ->selectRaw('AVG(score_performance) as p, AVG(score_accessibility) as a, AVG(score_best_practices) as b, AVG(score_seo) as s')
+            ->first();
+
+        $prevP = $previous?->getAttribute('p');
+        $prevA = $previous?->getAttribute('a');
+        $prevB = $previous?->getAttribute('b');
+        $prevS = $previous?->getAttribute('s');
+
+        if ($previous === null || $prevP === null) {
+            return ['performance' => null, 'accessibility' => null, 'best_practices' => null, 'seo' => null];
+        }
+
+        return [
+            'performance'    => $averages['performance'] !== null ? (int) round($averages['performance'] - (float) $prevP) : null,
+            'accessibility'  => $averages['accessibility'] !== null && $prevA !== null ? (int) round($averages['accessibility'] - (float) $prevA) : null,
+            'best_practices' => $averages['best_practices'] !== null && $prevB !== null ? (int) round($averages['best_practices'] - (float) $prevB) : null,
+            'seo'            => $averages['seo'] !== null && $prevS !== null ? (int) round($averages['seo'] - (float) $prevS) : null,
+        ];
     }
 
     /**

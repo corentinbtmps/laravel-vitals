@@ -18,38 +18,86 @@
         </div>
     </div>
 
-    {{-- Hero: activity rings + score chips --}}
-    <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-8">
-        <div class="flex items-center gap-8">
-            <x-vitals::activity-rings :scores="$averages">
-                <div class="text-3xl font-semibold tabular-nums leading-none text-ink-900 dark:text-ink-100">{{ $overallGrade ?? '—' }}</div>
-            </x-vitals::activity-rings>
-
-            <div class="flex-1">
-                <div class="text-sm text-ink-500">{{ $periodLabel }}</div>
-                <h2 class="text-2xl font-semibold mt-1">Health overview</h2>
-                <p class="text-sm text-ink-500 mt-2 max-w-md">Performance, accessibility, and SEO scores aggregated across {{ $urlsCount }} {{ Str::plural('URL', $urlsCount) }}.</p>
-            </div>
-        </div>
-
-        <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            @foreach ([
-                ['key' => 'performance',    'label' => 'Performance',    'color' => 'accent'],
-                ['key' => 'accessibility',  'label' => 'Accessibility',  'color' => 'emerald'],
-                ['key' => 'best_practices', 'label' => 'Best Practices', 'color' => 'violet'],
-                ['key' => 'seo',            'label' => 'SEO',            'color' => 'sky'],
-            ] as $stat)
-                <div class="rounded-2xl bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 p-4">
-                    <div class="flex items-center gap-2">
-                        <span class="h-2 w-2 rounded-full bg-{{ $stat['color'] }}-500"></span>
-                        <span class="text-xs font-medium text-ink-500 uppercase tracking-wide">{{ $stat['label'] }}</span>
-                    </div>
-                    <div class="mt-3 text-3xl font-semibold tabular-nums">
-                        {{ $averages[$stat['key']] ?? '—' }}<span class="text-base font-normal text-ink-500">/100</span>
-                    </div>
+    {{-- Lens cards: 4 metrics with sparklines --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        @foreach ([
+            ['key' => 'performance',    'label' => 'Performance',    'color' => 'accent',  'hex' => '#f43f5e'],
+            ['key' => 'accessibility',  'label' => 'Accessibility',  'color' => 'emerald', 'hex' => '#10b981'],
+            ['key' => 'best_practices', 'label' => 'Best Practices', 'color' => 'violet',  'hex' => '#8b5cf6'],
+            ['key' => 'seo',            'label' => 'SEO',            'color' => 'sky',     'hex' => '#0ea5e9'],
+        ] as $metric)
+            @php
+                $score  = $averages[$metric['key']] ?? null;
+                $delta  = $metricDeltas[$metric['key']] ?? null;
+                $series = $metricTrends[$metric['key']] ?? [];
+            @endphp
+            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5">
+                {{-- Top row: label + delta --}}
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">{{ $metric['label'] }}</span>
+                    @if ($delta !== null)
+                        @if ($delta > 0)
+                            <span class="inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+                                <flux:icon.arrow-trending-up class="size-3" />+{{ $delta }}
+                            </span>
+                        @elseif ($delta < 0)
+                            <span class="inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums text-accent-600 dark:text-accent-400">
+                                <flux:icon.arrow-trending-down class="size-3" />{{ $delta }}
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-0.5 text-xs font-medium text-ink-400">→</span>
+                        @endif
+                    @endif
                 </div>
-            @endforeach
-        </div>
+
+                {{-- Score --}}
+                <div class="mt-2 text-3xl font-semibold tabular-nums text-ink-900 dark:text-ink-100 leading-none">
+                    {{ $score ?? '—' }}<span class="text-base font-normal text-ink-400">/100</span>
+                </div>
+
+                {{-- Sparkline --}}
+                <div class="mt-4 -mx-1"
+                    x-data="{
+                        chart: null,
+                        series: {{ Js::from($series) }},
+                        hex: '{{ $metric['hex'] }}',
+                        label: '{{ $metric['label'] }}',
+                        render() {
+                            if (this.series.length < 2) return;
+                            this.chart = new ApexCharts(this.$refs.spark, {
+                                chart: { type: 'area', height: 48, sparkline: { enabled: true }, animations: { enabled: false } },
+                                series: [{ name: this.label, data: this.series }],
+                                stroke: { curve: 'smooth', width: 2 },
+                                fill: {
+                                    type: 'gradient',
+                                    gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0, stops: [0, 100] }
+                                },
+                                colors: [this.hex],
+                                tooltip: { enabled: false },
+                                yaxis: { min: 0, max: 100 },
+                            });
+                            this.chart.render();
+                        },
+                        update(newSeries) {
+                            this.series = newSeries;
+                            if (this.chart) {
+                                this.chart.updateSeries([{ data: this.series }]);
+                            } else {
+                                this.render();
+                            }
+                        },
+                        init() {
+                            this.render();
+                            this.$wire.on('sparklineUpdated', (data) => {
+                                this.update(data.trends['{{ $metric['key'] }}'] ?? []);
+                            });
+                        }
+                    }"
+                >
+                    <div x-ref="spark" class="h-12"></div>
+                </div>
+            </div>
+        @endforeach
     </div>
 
     {{-- Active alerts --}}

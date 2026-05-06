@@ -99,22 +99,6 @@ html:not(.dark) .apexcharts-tooltip-title {
     }
 }
 
-/* ─── Activity rings animation ─────────────────────────────────────────────── */
-@keyframes vitals-ring-fill {
-    from { stroke-dasharray: 0 100; }
-}
-
-.vitals-ring {
-    animation: vitals-ring-fill 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    transform-origin: center;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .vitals-ring {
-        animation: none;
-    }
-}
-
 /* ─── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     *,
