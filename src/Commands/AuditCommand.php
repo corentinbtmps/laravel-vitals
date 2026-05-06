@@ -173,6 +173,16 @@ final class AuditCommand extends Command
             return;
         }
 
+        if ($this->option('format') === 'junit') {
+            $rows = array_map(static fn (Audit $a): array => [
+                'audit' => $a,
+                'violations' => \LaravelVitals\Budgets\PerfBudget::evaluate($a),
+            ], $audits);
+
+            $this->line(\LaravelVitals\Commands\Output\JUnitFormatter::format($rows));
+            return;
+        }
+
         $this->table(
             ['Label', 'Device', 'Status', 'Perf', 'A11y', 'BP', 'SEO', 'LCP', 'CLS', 'INP'],
             array_map(static fn (Audit $a): array => [
