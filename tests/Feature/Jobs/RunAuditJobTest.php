@@ -9,6 +9,8 @@ use LaravelVitals\Drivers\Stubs\StubLighthouseDriver;
 use LaravelVitals\Jobs\RunAuditJob;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
+use LaravelVitals\Notifications\Channels\VitalsNotifier;
+use LaravelVitals\Recommendations\RecommendationBuilder;
 use LaravelVitals\Storage\ReportRepository;
 
 beforeEach(function (): void {
@@ -30,6 +32,8 @@ it('runs the audit, persists raw JSON, and updates the audit row', function (): 
     (new RunAuditJob($audit->id))->handle(
         app(LighthouseDriver::class),
         app(ReportRepository::class),
+        app(RecommendationBuilder::class),
+        app(VitalsNotifier::class),
     );
 
     $audit->refresh();
@@ -62,7 +66,7 @@ it('marks the audit failed when the driver throws', function (): void {
         public function isAvailable(): bool { return true; }
     };
 
-    expect(fn () => (new RunAuditJob($audit->id))->handle($boomDriver, app(ReportRepository::class)))
+    expect(fn () => (new RunAuditJob($audit->id))->handle($boomDriver, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class)))
         ->toThrow(\LaravelVitals\Support\AuditException::class);
 
     $audit->refresh();
@@ -98,7 +102,7 @@ it('injects the X-Vitals-Audit-Id header into AuditOptions passed to the driver'
         public function isAvailable(): bool { return true; }
     };
 
-    (new RunAuditJob($audit->id))->handle($spy, app(ReportRepository::class));
+    (new RunAuditJob($audit->id))->handle($spy, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class));
 
     expect($spy->captured)->not->toBeNull()
         ->and($spy->captured->extraHeaders)->toHaveKey('X-Vitals-Audit-Id')

@@ -92,7 +92,9 @@ final class Vitals
 
             $job->handle(
                 $driver,
-                app(ReportRepository::class),
+                app(\LaravelVitals\Storage\ReportRepository::class),
+                app(\LaravelVitals\Recommendations\RecommendationBuilder::class),
+                app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class),
             );
         } else {
             dispatch($job);

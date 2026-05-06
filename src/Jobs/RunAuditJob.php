@@ -38,7 +38,12 @@ final class RunAuditJob implements ShouldQueue
     ) {
     }
 
-    public function handle(LighthouseDriver $driver, ReportRepository $reports): void
+    public function handle(
+        LighthouseDriver $driver,
+        ReportRepository $reports,
+        \LaravelVitals\Recommendations\RecommendationBuilder $builder,
+        \LaravelVitals\Notifications\Channels\VitalsNotifier $notifier,
+    ): void
     {
         $audit = Audit::with('url')->findOrFail($this->auditId);
 
@@ -89,11 +94,9 @@ final class RunAuditJob implements ShouldQueue
             ]);
 
             $telemetry = \LaravelVitals\Models\BackendTelemetry::where('audit_id', $audit->id)->first();
-            app(\LaravelVitals\Recommendations\RecommendationBuilder::class)
-                ->buildFor($audit, $report, $telemetry);
+            $builder->buildFor($audit, $report, $telemetry);
 
-            app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class)
-                ->send('audit_completed', new \LaravelVitals\Notifications\AuditCompleted($audit->refresh()));
+            $notifier->send('audit_completed', new \LaravelVitals\Notifications\AuditCompleted($audit->refresh()));
         } catch (AuditException $e) {
             $audit->update([
                 'status' => 'failed',
