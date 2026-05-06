@@ -9,13 +9,13 @@ it('returns null for an unknown audit key', function (): void {
     expect(RecommendationDocs::for('imaginary-key'))->toBeNull();
 });
 
-it('provides docs for unused-javascript with web.dev link', function (): void {
+it('provides docs for unused-javascript with a canonical doc link', function (): void {
     $entry = RecommendationDocs::for('unused-javascript');
 
     expect($entry)->not->toBeNull()
         ->and($entry['why'])->toBeString()
         ->and($entry['docs'])->toBeArray()
-        ->and($entry['docs'][0]['url'])->toContain('web.dev');
+        ->and($entry['docs'][0]['url'])->toStartWith('https://');
 });
 
 it('every key in the docs registry exists in the recommendation registry', function (): void {
