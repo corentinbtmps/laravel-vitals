@@ -32,7 +32,7 @@
                 <tbody>
                 @foreach ($recent as $a)
                     <tr class="border-b dark:border-zinc-800/50">
-                        <td class="py-2"><a href="#" class="hover:underline">{{ $a->url?->label }}</a></td>
+                        <td class="py-2"><a href="{{ route('vitals.audit', $a) }}" class="hover:underline">{{ $a->url?->label }}</a></td>
                         <td>{{ $a->device }}</td>
                         <td>{{ $a->score_performance }}</td>
                         <td>{{ $a->score_accessibility }}</td>
