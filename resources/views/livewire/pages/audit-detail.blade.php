@@ -66,7 +66,7 @@
                 <div class="absolute top-0 left-0 right-0 h-0.5 bg-{{ $color }}-500 rounded-t-2xl"></div>
                 <div class="flex items-center gap-2 text-xs text-ink-500 mt-1">
                     <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
-                    <flux:tooltip content="Lighthouse {{ $meta['label'] }} score{{ $value !== null ? ': ' . $value . '/100' : '' }}">
+                    <flux:tooltip :content="__('vitals.tooltip.score_label', ['label' => $meta['label']])">
                         <span class="cursor-help underline decoration-dotted decoration-ink-300 dark:decoration-ink-700 underline-offset-2">{{ $meta['label'] }}</span>
                     </flux:tooltip>
                 </div>
@@ -125,16 +125,16 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach ([
                 ['col' => 'lcp_ms',  'label' => 'LCP',  'unit' => 'ms', 'desc' => 'Largest Contentful Paint',
-                 'tooltip' => 'Time until the largest visible content element is rendered. Good = under 2.5s.',
+                 'tooltip_key' => 'vitals.tooltip.cwv_lcp',
                  'doc' => 'https://web.dev/articles/lcp'],
                 ['col' => 'cls',     'label' => 'CLS',  'unit' => '',   'desc' => 'Cumulative Layout Shift',
-                 'tooltip' => 'How much visible content unexpectedly shifts during page load. Good = under 0.1.',
+                 'tooltip_key' => 'vitals.tooltip.cwv_cls',
                  'doc' => 'https://web.dev/articles/cls'],
                 ['col' => 'inp_ms',  'label' => 'INP',  'unit' => 'ms', 'desc' => 'Interaction to Next Paint',
-                 'tooltip' => 'Latency between user input and the next paint. Good = under 200ms.',
+                 'tooltip_key' => 'vitals.tooltip.cwv_inp',
                  'doc' => 'https://web.dev/articles/inp'],
                 ['col' => 'ttfb_ms', 'label' => 'TTFB', 'unit' => 'ms', 'desc' => 'Time to First Byte',
-                 'tooltip' => 'How long the server takes to respond with the first byte. Good = under 800ms.',
+                 'tooltip_key' => 'vitals.tooltip.cwv_ttfb',
                  'doc' => 'https://web.dev/articles/ttfb'],
             ] as $cwv)
                 @php
@@ -146,7 +146,7 @@
                 @endphp
                 <div class="rounded-lg border border-{{ $color }}-200 dark:border-{{ $color }}-900/40 bg-{{ $color }}-50/40 dark:bg-{{ $color }}-900/10 p-4">
                     <div class="flex items-center justify-between mb-2">
-                        <flux:tooltip content="{{ $cwv['desc'] }} — {{ $cwv['tooltip'] ?? '' }}">
+                        <flux:tooltip :content="__($cwv['tooltip_key'])">
                             <span class="text-xs font-semibold text-ink-500 cursor-help underline decoration-dotted decoration-ink-300 dark:decoration-ink-700 underline-offset-2">{{ $cwv['label'] }}</span>
                         </flux:tooltip>
                         <flux:icon name="{{ $icon }}" class="size-4 text-{{ $color }}-500" />

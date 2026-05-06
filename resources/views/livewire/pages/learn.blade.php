@@ -11,7 +11,6 @@
     @if ($filter === 'all')
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             @foreach ($this->categoryTiles() as $key => $tile)
-                <flux:tooltip content="{{ $tile['count'] }} known {{ Str::plural('issue', $tile['count']) }}, {{ $tile['active'] }} active in recent audits">
                 <button type="button"
                         wire:click="setFilter('{{ $key }}')"
                         class="group rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5 text-left transition-colors duration-150 hover:border-{{ $tile['color'] }}-500/40 hover:bg-{{ $tile['color'] }}-50/30 dark:hover:bg-{{ $tile['color'] }}-900/10">
@@ -28,7 +27,6 @@
                     <div class="text-base font-semibold text-ink-900 dark:text-ink-100 group-hover:text-{{ $tile['color'] }}-700 dark:group-hover:text-{{ $tile['color'] }}-300 transition-colors">{{ $tile['label'] }}</div>
                     <div class="text-xs text-ink-500 mt-0.5">{{ $tile['count'] }} {{ Str::plural('issue', $tile['count']) }}</div>
                 </button>
-                </flux:tooltip>
             @endforeach
         </div>
     @else
@@ -84,12 +82,8 @@
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="size-2 rounded-full bg-{{ $sevColor }}-500"></span>
                             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
-                            <flux:tooltip content="{{ $entry['descriptor']->severity === 'critical' ? 'High-impact issue — fix immediately' : ($entry['descriptor']->severity === 'warning' ? 'Medium-impact issue — fix soon' : 'Low-impact issue — fix when convenient') }}">
-                                <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $entry['descriptor']->severity }}</flux:badge>
-                            </flux:tooltip>
-                            <flux:tooltip content="Lighthouse audit identifier">
-                                <code class="ml-auto text-[11px] font-mono text-ink-400 cursor-help">{{ $entry['key'] }}</code>
-                            </flux:tooltip>
+                            <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $entry['descriptor']->severity }}</flux:badge>
+                            <code class="ml-auto text-[11px] font-mono text-ink-400">{{ $entry['key'] }}</code>
                         </div>
 
                         {{-- Description --}}
@@ -114,16 +108,14 @@
                             @if (! empty($entry['docs']['docs']))
                                 <div class="mt-4 flex flex-wrap gap-2">
                                     @foreach ($entry['docs']['docs'] as $doc)
-                                        <flux:tooltip content="{{ $doc['url'] }}">
-                                            <flux:button
-                                                href="{{ $doc['url'] }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                size="sm"
-                                                variant="ghost"
-                                                icon="arrow-top-right-on-square"
-                                            >{{ $doc['label'] }}</flux:button>
-                                        </flux:tooltip>
+                                        <flux:button
+                                            href="{{ $doc['url'] }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            size="sm"
+                                            variant="ghost"
+                                            icon="arrow-top-right-on-square"
+                                        >{{ $doc['label'] }}</flux:button>
                                     @endforeach
                                 </div>
                             @endif

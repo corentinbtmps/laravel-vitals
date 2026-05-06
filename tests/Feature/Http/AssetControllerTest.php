@@ -20,6 +20,13 @@ it('returns 404 for unknown asset names', function (): void {
     $this->get('/vitals/_assets/imaginary.css')->assertNotFound();
 });
 
+it('serves geist woff2 font files from the package dist directory', function (): void {
+    $response = $this->get('/vitals/_assets/geist-latin-wght-normal.woff2');
+
+    $response->assertOk();
+    expect($response->headers->get('Content-Type'))->toContain('font/woff2');
+});
+
 it('does not gate asset routes behind the Authorize middleware', function (): void {
     \LaravelVitals\Facades\Vitals::authorize(fn () => false);
 

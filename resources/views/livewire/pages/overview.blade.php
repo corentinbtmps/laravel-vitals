@@ -6,16 +6,14 @@
             <p class="text-sm text-ink-500 mt-1">Performance health across all monitored URLs</p>
         </div>
         <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1">
-            @foreach (['24h' => ['label' => '24h', 'desc' => 'Show audits from the last 24 hours'], '7d' => ['label' => '7d', 'desc' => 'Show audits from the last 7 days'], '30d' => ['label' => '30d', 'desc' => 'Show audits from the last 30 days'], '90d' => ['label' => '90d', 'desc' => 'Show audits from the last 90 days'], '1y' => ['label' => '1y', 'desc' => 'Show audits from the last year'], 'all' => ['label' => 'All', 'desc' => 'Show all audits']] as $val => $meta)
-                <flux:tooltip content="{{ $meta['desc'] }}">
-                    <button
-                        wire:click="setPeriod('{{ $val }}')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                            {{ $period === $val
-                                ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                                : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                    >{{ $meta['label'] }}</button>
-                </flux:tooltip>
+            @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
+                <button
+                    wire:click="setPeriod('{{ $val }}')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                        {{ $period === $val
+                            ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
+                            : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                >{{ $label }}</button>
             @endforeach
         </div>
     </div>
@@ -24,10 +22,7 @@
     <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-8">
         <div class="flex items-center gap-8">
             <x-vitals::activity-rings :scores="$averages">
-                <flux:tooltip content="Overall health score across all monitored URLs">
-                    <div class="text-5xl font-semibold tabular-nums leading-none cursor-default">{{ $overallGrade ?? '—' }}</div>
-                    <div class="text-sm text-ink-500 mt-1 tabular-nums">{{ $overall ?? '—' }}<span class="text-xs">/100</span></div>
-                </flux:tooltip>
+                <div class="text-3xl font-semibold tabular-nums leading-none text-ink-900 dark:text-ink-100">{{ $overallGrade ?? '—' }}</div>
             </x-vitals::activity-rings>
 
             <div class="flex-1">
@@ -77,9 +72,7 @@
                         <flux:callout.text>
                             {{ $alert['when']->diffForHumans() }} —
                             @if ($alert['link'])
-                                <flux:tooltip content="Open audit detail">
-                                    <a href="{{ $alert['link'] }}" class="underline">View audit</a>
-                                </flux:tooltip>
+                                <a href="{{ $alert['link'] }}" class="underline">View audit</a>
                             @endif
                         </flux:callout.text>
                     </flux:callout>
@@ -142,7 +135,7 @@
                                 <a href="{{ route('vitals.audit', $audit) }}" class="text-sm font-medium hover:underline truncate block">{{ $audit->url?->label }}</a>
                                 <div class="text-xs text-ink-500">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>
                             </div>
-                            <flux:button href="{{ route('vitals.audit', $audit) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View audit" />
+                            <flux:button href="{{ route('vitals.audit', $audit) }}" variant="ghost" size="sm" icon="arrow-right" />
                         </li>
                     @endforeach
                 </ul>

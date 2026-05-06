@@ -17,7 +17,7 @@
             {{-- Track --}}
             <circle cx="64" cy="64" r="{{ $ring['r'] }}"
                     fill="none" stroke="currentColor"
-                    class="text-ink-100 dark:text-ink-800"
+                    class="text-ink-100 dark:text-ink-700"
                     stroke-width="10" pathLength="100"/>
             {{-- Filled arc — only when we have a non-zero score --}}
             @if ($hasScore && $score > 0)

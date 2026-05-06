@@ -44,17 +44,13 @@
                             <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
                         </td>
                         <td class="py-3 pr-4">
-                            <flux:tooltip content="{{ $r->severity === 'critical' ? 'High-impact issue — fix immediately' : ($r->severity === 'warning' ? 'Medium-impact issue — fix soon' : 'Low-impact issue — fix when convenient') }}">
-                                <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
-                            </flux:tooltip>
+                            <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
                         </td>
                         <td class="py-3 pr-4 text-right font-semibold tabular-nums">
-                            <flux:tooltip content="Number of audits where this issue was detected">
-                                <span class="cursor-default">{{ $r->occurrences }}</span>
-                            </flux:tooltip>
+                            {{ $r->occurrences }}
                         </td>
                         <td class="py-3 pl-2 text-right">
-                            <flux:button href="{{ route('vitals.learn') . '#' . $r->audit_key }}" variant="ghost" size="sm" icon="book-open" tooltip="Learn more" />
+                            <flux:button href="{{ route('vitals.learn') . '#' . $r->audit_key }}" variant="ghost" size="sm" icon="book-open" />
                         </td>
                     </tr>
                 @endforeach

@@ -19,16 +19,14 @@
             </div>
             {{-- Period control --}}
             <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 shrink-0">
-                @foreach (['24h' => ['label' => '24h', 'desc' => 'Show audits from the last 24 hours'], '7d' => ['label' => '7d', 'desc' => 'Show audits from the last 7 days'], '30d' => ['label' => '30d', 'desc' => 'Show audits from the last 30 days'], '90d' => ['label' => '90d', 'desc' => 'Show audits from the last 90 days'], '1y' => ['label' => '1y', 'desc' => 'Show audits from the last year'], 'all' => ['label' => 'All', 'desc' => 'Show all audits']] as $val => $meta)
-                    <flux:tooltip content="{{ $meta['desc'] }}">
-                        <button
-                            wire:click="setPeriod('{{ $val }}')"
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                                {{ $period === $val
-                                    ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                                    : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                        >{{ $meta['label'] }}</button>
-                    </flux:tooltip>
+                @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
+                    <button
+                        wire:click="setPeriod('{{ $val }}')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                            {{ $period === $val
+                                ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
+                                : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                    >{{ $label }}</button>
                 @endforeach
             </div>
         </div>
@@ -52,13 +50,13 @@
                 {{-- Metric toggle --}}
                 <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1">
                     @foreach ([
-                        'performance' => ['label' => 'Score', 'desc' => 'Composite Lighthouse Performance score (0-100)'],
-                        'lcp'         => ['label' => 'LCP',   'desc' => 'Largest Contentful Paint — time until the largest visible content renders. Good < 2.5s'],
-                        'inp'         => ['label' => 'INP',   'desc' => 'Interaction to Next Paint — input latency. Good < 200ms'],
-                        'cls'         => ['label' => 'CLS',   'desc' => 'Cumulative Layout Shift — visual stability. Good < 0.1'],
-                        'ttfb'        => ['label' => 'TTFB',  'desc' => 'Time to First Byte — server response time. Good < 800ms'],
+                        'performance' => ['label' => 'Score', 'desc_key' => 'vitals.tooltip.metric_score'],
+                        'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals.tooltip.metric_lcp'],
+                        'inp'         => ['label' => 'INP',   'desc_key' => 'vitals.tooltip.metric_inp'],
+                        'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals.tooltip.metric_cls'],
+                        'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals.tooltip.metric_ttfb'],
                     ] as $val => $meta)
-                        <flux:tooltip content="{{ $meta['desc'] }}">
+                        <flux:tooltip :content="__($meta['desc_key'])">
                             <button
                                 wire:click="setMetric('{{ $val }}')"
                                 class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
@@ -267,7 +265,7 @@
                             {{ $a->cls !== null ? number_format((float) $a->cls, 2) : '—' }}
                         </td>
                         <td class="py-3 pl-2 text-right">
-                            <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View audit" />
+                            <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" />
                         </td>
                     </tr>
                 @endforeach

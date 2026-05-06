@@ -29,7 +29,13 @@ final class AssetController extends Controller
 
     public function __invoke(string $file): Response
     {
-        if (! isset(self::ALLOWED[$file])) {
+        // Allow Geist woff2 font files served alongside dashboard.css
+        $mimeType = self::ALLOWED[$file] ?? null;
+        if ($mimeType === null && preg_match('/^geist-[a-z\-]+-wght-normal\.woff2$/', $file)) {
+            $mimeType = 'font/woff2';
+        }
+
+        if ($mimeType === null) {
             abort(404);
         }
 
@@ -40,7 +46,7 @@ final class AssetController extends Controller
         }
 
         $response = new BinaryFileResponse($path);
-        $response->headers->set('Content-Type', self::ALLOWED[$file]);
+        $response->headers->set('Content-Type', $mimeType);
         // Cache aggressively — file is keyed by package version on the consumer side via a query string in the layout.
         $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');
 
