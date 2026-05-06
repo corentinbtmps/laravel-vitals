@@ -53,6 +53,13 @@ final class VitalsServiceProvider extends PackageServiceProvider
     {
         $this->app->singleton(Vitals::class);
         $this->app->alias(Vitals::class, 'vitals');
+
+        $this->app->singleton(\LaravelVitals\Support\ProcessFactory::class);
+        $this->app->singleton(\LaravelVitals\Drivers\LighthouseDriverManager::class);
+        $this->app->bind(
+            \LaravelVitals\Contracts\LighthouseDriver::class,
+            fn ($app) => $app->make(\LaravelVitals\Drivers\LighthouseDriverManager::class)->resolve(),
+        );
     }
 
     public function packageBooted(): void
