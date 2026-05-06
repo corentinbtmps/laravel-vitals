@@ -82,7 +82,15 @@ final class AuditCommand extends Command
         $this->renderAudits([$fresh]);
 
         if ($this->option('fail-on-budget')) {
-            $worst = \LaravelVitals\Budgets\PerfBudget::evaluate($fresh)->worstSeverity();
+            $auditFresh = $audit->fresh() ?? $audit;
+            $violations = \LaravelVitals\Budgets\PerfBudget::evaluate($auditFresh);
+            $worst = $violations->worstSeverity();
+
+            if (! $violations->isEmpty()) {
+                app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class)
+                    ->send('budget_violation', new \LaravelVitals\Notifications\BudgetViolated($auditFresh, $violations));
+            }
+
             if ($worst === 'critical') {
                 return 2;
             }
@@ -112,13 +120,20 @@ final class AuditCommand extends Command
             if ($this->option('fail-on-budget')) {
                 $worst = null;
                 foreach ($audits as $a) {
-                    $fresh = $a->fresh() ?? $a;
-                    $sev = \LaravelVitals\Budgets\PerfBudget::evaluate($fresh)->worstSeverity();
+                    $aFresh = $a->fresh() ?? $a;
+                    $violations = \LaravelVitals\Budgets\PerfBudget::evaluate($aFresh);
+
+                    if (! $violations->isEmpty()) {
+                        app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class)
+                            ->send('budget_violation', new \LaravelVitals\Notifications\BudgetViolated($aFresh, $violations));
+                    }
+
+                    $sev = $violations->worstSeverity();
                     if ($sev === 'critical') {
                         $worst = 'critical';
                         break;
                     }
-                    if ($sev === 'warning') {
+                    if ($sev === 'warning' && $worst !== 'critical') {
                         $worst = 'warning';
                     }
                 }
