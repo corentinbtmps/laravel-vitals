@@ -11,6 +11,7 @@ use LaravelVitals\Commands\BoostInstallCommand;
 use LaravelVitals\Commands\CheckRegressionsCommand;
 use LaravelVitals\Commands\DigestSendCommand;
 use LaravelVitals\Commands\DiscoverCommand;
+use LaravelVitals\Commands\DoctorCommand;
 use LaravelVitals\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -33,7 +34,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasViewComponents('vitals', \LaravelVitals\View\Components\CodeReference::class)
             ->hasRoute('web')
-            ->hasCommands([AuditCommand::class, BoostDiffCommand::class, BoostInstallCommand::class, CheckRegressionsCommand::class, DigestSendCommand::class, DiscoverCommand::class, InstallCommand::class]);
+            ->hasCommands([AuditCommand::class, BoostDiffCommand::class, BoostInstallCommand::class, CheckRegressionsCommand::class, DigestSendCommand::class, DiscoverCommand::class, DoctorCommand::class, InstallCommand::class]);
     }
 
     /**

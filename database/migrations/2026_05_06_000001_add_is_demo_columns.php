@@ -24,6 +24,10 @@ return new class extends Migration
         $connection = config('vitals.database');
 
         foreach (['vitals_urls', 'vitals_audits', 'vitals_audit_recommendations', 'vitals_backend_telemetry'] as $table) {
+            if (! Schema::connection($connection)->hasTable($table)) {
+                continue;
+            }
+
             Schema::connection($connection)->table($table, function (Blueprint $blueprint): void {
                 $blueprint->dropIndex(['is_demo']);
                 $blueprint->dropColumn('is_demo');
