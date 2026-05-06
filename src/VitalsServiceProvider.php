@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals;
 
 use Illuminate\Support\Facades\Gate;
+use LaravelVitals\Commands\AuditCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -24,7 +25,8 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ->discoversMigrations()
             ->runsMigrations()
             ->hasViews()
-            ->hasRoute('web');
+            ->hasRoute('web')
+            ->hasCommand(AuditCommand::class);
     }
 
     /**
