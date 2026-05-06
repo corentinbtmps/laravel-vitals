@@ -33,7 +33,19 @@ it('Vitals::auditAll dispatches a Bus batch of RunAuditJobs', function (): void 
 
     VitalsFacade::auditAll();
 
-    Bus::assertBatched(fn(\Illuminate\Bus\PendingBatch $batch): bool => $batch->jobs->count() === 2);
+    Bus::assertBatched(fn(\Illuminate\Bus\PendingBatch $batch): bool => $batch->jobs->count() === 4);
+});
+
+it('Vitals::audit dispatches two audits when URL device is "both" and no device specified', function (): void {
+    $this->app->bind(LighthouseDriver::class, fn () => new StubLighthouseDriver());
+
+    Url::create(['label' => 'home', 'path' => '/', 'device' => 'both']);
+
+    VitalsFacade::audit('home');
+
+    expect(Audit::count())->toBe(2);
+    expect(Audit::pluck('device')->sort()->values()->all())
+        ->toBe(['desktop', 'mobile']);
 });
 
 it('Vitals::driver overrides the resolved driver for the next call', function (): void {

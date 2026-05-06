@@ -65,7 +65,13 @@ final class Vitals
             ? $urlOrLabel
             : Url::where('label', $urlOrLabel)->firstOrFail();
 
-        $device ??= $url->device === 'both' ? 'mobile' : $url->device;
+        if ($device === null) {
+            if ($url->device === 'both') {
+                $this->audit($url, 'mobile', $sync);
+                return $this->audit($url, 'desktop', $sync);
+            }
+            $device = $url->device;
+        }
 
         if (! in_array($device, ['mobile', 'desktop'], true)) {
             throw new InvalidArgumentException("Device must be 'mobile' or 'desktop'.");
@@ -113,17 +119,19 @@ final class Vitals
         $jobs = [];
 
         foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $effectiveDevice = $device ?? ($url->device === 'both' ? 'mobile' : $url->device);
+            $devices = $device !== null ? [$device] : ($url->device === 'both' ? ['mobile', 'desktop'] : [$url->device]);
 
-            $audit = Audit::create([
-                'id'     => Str::uuid()->toString(),
-                'url_id' => $url->id,
-                'driver' => $this->driverOverride ?? (string) config('vitals.driver', 'auto'),
-                'device' => $effectiveDevice,
-                'status' => 'pending',
-            ]);
+            foreach ($devices as $effectiveDevice) {
+                $audit = Audit::create([
+                    'id'     => Str::uuid()->toString(),
+                    'url_id' => $url->id,
+                    'driver' => $this->driverOverride ?? (string) config('vitals.driver', 'auto'),
+                    'device' => $effectiveDevice,
+                    'status' => 'pending',
+                ]);
 
-            $jobs[] = new RunAuditJob($audit->id);
+                $jobs[] = new RunAuditJob($audit->id);
+            }
         }
 
         $this->driverOverride = null;
