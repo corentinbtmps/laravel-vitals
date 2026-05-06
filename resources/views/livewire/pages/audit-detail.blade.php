@@ -291,17 +291,82 @@
                                         <div class="flex items-start gap-3">
                                             <flux:icon name="{{ $sevIcon }}" class="size-5 text-{{ $sevColor }}-500 shrink-0 mt-0.5" />
                                             <div class="flex-1 min-w-0">
-                                                <div class="flex items-center gap-2 mb-1">
+                                                <div class="flex items-center gap-2 mb-1 flex-wrap">
                                                     <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_params ?? []) }}</h4>
                                                     <flux:badge color="{{ $sevColor }}" size="sm">{{ $reco->severity }}</flux:badge>
                                                 </div>
                                                 <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ __($reco->description_key, $reco->translation_params ?? []) }}</p>
 
+                                                @php $docs = \LaravelVitals\Recommendations\RecommendationDocs::for($reco->audit_key); @endphp
+
+                                                @if ($docs)
+                                                    {{-- Why it matters --}}
+                                                    <div class="mt-3 flex items-start gap-2 text-sm">
+                                                        <flux:icon.information-circle class="size-4 text-sky-500 shrink-0 mt-0.5" />
+                                                        <p class="text-zinc-700 dark:text-zinc-300">{{ $docs['why'] }}</p>
+                                                    </div>
+
+                                                    {{-- Estimated impact --}}
+                                                    @if (! empty($docs['impact']))
+                                                        <div class="mt-2 flex items-center gap-2 text-xs">
+                                                            <flux:icon.bolt class="size-3.5 text-amber-500" />
+                                                            <span class="text-amber-700 dark:text-amber-400 font-medium">{{ $docs['impact'] }}</span>
+                                                        </div>
+                                                    @endif
+
+                                                    {{-- Doc links as buttons --}}
+                                                    @if (! empty($docs['docs']))
+                                                        <div class="mt-3 flex flex-wrap gap-2">
+                                                            @foreach ($docs['docs'] as $doc)
+                                                                <flux:button
+                                                                    href="{{ $doc['url'] }}"
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    icon="arrow-top-right-on-square"
+                                                                >{{ $doc['label'] }}</flux:button>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+
+                                                    {{-- Good vs bad code examples --}}
+                                                    @if (! empty($docs['good']) || ! empty($docs['bad']))
+                                                        <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                                                            @if (! empty($docs['good']))
+                                                                <div class="rounded border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-900/10 overflow-hidden">
+                                                                    <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border-b border-emerald-200 dark:border-emerald-900/40">
+                                                                        <flux:icon.check-circle class="size-3.5" />
+                                                                        Recommended
+                                                                    </div>
+                                                                    <pre class="p-3 text-[11px] leading-snug overflow-x-auto"><code class="text-emerald-800 dark:text-emerald-200">{{ $docs['good'] }}</code></pre>
+                                                                </div>
+                                                            @endif
+                                                            @if (! empty($docs['bad']))
+                                                                <div class="rounded border border-rose-200 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-900/10 overflow-hidden">
+                                                                    <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 dark:text-rose-300 border-b border-rose-200 dark:border-rose-900/40">
+                                                                        <flux:icon.x-circle class="size-3.5" />
+                                                                        Avoid
+                                                                    </div>
+                                                                    <pre class="p-3 text-[11px] leading-snug overflow-x-auto"><code class="text-rose-800 dark:text-rose-200">{{ $docs['bad'] }}</code></pre>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                @endif
+
+                                                {{-- Code references in user's app --}}
                                                 @if (! empty($reco->code_references))
-                                                    <div class="mt-3 space-y-2">
-                                                        @foreach ($reco->code_references as $ref)
-                                                            <x-vitals::code-reference :ref="$ref" />
-                                                        @endforeach
+                                                    <div class="mt-4">
+                                                        <div class="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2">
+                                                            <flux:icon name="code-bracket" class="size-3.5" />
+                                                            Found in your application
+                                                        </div>
+                                                        <div class="space-y-2">
+                                                            @foreach ($reco->code_references as $ref)
+                                                                <x-vitals::code-reference :ref="$ref" />
+                                                            @endforeach
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>
