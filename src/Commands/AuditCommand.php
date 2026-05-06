@@ -28,8 +28,9 @@ final class AuditCommand extends Command
         {--all : Audit every enabled URL via Bus::batch}
         {--device=mobile : mobile|desktop}
         {--driver= : Override the configured LighthouseDriver for this run}
-        {--format=table : table|json}
-        {--sync : Force synchronous execution (single audit always sync; --all dispatches via queue otherwise)}';
+        {--format=table : table|json|junit}
+        {--sync : Force synchronous execution (single audit always sync; --all dispatches via queue otherwise)}
+        {--fail-on-budget : Exit non-zero when any audit violates the configured budgets (1=warning, 2=critical)}';
 
     /** @var string */
     protected $description = 'Run one or more Lighthouse audits.';
@@ -80,6 +81,16 @@ final class AuditCommand extends Command
 
         $this->renderAudits([$fresh]);
 
+        if ($this->option('fail-on-budget')) {
+            $worst = \LaravelVitals\Budgets\PerfBudget::evaluate($audit->fresh())->worstSeverity();
+            if ($worst === 'critical') {
+                return 2;
+            }
+            if ($worst === 'warning') {
+                return 1;
+            }
+        }
+
         return self::SUCCESS;
     }
 
@@ -97,6 +108,27 @@ final class AuditCommand extends Command
             }
 
             $this->renderAudits(array_map(static fn (Audit $a): Audit => $a->fresh() ?? $a, $audits));
+
+            if ($this->option('fail-on-budget')) {
+                $worst = null;
+                foreach ($audits as $a) {
+                    $sev = \LaravelVitals\Budgets\PerfBudget::evaluate($a->fresh())->worstSeverity();
+                    if ($sev === 'critical') {
+                        $worst = 'critical';
+                        break;
+                    }
+                    if ($sev === 'warning' && $worst !== 'critical') {
+                        $worst = 'warning';
+                    }
+                }
+                if ($worst === 'critical') {
+                    return 2;
+                }
+                if ($worst === 'warning') {
+                    return 1;
+                }
+            }
+
             return self::SUCCESS;
         }
 
