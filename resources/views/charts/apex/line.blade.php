@@ -1,11 +1,11 @@
 <div id="{{ $id }}" wire:ignore></div>
 <script>
-(function () {
+document.addEventListener('DOMContentLoaded', function () {
     new ApexCharts(document.querySelector('#{{ $id }}'), {
         chart:  { type: 'line', height: 320 },
         series: @json($data['series'] ?? []),
         xaxis:  { categories: @json($data['categories'] ?? []) },
         title:  { text: @json($options['title'] ?? '') },
     }).render();
-})();
+});
 </script>

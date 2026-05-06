@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Laravel Vitals' }}</title>
     <link rel="stylesheet" href="{{ route('vitals.assets', 'dashboard.css') }}">
+    <script defer src="{{ route('vitals.assets', 'dashboard.js') }}"></script>
     @livewireStyles
-    @fluxAppearance
 </head>
 <body class="h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
 <div class="min-h-full">
@@ -17,13 +17,13 @@
             </a>
             <nav class="flex gap-4 text-sm">
                 @if(Route::has('vitals.urls'))
-                <a href="{{ route('vitals.urls') }}" class="hover:underline">URLs</a>
+                    <a href="{{ route('vitals.urls') }}" class="hover:underline">URLs</a>
                 @endif
                 @if(Route::has('vitals.recommendations'))
-                <a href="{{ route('vitals.recommendations') }}" class="hover:underline">Recommendations</a>
+                    <a href="{{ route('vitals.recommendations') }}" class="hover:underline">Recommendations</a>
                 @endif
                 @if(Route::has('vitals.budgets'))
-                <a href="{{ route('vitals.budgets') }}" class="hover:underline">Budgets</a>
+                    <a href="{{ route('vitals.budgets') }}" class="hover:underline">Budgets</a>
                 @endif
             </nav>
         </div>
@@ -35,7 +35,5 @@
 </div>
 
 @livewireScripts
-@fluxScripts
-<script src="{{ route('vitals.assets', 'dashboard.js') }}"></script>
 </body>
 </html>
