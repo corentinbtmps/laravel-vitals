@@ -22,25 +22,82 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="text-left border-b border-zinc-200 dark:border-zinc-800">
-                        <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Label</th>
-                        <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Path</th>
-                        <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide">Device</th>
-                        <th class="py-3 pr-4 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Audits</th>
+                        <th class="py-3 pr-3 font-semibold text-zinc-500 text-xs uppercase tracking-wide">URL</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">Perf</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">A11y</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">BP</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">SEO</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-center">7d trend</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Last</th>
+                        <th class="py-3 px-2 font-semibold text-zinc-500 text-xs uppercase tracking-wide text-right">Audits</th>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach ($urls as $u)
+                    @php $last = $lastAudits[$u->id] ?? null; @endphp
                     <tr class="border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors">
-                        <td class="py-3 pr-4">
-                            <a href="{{ route('vitals.url', $u->id) }}" class="font-medium text-rose-600 hover:underline">{{ $u->label }}</a>
+                        {{-- URL column --}}
+                        <td class="py-3 pr-3">
+                            <a href="{{ route('vitals.url', $u->id) }}" class="block hover:underline">
+                                <div class="font-medium text-rose-600 dark:text-rose-400">{{ $u->label }}</div>
+                                <code class="text-[11px] text-zinc-500">{{ $u->path }}</code>
+                            </a>
                         </td>
-                        <td class="py-3 pr-4">
-                            <code class="text-xs text-zinc-600 dark:text-zinc-400">{{ $u->path }}</code>
+
+                        {{-- Score cells --}}
+                        @foreach (['score_performance', 'score_accessibility', 'score_best_practices', 'score_seo'] as $col)
+                            @php
+                                $score = $last?->{$col};
+                                $color = \LaravelVitals\Support\Health::colorForScore($score);
+                            @endphp
+                            <td class="py-3 px-2 text-center">
+                                @if ($score !== null)
+                                    <span class="inline-flex items-center justify-center size-9 rounded-md bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-bold text-sm tabular-nums">
+                                        {{ $score }}
+                                    </span>
+                                @else
+                                    <span class="text-zinc-300 dark:text-zinc-700 text-sm">—</span>
+                                @endif
+                            </td>
+                        @endforeach
+
+                        {{-- Sparkline --}}
+                        <td class="py-3 px-2">
+                            @php
+                                $points = $sparklines[$u->id] ?? [];
+                                $sparkId = 'spark-' . $u->id;
+                            @endphp
+                            @if (count($points) >= 2)
+                                <div id="{{ $sparkId }}" class="w-24 mx-auto"></div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        new ApexCharts(document.querySelector('#{{ $sparkId }}'), {
+                                            chart: { type: 'line', height: 28, sparkline: { enabled: true }, animations: { enabled: false } },
+                                            series: [{ data: @json($points) }],
+                                            stroke: { curve: 'smooth', width: 2 },
+                                            colors: ['#f43f5e'],
+                                            tooltip: { enabled: false },
+                                        }).render();
+                                    });
+                                </script>
+                            @else
+                                <span class="text-zinc-300 dark:text-zinc-700 text-xs">—</span>
+                            @endif
                         </td>
-                        <td class="py-3 pr-4">
-                            <flux:badge color="zinc" size="sm">{{ $u->device }}</flux:badge>
+
+                        {{-- Last audit time --}}
+                        <td class="py-3 px-2 text-right text-xs text-zinc-500">
+                            @if ($last !== null && $last->completed_at !== null)
+                                <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-rose-500 hover:underline" title="{{ $last->completed_at->toDayDateTimeString() }}">
+                                    {{ $last->completed_at->diffForHumans(short: true) }}
+                                </a>
+                            @else
+                                —
+                            @endif
                         </td>
-                        <td class="py-3 pr-4 text-right text-zinc-700 dark:text-zinc-300">{{ $u->audits_count }}</td>
+
+                        {{-- Audit count --}}
+                        <td class="py-3 px-2 text-right text-zinc-700 dark:text-zinc-300 tabular-nums">{{ $u->audits_count }}</td>
                     </tr>
                 @endforeach
                 </tbody>
