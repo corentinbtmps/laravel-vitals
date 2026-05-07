@@ -113,26 +113,26 @@
                     <p class="text-sm text-ink-500 mt-1">Scripts and resources from external domains</p>
                 </div>
             </div>
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left border-b border-ink-200 dark:border-ink-800">
-                        <th class="py-2 text-xs uppercase tracking-wide text-ink-500">Entity</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Audits with</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Total blocking</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach ($topThirdParties as $tp)
-                    <tr class="border-b border-ink-100 dark:border-ink-800/50">
-                        <td class="py-2 font-medium">{{ $tp['name'] }}</td>
-                        <td class="py-2 text-right tabular-nums">{{ $tp['occurrences'] }}</td>
-                        <td class="py-2 text-right">
-                            <flux:badge color="pink" size="sm">{{ (int) round($tp['total_blocking_ms']) }}ms</flux:badge>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+            <flux:table>
+                <flux:columns>
+                    <flux:column>Entity</flux:column>
+                    <flux:column align="end">Audits with</flux:column>
+                    <flux:column align="end">Total blocking</flux:column>
+                </flux:columns>
+                <flux:rows>
+                    @foreach ($topThirdParties as $tp)
+                        <flux:row>
+                            <flux:cell variant="strong">{{ $tp['name'] }}</flux:cell>
+                            <flux:cell align="end">
+                                <span class="tabular-nums">{{ $tp['occurrences'] }}</span>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <flux:badge color="pink" size="sm">{{ (int) round($tp['total_blocking_ms']) }}ms</flux:badge>
+                            </flux:cell>
+                        </flux:row>
+                    @endforeach
+                </flux:rows>
+            </flux:table>
         </div>
     @endif
     @endif

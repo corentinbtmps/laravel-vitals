@@ -493,24 +493,22 @@
                     });
                 </script>
 
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="text-left border-b border-ink-200 dark:border-ink-800">
-                            <th class="py-2 text-xs uppercase tracking-wide text-ink-500">Type</th>
-                            <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Count</th>
-                            <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Size</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach ($audit->details['resource_summary'] as $row)
-                        <tr class="border-b border-ink-100 dark:border-ink-800/50">
-                            <td class="py-2 capitalize">{{ $row['type'] }}</td>
-                            <td class="py-2 text-right">{{ $row['count'] }}</td>
-                            <td class="py-2 text-right text-ink-500 dark:text-ink-400">{{ number_format($row['bytes'] / 1024, 0) }} KB</td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
+                <flux:table>
+                    <flux:columns>
+                        <flux:column>Type</flux:column>
+                        <flux:column align="end">Count</flux:column>
+                        <flux:column align="end">Size</flux:column>
+                    </flux:columns>
+                    <flux:rows>
+                        @foreach ($audit->details['resource_summary'] as $row)
+                            <flux:row>
+                                <flux:cell variant="strong" class="capitalize">{{ $row['type'] }}</flux:cell>
+                                <flux:cell align="end">{{ $row['count'] }}</flux:cell>
+                                <flux:cell align="end">{{ number_format($row['bytes'] / 1024, 0) }} KB</flux:cell>
+                            </flux:row>
+                        @endforeach
+                    </flux:rows>
+                </flux:table>
             </div>
         </div>
     @endif
@@ -523,33 +521,31 @@
                 <h2 class="text-base font-semibold">Third-party impact</h2>
                 <flux:badge color="pink" size="sm">{{ count($audit->details['third_parties']) }}</flux:badge>
             </div>
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left border-b border-ink-200 dark:border-ink-800">
-                        <th class="py-2 text-xs uppercase tracking-wide text-ink-500">Entity</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Transfer</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Blocking</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Main thread</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach ($audit->details['third_parties'] as $tp)
-                    @php $blockingHigh = ($tp['blocking_ms'] ?? 0) > 250; @endphp
-                    <tr class="border-b border-ink-100 dark:border-ink-800/50">
-                        <td class="py-2 font-medium">{{ $tp['entity'] }}</td>
-                        <td class="py-2 text-right text-ink-500 dark:text-ink-400">{{ number_format(($tp['transfer_bytes'] ?? 0) / 1024, 0) }} KB</td>
-                        <td class="py-2 text-right">
-                            @if ($blockingHigh)
-                                <flux:badge color="rose" size="sm">{{ (int) round($tp['blocking_ms']) }}ms</flux:badge>
-                            @else
-                                <span class="text-ink-500 dark:text-ink-400">{{ (int) round($tp['blocking_ms']) }}ms</span>
-                            @endif
-                        </td>
-                        <td class="py-2 text-right text-ink-500 dark:text-ink-400">{{ (int) round($tp['main_thread_ms']) }}ms</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+            <flux:table>
+                <flux:columns>
+                    <flux:column>Entity</flux:column>
+                    <flux:column align="end">Transfer</flux:column>
+                    <flux:column align="end">Blocking</flux:column>
+                    <flux:column align="end">Main thread</flux:column>
+                </flux:columns>
+                <flux:rows>
+                    @foreach ($audit->details['third_parties'] as $tp)
+                        @php $blockingHigh = ($tp['blocking_ms'] ?? 0) > 250; @endphp
+                        <flux:row>
+                            <flux:cell variant="strong">{{ $tp['entity'] }}</flux:cell>
+                            <flux:cell align="end">{{ number_format(($tp['transfer_bytes'] ?? 0) / 1024, 0) }} KB</flux:cell>
+                            <flux:cell align="end">
+                                @if ($blockingHigh)
+                                    <flux:badge color="rose" size="sm">{{ (int) round($tp['blocking_ms']) }}ms</flux:badge>
+                                @else
+                                    <span>{{ (int) round($tp['blocking_ms']) }}ms</span>
+                                @endif
+                            </flux:cell>
+                            <flux:cell align="end">{{ (int) round($tp['main_thread_ms']) }}ms</flux:cell>
+                        </flux:row>
+                    @endforeach
+                </flux:rows>
+            </flux:table>
         </div>
     @endif
 
@@ -589,37 +585,37 @@
                 <flux:icon.clock class="size-5 text-amber-500" />
                 <h2 class="text-base font-semibold">Slowest requests</h2>
             </div>
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left border-b border-ink-200 dark:border-ink-800">
-                        <th class="py-2 text-xs uppercase tracking-wide text-ink-500">URL</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Type</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Size</th>
-                        <th class="py-2 text-right text-xs uppercase tracking-wide text-ink-500">Duration</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (array_slice($audit->details['slow_requests'], 0, 10) as $req)
-                    @php
-                        $color = match (true) {
-                            ($req['duration_ms'] ?? 0) > 800 => 'rose',
-                            ($req['duration_ms'] ?? 0) > 400 => 'amber',
-                            default => 'zinc',
-                        };
-                    @endphp
-                    <tr class="border-b border-ink-100 dark:border-ink-800/50">
-                        <td class="py-2 max-w-xs truncate"><code class="text-xs text-ink-700 dark:text-ink-300">{{ basename(parse_url($req['url'] ?? '', PHP_URL_PATH) ?: $req['url'] ?? '?') }}</code></td>
-                        <td class="py-2 text-right">
-                            <flux:badge color="zinc" size="sm">{{ $req['resource_type'] ?? '?' }}</flux:badge>
-                        </td>
-                        <td class="py-2 text-right text-ink-500 dark:text-ink-400">{{ number_format(($req['transfer_bytes'] ?? 0) / 1024, 0) }} KB</td>
-                        <td class="py-2 text-right">
-                            <flux:badge color="{{ $color }}" size="sm">{{ (int) round($req['duration_ms'] ?? 0) }}ms</flux:badge>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+            <flux:table>
+                <flux:columns>
+                    <flux:column>URL</flux:column>
+                    <flux:column align="end">Type</flux:column>
+                    <flux:column align="end">Size</flux:column>
+                    <flux:column align="end">Duration</flux:column>
+                </flux:columns>
+                <flux:rows>
+                    @foreach (array_slice($audit->details['slow_requests'], 0, 10) as $req)
+                        @php
+                            $color = match (true) {
+                                ($req['duration_ms'] ?? 0) > 800 => 'rose',
+                                ($req['duration_ms'] ?? 0) > 400 => 'amber',
+                                default => 'zinc',
+                            };
+                        @endphp
+                        <flux:row>
+                            <flux:cell class="max-w-xs truncate">
+                                <code class="text-xs">{{ basename(parse_url($req['url'] ?? '', PHP_URL_PATH) ?: $req['url'] ?? '?') }}</code>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <flux:badge color="zinc" size="sm">{{ $req['resource_type'] ?? '?' }}</flux:badge>
+                            </flux:cell>
+                            <flux:cell align="end">{{ number_format(($req['transfer_bytes'] ?? 0) / 1024, 0) }} KB</flux:cell>
+                            <flux:cell align="end">
+                                <flux:badge color="{{ $color }}" size="sm">{{ (int) round($req['duration_ms'] ?? 0) }}ms</flux:badge>
+                            </flux:cell>
+                        </flux:row>
+                    @endforeach
+                </flux:rows>
+            </flux:table>
         </div>
     @endif
 

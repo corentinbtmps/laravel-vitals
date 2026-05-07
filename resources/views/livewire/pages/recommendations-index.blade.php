@@ -22,45 +22,41 @@
         </div>
     @else
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-            <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
-            <table class="w-full text-sm min-w-[480px]">
-                <thead>
-                    <tr class="text-left border-b border-ink-200 dark:border-ink-800">
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide">Recommendation</th>
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide">Category</th>
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide">Severity</th>
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide text-right">Occurrences</th>
-                        <th class="py-3 pl-2 font-semibold text-ink-500 text-xs uppercase tracking-wide text-right">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach ($rows as $r)
-                    @php
-                        $sevColor = match ($r->severity) {
-                            'critical' => 'rose',
-                            'warning'  => 'amber',
-                            default    => 'sky',
-                        };
-                    @endphp
-                    <tr class="border-b border-ink-100 dark:border-ink-800/50 hover:bg-ink-50 dark:hover:bg-ink-900/40 transition-colors">
-                        <td class="py-3 pr-4 font-medium">{{ __($r->title_key) }}</td>
-                        <td class="py-3 pr-4">
-                            <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
-                        </td>
-                        <td class="py-3 pr-4">
-                            <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
-                        </td>
-                        <td class="py-3 pr-4 text-right font-semibold tabular-nums">
-                            {{ $r->occurrences }}
-                        </td>
-                        <td class="py-3 pl-2 text-right">
-                            <flux:button href="{{ route('vitals.learn') . '#' . $r->audit_key }}" variant="ghost" size="sm" icon="book-open" />
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-            </div>
+            <flux:table>
+                <flux:columns>
+                    <flux:column>Recommendation</flux:column>
+                    <flux:column>Category</flux:column>
+                    <flux:column>Severity</flux:column>
+                    <flux:column align="end">Occurrences</flux:column>
+                    <flux:column align="end" class="w-14"></flux:column>
+                </flux:columns>
+                <flux:rows>
+                    @foreach ($rows as $r)
+                        @php
+                            $sevColor = match ($r->severity) {
+                                'critical' => 'rose',
+                                'warning'  => 'amber',
+                                default    => 'sky',
+                            };
+                        @endphp
+                        <flux:row :key="$r->audit_key">
+                            <flux:cell variant="strong">{{ __($r->title_key) }}</flux:cell>
+                            <flux:cell>
+                                <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
+                            </flux:cell>
+                            <flux:cell>
+                                <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <span class="font-semibold tabular-nums">{{ $r->occurrences }}</span>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <flux:button href="{{ route('vitals.learn') . '#' . $r->audit_key }}" variant="ghost" size="sm" icon="book-open" />
+                            </flux:cell>
+                        </flux:row>
+                    @endforeach
+                </flux:rows>
+            </flux:table>
         </div>
     @endif
 </div>

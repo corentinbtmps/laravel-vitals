@@ -229,54 +229,50 @@
                     <p class="text-sm text-ink-500 mt-1">{{ $history->count() }} audits — {{ $periodLabel }}</p>
                 </div>
             </div>
-            <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
-            <table class="w-full text-sm min-w-[480px]">
-                <thead>
-                    <tr class="text-left border-b border-ink-200 dark:border-ink-800">
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide">Date</th>
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide">Device</th>
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide text-right">Score</th>
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide text-right">LCP</th>
-                        <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide text-right">CLS</th>
-                        <th class="py-3 pl-2 text-right font-semibold text-ink-500 text-xs uppercase tracking-wide">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach ($history as $a)
-                    @php
-                        $score = $a->score_performance;
-                        $color = \LaravelVitals\Support\Health::colorForScore($score);
-                        $grade = \LaravelVitals\Support\Health::grade($score);
-                    @endphp
-                    <tr class="border-b border-ink-100 dark:border-ink-800/50 hover:bg-ink-50 dark:hover:bg-ink-900/40 transition-colors">
-                        <td class="py-3 pr-4">
-                            <a href="{{ route('vitals.audit', $a) }}" class="text-ink-700 dark:text-ink-300 hover:text-accent-600 hover:underline">
-                                {{ $a->completed_at?->format('M j, H:i') }}
-                            </a>
-                        </td>
-                        <td class="py-3 pr-4">
-                            <flux:badge color="zinc" size="sm">{{ $a->device }}</flux:badge>
-                        </td>
-                        <td class="py-3 pr-4 text-right">
-                            <span class="inline-flex items-center gap-1.5 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold tabular-nums">
-                                {{ $score ?? '—' }}
-                                <span class="size-5 rounded bg-{{ $color }}-100 dark:bg-{{ $color }}-900/40 text-xs flex items-center justify-center font-bold">{{ $grade }}</span>
-                            </span>
-                        </td>
-                        <td class="py-3 pr-4 text-right text-ink-700 dark:text-ink-300 tabular-nums">
-                            {{ $a->lcp_ms !== null ? (int) round((float) $a->lcp_ms) : '—' }}<span class="text-xs text-ink-500">{{ $a->lcp_ms !== null ? 'ms' : '' }}</span>
-                        </td>
-                        <td class="py-3 pr-4 text-right text-ink-700 dark:text-ink-300 tabular-nums">
-                            {{ $a->cls !== null ? number_format((float) $a->cls, 2) : '—' }}
-                        </td>
-                        <td class="py-3 pl-2 text-right">
-                            <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" />
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-            </div>
+            <flux:table>
+                <flux:columns>
+                    <flux:column>Date</flux:column>
+                    <flux:column>Device</flux:column>
+                    <flux:column align="end">Score</flux:column>
+                    <flux:column align="end">LCP</flux:column>
+                    <flux:column align="end">CLS</flux:column>
+                    <flux:column align="end" class="w-14"></flux:column>
+                </flux:columns>
+                <flux:rows>
+                    @foreach ($history as $a)
+                        @php
+                            $score = $a->score_performance;
+                            $color = \LaravelVitals\Support\Health::colorForScore($score);
+                            $grade = \LaravelVitals\Support\Health::grade($score);
+                        @endphp
+                        <flux:row :key="$a->id">
+                            <flux:cell variant="strong">
+                                <a href="{{ route('vitals.audit', $a) }}" class="hover:text-accent-600 hover:underline">
+                                    {{ $a->completed_at?->format('M j, H:i') }}
+                                </a>
+                            </flux:cell>
+                            <flux:cell>
+                                <flux:badge color="zinc" size="sm">{{ $a->device }}</flux:badge>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <span class="inline-flex items-center gap-1.5 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold tabular-nums">
+                                    {{ $score ?? '—' }}
+                                    <span class="size-5 rounded bg-{{ $color }}-100 dark:bg-{{ $color }}-900/40 text-xs flex items-center justify-center font-bold">{{ $grade }}</span>
+                                </span>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <span class="tabular-nums">{{ $a->lcp_ms !== null ? (int) round((float) $a->lcp_ms) : '—' }}</span><span class="text-xs text-ink-500">{{ $a->lcp_ms !== null ? 'ms' : '' }}</span>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <span class="tabular-nums">{{ $a->cls !== null ? number_format((float) $a->cls, 2) : '—' }}</span>
+                            </flux:cell>
+                            <flux:cell align="end">
+                                <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" />
+                            </flux:cell>
+                        </flux:row>
+                    @endforeach
+                </flux:rows>
+            </flux:table>
         </div>
     @endif
 </div>
