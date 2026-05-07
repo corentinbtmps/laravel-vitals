@@ -193,10 +193,6 @@ final class VitalsServiceProvider extends PackageServiceProvider
 
     private function registerOnboardingSteps(): void
     {
-        if (! class_exists(\Spatie\Onboard\Facades\Onboard::class)) {
-            return; // Optional dependency not installed — graceful no-op
-        }
-
         \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.urls.title'))
             ->link('/' . config('vitals.path', 'vitals') . '/urls')
             ->cta(__('vitals::vitals.onboarding.steps.urls.cta'))

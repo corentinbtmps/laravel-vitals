@@ -7,6 +7,7 @@ namespace LaravelVitals\Livewire\Components;
 use Illuminate\Contracts\View\View;
 use LaravelVitals\Models\VitalsInstallation;
 use Livewire\Component;
+use Spatie\Onboard\OnboardingStep;
 
 final class OnboardingBanner extends Component
 {
@@ -19,50 +20,25 @@ final class OnboardingBanner extends Component
     {
         $installation = VitalsInstallation::singleton();
 
-        // Hide if dismissed
         if ($installation->onboardingDismissed()) {
             return view('vitals::livewire.components.onboarding-banner-empty');
         }
 
-        // Hide if spatie/laravel-onboard is not installed
-        if (! class_exists('Spatie\\Onboard\\Facades\\Onboard')) {
-            return view('vitals::livewire.components.onboarding-banner-empty');
-        }
+        $manager = $installation->onboarding();
 
-        return $this->renderWithOnboard($installation);
-    }
-
-    /**
-     * Called only after confirming spatie/laravel-onboard is installed.
-     *
-     * PHPStan errors for Spatie\Onboard\* are suppressed in phpstan.neon
-     * because the package is an optional dependency.
-     */
-    private function renderWithOnboard(VitalsInstallation $installation): View
-    {
-        /** @phpstan-ignore-next-line */
-        $manager = \Spatie\Onboard\Facades\Onboard::onboarding($installation);
-
-        /** @phpstan-ignore-next-line */
         if ($manager->finished()) {
             return view('vitals::livewire.components.onboarding-banner-empty');
         }
 
-        /** @phpstan-ignore-next-line */
         $steps = $manager->steps();
-        /** @phpstan-ignore-next-line */
-        $percentage = $manager->percentageCompleted();
-        /** @phpstan-ignore-next-line */
-        $finished = $manager->finishedSteps()->count();
-        /** @phpstan-ignore-next-line */
-        $nextStep = $manager->nextUnfinishedStep();
+        $completed = $steps->filter(fn (OnboardingStep $s): bool => $s->complete())->count();
 
         return view('vitals::livewire.components.onboarding-banner', [
             'steps'      => $steps,
-            'percentage' => $percentage,
-            'completed'  => $finished,
+            'percentage' => $manager->percentageCompleted(),
+            'completed'  => $completed,
             'total'      => $steps->count(),
-            'nextStep'   => $nextStep,
+            'nextStep'   => $manager->nextUnfinishedStep(),
         ]);
     }
 }

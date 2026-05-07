@@ -5,20 +5,23 @@ declare(strict_types=1);
 namespace LaravelVitals\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Onboard\Concerns\Onboardable;
+use Spatie\Onboard\OnboardingManager;
+use Spatie\Onboard\OnboardingSteps;
 
 /**
  * Singleton row representing the package's installation state.
  *
- * Used by the spatie/laravel-onboard integration (when installed) to track
- * which onboarding steps have been completed and whether the user has
- * dismissed the onboarding flow.
+ * Used by the spatie/laravel-onboard integration to track which onboarding
+ * steps have been completed and whether the user has dismissed the
+ * onboarding flow.
  *
  * @property int $id
  * @property \Carbon\Carbon|null $onboarding_dismissed_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
-class VitalsInstallation extends Model
+class VitalsInstallation extends Model implements Onboardable
 {
     /** @var array<string, string> */
     protected $casts = [
@@ -51,5 +54,10 @@ class VitalsInstallation extends Model
     public function onboardingDismissed(): bool
     {
         return $this->onboarding_dismissed_at !== null;
+    }
+
+    public function onboarding(): OnboardingManager
+    {
+        return new OnboardingManager($this, app(OnboardingSteps::class));
     }
 }
