@@ -114,24 +114,24 @@
                 </div>
             </div>
             <flux:table>
-                <flux:columns>
-                    <flux:column>Entity</flux:column>
-                    <flux:column align="end">Audits with</flux:column>
-                    <flux:column align="end">Total blocking</flux:column>
-                </flux:columns>
-                <flux:rows>
+                <flux:table.columns>
+                    <flux:table.column>Entity</flux:table.column>
+                    <flux:table.column align="end">Audits with</flux:table.column>
+                    <flux:table.column align="end">Total blocking</flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
                     @foreach ($topThirdParties as $tp)
-                        <flux:row>
-                            <flux:cell variant="strong">{{ $tp['name'] }}</flux:cell>
-                            <flux:cell align="end">
+                        <flux:table.row>
+                            <flux:table.cell variant="strong">{{ $tp['name'] }}</flux:table.cell>
+                            <flux:table.cell align="end">
                                 <span class="tabular-nums">{{ $tp['occurrences'] }}</span>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <flux:badge color="pink" size="sm">{{ (int) round($tp['total_blocking_ms']) }}ms</flux:badge>
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
         </div>
     @endif

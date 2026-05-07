@@ -494,20 +494,20 @@
                 </script>
 
                 <flux:table>
-                    <flux:columns>
-                        <flux:column>Type</flux:column>
-                        <flux:column align="end">Count</flux:column>
-                        <flux:column align="end">Size</flux:column>
-                    </flux:columns>
-                    <flux:rows>
+                    <flux:table.columns>
+                        <flux:table.column>Type</flux:table.column>
+                        <flux:table.column align="end">Count</flux:table.column>
+                        <flux:table.column align="end">Size</flux:table.column>
+                    </flux:table.columns>
+                    <flux:table.rows>
                         @foreach ($audit->details['resource_summary'] as $row)
-                            <flux:row>
-                                <flux:cell variant="strong" class="capitalize">{{ $row['type'] }}</flux:cell>
-                                <flux:cell align="end">{{ $row['count'] }}</flux:cell>
-                                <flux:cell align="end">{{ number_format($row['bytes'] / 1024, 0) }} KB</flux:cell>
-                            </flux:row>
+                            <flux:table.row>
+                                <flux:table.cell variant="strong" class="capitalize">{{ $row['type'] }}</flux:table.cell>
+                                <flux:table.cell align="end">{{ $row['count'] }}</flux:table.cell>
+                                <flux:table.cell align="end">{{ number_format($row['bytes'] / 1024, 0) }} KB</flux:table.cell>
+                            </flux:table.row>
                         @endforeach
-                    </flux:rows>
+                    </flux:table.rows>
                 </flux:table>
             </div>
         </div>
@@ -522,29 +522,29 @@
                 <flux:badge color="pink" size="sm">{{ count($audit->details['third_parties']) }}</flux:badge>
             </div>
             <flux:table>
-                <flux:columns>
-                    <flux:column>Entity</flux:column>
-                    <flux:column align="end">Transfer</flux:column>
-                    <flux:column align="end">Blocking</flux:column>
-                    <flux:column align="end">Main thread</flux:column>
-                </flux:columns>
-                <flux:rows>
+                <flux:table.columns>
+                    <flux:table.column>Entity</flux:table.column>
+                    <flux:table.column align="end">Transfer</flux:table.column>
+                    <flux:table.column align="end">Blocking</flux:table.column>
+                    <flux:table.column align="end">Main thread</flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
                     @foreach ($audit->details['third_parties'] as $tp)
                         @php $blockingHigh = ($tp['blocking_ms'] ?? 0) > 250; @endphp
-                        <flux:row>
-                            <flux:cell variant="strong">{{ $tp['entity'] }}</flux:cell>
-                            <flux:cell align="end">{{ number_format(($tp['transfer_bytes'] ?? 0) / 1024, 0) }} KB</flux:cell>
-                            <flux:cell align="end">
+                        <flux:table.row>
+                            <flux:table.cell variant="strong">{{ $tp['entity'] }}</flux:table.cell>
+                            <flux:table.cell align="end">{{ number_format(($tp['transfer_bytes'] ?? 0) / 1024, 0) }} KB</flux:table.cell>
+                            <flux:table.cell align="end">
                                 @if ($blockingHigh)
                                     <flux:badge color="rose" size="sm">{{ (int) round($tp['blocking_ms']) }}ms</flux:badge>
                                 @else
                                     <span>{{ (int) round($tp['blocking_ms']) }}ms</span>
                                 @endif
-                            </flux:cell>
-                            <flux:cell align="end">{{ (int) round($tp['main_thread_ms']) }}ms</flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                            <flux:table.cell align="end">{{ (int) round($tp['main_thread_ms']) }}ms</flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
         </div>
     @endif
@@ -586,13 +586,13 @@
                 <h2 class="text-base font-semibold">Slowest requests</h2>
             </div>
             <flux:table>
-                <flux:columns>
-                    <flux:column>URL</flux:column>
-                    <flux:column align="end">Type</flux:column>
-                    <flux:column align="end">Size</flux:column>
-                    <flux:column align="end">Duration</flux:column>
-                </flux:columns>
-                <flux:rows>
+                <flux:table.columns>
+                    <flux:table.column>URL</flux:table.column>
+                    <flux:table.column align="end">Type</flux:table.column>
+                    <flux:table.column align="end">Size</flux:table.column>
+                    <flux:table.column align="end">Duration</flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
                     @foreach (array_slice($audit->details['slow_requests'], 0, 10) as $req)
                         @php
                             $color = match (true) {
@@ -601,20 +601,20 @@
                                 default => 'zinc',
                             };
                         @endphp
-                        <flux:row>
-                            <flux:cell class="max-w-xs truncate">
+                        <flux:table.row>
+                            <flux:table.cell class="max-w-xs truncate">
                                 <code class="text-xs">{{ basename(parse_url($req['url'] ?? '', PHP_URL_PATH) ?: $req['url'] ?? '?') }}</code>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <flux:badge color="zinc" size="sm">{{ $req['resource_type'] ?? '?' }}</flux:badge>
-                            </flux:cell>
-                            <flux:cell align="end">{{ number_format(($req['transfer_bytes'] ?? 0) / 1024, 0) }} KB</flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">{{ number_format(($req['transfer_bytes'] ?? 0) / 1024, 0) }} KB</flux:table.cell>
+                            <flux:table.cell align="end">
                                 <flux:badge color="{{ $color }}" size="sm">{{ (int) round($req['duration_ms'] ?? 0) }}ms</flux:badge>
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
         </div>
     @endif

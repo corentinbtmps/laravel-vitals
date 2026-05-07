@@ -35,24 +35,24 @@
                 </div>
                 <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
                     <flux:table>
-                        <flux:columns>
-                            <flux:column class="w-8"></flux:column>
-                            <flux:column>URL</flux:column>
-                            <flux:column align="center">Perf</flux:column>
-                            <flux:column align="center">A11y</flux:column>
-                            <flux:column align="center">BP</flux:column>
-                            <flux:column align="center">SEO</flux:column>
-                            <flux:column align="center">Trend</flux:column>
-                            <flux:column align="end">Last</flux:column>
-                            <flux:column align="end">Audits</flux:column>
-                            <flux:column align="end" class="w-20"></flux:column>
-                        </flux:columns>
-                        <flux:rows>
+                        <flux:table.columns>
+                            <flux:table.column class="w-8"></flux:table.column>
+                            <flux:table.column>URL</flux:table.column>
+                            <flux:table.column align="center">Perf</flux:table.column>
+                            <flux:table.column align="center">A11y</flux:table.column>
+                            <flux:table.column align="center">BP</flux:table.column>
+                            <flux:table.column align="center">SEO</flux:table.column>
+                            <flux:table.column align="center">Trend</flux:table.column>
+                            <flux:table.column align="end">Last</flux:table.column>
+                            <flux:table.column align="end">Audits</flux:table.column>
+                            <flux:table.column align="end" class="w-20"></flux:table.column>
+                        </flux:table.columns>
+                        <flux:table.rows>
                             @foreach ($pinnedUrls as $u)
                                 @php $last = $lastAudits[$u->id] ?? null; @endphp
-                                <flux:row :key="$u->id">
+                                <flux:table.row :key="$u->id">
                                     {{-- Star / pin button --}}
-                                    <flux:cell>
+                                    <flux:table.cell>
                                         <flux:tooltip :content="$u->pinned_at ? __('vitals.tooltip.unpin') : __('vitals.tooltip.pin')">
                                             <button wire:click="togglePin({{ $u->id }})"
                                                     type="button"
@@ -60,15 +60,15 @@
                                                 <flux:icon.star variant="solid" class="size-4" />
                                             </button>
                                         </flux:tooltip>
-                                    </flux:cell>
+                                    </flux:table.cell>
 
                                     {{-- URL column --}}
-                                    <flux:cell variant="strong">
+                                    <flux:table.cell variant="strong">
                                         <a href="{{ route('vitals.url', $u->id) }}" class="block hover:underline">
                                             <div class="font-medium text-accent-600 dark:text-accent-400">{{ $u->label }}</div>
                                             <code class="text-[11px] text-ink-500">{{ $u->path }}</code>
                                         </a>
-                                    </flux:cell>
+                                    </flux:table.cell>
 
                                     {{-- Score cells --}}
                                     @foreach (['score_performance' => 'Performance', 'score_accessibility' => 'Accessibility', 'score_best_practices' => 'Best Practices', 'score_seo' => 'SEO'] as $col => $colLabel)
@@ -76,7 +76,7 @@
                                             $score = $last?->{$col};
                                             $color = \LaravelVitals\Support\Health::colorForScore($score);
                                         @endphp
-                                        <flux:cell align="center">
+                                        <flux:table.cell align="center">
                                             @if ($score !== null)
                                                 <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums">
                                                     {{ $score }}
@@ -84,11 +84,11 @@
                                             @else
                                                 <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
                                             @endif
-                                        </flux:cell>
+                                        </flux:table.cell>
                                     @endforeach
 
                                     {{-- Sparkline --}}
-                                    <flux:cell align="center">
+                                    <flux:table.cell align="center">
                                         @php
                                             $points = $sparklines[$u->id] ?? [];
                                             $sparkId = 'spark-pin-' . $u->id;
@@ -109,10 +109,10 @@
                                         @else
                                             <span class="text-ink-300 dark:text-ink-700 text-xs">—</span>
                                         @endif
-                                    </flux:cell>
+                                    </flux:table.cell>
 
                                     {{-- Last audit time --}}
-                                    <flux:cell align="end">
+                                    <flux:table.cell align="end">
                                         @if ($last !== null && $last->completed_at !== null)
                                             <flux:tooltip :content="__('vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
                                                 <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline text-xs">
@@ -122,20 +122,20 @@
                                         @else
                                             —
                                         @endif
-                                    </flux:cell>
+                                    </flux:table.cell>
 
                                     {{-- Audit count --}}
-                                    <flux:cell align="end">
+                                    <flux:table.cell align="end">
                                         <span class="tabular-nums">{{ $u->audits_count }}</span>
-                                    </flux:cell>
+                                    </flux:table.cell>
 
                                     {{-- Action --}}
-                                    <flux:cell align="end">
+                                    <flux:table.cell align="end">
                                         <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
-                                    </flux:cell>
-                                </flux:row>
+                                    </flux:table.cell>
+                                </flux:table.row>
                             @endforeach
-                        </flux:rows>
+                        </flux:table.rows>
                     </flux:table>
                 </div>
             </div>
@@ -151,24 +151,24 @@
             @endif
             <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
                 <flux:table>
-                    <flux:columns>
-                        <flux:column class="w-8"></flux:column>
-                        <flux:column>URL</flux:column>
-                        <flux:column align="center">Perf</flux:column>
-                        <flux:column align="center">A11y</flux:column>
-                        <flux:column align="center">BP</flux:column>
-                        <flux:column align="center">SEO</flux:column>
-                        <flux:column align="center">Trend</flux:column>
-                        <flux:column align="end">Last</flux:column>
-                        <flux:column align="end">Audits</flux:column>
-                        <flux:column align="end" class="w-20"></flux:column>
-                    </flux:columns>
-                    <flux:rows>
+                    <flux:table.columns>
+                        <flux:table.column class="w-8"></flux:table.column>
+                        <flux:table.column>URL</flux:table.column>
+                        <flux:table.column align="center">Perf</flux:table.column>
+                        <flux:table.column align="center">A11y</flux:table.column>
+                        <flux:table.column align="center">BP</flux:table.column>
+                        <flux:table.column align="center">SEO</flux:table.column>
+                        <flux:table.column align="center">Trend</flux:table.column>
+                        <flux:table.column align="end">Last</flux:table.column>
+                        <flux:table.column align="end">Audits</flux:table.column>
+                        <flux:table.column align="end" class="w-20"></flux:table.column>
+                    </flux:table.columns>
+                    <flux:table.rows>
                         @foreach ($allUrls as $u)
                             @php $last = $lastAudits[$u->id] ?? null; @endphp
-                            <flux:row :key="$u->id">
+                            <flux:table.row :key="$u->id">
                                 {{-- Star / pin button --}}
-                                <flux:cell>
+                                <flux:table.cell>
                                     <flux:tooltip :content="$u->pinned_at ? __('vitals.tooltip.unpin') : __('vitals.tooltip.pin')">
                                         <button wire:click="togglePin({{ $u->id }})"
                                                 type="button"
@@ -180,15 +180,15 @@
                                             @endif
                                         </button>
                                     </flux:tooltip>
-                                </flux:cell>
+                                </flux:table.cell>
 
                                 {{-- URL column --}}
-                                <flux:cell variant="strong">
+                                <flux:table.cell variant="strong">
                                     <a href="{{ route('vitals.url', $u->id) }}" class="block hover:underline">
                                         <div class="font-medium text-accent-600 dark:text-accent-400">{{ $u->label }}</div>
                                         <code class="text-[11px] text-ink-500">{{ $u->path }}</code>
                                     </a>
-                                </flux:cell>
+                                </flux:table.cell>
 
                                 {{-- Score cells --}}
                                 @foreach (['score_performance' => 'Performance', 'score_accessibility' => 'Accessibility', 'score_best_practices' => 'Best Practices', 'score_seo' => 'SEO'] as $col => $colLabel)
@@ -196,7 +196,7 @@
                                         $score = $last?->{$col};
                                         $color = \LaravelVitals\Support\Health::colorForScore($score);
                                     @endphp
-                                    <flux:cell align="center">
+                                    <flux:table.cell align="center">
                                         @if ($score !== null)
                                             <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums">
                                                 {{ $score }}
@@ -204,11 +204,11 @@
                                         @else
                                             <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
                                         @endif
-                                    </flux:cell>
+                                    </flux:table.cell>
                                 @endforeach
 
                                 {{-- Sparkline --}}
-                                <flux:cell align="center">
+                                <flux:table.cell align="center">
                                     @php
                                         $points = $sparklines[$u->id] ?? [];
                                         $sparkId = 'spark-' . $u->id;
@@ -229,10 +229,10 @@
                                     @else
                                         <span class="text-ink-300 dark:text-ink-700 text-xs">—</span>
                                     @endif
-                                </flux:cell>
+                                </flux:table.cell>
 
                                 {{-- Last audit time --}}
-                                <flux:cell align="end">
+                                <flux:table.cell align="end">
                                     @if ($last !== null && $last->completed_at !== null)
                                         <flux:tooltip :content="__('vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
                                             <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline text-xs">
@@ -242,20 +242,20 @@
                                     @else
                                         —
                                     @endif
-                                </flux:cell>
+                                </flux:table.cell>
 
                                 {{-- Audit count --}}
-                                <flux:cell align="end">
+                                <flux:table.cell align="end">
                                     <span class="tabular-nums">{{ $u->audits_count }}</span>
-                                </flux:cell>
+                                </flux:table.cell>
 
                                 {{-- Action --}}
-                                <flux:cell align="end">
+                                <flux:table.cell align="end">
                                     <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
-                                </flux:cell>
-                            </flux:row>
+                                </flux:table.cell>
+                            </flux:table.row>
                         @endforeach
-                    </flux:rows>
+                    </flux:table.rows>
                 </flux:table>
             </div>
         </div>

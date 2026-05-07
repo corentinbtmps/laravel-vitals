@@ -23,14 +23,14 @@
     @else
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <flux:table>
-                <flux:columns>
-                    <flux:column>Recommendation</flux:column>
-                    <flux:column>Category</flux:column>
-                    <flux:column>Severity</flux:column>
-                    <flux:column align="end">Occurrences</flux:column>
-                    <flux:column align="end" class="w-14"></flux:column>
-                </flux:columns>
-                <flux:rows>
+                <flux:table.columns>
+                    <flux:table.column>Recommendation</flux:table.column>
+                    <flux:table.column>Category</flux:table.column>
+                    <flux:table.column>Severity</flux:table.column>
+                    <flux:table.column align="end">Occurrences</flux:table.column>
+                    <flux:table.column align="end" class="w-14"></flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
                     @foreach ($rows as $r)
                         @php
                             $sevColor = match ($r->severity) {
@@ -39,23 +39,23 @@
                                 default    => 'sky',
                             };
                         @endphp
-                        <flux:row :key="$r->audit_key">
-                            <flux:cell variant="strong">{{ __($r->title_key) }}</flux:cell>
-                            <flux:cell>
+                        <flux:table.row :key="$r->audit_key">
+                            <flux:table.cell variant="strong">{{ __($r->title_key) }}</flux:table.cell>
+                            <flux:table.cell>
                                 <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
-                            </flux:cell>
-                            <flux:cell>
+                            </flux:table.cell>
+                            <flux:table.cell>
                                 <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <span class="font-semibold tabular-nums">{{ $r->occurrences }}</span>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <flux:button href="{{ route('vitals.learn') . '#' . $r->audit_key }}" variant="ghost" size="sm" icon="book-open" />
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
         </div>
     @endif

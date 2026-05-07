@@ -30,26 +30,26 @@
     @else
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <flux:table>
-                <flux:columns>
-                    <flux:column>Metric</flux:column>
-                    <flux:column align="end">Warning</flux:column>
-                    <flux:column align="end">Critical</flux:column>
-                </flux:columns>
-                <flux:rows>
+                <flux:table.columns>
+                    <flux:table.column>Metric</flux:table.column>
+                    <flux:table.column align="end">Warning</flux:table.column>
+                    <flux:table.column align="end">Critical</flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
                     @foreach ($budgets as $metric => $thresholds)
-                        <flux:row>
-                            <flux:cell variant="strong">
+                        <flux:table.row>
+                            <flux:table.cell variant="strong">
                                 <code class="text-xs">{{ $metric }}</code>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <flux:badge color="amber" size="sm">{{ $thresholds['warning'] ?? '—' }}</flux:badge>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <flux:badge color="rose" size="sm">{{ $thresholds['critical'] ?? '—' }}</flux:badge>
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
         </div>
     @endif

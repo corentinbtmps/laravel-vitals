@@ -230,48 +230,48 @@
                 </div>
             </div>
             <flux:table>
-                <flux:columns>
-                    <flux:column>Date</flux:column>
-                    <flux:column>Device</flux:column>
-                    <flux:column align="end">Score</flux:column>
-                    <flux:column align="end">LCP</flux:column>
-                    <flux:column align="end">CLS</flux:column>
-                    <flux:column align="end" class="w-14"></flux:column>
-                </flux:columns>
-                <flux:rows>
+                <flux:table.columns>
+                    <flux:table.column>Date</flux:table.column>
+                    <flux:table.column>Device</flux:table.column>
+                    <flux:table.column align="end">Score</flux:table.column>
+                    <flux:table.column align="end">LCP</flux:table.column>
+                    <flux:table.column align="end">CLS</flux:table.column>
+                    <flux:table.column align="end" class="w-14"></flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
                     @foreach ($history as $a)
                         @php
                             $score = $a->score_performance;
                             $color = \LaravelVitals\Support\Health::colorForScore($score);
                             $grade = \LaravelVitals\Support\Health::grade($score);
                         @endphp
-                        <flux:row :key="$a->id">
-                            <flux:cell variant="strong">
+                        <flux:table.row :key="$a->id">
+                            <flux:table.cell variant="strong">
                                 <a href="{{ route('vitals.audit', $a) }}" class="hover:text-accent-600 hover:underline">
                                     {{ $a->completed_at?->format('M j, H:i') }}
                                 </a>
-                            </flux:cell>
-                            <flux:cell>
+                            </flux:table.cell>
+                            <flux:table.cell>
                                 <flux:badge color="zinc" size="sm">{{ $a->device }}</flux:badge>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <span class="inline-flex items-center gap-1.5 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold tabular-nums">
                                     {{ $score ?? '—' }}
                                     <span class="size-5 rounded bg-{{ $color }}-100 dark:bg-{{ $color }}-900/40 text-xs flex items-center justify-center font-bold">{{ $grade }}</span>
                                 </span>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <span class="tabular-nums">{{ $a->lcp_ms !== null ? (int) round((float) $a->lcp_ms) : '—' }}</span><span class="text-xs text-ink-500">{{ $a->lcp_ms !== null ? 'ms' : '' }}</span>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <span class="tabular-nums">{{ $a->cls !== null ? number_format((float) $a->cls, 2) : '—' }}</span>
-                            </flux:cell>
-                            <flux:cell align="end">
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
                                 <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" />
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
         </div>
     @endif
