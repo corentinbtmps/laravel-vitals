@@ -5,12 +5,12 @@
     </flux:breadcrumbs>
 
     {{-- URL hero card --}}
-    <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-8">
-        <div class="flex items-start justify-between gap-6">
+    <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 md:p-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2 text-sm text-ink-500 mb-2">
-                    <flux:icon.link class="size-4" />
-                    <code class="text-ink-700 dark:text-ink-300">{{ $urlModel->path }}</code>
+                    <flux:icon.link class="size-4 shrink-0" />
+                    <code class="text-ink-700 dark:text-ink-300 truncate">{{ $urlModel->path }}</code>
                 </div>
                 <h1 class="text-2xl font-semibold tracking-tight">{{ $urlModel->label }}</h1>
                 <div class="mt-2">
@@ -18,16 +18,18 @@
                 </div>
             </div>
             {{-- Period control --}}
-            <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 shrink-0">
-                @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
-                    <button
-                        wire:click="setPeriod('{{ $val }}')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                            {{ $period === $val
-                                ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                                : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                    >{{ $label }}</button>
-                @endforeach
+            <div class="overflow-x-auto -mx-2 sm:mx-0">
+                <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0 shrink-0">
+                    @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
+                        <button
+                            wire:click="setPeriod('{{ $val }}')"
+                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                                {{ $period === $val
+                                    ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
+                                    : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                        >{{ $label }}</button>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
@@ -41,31 +43,33 @@
         </div>
     @else
         {{-- Hero area chart --}}
-        <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-8">
-            <div class="flex items-start justify-between mb-6">
+        <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 md:p-8">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
                 <div>
                     <h3 class="text-base font-semibold">Performance over time</h3>
                     <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }}</p>
                 </div>
                 {{-- Metric toggle --}}
-                <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1">
-                    @foreach ([
-                        'performance' => ['label' => 'Score', 'desc_key' => 'vitals.tooltip.metric_score'],
-                        'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals.tooltip.metric_lcp'],
-                        'inp'         => ['label' => 'INP',   'desc_key' => 'vitals.tooltip.metric_inp'],
-                        'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals.tooltip.metric_cls'],
-                        'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals.tooltip.metric_ttfb'],
-                    ] as $val => $meta)
-                        <flux:tooltip :content="__($meta['desc_key'])">
-                            <button
-                                wire:click="setMetric('{{ $val }}')"
-                                class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                                    {{ $metric === $val
-                                        ? 'bg-accent-500 text-white'
-                                        : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                            >{{ $meta['label'] }}</button>
-                        </flux:tooltip>
-                    @endforeach
+                <div class="overflow-x-auto -mx-2 sm:mx-0">
+                    <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0">
+                        @foreach ([
+                            'performance' => ['label' => 'Score', 'desc_key' => 'vitals.tooltip.metric_score'],
+                            'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals.tooltip.metric_lcp'],
+                            'inp'         => ['label' => 'INP',   'desc_key' => 'vitals.tooltip.metric_inp'],
+                            'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals.tooltip.metric_cls'],
+                            'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals.tooltip.metric_ttfb'],
+                        ] as $val => $meta)
+                            <flux:tooltip :content="__($meta['desc_key'])">
+                                <button
+                                    wire:click="setMetric('{{ $val }}')"
+                                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                                        {{ $metric === $val
+                                            ? 'bg-accent-500 text-white'
+                                            : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                                >{{ $meta['label'] }}</button>
+                            </flux:tooltip>
+                        @endforeach
+                    </div>
                 </div>
             </div>
             <div
@@ -225,7 +229,8 @@
                     <p class="text-sm text-ink-500 mt-1">{{ $history->count() }} audits — {{ $periodLabel }}</p>
                 </div>
             </div>
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
+            <table class="w-full text-sm min-w-[480px]">
                 <thead>
                     <tr class="text-left border-b border-ink-200 dark:border-ink-800">
                         <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide">Date</th>
@@ -271,6 +276,7 @@
                 @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
     @endif
 </div>

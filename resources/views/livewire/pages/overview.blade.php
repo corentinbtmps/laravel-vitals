@@ -61,7 +61,7 @@
                 $delta  = $metricDeltas[$metric['key']] ?? null;
                 $series = $metricTrends[$metric['key']] ?? [];
             @endphp
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5">
+            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4 lg:p-5">
                 {{-- Top row: label + delta --}}
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">{{ $metric['label'] }}</span>

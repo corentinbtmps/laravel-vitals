@@ -22,7 +22,8 @@
         </div>
     @else
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
+            <table class="w-full text-sm min-w-[480px]">
                 <thead>
                     <tr class="text-left border-b border-ink-200 dark:border-ink-800">
                         <th class="py-3 pr-4 font-semibold text-ink-500 text-xs uppercase tracking-wide">Recommendation</th>
@@ -59,6 +60,7 @@
                 @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
     @endif
 </div>

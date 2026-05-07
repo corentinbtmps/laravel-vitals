@@ -91,6 +91,64 @@
         x-on:click="$flux.dark = ! $flux.dark"
         tooltip="Toggle theme"
     />
+
+    {{-- Mobile hamburger menu (shown on lg:hidden screens) --}}
+    <div class="lg:hidden" x-data="{ open: false }">
+        <button
+            type="button"
+            x-on:click="open = !open"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+            aria-label="Open navigation"
+        >
+            <flux:icon.bars-3 x-show="!open" class="size-5" />
+            <flux:icon.x-mark x-show="open" class="size-5" x-cloak />
+        </button>
+
+        {{-- Dropdown drawer --}}
+        <div
+            x-show="open"
+            x-cloak
+            x-on:click.outside="open = false"
+            class="absolute top-full left-0 right-0 z-50 border-b border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 shadow-lg"
+        >
+            <nav class="container mx-auto px-4 py-3 flex flex-col gap-1">
+                <a href="{{ route('vitals.dashboard') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.dashboard') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.squares-2x2 class="size-4" />Overview
+                </a>
+                @if(Route::has('vitals.urls'))
+                <a href="{{ route('vitals.urls') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.url*') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.link class="size-4" />URLs
+                </a>
+                @endif
+                @if(Route::has('vitals.recommendations'))
+                <a href="{{ route('vitals.recommendations') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.recommendations') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.light-bulb class="size-4" />Recommendations
+                </a>
+                @endif
+                @if(Route::has('vitals.insights'))
+                <a href="{{ route('vitals.insights') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.insights') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.sparkles class="size-4" />Insights
+                </a>
+                @endif
+                @if(Route::has('vitals.learn'))
+                <a href="{{ route('vitals.learn') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.learn') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.book-open class="size-4" />Learn
+                </a>
+                @endif
+                @if(Route::has('vitals.budgets'))
+                <a href="{{ route('vitals.budgets') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.budgets') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.chart-bar class="size-4" />Budgets
+                </a>
+                @endif
+            </nav>
+        </div>
+    </div>
 </flux:header>
 
 <flux:main container>

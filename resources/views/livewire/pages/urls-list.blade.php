@@ -34,7 +34,8 @@
                     <span class="text-xs text-ink-500">{{ $pinnedUrls->count() }}</span>
                 </div>
                 <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-                    <table class="w-full text-sm">
+                    <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
+                    <table class="w-full text-sm min-w-[600px]">
                         <thead>
                             <tr class="text-left border-b border-ink-200 dark:border-ink-800">
                                 <th class="py-3 pr-2 w-6"></th>
@@ -137,6 +138,7 @@
                         @endforeach
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         @endif
@@ -150,7 +152,8 @@
                 </div>
             @endif
             <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
+                <table class="w-full text-sm min-w-[600px]">
                     <thead>
                         <tr class="text-left border-b border-ink-200 dark:border-ink-800">
                             <th class="py-3 pr-2 w-6"></th>
@@ -257,6 +260,7 @@
                     @endforeach
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     @endif
