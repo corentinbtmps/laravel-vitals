@@ -127,10 +127,12 @@ final class Overview extends Component
             $query->where('completed_at', '>=', $cutoff);
         }
 
+        $bucket = $this->bucketExpression();
+
         $rows = $query
-            ->selectRaw('DATE(completed_at) as day, AVG(score_performance) as p, AVG(score_accessibility) as a, AVG(score_best_practices) as b, AVG(score_seo) as s')
-            ->groupBy('day')
-            ->orderBy('day')
+            ->selectRaw("{$bucket} as bucket, AVG(score_performance) as p, AVG(score_accessibility) as a, AVG(score_best_practices) as b, AVG(score_seo) as s")
+            ->groupBy('bucket')
+            ->orderBy('bucket')
             ->get();
 
         /** @var array<int, int> $perf */
@@ -148,6 +150,29 @@ final class Overview extends Component
             'best_practices' => $bp,
             'seo'            => $seo,
         ];
+    }
+
+    /**
+     * Database-portable SQL expression that buckets `completed_at` by hour for
+     * the 24h period and by day otherwise. Returns a string usable inside selectRaw.
+     */
+    private function bucketExpression(): string
+    {
+        $hourly = $this->period === '24h';
+        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+
+        return match ($driver) {
+            'sqlite' => $hourly
+                ? "strftime('%Y-%m-%d %H:00', completed_at)"
+                : "strftime('%Y-%m-%d', completed_at)",
+            'mysql', 'mariadb' => $hourly
+                ? "DATE_FORMAT(completed_at, '%Y-%m-%d %H:00')"
+                : "DATE(completed_at)",
+            'pgsql' => $hourly
+                ? "to_char(completed_at, 'YYYY-MM-DD HH24:00')"
+                : "to_char(completed_at, 'YYYY-MM-DD')",
+            default => 'DATE(completed_at)',
+        };
     }
 
     /**
