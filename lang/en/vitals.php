@@ -44,6 +44,30 @@ return [
             'docs'  => 'Read docs',
         ],
     ],
+    'onboarding' => [
+        'banner_title'   => 'Get started with Laravel Vitals',
+        'banner_subtitle' => ':count of :total steps complete',
+        'dismiss'        => 'Skip onboarding',
+        'dismiss_confirm' => 'Hide this banner permanently. You can still access all features from the navigation.',
+        'steps' => [
+            'urls' => [
+                'title' => 'Configure your first URL',
+                'cta'   => 'Add URL',
+            ],
+            'audit' => [
+                'title' => 'Run your first audit',
+                'cta'   => 'Run audit',
+            ],
+            'notifications' => [
+                'title' => 'Configure notifications (optional)',
+                'cta'   => 'Configure',
+            ],
+            'budgets' => [
+                'title' => 'Set performance budgets',
+                'cta'   => 'Set budgets',
+            ],
+        ],
+    ],
     'tooltip' => [
         'pin'          => 'Pin to favorites',
         'unpin'        => 'Unpin from favorites',

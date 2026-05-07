@@ -11,6 +11,14 @@ it('creates all four vitals tables', function (): void {
         ->and(Schema::hasTable('vitals_backend_telemetry'))->toBeTrue();
 });
 
+it('creates the vitals_installations table', function (): void {
+    expect(Schema::hasTable('vitals_installations'))->toBeTrue()
+        ->and(Schema::hasColumn('vitals_installations', 'id'))->toBeTrue()
+        ->and(Schema::hasColumn('vitals_installations', 'onboarding_dismissed_at'))->toBeTrue()
+        ->and(Schema::hasColumn('vitals_installations', 'created_at'))->toBeTrue()
+        ->and(Schema::hasColumn('vitals_installations', 'updated_at'))->toBeTrue();
+});
+
 it('creates the expected columns on vitals_audits', function (): void {
     $expected = [
         'id', 'url_id', 'batch_id', 'driver', 'device', 'status',

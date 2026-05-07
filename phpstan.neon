@@ -17,3 +17,11 @@ parameters:
             # Package views are registered at runtime; view-string cannot be validated statically
             message: '/Parameter .* of function view expects view-string\|null, string given\./'
             identifier: argument.type
+        -
+            # spatie/laravel-onboard is an optional dependency — class may not exist
+            identifier: class.notFound
+            path: src/Livewire/Components/OnboardingBanner.php
+        -
+            # spatie/laravel-onboard is an optional dependency — class may not exist
+            identifier: class.notFound
+            path: src/VitalsServiceProvider.php

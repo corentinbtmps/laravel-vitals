@@ -1,4 +1,6 @@
 <div class="space-y-6">
+    <livewire:vitals::components.onboarding-banner />
+
     {{-- Page header + period control --}}
     <div class="flex items-center justify-between mb-6">
         <div>

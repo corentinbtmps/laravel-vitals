@@ -31,7 +31,8 @@
         "rector/rector": "^2.0"
     },
     "suggest": {
-        "livewire/flux-pro": "Enables richer chart components (flux:chart) in the dashboard (^3.0)"
+        "livewire/flux-pro": "Enables richer chart components (flux:chart) in the dashboard (^3.0)",
+        "spatie/laravel-onboard": "Add a guided onboarding banner on the dashboard that walks through configuring URLs, running audits, notifications, and budgets (^2.0)"
     },
     "autoload": {
         "psr-4": {

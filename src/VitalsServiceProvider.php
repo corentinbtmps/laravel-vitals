@@ -125,6 +125,9 @@ final class VitalsServiceProvider extends PackageServiceProvider
         \Livewire\Livewire::addNamespace('vitals', classNamespace: 'LaravelVitals\\Livewire');
         \Livewire\Livewire::component('vitals::pages.insights', \LaravelVitals\Livewire\Pages\Insights::class);
         \Livewire\Livewire::component('vitals::pages.learn', \LaravelVitals\Livewire\Pages\Learn::class);
+        \Livewire\Livewire::component('vitals::components.onboarding-banner', \LaravelVitals\Livewire\Components\OnboardingBanner::class);
+
+        $this->registerOnboardingSteps();
 
         Gate::define('viewVitals', function ($user = null): bool {
             $callback = app(Vitals::class)->authorizeCallback();
@@ -186,5 +189,35 @@ final class VitalsServiceProvider extends PackageServiceProvider
         $this->publishes([
             dirname(__DIR__) . '/resources/views/mail' => resource_path('views/vendor/vitals/mail'),
         ], 'vitals-mail-views');
+    }
+
+    private function registerOnboardingSteps(): void
+    {
+        if (! class_exists(\Spatie\Onboard\Facades\Onboard::class)) {
+            return; // Optional dependency not installed — graceful no-op
+        }
+
+        \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.urls.title'))
+            ->link('/' . config('vitals.path', 'vitals') . '/urls')
+            ->cta(__('vitals::vitals.onboarding.steps.urls.cta'))
+            ->completeIf(fn (): bool => \LaravelVitals\Models\Url::query()->count() > 0);
+
+        \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.audit.title'))
+            ->link('/' . config('vitals.path', 'vitals') . '/urls')
+            ->cta(__('vitals::vitals.onboarding.steps.audit.cta'))
+            ->completeIf(fn (): bool => \LaravelVitals\Models\Audit::query()->where('status', 'completed')->exists());
+
+        \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.notifications.title'))
+            ->link('/' . config('vitals.path', 'vitals'))
+            ->cta(__('vitals::vitals.onboarding.steps.notifications.cta'))
+            ->completeIf(fn (): bool =>
+                ! empty(config('vitals.notifications.slack.webhook')) ||
+                ! empty(config('vitals.notifications.mail.to'))
+            );
+
+        \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.budgets.title'))
+            ->link('/' . config('vitals.path', 'vitals') . '/budgets')
+            ->cta(__('vitals::vitals.onboarding.steps.budgets.cta'))
+            ->completeIf(fn (): bool => is_array(config('vitals.budgets')) && count(config('vitals.budgets', [])) > 0);
     }
 }

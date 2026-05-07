@@ -38,6 +38,30 @@ return [
             'docs'  => 'Dokumentation lesen',
         ],
     ],
+    'onboarding' => [
+        'banner_title'    => 'Erste Schritte mit Laravel Vitals',
+        'banner_subtitle' => ':count von :total Schritten abgeschlossen',
+        'dismiss'         => 'Einrichtung überspringen',
+        'dismiss_confirm' => 'Dieses Banner dauerhaft ausblenden. Alle Funktionen sind weiterhin über die Navigation erreichbar.',
+        'steps' => [
+            'urls' => [
+                'title' => 'Erste URL konfigurieren',
+                'cta'   => 'URL hinzufügen',
+            ],
+            'audit' => [
+                'title' => 'Erste Analyse durchführen',
+                'cta'   => 'Analyse starten',
+            ],
+            'notifications' => [
+                'title' => 'Benachrichtigungen einrichten (optional)',
+                'cta'   => 'Konfigurieren',
+            ],
+            'budgets' => [
+                'title' => 'Performance-Budgets festlegen',
+                'cta'   => 'Budgets festlegen',
+            ],
+        ],
+    ],
     'tooltip' => [
         'pin'          => 'Zu Favoriten hinzufügen',
         'unpin'        => 'Aus Favoriten entfernen',
