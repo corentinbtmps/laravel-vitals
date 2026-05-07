@@ -77,6 +77,17 @@ return [
         'cwv_ttfb'     => 'Time to First Byte — tiempo que tarda el servidor en responder con el primer byte. Bien = menos de 800 ms.',
         'score_label'  => 'Puntuación Lighthouse :label',
     ],
+    'spotlight' => [
+        'placeholder'            => 'Buscar URLs, auditorías, recomendaciones…',
+        'group_urls'             => 'URLs',
+        'group_audits'           => 'Auditorías',
+        'group_recommendations'  => 'Recomendaciones',
+        'group_learn'            => 'Aprender',
+        'empty'                  => 'Sin resultados',
+        'hint'                   => 'Escribe al menos 2 caracteres para buscar',
+        'kbd_navigate'           => 'Navegar',
+        'kbd_open'               => 'Abrir',
+    ],
     'recommendations' => [
         'unused-javascript' => [
             'title'       => 'Reducir JavaScript no utilizado',

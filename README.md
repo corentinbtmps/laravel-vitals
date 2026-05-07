@@ -62,6 +62,26 @@ php artisan vendor:publish --tag=vitals-assets --force
 
 Then override the layout to use `asset('vendor/vitals/dashboard.css')` instead of `route('vitals.assets', ...)`.
 
+## Global search (Cmd+K)
+
+Add the `@vitalsSpotlight` directive to your main layout to enable a global
+keyboard-driven search across URLs, audits, recommendations, and the Learn
+knowledge base. Press **Cmd+K** (macOS) or **Ctrl+K** (Linux/Windows) on
+any page of your application to open it.
+
+```blade
+{{-- resources/views/layouts/app.blade.php --}}
+<body>
+    {{ $slot }}
+
+    @vitalsSpotlight
+</body>
+```
+
+Place it once, near the closing `</body>`. The modal lives in your app
+shell and binds keyboard listeners globally. Arrow keys navigate, Enter opens,
+Esc closes.
+
 ## Configuration
 
 Edit `config/vitals.php`:

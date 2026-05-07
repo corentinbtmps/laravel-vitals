@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
 /**
  * @property int $id
@@ -22,9 +24,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<string, mixed>|null $metrics
  * @property array<int, array<string, mixed>>|null $code_references
  */
-final class Recommendation extends Model
+final class Recommendation extends Model implements Searchable
 {
     use Prunable;
+
+    public string $searchableType = 'recommendations';
 
     /** @var string */
     protected $table = 'vitals_audit_recommendations';
@@ -48,6 +52,15 @@ final class Recommendation extends Model
     public function getConnectionName(): ?string
     {
         return config('vitals.database') ?? parent::getConnectionName();
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            __($this->title_key, (array) ($this->translation_params ?? [])) . ' (' . $this->audit_key . ')',
+            route('vitals.learn') . '#' . $this->audit_key,
+        );
     }
 
     /**

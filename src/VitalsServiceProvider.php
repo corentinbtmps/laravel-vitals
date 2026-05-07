@@ -66,6 +66,13 @@ final class VitalsServiceProvider extends PackageServiceProvider
         $this->app->singleton(Vitals::class);
         $this->app->alias(Vitals::class, 'vitals');
 
+        $this->app->bind('vitals.search-aspects', fn (): array => [
+            \Spatie\Searchable\ModelSearchAspect::forModel(\LaravelVitals\Models\Url::class, 'label', 'path'),
+            new \LaravelVitals\Search\AuditSearchAspect(),
+            new \LaravelVitals\Search\RecommendationSearchAspect(),
+            new \LaravelVitals\Search\LearnSearchAspect(),
+        ]);
+
         $this->app->singleton(\LaravelVitals\Support\ProcessFactory::class);
         $this->app->singleton(\LaravelVitals\Drivers\LighthouseDriverManager::class);
         $this->app->bind(
@@ -126,6 +133,9 @@ final class VitalsServiceProvider extends PackageServiceProvider
         \Livewire\Livewire::component('vitals::pages.insights', \LaravelVitals\Livewire\Pages\Insights::class);
         \Livewire\Livewire::component('vitals::pages.learn', \LaravelVitals\Livewire\Pages\Learn::class);
         \Livewire\Livewire::component('vitals::components.onboarding-banner', \LaravelVitals\Livewire\Components\OnboardingBanner::class);
+        \Livewire\Livewire::component('vitals::components.spotlight', \LaravelVitals\Livewire\Components\Spotlight::class);
+
+        \Illuminate\Support\Facades\Blade::directive('vitalsSpotlight', fn (): string => "<?php echo view('vitals::partials.spotlight-mount')->render(); ?>");
 
         $this->registerOnboardingSteps();
 

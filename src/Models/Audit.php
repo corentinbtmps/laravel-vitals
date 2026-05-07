@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
 /**
  * @property string $id
@@ -36,10 +38,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property \Illuminate\Support\Carbon|null $started_at
  * @property \Illuminate\Support\Carbon|null $completed_at
  */
-final class Audit extends Model
+final class Audit extends Model implements Searchable
 {
     use HasUuids;
     use Prunable;
+
+    public string $searchableType = 'audits';
 
     /** @var string */
     protected $table = 'vitals_audits';
@@ -97,6 +101,15 @@ final class Audit extends Model
     public function telemetry(): HasOne
     {
         return $this->hasOne(BackendTelemetry::class, 'audit_id');
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            ($this->url->label ?? 'Audit') . ' · ' . ($this->completed_at?->diffForHumans() ?? ''),
+            route('vitals.audit', $this->id),
+        );
     }
 
     /**

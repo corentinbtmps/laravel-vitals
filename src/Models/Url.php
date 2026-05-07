@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
 /**
  * Url declared in the host app's vitals config and audited by the package.
@@ -22,9 +24,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */
-final class Url extends Model
+final class Url extends Model implements Searchable
 {
     use Prunable;
+
+    public string $searchableType = 'urls';
 
     /** @var string */
     protected $table = 'vitals_urls';
@@ -65,6 +69,15 @@ final class Url extends Model
     public function audits(): HasMany
     {
         return $this->hasMany(Audit::class, 'url_id');
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->label . ' (' . $this->path . ')',
+            route('vitals.url', $this->id),
+        );
     }
 
     /**

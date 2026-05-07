@@ -83,6 +83,17 @@ return [
         'cwv_ttfb'     => 'Time to First Byte — how long the server takes to respond with the first byte. Good = under 800ms.',
         'score_label'  => 'Lighthouse :label score',
     ],
+    'spotlight' => [
+        'placeholder'            => 'Search URLs, audits, recommendations…',
+        'group_urls'             => 'URLs',
+        'group_audits'           => 'Audits',
+        'group_recommendations'  => 'Recommendations',
+        'group_learn'            => 'Learn',
+        'empty'                  => 'No results',
+        'hint'                   => 'Type at least 2 characters to search',
+        'kbd_navigate'           => 'Navigate',
+        'kbd_open'               => 'Open',
+    ],
     'recommendations' => [
         'unused-javascript' => [
             'title'       => 'Reduce unused JavaScript',
