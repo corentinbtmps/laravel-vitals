@@ -27,15 +27,20 @@
     <div class="space-y-2">
         @foreach ($steps as $step)
             @php $done = $step->complete(); @endphp
-            <div class="flex items-center gap-3 py-1">
+            <div class="flex items-center gap-3 py-1.5">
                 <div class="flex h-5 w-5 items-center justify-center rounded-full {{ $done ? 'bg-emerald-500' : 'bg-ink-200 dark:bg-ink-800' }} shrink-0">
                     @if ($done)
                         <flux:icon.check class="size-3 text-white" />
                     @endif
                 </div>
-                <span class="flex-1 text-sm {{ $done ? 'text-ink-400 line-through' : 'text-ink-800 dark:text-ink-200' }}">
-                    {{ $step->title }}
-                </span>
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm {{ $done ? 'text-ink-400 line-through' : 'text-ink-800 dark:text-ink-200' }}">
+                        {{ $step->title }}
+                    </div>
+                    @if (! $done && $step->attribute('hint'))
+                        <code class="mt-1 inline-block rounded bg-ink-100 dark:bg-ink-800 px-2 py-0.5 text-[11px] text-ink-600 dark:text-ink-400 font-mono">{{ $step->attribute('hint') }}</code>
+                    @endif
+                </div>
                 @if (! $done && $step === $nextStep)
                     <flux:button href="{{ $step->link }}" size="sm" variant="filled" color="accent">
                         {{ $step->cta }}

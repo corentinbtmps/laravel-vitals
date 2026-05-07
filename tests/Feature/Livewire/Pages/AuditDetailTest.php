@@ -30,8 +30,8 @@ it('renders audit details with scores, metrics, and recommendations', function (
         'audit_key'        => 'unused-javascript',
         'category'         => 'performance',
         'severity'         => 'warning',
-        'title_key'        => 'vitals::recommendations.unused-javascript.title',
-        'description_key'  => 'vitals::recommendations.unused-javascript.description',
+        'title_key'        => 'vitals::vitals.recommendations.unused-javascript.title',
+        'description_key'  => 'vitals::vitals.recommendations.unused-javascript.description',
         'code_references'  => [
             ['file' => 'resources/views/welcome.blade.php', 'line_start' => 12, 'line_end' => 12, 'snippet' => '<script src="..."></script>', 'hint' => 'Use @vite()'],
         ],

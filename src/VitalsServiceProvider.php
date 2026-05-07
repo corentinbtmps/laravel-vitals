@@ -196,16 +196,19 @@ final class VitalsServiceProvider extends PackageServiceProvider
         \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.urls.title'))
             ->link('/' . config('vitals.path', 'vitals') . '/urls')
             ->cta(__('vitals::vitals.onboarding.steps.urls.cta'))
+            ->attributes(['hint' => "config/vitals.php → 'urls' => [['label' => 'Home', 'path' => '/']]"])
             ->completeIf(fn (): bool => \LaravelVitals\Models\Url::query()->count() > 0);
 
         \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.audit.title'))
             ->link('/' . config('vitals.path', 'vitals') . '/urls')
             ->cta(__('vitals::vitals.onboarding.steps.audit.cta'))
+            ->attributes(['hint' => 'php artisan vitals:audit'])
             ->completeIf(fn (): bool => \LaravelVitals\Models\Audit::query()->where('status', 'completed')->exists());
 
         \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.notifications.title'))
             ->link('/' . config('vitals.path', 'vitals'))
             ->cta(__('vitals::vitals.onboarding.steps.notifications.cta'))
+            ->attributes(['hint' => "config/vitals.php → notifications.slack.webhook or notifications.mail.to"])
             ->completeIf(fn (): bool =>
                 ! empty(config('vitals.notifications.slack.webhook')) ||
                 ! empty(config('vitals.notifications.mail.to'))
@@ -214,6 +217,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
         \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.budgets.title'))
             ->link('/' . config('vitals.path', 'vitals') . '/budgets')
             ->cta(__('vitals::vitals.onboarding.steps.budgets.cta'))
+            ->attributes(['hint' => "config/vitals.php → 'budgets' => ['lcp_ms' => ['warning' => 2500]]"])
             ->completeIf(fn (): bool => is_array(config('vitals.budgets')) && count(config('vitals.budgets', [])) > 0);
     }
 }

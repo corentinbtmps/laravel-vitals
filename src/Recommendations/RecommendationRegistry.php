@@ -93,8 +93,8 @@ final class RecommendationRegistry
             source:         $source,
             category:       $category,
             severity:       $severity,
-            titleKey:       "vitals::recommendations.$key.title",
-            descriptionKey: "vitals::recommendations.$key.description",
+            titleKey:       "vitals::vitals.recommendations.$key.title",
+            descriptionKey: "vitals::vitals.recommendations.$key.description",
         );
     }
 }

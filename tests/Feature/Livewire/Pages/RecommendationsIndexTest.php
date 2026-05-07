@@ -25,14 +25,14 @@ it('aggregates recommendations across audits', function (): void {
     Recommendation::create([
         'audit_id' => $audit->id, 'source' => 'lighthouse', 'audit_key' => 'unused-javascript',
         'category' => 'performance', 'severity' => 'warning',
-        'title_key' => 'vitals::recommendations.unused-javascript.title',
-        'description_key' => 'vitals::recommendations.unused-javascript.description',
+        'title_key' => 'vitals::vitals.recommendations.unused-javascript.title',
+        'description_key' => 'vitals::vitals.recommendations.unused-javascript.description',
     ]);
     Recommendation::create([
         'audit_id' => $audit->id, 'source' => 'lighthouse', 'audit_key' => 'unused-javascript',
         'category' => 'performance', 'severity' => 'warning',
-        'title_key' => 'vitals::recommendations.unused-javascript.title',
-        'description_key' => 'vitals::recommendations.unused-javascript.description',
+        'title_key' => 'vitals::vitals.recommendations.unused-javascript.title',
+        'description_key' => 'vitals::vitals.recommendations.unused-javascript.description',
     ]);
 
     Livewire::test(RecommendationsIndex::class)

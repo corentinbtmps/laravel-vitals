@@ -11,7 +11,7 @@ it('exposes descriptors for known Lighthouse audit keys', function (): void {
     expect($unused)->not->toBeNull()
         ->and($unused->category)->toBe('performance')
         ->and($unused->severity)->toBeIn(['info', 'warning', 'critical'])
-        ->and($unused->titleKey)->toBe('vitals::recommendations.unused-javascript.title');
+        ->and($unused->titleKey)->toBe('vitals::vitals.recommendations.unused-javascript.title');
 });
 
 it('exposes descriptors for custom (config) audit keys', function (): void {

@@ -53,11 +53,11 @@
                 <div class="overflow-x-auto -mx-2 sm:mx-0">
                     <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0">
                         @foreach ([
-                            'performance' => ['label' => 'Score', 'desc_key' => 'vitals.tooltip.metric_score'],
-                            'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals.tooltip.metric_lcp'],
-                            'inp'         => ['label' => 'INP',   'desc_key' => 'vitals.tooltip.metric_inp'],
-                            'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals.tooltip.metric_cls'],
-                            'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals.tooltip.metric_ttfb'],
+                            'performance' => ['label' => 'Score', 'desc_key' => 'vitals::vitals.tooltip.metric_score'],
+                            'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals::vitals.tooltip.metric_lcp'],
+                            'inp'         => ['label' => 'INP',   'desc_key' => 'vitals::vitals.tooltip.metric_inp'],
+                            'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals::vitals.tooltip.metric_cls'],
+                            'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals::vitals.tooltip.metric_ttfb'],
                         ] as $val => $meta)
                             <flux:tooltip :content="__($meta['desc_key'])">
                                 <button

@@ -66,7 +66,7 @@
                 <div class="absolute top-0 left-0 right-0 h-0.5 bg-{{ $color }}-500 rounded-t-2xl"></div>
                 <div class="flex items-center gap-2 text-xs text-ink-500 mt-1">
                     <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
-                    <flux:tooltip :content="__('vitals.tooltip.score_label', ['label' => $meta['label']])">
+                    <flux:tooltip :content="__('vitals::vitals.tooltip.score_label', ['label' => $meta['label']])">
                         <span class="cursor-help underline decoration-dotted decoration-ink-300 dark:decoration-ink-700 underline-offset-2">{{ $meta['label'] }}</span>
                     </flux:tooltip>
                 </div>
@@ -125,16 +125,16 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach ([
                 ['col' => 'lcp_ms',  'label' => 'LCP',  'unit' => 'ms', 'desc' => 'Largest Contentful Paint',
-                 'tooltip_key' => 'vitals.tooltip.cwv_lcp',
+                 'tooltip_key' => 'vitals::vitals.tooltip.cwv_lcp',
                  'doc' => 'https://web.dev/articles/lcp'],
                 ['col' => 'cls',     'label' => 'CLS',  'unit' => '',   'desc' => 'Cumulative Layout Shift',
-                 'tooltip_key' => 'vitals.tooltip.cwv_cls',
+                 'tooltip_key' => 'vitals::vitals.tooltip.cwv_cls',
                  'doc' => 'https://web.dev/articles/cls'],
                 ['col' => 'inp_ms',  'label' => 'INP',  'unit' => 'ms', 'desc' => 'Interaction to Next Paint',
-                 'tooltip_key' => 'vitals.tooltip.cwv_inp',
+                 'tooltip_key' => 'vitals::vitals.tooltip.cwv_inp',
                  'doc' => 'https://web.dev/articles/inp'],
                 ['col' => 'ttfb_ms', 'label' => 'TTFB', 'unit' => 'ms', 'desc' => 'Time to First Byte',
-                 'tooltip_key' => 'vitals.tooltip.cwv_ttfb',
+                 'tooltip_key' => 'vitals::vitals.tooltip.cwv_ttfb',
                  'doc' => 'https://web.dev/articles/ttfb'],
             ] as $cwv)
                 @php

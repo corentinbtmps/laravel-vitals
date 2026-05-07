@@ -23,8 +23,8 @@ it('persists a Recommendation with json columns cast to arrays', function (): vo
         'audit_key'          => 'unused-javascript',
         'category'           => 'performance',
         'severity'           => 'warning',
-        'title_key'          => 'vitals::recommendations.unused-javascript.title',
-        'description_key'    => 'vitals::recommendations.unused-javascript.description',
+        'title_key'          => 'vitals::vitals.recommendations.unused-javascript.title',
+        'description_key'    => 'vitals::vitals.recommendations.unused-javascript.description',
         'translation_params' => ['size' => '180 KB'],
         'metrics'            => ['savings_kb' => 180],
         'code_references'    => [

@@ -53,7 +53,7 @@
                                 <flux:table.row :key="$u->id">
                                     {{-- Star / pin button --}}
                                     <flux:table.cell>
-                                        <flux:tooltip :content="$u->pinned_at ? __('vitals.tooltip.unpin') : __('vitals.tooltip.pin')">
+                                        <flux:tooltip :content="$u->pinned_at ? __('vitals::vitals.tooltip.unpin') : __('vitals::vitals.tooltip.pin')">
                                             <button wire:click="togglePin({{ $u->id }})"
                                                     type="button"
                                                     class="text-amber-500 hover:text-amber-600 transition-colors duration-150">
@@ -114,7 +114,7 @@
                                     {{-- Last audit time --}}
                                     <flux:table.cell align="end">
                                         @if ($last !== null && $last->completed_at !== null)
-                                            <flux:tooltip :content="__('vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
+                                            <flux:tooltip :content="__('vitals::vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
                                                 <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline text-xs">
                                                     {{ $last->completed_at->diffForHumans(short: true) }}
                                                 </a>
@@ -169,7 +169,7 @@
                             <flux:table.row :key="$u->id">
                                 {{-- Star / pin button --}}
                                 <flux:table.cell>
-                                    <flux:tooltip :content="$u->pinned_at ? __('vitals.tooltip.unpin') : __('vitals.tooltip.pin')">
+                                    <flux:tooltip :content="$u->pinned_at ? __('vitals::vitals.tooltip.unpin') : __('vitals::vitals.tooltip.pin')">
                                         <button wire:click="togglePin({{ $u->id }})"
                                                 type="button"
                                                 class="transition-colors duration-150 {{ $u->pinned_at ? 'text-amber-500 hover:text-amber-600' : 'text-ink-300 hover:text-amber-500' }}">
@@ -234,7 +234,7 @@
                                 {{-- Last audit time --}}
                                 <flux:table.cell align="end">
                                     @if ($last !== null && $last->completed_at !== null)
-                                        <flux:tooltip :content="__('vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
+                                        <flux:tooltip :content="__('vitals::vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
                                             <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline text-xs">
                                                 {{ $last->completed_at->diffForHumans(short: true) }}
                                             </a>
