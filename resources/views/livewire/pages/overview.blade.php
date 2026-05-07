@@ -80,6 +80,13 @@
                         },
                         update(newSeries) {
                             this.series = newSeries;
+                            if (this.series.length < 2) {
+                                if (this.chart) {
+                                    this.chart.destroy();
+                                    this.chart = null;
+                                }
+                                return;
+                            }
                             if (this.chart) {
                                 this.chart.updateSeries([{ data: this.series }]);
                             } else {
