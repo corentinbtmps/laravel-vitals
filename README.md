@@ -2,6 +2,10 @@
   <img src="resources/svg/logo.svg" alt="Laravel Vitals" width="280">
 </p>
 
+[![CI](https://github.com/corentinbtmps/laravel-vitals/actions/workflows/ci.yml/badge.svg)](https://github.com/corentinbtmps/laravel-vitals/actions/workflows/ci.yml)
+[![Latest Stable Version](https://img.shields.io/packagist/v/humantocomputer/laravel-vitals.svg)](https://packagist.org/packages/humantocomputer/laravel-vitals)
+[![License](https://img.shields.io/packagist/l/humantocomputer/laravel-vitals.svg)](LICENSE.md)
+
 # Laravel Vitals
 
 Lighthouse-powered performance audits for Laravel apps, with backend telemetry
