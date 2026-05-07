@@ -155,6 +155,8 @@
     {{ $slot ?? '' }}
 </flux:main>
 
+@vitalsSpotlight
+
 @livewireScripts
 @fluxScripts
 </body>

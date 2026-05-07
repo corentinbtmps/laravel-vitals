@@ -2,6 +2,10 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
+    // Emit relative asset URLs in CSS (url(./foo.woff2)) so they resolve
+    // alongside dashboard.css regardless of where it is served from
+    // (the package serves it via /vitals/_assets/{file}).
+    base: './',
     build: {
         outDir: 'dist',
         emptyOutDir: true,
