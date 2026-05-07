@@ -3,6 +3,41 @@
 declare(strict_types=1);
 
 return [
+    'empty' => [
+        'overview_no_urls' => [
+            'title' => 'Añade tu primera URL para comenzar la monitorización',
+            'body'  => 'Laravel Vitals rastrea puntuaciones Lighthouse y telemetría de backend para las URLs que configures. Empieza añadiendo las URLs que quieres monitorizar.',
+            'cta'   => 'Configurar URLs',
+            'docs'  => 'Leer documentación',
+        ],
+        'overview_no_audits' => [
+            'title' => 'Aún no hay auditorías',
+            'body'  => 'Ejecuta tu primera auditoría para poblar el panel. Las auditorías pueden ejecutarse mediante artisan, una tarea programada o tu pipeline de CI.',
+            'cta'   => 'Abrir URLs',
+            'docs'  => 'Leer documentación',
+        ],
+        'urls_no_urls' => [
+            'title' => 'No hay URLs configuradas',
+            'body'  => 'Configura las URLs en config/vitals.php bajo la clave urls, o ejecuta el seeder de demostración para datos de ejemplo.',
+            'docs'  => 'Leer documentación',
+        ],
+        'recos_no_recos' => [
+            'title' => 'Aún no hay recomendaciones',
+            'body'  => 'Ejecuta una auditoría para descubrir oportunidades de optimización. Cada recomendación enlaza con el archivo y la línea exactos de tu aplicación.',
+            'cta'   => 'Explorar problemas conocidos',
+            'docs'  => 'Leer documentación',
+        ],
+        'insights_no_history' => [
+            'title' => 'Historial de auditorías insuficiente',
+            'body'  => 'Los insights comparan auditorías a lo largo del tiempo. Ejecuta al menos 2 auditorías por URL para ver tendencias y regresiones.',
+            'docs'  => 'Leer documentación',
+        ],
+        'budgets_no_budgets' => [
+            'title' => 'No hay presupuestos definidos',
+            'body'  => 'Los presupuestos de rendimiento hacen fallar tu CI cuando las puntuaciones caen por debajo de un umbral. Defínelos en config/vitals.php bajo budgets.',
+            'docs'  => 'Leer documentación',
+        ],
+    ],
     'tooltip' => [
         'pin'          => 'Añadir a favoritos',
         'unpin'        => 'Quitar de favoritos',

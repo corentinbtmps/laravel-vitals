@@ -12,6 +12,12 @@ use Livewire\Livewire;
 
 beforeEach(fn () => Vitals::authorize(fn (): true => true));
 
+it('shows empty state when no recommendations exist', function (): void {
+    Livewire::test(RecommendationsIndex::class)
+        ->assertOk()
+        ->assertSee('No recommendations yet');
+});
+
 it('aggregates recommendations across audits', function (): void {
     $url = Url::create(['label' => 'home', 'path' => '/']);
     $audit = Audit::create(['id' => Str::uuid()->toString(), 'url_id' => $url->id, 'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed']);

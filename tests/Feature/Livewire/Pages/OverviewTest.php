@@ -35,10 +35,18 @@ it('renders the overview page with average scores when audits exist', function (
         ->assertSeeText('90');
 });
 
-it('renders gracefully when no audits exist', function (): void {
+it('shows empty state when no URLs configured', function (): void {
     Livewire::test(Overview::class)
         ->assertOk()
-        ->assertSee('No audits');
+        ->assertSee('Add your first URL to start monitoring');
+});
+
+it('shows no-audits empty state when URLs exist but no audits', function (): void {
+    Url::create(['label' => 'home', 'path' => '/']);
+
+    Livewire::test(Overview::class)
+        ->assertOk()
+        ->assertSee('No audits yet');
 });
 
 it('passes metric trends and deltas to the view', function (): void {

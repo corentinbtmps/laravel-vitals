@@ -4,6 +4,16 @@
         <p class="text-sm text-ink-500 mt-1">Cross-URL trends and opportunities aggregated from the last 7 days</p>
     </div>
 
+    @if ($quickWins->isEmpty() && empty($worsening) && empty($improving))
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
+                <flux:icon.sparkles class="size-6 text-accent-600 dark:text-accent-400" />
+            </div>
+            <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __('vitals::vitals.empty.insights_no_history.title') }}</h3>
+            <p class="mt-2 text-sm text-ink-500 max-w-md mx-auto">{{ __('vitals::vitals.empty.insights_no_history.body') }}</p>
+        </div>
+    @else
+
     {{-- Quick wins --}}
     <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-start justify-between mb-4">
@@ -124,5 +134,6 @@
                 </tbody>
             </table>
         </div>
+    @endif
     @endif
 </div>

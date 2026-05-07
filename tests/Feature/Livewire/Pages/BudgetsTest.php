@@ -8,6 +8,14 @@ use Livewire\Livewire;
 
 beforeEach(fn () => Vitals::authorize(fn (): true => true));
 
+it('shows empty state when no budgets configured', function (): void {
+    config()->set('vitals.budgets', []);
+
+    Livewire::test(Budgets::class)
+        ->assertOk()
+        ->assertSee('No budgets defined');
+});
+
 it('renders the configured budgets', function (): void {
     config()->set('vitals.budgets', [
         'lcp_ms' => ['warning' => 2500, 'critical' => 4000],

@@ -10,11 +10,14 @@
     </div>
 
     @if ($rows->isEmpty())
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-            <div class="text-center py-8">
-                <flux:icon.light-bulb class="size-12 text-ink-300 dark:text-ink-700 mx-auto mb-3" />
-                <p class="text-sm text-ink-500">No recommendations yet.</p>
-                <p class="text-xs text-ink-400 mt-2">Recommendations appear after audits are completed.</p>
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
+                <flux:icon.light-bulb class="size-6 text-accent-600 dark:text-accent-400" />
+            </div>
+            <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __('vitals::vitals.empty.recos_no_recos.title') }}</h3>
+            <p class="mt-2 text-sm text-ink-500 max-w-md mx-auto">{{ __('vitals::vitals.empty.recos_no_recos.body') }}</p>
+            <div class="mt-5 flex items-center justify-center gap-2">
+                <flux:button href="{{ route('vitals.learn') }}" variant="filled" color="accent" icon="book-open" size="sm">{{ __('vitals::vitals.empty.recos_no_recos.cta') }}</flux:button>
             </div>
         </div>
     @else

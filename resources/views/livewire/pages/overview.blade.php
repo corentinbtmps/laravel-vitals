@@ -5,18 +5,48 @@
             <h1 class="text-2xl font-semibold">Vitals</h1>
             <p class="text-sm text-ink-500 mt-1">Performance health across all monitored URLs</p>
         </div>
-        <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1">
-            @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
-                <button
-                    wire:click="setPeriod('{{ $val }}')"
-                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                        {{ $period === $val
-                            ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                            : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
-                >{{ $label }}</button>
-            @endforeach
+        <div class="overflow-x-auto -mx-2 md:mx-0">
+            <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 md:mx-0">
+                @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
+                    <button
+                        wire:click="setPeriod('{{ $val }}')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                            {{ $period === $val
+                                ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
+                                : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                    >{{ $label }}</button>
+                @endforeach
+            </div>
         </div>
     </div>
+
+    {{-- Empty state: no URLs configured --}}
+    @if ($urlsCount === 0)
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
+                <flux:icon.link class="size-6 text-accent-600 dark:text-accent-400" />
+            </div>
+            <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __('vitals::vitals.empty.overview_no_urls.title') }}</h3>
+            <p class="mt-2 text-sm text-ink-500 max-w-md mx-auto">{{ __('vitals::vitals.empty.overview_no_urls.body') }}</p>
+            <div class="mt-5 flex items-center justify-center gap-2">
+                <flux:button href="{{ route('vitals.urls') }}" variant="filled" color="accent" icon="link" size="sm">{{ __('vitals::vitals.empty.overview_no_urls.cta') }}</flux:button>
+            </div>
+            <code class="mt-6 inline-block rounded-md bg-ink-100 dark:bg-ink-800 px-3 py-1.5 text-xs text-ink-600 dark:text-ink-400 font-mono">php artisan vitals:demo</code>
+        </div>
+    @elseif ($recent->isEmpty())
+        {{-- Empty state: URLs configured but no audits yet --}}
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
+                <flux:icon.signal class="size-6 text-accent-600 dark:text-accent-400" />
+            </div>
+            <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __('vitals::vitals.empty.overview_no_audits.title') }}</h3>
+            <p class="mt-2 text-sm text-ink-500 max-w-md mx-auto">{{ __('vitals::vitals.empty.overview_no_audits.body') }}</p>
+            <div class="mt-5 flex items-center justify-center gap-2">
+                <flux:button href="{{ route('vitals.urls') }}" variant="filled" color="accent" icon="link" size="sm">{{ __('vitals::vitals.empty.overview_no_audits.cta') }}</flux:button>
+            </div>
+            <code class="mt-6 inline-block rounded-md bg-ink-100 dark:bg-ink-800 px-3 py-1.5 text-xs text-ink-600 dark:text-ink-400 font-mono">php artisan vitals:audit</code>
+        </div>
+    @else
 
     {{-- Lens cards: 4 metrics with sparklines --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -171,30 +201,23 @@
                     <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }}</p>
                 </div>
             </div>
-            @if ($recent->isEmpty())
-                <div class="text-center py-6">
-                    <flux:icon.signal class="size-10 text-ink-300 mx-auto mb-2" />
-                    <p class="text-sm text-ink-500 mb-3">No audits in this period.</p>
-                    <code class="text-xs bg-ink-100 dark:bg-ink-800 px-2 py-1 rounded">php artisan vitals:audit</code>
-                </div>
-            @else
-                <ul class="divide-y divide-ink-100 dark:divide-ink-800">
-                    @foreach ($recent->take(8) as $audit)
-                        @php
-                            $color = \LaravelVitals\Support\Health::colorForScore($audit->score_performance);
-                            $grade = \LaravelVitals\Support\Health::grade($audit->score_performance);
-                        @endphp
-                        <li class="py-2.5 flex items-center gap-3">
-                            <span class="size-9 rounded-full bg-{{ $color }}-100 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 flex items-center justify-center font-bold text-sm">{{ $grade }}</span>
-                            <div class="flex-1 min-w-0">
-                                <a href="{{ route('vitals.audit', $audit) }}" class="text-sm font-medium hover:underline truncate block">{{ $audit->url?->label }}</a>
-                                <div class="text-xs text-ink-500">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>
-                            </div>
-                            <flux:button href="{{ route('vitals.audit', $audit) }}" variant="ghost" size="sm" icon="arrow-right" />
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
+            <ul class="divide-y divide-ink-100 dark:divide-ink-800">
+                @foreach ($recent->take(8) as $audit)
+                    @php
+                        $color = \LaravelVitals\Support\Health::colorForScore($audit->score_performance);
+                        $grade = \LaravelVitals\Support\Health::grade($audit->score_performance);
+                    @endphp
+                    <li class="py-2.5 flex items-center gap-3">
+                        <span class="size-9 rounded-full bg-{{ $color }}-100 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 flex items-center justify-center font-bold text-sm">{{ $grade }}</span>
+                        <div class="flex-1 min-w-0">
+                            <a href="{{ route('vitals.audit', $audit) }}" class="text-sm font-medium hover:underline truncate block">{{ $audit->url?->label }}</a>
+                            <div class="text-xs text-ink-500">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>
+                        </div>
+                        <flux:button href="{{ route('vitals.audit', $audit) }}" variant="ghost" size="sm" icon="arrow-right" />
+                    </li>
+                @endforeach
+            </ul>
         </div>
     </div>
+    @endif
 </div>
