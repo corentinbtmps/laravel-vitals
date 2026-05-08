@@ -87,6 +87,7 @@ return [
         'hint'                   => 'Mindestens 2 Zeichen eingeben',
         'kbd_navigate'           => 'Navigieren',
         'kbd_open'               => 'Öffnen',
+        'button_label'           => 'Suchen…',
     ],
     'recommendations' => [
         'unused-javascript' => [

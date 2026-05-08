@@ -87,6 +87,7 @@ return [
         'hint'                   => 'Escribe al menos 2 caracteres para buscar',
         'kbd_navigate'           => 'Navegar',
         'kbd_open'               => 'Abrir',
+        'button_label'           => 'Buscar…',
     ],
     'recommendations' => [
         'unused-javascript' => [

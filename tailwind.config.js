@@ -41,10 +41,10 @@ export default {
                     400: 'oklch(65% 0.010 17)',
                     500: 'oklch(52% 0.012 17)',
                     600: 'oklch(42% 0.012 17)',
-                    700: 'oklch(32% 0.012 17)',
-                    800: 'oklch(22% 0.010 17)',
-                    900: 'oklch(15% 0.008 17)',
-                    950: 'oklch(10% 0.006 17)',
+                    700: 'oklch(35% 0.014 17)',
+                    800: 'oklch(26% 0.012 17)',
+                    900: 'oklch(18% 0.010 17)',
+                    950: 'oklch(13% 0.008 17)',
                 },
                 // Rose accent scale — primary brand color
                 accent: {

@@ -93,6 +93,7 @@ return [
         'hint'                   => 'Type at least 2 characters to search',
         'kbd_navigate'           => 'Navigate',
         'kbd_open'               => 'Open',
+        'button_label'           => 'Search...',
     ],
     'recommendations' => [
         'unused-javascript' => [

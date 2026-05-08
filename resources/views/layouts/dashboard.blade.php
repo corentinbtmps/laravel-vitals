@@ -82,6 +82,21 @@
         @endif
     </flux:navbar>
 
+    {{-- Spotlight trigger button — visible affordance for Cmd+K (desktop only) --}}
+    <button
+        type="button"
+        x-data
+        x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
+        class="hidden lg:inline-flex items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors min-w-[200px]"
+        aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
+    >
+        <flux:icon.magnifying-glass class="size-4 shrink-0" />
+        <span class="flex-1 text-left">{{ __('vitals::vitals.spotlight.button_label') }}</span>
+        <kbd class="hidden md:inline-flex items-center gap-0.5 rounded border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 px-1.5 py-0.5 text-[10px] font-mono text-ink-500" x-data x-init="$el.firstElementChild.textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'">
+            <span></span>K
+        </kbd>
+    </button>
+
     <flux:spacer />
 
     <flux:button
@@ -92,8 +107,8 @@
         tooltip="Toggle theme"
     />
 
-    {{-- Mobile hamburger menu (shown on lg:hidden screens) --}}
-    <div class="lg:hidden" x-data="{ open: false }">
+    {{-- Mobile burger menu (shown on lg:hidden screens) --}}
+    <div class="lg:hidden" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
         <button
             type="button"
             x-on:click="open = !open"
@@ -104,14 +119,34 @@
             <flux:icon.x-mark x-show="open" class="size-5" x-cloak />
         </button>
 
-        {{-- Dropdown drawer --}}
+        {{-- Backdrop --}}
         <div
             x-show="open"
             x-cloak
-            x-on:click.outside="open = false"
-            class="absolute top-full left-0 right-0 z-50 border-b border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 shadow-lg"
+            x-on:click="open = false"
+            class="fixed inset-0 z-40 bg-ink-950/40 backdrop-blur-sm lg:hidden"
+            x-transition.opacity
+        ></div>
+
+        {{-- Drawer (slides from right) --}}
+        <nav
+            x-show="open"
+            x-cloak
+            class="fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-paper dark:bg-ink-900 border-l border-ink-200 dark:border-ink-800 shadow-2xl px-4 py-6 overflow-y-auto lg:hidden"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="translate-x-full"
         >
-            <nav class="container mx-auto px-4 py-3 flex flex-col gap-1">
+            <div class="flex items-center justify-between mb-6 px-2">
+                <span class="text-base font-semibold text-ink-900 dark:text-ink-100">Menu</span>
+                <button x-on:click="open = false" class="text-ink-400 hover:text-ink-600 dark:hover:text-ink-300 transition-colors">
+                    <flux:icon.x-mark class="size-5" />
+                </button>
+            </div>
+            <div class="flex flex-col gap-1">
                 <a href="{{ route('vitals.dashboard') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.dashboard') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
                     <flux:icon.squares-2x2 class="size-4" />Overview
@@ -146,8 +181,8 @@
                     <flux:icon.chart-bar class="size-4" />Budgets
                 </a>
                 @endif
-            </nav>
-        </div>
+            </div>
+        </nav>
     </div>
 </flux:header>
 
