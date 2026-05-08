@@ -16,6 +16,18 @@
         [data-flux-navbar-items][data-current]::after {
             background-color: rgb(244 63 94) !important;
         }
+        /* Responsive helpers that bypass a Tailwind/Chrome parser issue
+           where the first rule of compiled @media blocks is silently dropped. */
+        .vitals-mobile-only { display: none; }
+        .vitals-desktop-only { display: none; }
+        @media (max-width: 1023.98px) {
+            .vitals-padding { padding: 0 !important; }
+            .vitals-mobile-only { display: flex; }
+        }
+        @media (min-width: 1024px) {
+            .vitals-padding { padding: 0 !important; }
+            .vitals-desktop-only { display: inline-flex; }
+        }
     </style>
 </head>
 <body class="h-full bg-ink-50 text-ink-900 dark:bg-ink-950 dark:text-ink-100" data-flux-appearance>
@@ -87,7 +99,7 @@
         type="button"
         x-data
         x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
-        class="max-lg:hidden inline-flex items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors w-56"
+        class="vitals-desktop-only items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors w-56"
         aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
     >
         <flux:icon.magnifying-glass class="size-4 shrink-0" />
@@ -108,7 +120,7 @@
     />
 
     {{-- Mobile burger menu (shown on max-lg screens) --}}
-    <div class="max-lg:flex hidden" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
+    <div class="vitals-mobile-only" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
         <button
             type="button"
             x-on:click="open = !open"
