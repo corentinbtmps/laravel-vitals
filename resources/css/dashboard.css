@@ -1,9 +1,78 @@
-/* Geist Variable — self-hosted via @fontsource-variable, no external CDN */
-@import '@fontsource-variable/geist';
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Class-based dark mode — replaces darkMode: 'class' from tailwind.config.js */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Theme tokens ─────────────────────────────────────────────────────────── */
+/* Replaces theme.extend.colors, theme.extend.fontFamily, theme.extend.fontSize,
+   and theme.extend.letterSpacing from tailwind.config.js (v3).
+   Tailwind 4 supports OKLCH natively — no <alpha-value> placeholder needed. */
+@theme {
+    /* Base surface colors */
+    --color-paper:  oklch(99.2% 0.003 17);
+    --color-canvas: oklch(97.8% 0.005 17);
+
+    /* Tinted-neutral scale (replaces zinc entirely — rose tint at low chroma) */
+    --color-ink-50:  oklch(98% 0.003 17);
+    --color-ink-100: oklch(95% 0.005 17);
+    --color-ink-200: oklch(90% 0.007 17);
+    --color-ink-300: oklch(80% 0.008 17);
+    --color-ink-400: oklch(65% 0.010 17);
+    --color-ink-500: oklch(52% 0.012 17);
+    --color-ink-600: oklch(42% 0.012 17);
+    --color-ink-700: oklch(35% 0.014 17);
+    --color-ink-800: oklch(26% 0.012 17);
+    --color-ink-900: oklch(18% 0.010 17);
+    --color-ink-950: oklch(13% 0.008 17);
+
+    /* Rose accent scale — primary brand color */
+    --color-accent-50:  oklch(97% 0.018 12);
+    --color-accent-100: oklch(94% 0.040 12);
+    --color-accent-200: oklch(88% 0.075 12);
+    --color-accent-300: oklch(80% 0.120 12);
+    --color-accent-400: oklch(72% 0.180 12);
+    --color-accent-500: oklch(64% 0.220 12);
+    --color-accent-600: oklch(57% 0.240 12);
+    --color-accent-700: oklch(50% 0.220 12);
+    --color-accent-800: oklch(40% 0.180 12);
+    --color-accent-900: oklch(30% 0.150 12);
+    --color-accent-950: oklch(20% 0.100 12);
+
+    /* Typography */
+    --font-sans: 'Geist Variable', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Geist Mono Variable', 'Geist Variable', ui-monospace, monospace;
+
+    /* Type scale */
+    --text-xs:          0.75rem;
+    --text-xs--line-height: 1rem;
+    --text-sm:          0.875rem;
+    --text-sm--line-height: 1.25rem;
+    --text-base:        1rem;
+    --text-base--line-height: 1.5rem;
+    --text-lg:          1.125rem;
+    --text-lg--line-height: 1.75rem;
+    --text-xl:          1.25rem;
+    --text-xl--line-height: 1.75rem;
+    --text-2xl:         1.5rem;
+    --text-2xl--line-height: 2rem;
+    --text-3xl:         2rem;
+    --text-3xl--line-height: 2.25rem;
+    --text-display:     3rem;
+    --text-display--line-height: 1;
+    --text-display--letter-spacing: -0.02em;
+
+    /* Tracking */
+    --tracking-label: 0.08em;
+}
+
+/* ─── Source paths ─────────────────────────────────────────────────────────── */
+/* Tailwind 4 auto-detects most paths; these cover cross-package content that
+   lives outside the default detection scope. */
+@source "../../src/**/*.php";
+@source "../../lang/**/*.php";
+@source "../../vendor/livewire/flux/stubs/**/*.blade.php";
+@source "../../vendor/livewire/flux/src/**/*.php";
 
 /* ─── Base resets ──────────────────────────────────────────────────────────── */
 @layer base {
