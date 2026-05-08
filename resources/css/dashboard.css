@@ -74,6 +74,33 @@
 @source "../../vendor/livewire/flux/stubs/**/*.blade.php";
 @source "../../vendor/livewire/flux/src/**/*.php";
 
+/* ─── Dynamic class strings (Blade variable interpolation) ─────────────────── */
+/* Tailwind's content scanner cannot expand `border-{{ $color }}-200/60` etc.
+   These come from the severity match (accent/amber/sky for critical/warning/info)
+   and Browse tile color match (accent/emerald/sky/violet).
+   Scope tightly to what views actually emit. */
+
+/* Severity quick-wins / recommendation borders + tinted backgrounds */
+@source inline("{,dark:}border-{accent,amber,sky,emerald,violet}-200/60");
+@source inline("{,dark:}border-{accent,amber,sky,emerald,violet}-900/40");
+@source inline("{,dark:}bg-{accent,amber,sky,emerald,violet}-50/{30,40}");
+@source inline("{,dark:}bg-{accent,amber,sky,emerald,violet}-900/{5,10,20}");
+
+/* Severity dot indicator + text */
+@source inline("bg-{accent,amber,sky,emerald,violet}-500");
+@source inline("{,dark:}text-{accent,amber,sky,emerald,violet}-{400,500,600,700}");
+
+/* Browse tile icon backgrounds + hover overlays + active borders */
+@source inline("bg-{accent,amber,sky,emerald,violet}-100");
+@source inline("dark:bg-{accent,amber,sky,emerald,violet}-900/30");
+@source inline("hover:bg-{accent,amber,sky,emerald,violet}-50/30");
+@source inline("dark:hover:bg-{accent,amber,sky,emerald,violet}-900/10");
+@source inline("hover:border-{accent,amber,sky,emerald,violet}-500/40");
+
+/* Group-hover text shifts on browse tiles */
+@source inline("group-hover:text-{accent,amber,sky,emerald,violet}-{300,700}");
+@source inline("dark:group-hover:text-{accent,amber,sky,emerald,violet}-300");
+
 /* ─── Base resets ──────────────────────────────────────────────────────────── */
 @layer base {
     html {

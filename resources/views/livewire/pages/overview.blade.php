@@ -95,7 +95,7 @@
                         hex: '{{ $metric['hex'] }}',
                         label: '{{ $metric['label'] }}',
                         render() {
-                            if (this.series.length < 2) return;
+                            if (this.series.length < 2 || this.chart) return;
                             this.chart = new ApexCharts(this.$refs.spark, {
                                 chart: { type: 'area', height: 48, sparkline: { enabled: true }, animations: { enabled: false } },
                                 series: [{ name: this.label, data: this.series }],

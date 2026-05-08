@@ -77,14 +77,18 @@
                     chart: null,
                     metric: @js($metric),
                     series: @js($chartSeries),
+                    labelColor() {
+                        return document.documentElement.classList.contains('dark') ? '#a1a1aa' : '#71717a';
+                    },
                     getYaxis(metric) {
+                        const labelStyle = { colors: this.labelColor() };
                         if (metric === 'cls') {
                             return {
                                 show: true,
                                 min: 0,
                                 max: function(max) { return Math.max(max * 1.2, 0.5); },
                                 decimalsInFloat: 3,
-                                labels: { style: { colors: '#71717a' }, formatter: function(v) { return v.toFixed(3); } }
+                                labels: { style: labelStyle, formatter: function(v) { return v.toFixed(3); } }
                             };
                         }
                         if (metric === 'performance') {
@@ -92,14 +96,13 @@
                                 show: true,
                                 min: 0,
                                 max: 100,
-                                labels: { style: { colors: '#71717a' }, formatter: function(v) { return Math.round(v); } }
+                                labels: { style: labelStyle, formatter: function(v) { return Math.round(v); } }
                             };
                         }
-                        // lcp, inp, ttfb — milliseconds
                         return {
                             show: true,
                             min: 0,
-                            labels: { style: { colors: '#71717a' }, formatter: function(v) { return Math.round(v) + 'ms'; } }
+                            labels: { style: labelStyle, formatter: function(v) { return Math.round(v) + 'ms'; } }
                         };
                     },
                     getSeriesName(metric) {
@@ -107,25 +110,30 @@
                         return names[metric] || 'Value';
                     },
                     buildOptions() {
+                        const lc = this.labelColor();
+                        const isDark = document.documentElement.classList.contains('dark');
                         return {
                             chart: { type: 'area', height: 280, toolbar: { show: false }, sparkline: { enabled: false }, animations: { enabled: false } },
                             series: [{ name: this.getSeriesName(this.metric), data: this.series }],
                             stroke: { curve: 'smooth', width: 2.5 },
                             fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 100] } },
                             colors: ['#f43f5e'],
-                            grid: { show: true, borderColor: 'rgba(161,161,170,0.1)', strokeDashArray: 4 },
+                            grid: { show: true, borderColor: isDark ? 'rgba(161,161,170,0.15)' : 'rgba(161,161,170,0.2)', strokeDashArray: 4 },
                             yaxis: this.getYaxis(this.metric),
                             xaxis: {
                                 type: 'datetime',
-                                labels: { style: { colors: '#71717a' } },
+                                labels: { style: { colors: lc } },
                                 axisBorder: { show: false },
                                 axisTicks: { show: false }
                             },
-                            tooltip: { theme: 'dark', x: { format: 'MMM d, h:mm tt' } },
-                            noData: { text: 'No data for this period', style: { color: '#71717a' } },
+                            tooltip: { theme: isDark ? 'dark' : 'light', x: { format: 'MMM d, h:mm tt' } },
+                            noData: { text: 'No data for this period', style: { color: lc } },
                         };
                     },
                     init() {
+                        // Guard against double init (Alpine auto-calls init() if defined; the
+                        // x-init attribute used to call it again, causing 2 renders on first load).
+                        if (this.chart) return;
                         this.chart = new ApexCharts(this.$el, this.buildOptions());
                         this.chart.render();
 
@@ -135,9 +143,13 @@
                             this.series = data.series;
                             this.chart.updateOptions(this.buildOptions(), true, false);
                         });
+
+                        // React to theme toggle — rebuild label colors when dark class flips
+                        new MutationObserver(() => {
+                            if (this.chart) this.chart.updateOptions(this.buildOptions(), true, false);
+                        }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
                     }
                 }"
-                x-init="init()"
             ></div>
         </div>
 
