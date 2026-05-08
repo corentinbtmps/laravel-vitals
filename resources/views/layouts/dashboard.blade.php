@@ -87,12 +87,12 @@
         type="button"
         x-data
         x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
-        class="max-lg:hidden inline-flex items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors min-w-[200px]"
+        class="max-lg:hidden inline-flex items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors w-56"
         aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
     >
         <flux:icon.magnifying-glass class="size-4 shrink-0" />
         <span class="flex-1 text-left">{{ __('vitals::vitals.spotlight.button_label') }}</span>
-        <kbd class="hidden md:inline-flex items-center gap-0.5 rounded border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 px-1.5 py-0.5 text-[10px] font-mono text-ink-500" x-data x-init="$el.firstElementChild.textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'">
+        <kbd class="inline-flex items-center gap-0.5 rounded border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 px-1.5 py-0.5 text-xs font-mono text-ink-500" x-data x-init="$el.firstElementChild.textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'">
             <span></span>K
         </kbd>
     </button>
