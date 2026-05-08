@@ -108,7 +108,7 @@
     />
 
     {{-- Mobile burger menu (shown on max-lg screens) --}}
-    <div class="max-lg:contents hidden" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
+    <div class="max-lg:flex hidden" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
         <button
             type="button"
             x-on:click="open = !open"
