@@ -94,17 +94,17 @@
         @endif
     </flux:navbar>
 
-    {{-- Spotlight trigger button — visible affordance for Cmd+K (desktop only) --}}
+    {{-- Spotlight trigger — full button with kbd hint (desktop only) --}}
     <button
         type="button"
         x-data
         x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
-        class="vitals-desktop-only items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors w-56"
+        class="vitals-desktop-only items-center gap-2 rounded-lg border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors"
         aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
     >
         <flux:icon.magnifying-glass class="size-4 shrink-0" />
-        <span class="flex-1 text-left">{{ __('vitals::vitals.spotlight.button_label') }}</span>
-        <kbd class="inline-flex items-center gap-0.5 rounded border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 px-1.5 py-0.5 text-xs font-mono text-ink-500" x-data x-init="$el.firstElementChild.textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'">
+        <span class="text-left">{{ __('vitals::vitals.spotlight.button_label') }}</span>
+        <kbd class="inline-flex items-center gap-0.5 rounded border border-ink-200/60 dark:border-ink-700 bg-ink-50 dark:bg-ink-800 px-1.5 py-0.5 text-xs font-mono text-ink-500" x-data x-init="$el.firstElementChild.textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl'">
             <span></span>K
         </kbd>
     </button>
@@ -119,8 +119,18 @@
         tooltip="Toggle theme"
     />
 
-    {{-- Mobile burger menu (shown on max-lg screens) --}}
-    <div class="vitals-mobile-only" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
+    {{-- Mobile: search icon + burger menu (shown on max-lg screens) --}}
+    <div class="vitals-mobile-only items-center gap-1" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
+        {{-- Mobile search icon button — opens the same Spotlight modal --}}
+        <button
+            type="button"
+            x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+            aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
+        >
+            <flux:icon.magnifying-glass class="size-5" />
+        </button>
+
         <button
             type="button"
             x-on:click="open = !open"
@@ -144,7 +154,7 @@
         <nav
             x-show="open"
             x-cloak
-            class="fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-paper dark:bg-ink-900 border-l border-ink-200 dark:border-ink-800 shadow-2xl px-4 py-6 overflow-y-auto lg:hidden"
+            class="fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-paper dark:bg-ink-900 border-l border-ink-200/60 dark:border-ink-800/60 shadow-2xl px-4 py-6 overflow-y-auto lg:hidden"
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="translate-x-full"
             x-transition:enter-end="translate-x-0"

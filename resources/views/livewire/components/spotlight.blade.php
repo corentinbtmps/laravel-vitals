@@ -30,7 +30,7 @@
     class="w-full max-w-2xl"
 >
     {{-- Search input --}}
-    <div class="border-b border-ink-200 dark:border-ink-800 px-4 py-3">
+    <div class="border-b border-ink-200/60 dark:border-ink-800/60 px-4 py-3">
         <div class="flex items-center gap-3">
             <flux:icon.magnifying-glass class="size-5 text-ink-400 shrink-0" />
             <input
@@ -40,7 +40,7 @@
                 placeholder="{{ __('vitals::vitals.spotlight.placeholder') }}"
                 class="flex-1 bg-transparent border-0 outline-none text-base text-ink-900 dark:text-ink-100 placeholder:text-ink-400"
             >
-            <kbd class="hidden md:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 text-ink-400">Esc</kbd>
+            <kbd class="hidden md:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border border-ink-200/60 dark:border-ink-800/60 text-ink-400">Esc</kbd>
         </div>
     </div>
 
@@ -83,14 +83,14 @@
     </div>
 
     {{-- Footer --}}
-    <div class="border-t border-ink-200 dark:border-ink-800 px-4 py-2 flex items-center justify-between text-[10px] text-ink-400">
+    <div class="border-t border-ink-200/60 dark:border-ink-800/60 px-4 py-2 flex items-center justify-between text-[10px] text-ink-400">
         <div class="flex items-center gap-3">
             <span class="flex items-center gap-1">
-                <kbd class="font-mono px-1 py-0.5 rounded border border-ink-200 dark:border-ink-800">↑↓</kbd>
+                <kbd class="font-mono px-1 py-0.5 rounded border border-ink-200/60 dark:border-ink-800/60">↑↓</kbd>
                 {{ __('vitals::vitals.spotlight.kbd_navigate') }}
             </span>
             <span class="flex items-center gap-1">
-                <kbd class="font-mono px-1 py-0.5 rounded border border-ink-200 dark:border-ink-800">↵</kbd>
+                <kbd class="font-mono px-1 py-0.5 rounded border border-ink-200/60 dark:border-ink-800/60">↵</kbd>
                 {{ __('vitals::vitals.spotlight.kbd_open') }}
             </span>
         </div>

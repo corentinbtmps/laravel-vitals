@@ -255,7 +255,7 @@
                     <div class="text-sm font-semibold text-ink-700 dark:text-ink-300 mb-2">Slowest queries</div>
                     <div class="space-y-2">
                         @foreach (array_slice($audit->telemetry->slow_queries, 0, 5) as $q)
-                            <div class="rounded border border-ink-200 dark:border-ink-800 bg-ink-50 dark:bg-ink-900 p-3">
+                            <div class="rounded border border-ink-200/60 dark:border-ink-800/60 bg-ink-50 dark:bg-ink-900 p-3">
                                 <div class="flex items-baseline justify-between gap-3 mb-1">
                                     <code class="text-xs text-ink-700 dark:text-ink-300 truncate flex-1">{{ $q['sql'] ?? '' }}</code>
                                     <flux:badge color="rose" size="sm">{{ (int) round((float) ($q['time_ms'] ?? 0)) }}ms</flux:badge>
@@ -441,13 +441,13 @@
             </div>
 
             @if (! empty($audit->details['lcp_element']['selector']))
-                <div class="mt-6 pt-4 border-t border-ink-200 dark:border-ink-800">
+                <div class="mt-6 pt-4 border-t border-ink-200/60 dark:border-ink-800/60">
                     <div class="text-xs text-ink-500 mb-2 flex items-center gap-1.5">
                         <flux:icon.heart class="size-3.5 text-accent-500" /> LCP element
                     </div>
-                    <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200 dark:border-ink-800 overflow-x-auto">{{ $audit->details['lcp_element']['selector'] }}</code>
+                    <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200/60 dark:border-ink-800/60 overflow-x-auto">{{ $audit->details['lcp_element']['selector'] }}</code>
                     @if (! empty($audit->details['lcp_element']['snippet']))
-                        <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200 dark:border-ink-800 mt-1.5 overflow-x-auto">{{ $audit->details['lcp_element']['snippet'] }}</code>
+                        <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200/60 dark:border-ink-800/60 mt-1.5 overflow-x-auto">{{ $audit->details['lcp_element']['snippet'] }}</code>
                     @endif
                 </div>
             @endif
