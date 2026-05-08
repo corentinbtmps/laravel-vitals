@@ -11,3 +11,8 @@
 /workbench/database/database.sqlite
 .DS_Store
 /.vite/
+.playwright-mcp
+.claude
+/docs/
+/.impeccable.md
+/*.png
