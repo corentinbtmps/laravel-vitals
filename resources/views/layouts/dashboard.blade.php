@@ -87,7 +87,7 @@
         type="button"
         x-data
         x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
-        class="hidden lg:inline-flex items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors min-w-[200px]"
+        class="max-lg:hidden inline-flex items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors min-w-[200px]"
         aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
     >
         <flux:icon.magnifying-glass class="size-4 shrink-0" />
@@ -107,8 +107,8 @@
         tooltip="Toggle theme"
     />
 
-    {{-- Mobile burger menu (shown on lg:hidden screens) --}}
-    <div class="lg:hidden" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
+    {{-- Mobile burger menu (shown on max-lg screens) --}}
+    <div class="max-lg:contents hidden" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
         <button
             type="button"
             x-on:click="open = !open"
