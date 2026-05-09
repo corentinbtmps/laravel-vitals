@@ -6,7 +6,7 @@
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="14" fill="url(#vitals-bg-2)"/>
-  <path d="M8 34 H20 L24 24 L32 46 L38 18 L42 34 H56"
+  <path d="M8 34 H20 L24 24 L28 42 L32 16 L36 42 L40 24 L44 34 H56"
         stroke="white" stroke-width="3"
         stroke-linecap="round" stroke-linejoin="round"/>
   <text x="80" y="40"
