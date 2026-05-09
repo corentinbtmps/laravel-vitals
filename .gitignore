@@ -13,6 +13,9 @@
 /.vite/
 .playwright-mcp
 .claude
-/docs/
 /.impeccable.md
 /*.png
+/docs/*
+!/docs/screenshots/
+!/docs/screenshots/.gitkeep
+!/docs/screenshots/*.png

@@ -1,6 +1,6 @@
 # Contributing to Laravel Vitals
 
-Thanks for your interest! This package is in active alpha — contributions are welcome.
+Thanks for your interest! The package is in active alpha — contributions are welcome and reviewed promptly.
 
 ## Development setup
 
@@ -10,71 +10,92 @@ cd laravel-vitals
 composer install
 npm install
 npm run build
+```
+
+**Run the test suite:**
+```bash
 vendor/bin/pest
 ```
 
+**Run static analysis:**
+```bash
+vendor/bin/phpstan analyse --no-progress
+```
+
+**Run both (same as CI):**
+```bash
+composer lint   # PHPStan + Rector dry-run
+composer test   # Pest
+```
+
+Both must pass before submitting a PR.
+
 ## Workflow
 
-- Fork the repo, create a branch, open a PR against `main`.
-- Branch naming: `feat/short-description` or `fix/short-description`.
-- Run `vendor/bin/pest` and `vendor/bin/phpstan analyse` before pushing.
-- Match existing code style: PHP 8.2+ strict types, PSR-12, Larastan level 8.
-- New features need tests. Bug fixes ideally include a regression test.
-- Keep PRs focused — one concern per PR.
+1. Fork the repo, create a branch off `main`.
+2. Naming: `feat/short-description` or `fix/short-description`.
+3. Open a PR against `main`. Keep it focused — one concern per PR.
+4. Include tests. New features require feature tests. Bug fixes ideally include a regression test that would have caught the bug.
+5. All CI checks must be green before merge.
 
-## Design conventions
+## Code style
 
-- All UI strings i18n'd via `__()` keys. Translations: EN/FR/DE/ES.
-- Use design tokens: `ink-*` for neutrals, `accent-*` for the primary brand colour,
-  `paper`/`canvas` for surfaces. Do not use `zinc-*` or raw `rose-*` in views.
-- Flux Free components only. No Flux Pro.
-- Cards use `rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900`.
-- Numbers use `tabular-nums`.
-- Tables that overflow at small viewports get `overflow-x-auto` with bleed padding.
+- PHP 8.2+, strict types everywhere (`declare(strict_types=1);`), PSR-12 formatting.
+- Larastan level 8 — no suppression comments without a clear explanation.
+- Use `final` on all classes that are not designed for extension.
+- No `array_*` functions when a collection method exists.
 
-## Adding a new recommendation
+## UI and design conventions
 
-1. Add a constant to `RecommendationRegistry` with `audit_key`, `category`, `severity`, and translation keys.
-2. Add the English translation under `lang/en/vitals.php` in the `recommendations` block, then FR/DE/ES.
-3. Add `RecommendationDocs` entry with `why`, `docs`, `good`/`bad` code examples.
-4. Write a test in `tests/Feature/Recommendations/` covering the emit condition.
+- All user-visible strings go through `__()` translation keys. Add translations to all four language files: `lang/en/vitals.php`, `lang/fr/vitals.php`, `lang/de/vitals.php`, `lang/es/vitals.php`.
+- Design tokens to use in Blade views:
+  - **Neutrals:** `ink-*` (e.g. `text-ink-500`, `border-ink-200/60`). Never use `zinc-*`.
+  - **Brand color:** `accent-*`. Never use raw `rose-*`.
+  - **Surfaces:** `bg-paper` (light cards), `bg-canvas` (page background), `dark:bg-ink-900` (dark mode).
+- Cards: `rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900`.
+- Numbers: always add `tabular-nums` so digits align in tables.
+- Tables that might overflow on mobile: wrap in `overflow-x-auto` with bleed padding.
+- Use Flux Free components only. Flux Pro components are not available to all users.
+
+## How to add a new recommendation
+
+Recommendations appear in the `/vitals/recommendations` and `/vitals/learn` pages and are surfaced as code-level hints after each audit.
+
+1. **Register it** — add the key to `src/Recommendations/RecommendationRegistry.php`. Each entry needs an `audit_key`, `source` (lighthouse/config/backend/static), `category` (performance/accessibility/best_practices/seo), and `severity` (info/warning/critical).
+
+2. **Add translations** — add the recommendation title and description under the `recommendations` key in all four `lang/*/vitals.php` files.
+
+3. **Add documentation** — add an entry to `src/Recommendations/RecommendationDocs.php` with `why` (one sentence), `docs` (a web.dev or Laravel docs URL), and optionally `good`/`bad` code examples.
+
+4. **Add a code analyzer** (optional) — if the recommendation can point to a specific file and line in the host app, implement `LaravelVitals\Contracts\CodeAnalyzer` and register it in `config/vitals.php` under `analyzers.custom`.
+
+5. **Write a test** — add a test in `tests/Feature/Recommendations/` that asserts the recommendation is emitted when the triggering condition is present.
 
 ## How to add a new RUM metric
 
-The `web-vitals@4` library supports LCP, INP, CLS, TTFB, and FCP out of the box. If you want
-to add an additional custom metric (e.g. a User Timing mark), follow these steps:
+The `web-vitals@4` library supports LCP, INP, CLS, TTFB, and FCP. To add a custom metric:
 
-1. **JS bundle** (`resources/js/rum.js`): import or create a new reporter. Custom metrics
-   should call the same `send(metric)` function with a compatible payload shape.
+1. **JS bundle** (`resources/js/rum.js`): import or write a reporter that calls the same `send(metric)` function with a compatible payload shape (`{name, value, rating, attribution}`).
 
-2. **Ingest validation** (`src/Http/Controllers/RumController.php`): add your new metric name
-   to the `'metric'` validation rule's `in:` list.
+2. **Ingest validation** (`src/Http/Controllers/RumController.php`): add the new metric name to the `'metric'` validation rule's `in:` list.
 
-3. **Migration**: the `vitals_rum_events` table is designed to hold any metric name up to 8
-   characters. If your metric key is longer, edit the migration (pre-1.0, source edit) and
-   update the column width.
+3. **Migration**: the `vitals_rum_events.metric` column accepts up to 8 characters. If your key is longer, edit the source migration (pre-1.0, source edits are permitted per our migration policy) and update the column width.
 
-4. **Livewire page** (`src/Livewire/Pages/Rum.php`): add your metric to the `$metrics` array
-   in `render()` and add a threshold entry to `$metricThresholds` in the view.
+4. **Livewire page** (`src/Livewire/Pages/Rum.php`): add your metric name to the `$metrics` array in `render()`.
 
-5. **Translations**: add the new metric name/description keys to all four `lang/` files (EN, FR, DE, ES).
+5. **Translations**: add the metric name and description to all four `lang/*/vitals.php` files.
 
-6. **Tests**: add a test case in `tests/Feature/Http/RumControllerTest.php` covering
-   ingestion of the new metric, and a Livewire test verifying the card renders.
+6. **Tests**: add ingestion coverage to `tests/Feature/Http/RumControllerTest.php` and a Livewire rendering test to `tests/Feature/Livewire/Pages/RumTest.php`.
 
-7. **Rebuild**: `npm run build` to include any JS changes in `dist/vitals-rum.js`.
-
-> Note: The `ALLOWED` list in `AssetController` does not need updating — asset routing uses
-> the file name, and `vitals-rum.js` is already whitelisted.
+7. **Rebuild assets**: `npm run build`.
 
 ## Reporting issues
 
-[Open an issue](https://github.com/corentinbtmps/laravel-vitals/issues/new/choose)
-using the relevant template (bug report, feature request, or question).
+[Open an issue](https://github.com/corentinbtmps/laravel-vitals/issues/new/choose) using the relevant template (bug report, feature request, or question). Include your Laravel version, PHP version, Vitals version, and driver type.
 
 ## Code of Conduct
 
-Be kind. Technical disagreements are welcome — personal attacks are not.
+Be kind. Technical disagreements are welcome and encouraged — personal attacks are not.
 
 ## License
 

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.52] - 2026-05-10
+
+### Changed
+
+- **Complete README rewrite** — every feature now explained in plain language for any reader (junior dev, senior dev, DevOps, product manager, agency client). The previous README was technical and dense; this version walks through each of the 16 features in 80–200 words before showing any configuration snippet.
+- Added "Why Laravel Vitals" comparison table vs GTMetrix and Google PageSpeed Insights, covering 9 capabilities side by side.
+- Added "How it works" lifecycle diagram showing the full audit flow from URL declaration to recommendation with file/line reference.
+- Added a "Privacy and data" section documenting exactly what RUM collects and what it does not (no IP addresses, no cookies, no fingerprinting beyond UA string).
+- Added a "Performance impact" section covering middleware overhead (sub-microsecond on non-audit requests), RUM bundle size (4.25 kB gzipped), and dashboard asset caching strategy.
+- Added a "Top 5 troubleshooting" section covering the most common issues: URL not found, Chrome sandbox errors in Docker, dashboard access denied, missing RUM data, and `vitals:doctor` failures.
+- All 16 feature sections now follow a consistent structure: what value it gives you → concrete example → how to configure.
+- CHANGELOG alpha.51 entry was already complete and human-friendly — no changes needed.
+- CONTRIBUTING.md tightened: setup steps verified, design conventions made actionable, test/lint commands explicit.
+- Created `docs/screenshots/` directory with `.gitkeep` to provide a stable location for screenshot files.
+- Updated `.gitignore` to allow `docs/screenshots/*.png` while continuing to exclude root-level PNGs.
+
 ## [v1.0.0-alpha.51] - 2026-05-10
 
 ### Added
@@ -266,7 +282,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance budgets with CI exit codes and JUnit XML output
 - English recommendation translations
 
-[Unreleased]: https://github.com/corentinbtmps/laravel-vitals/compare/v1.0.0-alpha.30...HEAD
+[Unreleased]: https://github.com/corentinbtmps/laravel-vitals/compare/v1.0.0-alpha.52...HEAD
+[v1.0.0-alpha.52]: https://github.com/corentinbtmps/laravel-vitals/compare/v1.0.0-alpha.51...v1.0.0-alpha.52
+[v1.0.0-alpha.51]: https://github.com/corentinbtmps/laravel-vitals/compare/v1.0.0-alpha.30...v1.0.0-alpha.51
 [v1.0.0-alpha.30]: https://github.com/corentinbtmps/laravel-vitals/compare/v1.0.0-alpha.29...v1.0.0-alpha.30
 [v1.0.0-alpha.29]: https://github.com/corentinbtmps/laravel-vitals/compare/v1.0.0-alpha.28...v1.0.0-alpha.29
 [v1.0.0-alpha.28]: https://github.com/corentinbtmps/laravel-vitals/compare/v1.0.0-alpha.27...v1.0.0-alpha.28
