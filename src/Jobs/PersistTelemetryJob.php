@@ -49,6 +49,7 @@ final class PersistTelemetryJob implements ShouldQueue
             'http_status'        => $this->snapshot->httpStatus,
             'duration_ms'        => $this->snapshot->durationMs,
             'memory_peak_kb'     => $this->snapshot->memoryPeakKb,
+            'peak_memory_bytes'  => $this->snapshot->peakMemoryBytes,
             'queries_count'      => $this->snapshot->queriesCount,
             'queries_time_ms'    => $this->snapshot->queriesTimeMs,
             'queries_unique'     => $this->snapshot->queriesUnique,

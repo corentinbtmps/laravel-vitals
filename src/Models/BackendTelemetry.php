@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $cache_misses
  * @property array<int, array<string, mixed>>|null $slow_queries
  * @property bool $truncated
+ * @property int|null $peak_memory_bytes
  */
 final class BackendTelemetry extends Model
 {

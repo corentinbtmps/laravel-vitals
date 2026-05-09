@@ -12,6 +12,7 @@
     "dependencies": {
         "@fontsource-variable/geist": "^5.2.8",
         "@tailwindcss/vite": "^4.3.0",
-        "apexcharts": "^3.45"
+        "apexcharts": "^3.45",
+        "web-vitals": "^4.2.4"
     }
 }

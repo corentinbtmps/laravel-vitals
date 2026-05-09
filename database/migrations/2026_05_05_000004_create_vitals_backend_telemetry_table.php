@@ -29,6 +29,7 @@ return new class extends Migration
             $table->unsignedInteger('cache_hits');
             $table->unsignedInteger('cache_misses');
             $table->json('slow_queries')->nullable();
+            $table->unsignedBigInteger('peak_memory_bytes')->nullable();
             $table->boolean('truncated')->default(false);
             $table->boolean('is_demo')->default(false)->index();
             $table->timestamps();

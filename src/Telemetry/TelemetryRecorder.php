@@ -97,29 +97,31 @@ final class TelemetryRecorder
             ? ((float) hrtime(true) - $this->startedAtNs) / 1_000_000.0
             : 0.0;
 
-        $memoryPeakKb = (int) round(memory_get_peak_usage(true) / 1024);
+        $peakMemoryBytes = memory_get_peak_usage(true);
+        $memoryPeakKb = (int) round($peakMemoryBytes / 1024);
 
         $threshold = (int) config('vitals.telemetry.n_plus_one_threshold', 10);
 
         $snapshot = new BackendTelemetrySnapshot(
-            auditId:         $this->auditId,
-            sampledRequest:  $this->sampled,
-            routeName:       $routeName,
-            httpStatus:      $httpStatus,
-            durationMs:      $durationMs,
-            memoryPeakKb:    $memoryPeakKb,
-            queriesCount:    $this->queries->count(),
-            queriesTimeMs:   $this->queries->totalTimeMs(),
-            queriesUnique:   $this->queries->uniqueCount(),
-            nPlusOneSuspect: $this->queries->isNPlusOneSuspect($threshold),
-            viewsRendered:   0,
-            viewsTimeMs:     0.0,
-            jobsDispatched:  $this->jobsDispatched,
-            eventsFired:     0,
-            cacheHits:       $this->cacheHits,
-            cacheMisses:     $this->cacheMisses,
-            slowQueries:     $this->queries->slowQueries(),
-            truncated:       $this->queries->isTruncated(),
+            auditId:          $this->auditId,
+            sampledRequest:   $this->sampled,
+            routeName:        $routeName,
+            httpStatus:       $httpStatus,
+            durationMs:       $durationMs,
+            memoryPeakKb:     $memoryPeakKb,
+            queriesCount:     $this->queries->count(),
+            queriesTimeMs:    $this->queries->totalTimeMs(),
+            queriesUnique:    $this->queries->uniqueCount(),
+            nPlusOneSuspect:  $this->queries->isNPlusOneSuspect($threshold),
+            viewsRendered:    0,
+            viewsTimeMs:      0.0,
+            jobsDispatched:   $this->jobsDispatched,
+            eventsFired:      0,
+            cacheHits:        $this->cacheHits,
+            cacheMisses:      $this->cacheMisses,
+            slowQueries:      $this->queries->slowQueries(),
+            truncated:        $this->queries->isTruncated(),
+            peakMemoryBytes:  $peakMemoryBytes,
         );
 
         $this->active = false;

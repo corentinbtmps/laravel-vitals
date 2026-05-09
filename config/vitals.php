@@ -143,6 +143,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Real User Monitoring (RUM)
+    |--------------------------------------------------------------------------
+    | RUM collects Core Web Vitals from real visitors via the web-vitals library.
+    | Add @vitalsRum to your main layout's <head> to enable collection.
+    | Privacy: no IP addresses, cookies, or fingerprinting — only metric values,
+    | URL paths, device type, connection hint, and user-agent string are stored.
+    */
+    'rum' => [
+        'enabled'        => env('VITALS_RUM_ENABLED', true),
+        'sample_rate'    => (float) env('VITALS_RUM_SAMPLE_RATE', 1.0),
+        'retention_days' => (int) env('VITALS_RUM_RETENTION_DAYS', 90),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Notifications
     |--------------------------------------------------------------------------
     */

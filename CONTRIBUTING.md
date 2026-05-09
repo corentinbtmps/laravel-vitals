@@ -39,6 +39,34 @@ vendor/bin/pest
 3. Add `RecommendationDocs` entry with `why`, `docs`, `good`/`bad` code examples.
 4. Write a test in `tests/Feature/Recommendations/` covering the emit condition.
 
+## How to add a new RUM metric
+
+The `web-vitals@4` library supports LCP, INP, CLS, TTFB, and FCP out of the box. If you want
+to add an additional custom metric (e.g. a User Timing mark), follow these steps:
+
+1. **JS bundle** (`resources/js/rum.js`): import or create a new reporter. Custom metrics
+   should call the same `send(metric)` function with a compatible payload shape.
+
+2. **Ingest validation** (`src/Http/Controllers/RumController.php`): add your new metric name
+   to the `'metric'` validation rule's `in:` list.
+
+3. **Migration**: the `vitals_rum_events` table is designed to hold any metric name up to 8
+   characters. If your metric key is longer, edit the migration (pre-1.0, source edit) and
+   update the column width.
+
+4. **Livewire page** (`src/Livewire/Pages/Rum.php`): add your metric to the `$metrics` array
+   in `render()` and add a threshold entry to `$metricThresholds` in the view.
+
+5. **Translations**: add the new metric name/description keys to all four `lang/` files (EN, FR, DE, ES).
+
+6. **Tests**: add a test case in `tests/Feature/Http/RumControllerTest.php` covering
+   ingestion of the new metric, and a Livewire test verifying the card renders.
+
+7. **Rebuild**: `npm run build` to include any JS changes in `dist/vitals-rum.js`.
+
+> Note: The `ALLOWED` list in `AssetController` does not need updating — asset routing uses
+> the file name, and `vitals-rum.js` is already whitelisted.
+
 ## Reporting issues
 
 [Open an issue](https://github.com/corentinbtmps/laravel-vitals/issues/new/choose)

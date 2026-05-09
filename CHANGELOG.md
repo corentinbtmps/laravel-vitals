@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.51] - 2026-05-10
+
+### Added
+
+#### Real User Monitoring (RUM)
+- New `vitals_rum_events` table: stores CWV beacons from real visitors (metric, value, rating, device, navigation type, connection, attribution JSON, user-agent, occurred_at)
+- New `RumEvent` model with `Prunable` trait (configurable retention, default 90 days)
+- `POST /vitals/rum/ingest` endpoint — CSP-friendly, no CSRF (uses `sendBeacon`), rate-limited to 120 req/min; disabled while `vitals.rum.enabled = false`
+- New `@vitalsRum` Blade directive — emits the `<script>` config block + `vitals-rum.js` deferred script tag
+- `resources/js/rum.js` — wraps `web-vitals@4` attribution API (`onLCP`, `onINP`, `onCLS`, `onTTFB`, `onFCP`) with `sendBeacon` / `fetch` fallback; client-side sample rate applied before any network activity
+- New Vite entry point `vitals-rum` → `dist/vitals-rum.js` (4.25 kB gzipped, well under 10 kB target)
+- New `/vitals/rum` Livewire dashboard page: metric cards with p75 + good/needs-improvement/poor distribution bars, per-URL breakdown table (LCP/INP/CLS p75), INP attribution panel showing element selectors + event types
+- Period (24h/7d/30d/90d) and device (all/mobile/desktop) filters on RUM page
+- `vitals.rum` config block: `enabled`, `sample_rate`, `retention_days`
+- Privacy: no IP addresses, no cookies, no fingerprinting beyond UA string — documented in config and README
+
+#### Memory profiling
+- Added `peak_memory_bytes BIGINT nullable` column to `vitals_backend_telemetry` (folded into source migration per alpha.15 convention)
+- `TelemetryRecorder::snapshot()` now captures `memory_get_peak_usage(true)` as `peakMemoryBytes` in `BackendTelemetrySnapshot`
+- `PersistTelemetryJob` writes `peak_memory_bytes` to the record
+- Memory hogs panel on `/vitals/queries` showing top 5 routes by p75 peak memory (MB)
+
+#### Database query baseline
+- New `/vitals/queries` Livewire page: avg / p75 / p95 of `queries_count` and `queries_time_ms` per route name, sorted by p95 descending
+- Regression detection: routes where current period p75 > 2× previous period p75 are flagged with a "↑ regression" badge
+- Memory hogs sub-panel: top 5 routes by p75 `peak_memory_bytes`
+
+#### INP attribution breakdown
+- INP `attribution` JSON from web-vitals (interaction target selector, event type) is stored in `vitals_rum_events.attribution`
+- RUM page shows an "INP attribution — slow interactions" table: element selector, event type, sample count, p75 INP
+
+#### Navigation
+- "RUM" and "Queries" nav items added to dashboard header (desktop navbar + mobile drawer)
+
+#### Translations
+- All new copy i18n'd in EN, FR, DE, ES (`vitals::vitals.rum.*`, `vitals::vitals.queries.*`)
+
+#### Tests
+- `tests/Feature/Http/RumControllerTest.php` — 8 tests: ingest validation, persistence, 5 metric types, `enabled=false` short-circuit, attribution storage, nullable fields
+- `tests/Feature/Models/RumEventTest.php` — 6 tests: casts, prunable scope, all metric types
+- `tests/Feature/Livewire/Pages/RumTest.php` — 6 tests: empty state, metric cards, period filter, device filter, invalid period guard, p75 calculation
+- `tests/Feature/Telemetry/MemoryCaptureTest.php` — 3 tests: `peak_memory_bytes` stored, non-zero in snapshot, KB consistency
+- `tests/Feature/Livewire/Pages/QueriesTest.php` — 6 tests: empty state, route display, period filter, regression detection, memory hogs, invalid period guard
+- Total: 337 tests (+29 from v1.0.0-alpha.50)
+
 ## [v1.0.0-alpha.30] - 2026-05-07
 
 ### Added

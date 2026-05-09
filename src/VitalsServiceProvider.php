@@ -137,6 +137,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
         \Livewire\Livewire::component('vitals::components.spotlight', \LaravelVitals\Livewire\Components\Spotlight::class);
 
         \Illuminate\Support\Facades\Blade::directive('vitalsSpotlight', fn (): string => "<?php echo view('vitals::partials.spotlight-mount')->render(); ?>");
+        \Illuminate\Support\Facades\Blade::directive('vitalsRum', fn (): string => "<?php echo view('vitals::partials.rum-mount')->render(); ?>");
 
         $this->registerOnboardingSteps();
 

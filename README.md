@@ -15,6 +15,9 @@ correlation and host-application source code pointers for every recommendation.
 
 - Runs Lighthouse against URLs of your Laravel app via three drivers (`local`, `playwright`, `pagespeed`)
 - Captures backend telemetry during the audit (queries, memory, views, jobs, cache, N+1)
+- **Real User Monitoring** with privacy-respecting CWV beacons from real visitors
+- **Memory profiling per route** — p75 peak memory surfaces the heaviest routes
+- **Database query baselines** with regression detection (flags routes where p75 queries > 2× prior period)
 - Surfaces actionable recommendations with `file:line` references in your own source code
 - Ships a Livewire dashboard at `/vitals`
 - Supports performance budgets with CI exit codes and JUnit XML output
@@ -61,6 +64,54 @@ php artisan vendor:publish --tag=vitals-assets --force
 ```
 
 Then override the layout to use `asset('vendor/vitals/dashboard.css')` instead of `route('vitals.assets', ...)`.
+
+## Real User Monitoring
+
+RUM collects Core Web Vitals (LCP, INP, CLS, TTFB, FCP) from real visitors using Google's
+[web-vitals](https://github.com/GoogleChrome/web-vitals) library. Unlike Lighthouse (lab data),
+RUM reflects actual user conditions — varying connections, devices, and geography.
+
+**Privacy by design:** No IP addresses are stored. No cookies. No client-side fingerprinting
+beyond the browser UA string. Only metric values, URL paths, device type, connection hint, and
+user-agent are persisted in `vitals_rum_events` (90 day retention, prunable).
+
+### Setup
+
+1. After upgrading, run migrations:
+
+```bash
+composer update
+php artisan migrate
+```
+
+2. Add `@vitalsRum` to your main layout's `<head>` (or just before `</body>`):
+
+```blade
+{{-- resources/views/layouts/app.blade.php --}}
+<head>
+    ...
+    @vitalsRum
+</head>
+```
+
+3. View results at `/vitals/rum`. Per-URL distributions and p75 trends appear as soon as
+   real users hit your pages.
+
+### Configuration
+
+```env
+VITALS_RUM_ENABLED=true          # toggle collection (default: true)
+VITALS_RUM_SAMPLE_RATE=0.1       # sample 10% of sessions in production
+VITALS_RUM_RETENTION_DAYS=90     # prune events older than N days (default: 90)
+```
+
+To prune RUM events, add to your scheduler:
+
+```php
+$schedule->command('model:prune', [
+    '--model' => [\LaravelVitals\Models\RumEvent::class],
+])->daily();
+```
 
 ## Global search (Cmd+K)
 

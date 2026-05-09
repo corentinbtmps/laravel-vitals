@@ -78,6 +78,22 @@
         >Insights</flux:navbar.item>
         @endif
 
+        @if(Route::has('vitals.rum'))
+        <flux:navbar.item
+            href="{{ route('vitals.rum') }}"
+            icon="signal"
+            :current="request()->routeIs('vitals.rum')"
+        >RUM</flux:navbar.item>
+        @endif
+
+        @if(Route::has('vitals.queries'))
+        <flux:navbar.item
+            href="{{ route('vitals.queries') }}"
+            icon="circle-stack"
+            :current="request()->routeIs('vitals.queries')"
+        >Queries</flux:navbar.item>
+        @endif
+
         @if(Route::has('vitals.learn'))
         <flux:navbar.item
             href="{{ route('vitals.learn') }}"
@@ -190,6 +206,18 @@
                 <a href="{{ route('vitals.insights') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.insights') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
                     <flux:icon.sparkles class="size-4" />Insights
+                </a>
+                @endif
+                @if(Route::has('vitals.rum'))
+                <a href="{{ route('vitals.rum') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.rum') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.signal class="size-4" />RUM
+                </a>
+                @endif
+                @if(Route::has('vitals.queries'))
+                <a href="{{ route('vitals.queries') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.queries') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.circle-stack class="size-4" />Queries
                 </a>
                 @endif
                 @if(Route::has('vitals.learn'))

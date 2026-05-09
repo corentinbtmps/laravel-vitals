@@ -18,6 +18,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 dashboard: resolve(__dirname, 'resources/js/dashboard.js'),
+                'vitals-rum': resolve(__dirname, 'resources/js/rum.js'),
             },
             output: {
                 entryFileNames: '[name].js',

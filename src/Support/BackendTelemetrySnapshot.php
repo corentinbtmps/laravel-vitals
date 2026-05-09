@@ -32,6 +32,7 @@ final readonly class BackendTelemetrySnapshot
         public int $cacheMisses,
         public array $slowQueries,
         public bool $truncated,
+        public ?int $peakMemoryBytes = null,
     ) {
     }
 }
