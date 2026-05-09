@@ -10,9 +10,12 @@ use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
 use Illuminate\Notifications\Slack\SlackMessage;
 use LaravelVitals\Budgets\BudgetViolations;
 use LaravelVitals\Models\Audit;
+use LaravelVitals\Notifications\Concerns\ResolvesAuditThread;
 
 final class BudgetViolated extends Notification
 {
+    use ResolvesAuditThread;
+
     public function __construct(
         public readonly Audit $audit,
         public readonly BudgetViolations $violations,
@@ -50,10 +53,20 @@ final class BudgetViolated extends Notification
             ->map(fn ($v): string => "{$v['metric']}={$v['actual']} (>{$v['threshold']})")
             ->implode(', ');
 
-        return (new SlackMessage())
+        $message = (new SlackMessage())
             ->headerBlock("{$emoji} Budget violation")
             ->sectionBlock(function (SectionBlock $block) use ($label, $list): void {
                 $block->text("`{$label}`: {$list}");
             });
+
+        // Reply in the audit's Slack thread when a prior message exists.
+        if ($this->audit->url_id !== null) {
+            $ts = $this->resolveThreadTs((int) $this->audit->url_id);
+            if ($ts !== null) {
+                $message->threadTimestamp($ts);
+            }
+        }
+
+        return $message;
     }
 }

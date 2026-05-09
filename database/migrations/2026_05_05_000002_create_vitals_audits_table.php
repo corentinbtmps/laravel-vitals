@@ -34,6 +34,7 @@ return new class extends Migration
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->boolean('is_demo')->default(false)->index();
+            $table->string('slack_message_ts')->nullable()->comment('Slack message timestamp — used to post follow-ups as thread replies');
             $table->timestamps();
 
             $table->index(['url_id', 'completed_at']);

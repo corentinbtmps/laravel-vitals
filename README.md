@@ -123,12 +123,120 @@ Exit codes when `--fail-on-budget` is set:
 
 ## Diagnostics & demos
 
-- `php artisan vitals:doctor` — verify drivers, storage, notifications, telemetry sources are correctly wired
+- `php artisan vitals:doctor` — comprehensive diagnostics: DB tables, dist assets, Geist fonts, env settings, optional integrations, drivers, storage, notifications (12 checks, exits 1 on failure)
+- `php artisan vitals:doctor --quiet` — silent CI mode: exits 1 on failure, no output on success
+- `php artisan vitals:install-hook` — install a pre-commit git hook that runs `vitals:doctor` and aborts the commit on failure
+- `php artisan vitals:install-hook --type=pre-push` — same for pre-push
+- `php artisan vitals:install-hook --uninstall` — remove the hook (restores any previous backup)
 - `php artisan vitals:demo` — seed 4 fictional URLs with 14 days of audit history (perfect for screenshots and onboarding)
 - `php artisan vitals:purge --demo` — remove demo data only
 - `php artisan vitals:purge` — remove ALL vitals data (asks for confirmation)
 - `php artisan vitals:check-regressions` — alert on score drops vs 7-day baseline
 - `php artisan vitals:digest:send` — send weekly digest summary
+
+## JSON API
+
+A read-only JSON API is mounted under `/vitals/api/v1/` and protected by the same `viewVitals` gate as the dashboard. No separate API tokens.
+
+| Endpoint | Description |
+|---|---|
+| `GET /vitals/api/v1/audits` | Paginated list of completed audits |
+| `GET /vitals/api/v1/audits/{id}` | Single audit detail with recommendations |
+| `GET /vitals/api/v1/urls` | Paginated list of configured URLs |
+| `GET /vitals/api/v1/urls/{id}/latest` | Latest completed audit for a URL |
+| `GET /vitals/api/v1/recommendations` | Paginated list of recommendations |
+
+Supports `?page=N&per_page=M` (default 25, max 100) and date filters `?since=2026-05-01&until=2026-05-09`.
+
+Sample response for `/vitals/api/v1/audits`:
+
+```json
+{
+    "data": [
+        {
+            "id": "uuid",
+            "url": { "id": 1, "label": "home", "path": "/" },
+            "device": "mobile",
+            "score_performance": 85,
+            "score_accessibility": 92,
+            "lcp_ms": 2300,
+            "inp_ms": 180,
+            "cls": 0.05,
+            "ttfb_ms": 450,
+            "completed_at": "2026-05-09T10:00:00+00:00",
+            "_links": {
+                "self": "https://app.test/vitals/api/v1/audits/uuid",
+                "html": "https://app.test/vitals/audits/uuid"
+            }
+        }
+    ],
+    "meta": { "page": 1, "per_page": 25, "total": 142 }
+}
+```
+
+## CI Integration
+
+### GitHub Action — PR performance comment
+
+The package ships a GitHub Action that audits a PR's preview URL and posts a Markdown score delta table as a PR comment.
+
+```yaml
+# .github/workflows/pr-perf.yml
+name: PR Performance
+
+on: [pull_request]
+
+jobs:
+  vitals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: humantocomputer/laravel-vitals/.github/actions/vitals-pr-comment@v1.0.0-alpha.50
+        with:
+          preview-url: ${{ vars.PREVIEW_URL }}
+          base-url: https://your-production-app.com
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-regression: 'true'
+```
+
+The action posts a comment like:
+
+```
+## ⚡ Laravel Vitals — preview perf
+
+| Metric | Base | Preview | Δ |
+|---|---|---|---|
+| Performance | 92 | 89 | 🔴 -3 |
+| Accessibility | 95 | 95 | → |
+| LCP | 2.10s | 2.40s | 🔴 +300ms |
+```
+
+**Inputs:**
+
+| Input | Required | Default | Description |
+|---|---|---|---|
+| `preview-url` | yes | — | Deployed preview URL to audit |
+| `base-url` | no | — | Production URL for diff baseline (falls back to `vitals-baseline.json`) |
+| `github-token` | yes | — | `secrets.GITHUB_TOKEN` |
+| `fail-on-regression` | no | `false` | Exit 1 when a score drops more than the threshold |
+| `regression-threshold` | no | `5` | Minimum score drop counted as regression |
+| `devices` | no | `mobile` | Comma-separated: `mobile,desktop` |
+
+### Pre-commit hook
+
+Gate every commit behind `vitals:doctor`:
+
+```bash
+php artisan vitals:install-hook
+# or for push
+php artisan vitals:install-hook --type=pre-push
+```
+
+Removes and restores any previous hook automatically. Remove with:
+
+```bash
+php artisan vitals:install-hook --uninstall
+```
 
 ## Dashboard
 

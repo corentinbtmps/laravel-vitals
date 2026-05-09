@@ -3,6 +3,13 @@
 declare(strict_types=1);
 
 return [
+    'api' => [
+        'not_found'  => 'Ressource introuvable.',
+        'no_audits'  => 'Aucune analyse complète trouvée pour cette URL.',
+        'forbidden'  => 'Accès refusé.',
+        'validation' => 'Paramètres de requête invalides.',
+        'error'      => 'Une erreur inattendue s\'est produite.',
+    ],
     'empty' => [
         'overview_no_urls' => [
             'title' => 'Ajoutez votre première URL pour commencer la surveillance',

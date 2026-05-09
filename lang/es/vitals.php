@@ -3,6 +3,13 @@
 declare(strict_types=1);
 
 return [
+    'api' => [
+        'not_found'  => 'Recurso no encontrado.',
+        'no_audits'  => 'No se encontraron auditorías completadas para esta URL.',
+        'forbidden'  => 'Acceso denegado.',
+        'validation' => 'Parámetros de consulta inválidos.',
+        'error'      => 'Se ha producido un error inesperado.',
+    ],
     'empty' => [
         'overview_no_urls' => [
             'title' => 'Añade tu primera URL para comenzar la monitorización',

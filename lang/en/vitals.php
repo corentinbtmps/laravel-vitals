@@ -8,6 +8,13 @@ return [
             'body' => 'The dashboard is being assembled. Real Livewire pages land in plan 5.',
         ],
     ],
+    'api' => [
+        'not_found'  => 'Resource not found.',
+        'no_audits'  => 'No completed audits found for this URL.',
+        'forbidden'  => 'Access denied.',
+        'validation' => 'Invalid query parameters.',
+        'error'      => 'An unexpected error occurred.',
+    ],
     'commands' => [],
     'empty' => [
         'overview_no_urls' => [

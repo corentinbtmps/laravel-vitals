@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use LaravelVitals\Http\Controllers\VitalsApiController;
 use LaravelVitals\Http\Middleware\Authorize;
 use LaravelVitals\Livewire\Pages\AuditDetail;
 use LaravelVitals\Livewire\Pages\Budgets;
@@ -25,6 +26,15 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/insights',              Insights::class)            ->name('vitals.insights');
             Route::get('/recommendations',       RecommendationsIndex::class)->name('vitals.recommendations');
             Route::get('/learn',                 Learn::class)               ->name('vitals.learn');
+
+            // JSON API v1
+            Route::prefix('api/v1')->name('vitals.api.')->group(function (): void {
+                Route::get('/audits',                    [VitalsApiController::class, 'audits'])      ->name('audits');
+                Route::get('/audits/{audit}',            [VitalsApiController::class, 'audit'])       ->name('audit');
+                Route::get('/urls',                      [VitalsApiController::class, 'urls'])        ->name('urls');
+                Route::get('/urls/{url}/latest',         [VitalsApiController::class, 'urlLatest'])  ->name('url.latest');
+                Route::get('/recommendations',           [VitalsApiController::class, 'recommendations'])->name('recommendations');
+            });
         });
 
     // Public asset routes (no auth gate — needed for the dashboard layout to work for any visitor whose Authorize gate denied)

@@ -1,0 +1,48 @@
+name: Laravel Vitals PR Performance Comment
+description: >
+  Run vitals:audit against a preview URL and post a Markdown performance
+  delta comment on the PR, comparing scores against a base URL or
+  a vitals-baseline.json file committed to the repo.
+
+inputs:
+  preview-url:
+    description: The deployed preview URL to audit (e.g. https://pr-42.example.com)
+    required: true
+  base-url:
+    description: The base/production URL to diff against. Omit to use vitals-baseline.json.
+    required: false
+    default: ''
+  github-token:
+    description: GitHub token used to post the PR comment (secrets.GITHUB_TOKEN).
+    required: true
+  fail-on-regression:
+    description: Exit with code 1 when any metric regresses beyond the threshold.
+    required: false
+    default: 'false'
+  regression-threshold:
+    description: Minimum score drop (integer) that is considered a regression.
+    required: false
+    default: '5'
+  devices:
+    description: Comma-separated list of devices to audit (mobile,desktop).
+    required: false
+    default: 'mobile'
+  working-directory:
+    description: Directory where `php artisan` should be called from.
+    required: false
+    default: '.'
+
+runs:
+  using: composite
+  steps:
+    - name: Run Vitals audit and post PR comment
+      shell: bash
+      env:
+        PREVIEW_URL: ${{ inputs.preview-url }}
+        BASE_URL: ${{ inputs.base-url }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        FAIL_ON_REGRESSION: ${{ inputs.fail-on-regression }}
+        REGRESSION_THRESHOLD: ${{ inputs.regression-threshold }}
+        DEVICES: ${{ inputs.devices }}
+        WORKING_DIR: ${{ inputs.working-directory }}
+      run: ${{ github.action_path }}/entrypoint.sh

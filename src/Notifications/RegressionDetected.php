@@ -9,9 +9,12 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
 use Illuminate\Notifications\Slack\SlackMessage;
 use LaravelVitals\Models\Url;
+use LaravelVitals\Notifications\Concerns\ResolvesAuditThread;
 
 final class RegressionDetected extends Notification
 {
+    use ResolvesAuditThread;
+
     public function __construct(
         public readonly Url $url,
         public readonly int $baselineScore,
@@ -43,10 +46,18 @@ final class RegressionDetected extends Notification
 
     public function toSlack(object $notifiable): SlackMessage
     {
-        return (new SlackMessage())
+        $message = (new SlackMessage())
             ->headerBlock('📉 Performance regression')
             ->sectionBlock(function (SectionBlock $block): void {
                 $block->text("`{$this->url->label}` perf regressed: {$this->baselineScore} → {$this->currentScore} (-{$this->dropPercent}%)");
             });
+
+        // Reply in the URL's Slack audit thread when a prior message exists.
+        $ts = $this->resolveThreadTs((int) $this->url->id);
+        if ($ts !== null) {
+            $message->threadTimestamp($ts);
+        }
+
+        return $message;
     }
 }
