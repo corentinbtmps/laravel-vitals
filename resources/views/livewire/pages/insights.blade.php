@@ -25,29 +25,28 @@
         @if ($quickWins->isEmpty())
             <p class="text-sm text-ink-500">No prioritized issues found in the last 7 days.</p>
         @else
-            <ul class="space-y-3">
+            <div class="space-y-2">
                 @foreach ($quickWins as $w)
                     @php
-                        $sevColor = match ($w->severity) {
-                            'critical' => 'accent',
-                            'warning'  => 'amber',
-                            default    => 'sky',
+                        $variant = match ($w->severity) {
+                            'critical' => 'danger',
+                            'warning'  => 'warning',
+                            default    => 'secondary',
                         };
-                        $sevFluxColor = match ($w->severity) {
-                            'critical' => 'rose',
-                            'warning'  => 'amber',
-                            default    => 'sky',
+                        $icon = match ($w->severity) {
+                            'critical' => 'exclamation-circle',
+                            'warning'  => 'exclamation-triangle',
+                            default    => 'information-circle',
                         };
                     @endphp
-                    <li class="flex items-start gap-3 p-3 rounded-2xl border border-{{ $sevColor }}-200/60 dark:border-{{ $sevColor }}-900/40 bg-{{ $sevColor }}-50/30 dark:bg-{{ $sevColor }}-900/5">
-                        <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $w->severity }}</flux:badge>
-                        <div class="flex-1 min-w-0">
-                            <div class="font-medium text-sm">{{ __($w->title_key) }}</div>
-                            <div class="text-xs text-ink-500 mt-0.5">{{ $w->occurrences }} occurrence(s) across {{ $w->audit_count }} audit(s)</div>
-                        </div>
-                    </li>
+                    <flux:callout variant="{{ $variant }}" icon="{{ $icon }}">
+                        <flux:callout.heading>{{ __($w->title_key) }}</flux:callout.heading>
+                        <flux:callout.text>
+                            {{ $w->occurrences }} {{ Str::plural('occurrence', $w->occurrences) }} across {{ $w->audit_count }} {{ Str::plural('audit', $w->audit_count) }}
+                        </flux:callout.text>
+                    </flux:callout>
                 @endforeach
-            </ul>
+            </div>
         @endif
     </div>
 
