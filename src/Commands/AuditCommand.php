@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 use LaravelVitals\Support\AuditException;
@@ -30,7 +31,8 @@ final class AuditCommand extends Command
         {--driver= : Override the configured LighthouseDriver for this run}
         {--format=table : table|json|junit}
         {--sync : Force synchronous execution (single audit always sync; --all dispatches via queue otherwise)}
-        {--fail-on-budget : Exit non-zero when any audit violates the configured budgets (1=warning, 2=critical)}';
+        {--fail-on-budget : Exit non-zero when any audit violates the configured budgets (1=warning, 2=critical)}
+        {--force : Bypass the concurrency lock and run even if another audit is already in progress}';
 
     /** @var string */
     protected $description = 'Run one or more Lighthouse audits.';
@@ -69,11 +71,33 @@ final class AuditCommand extends Command
         $device = $this->option('device');
         $device = is_string($device) ? $device : 'mobile';
 
+        // Concurrency lock — prevent parallel audits of the same URL.
+        $urlId  = $url !== null ? $url->id : md5($label);
+        $lockKey = "vitals:audit:{$urlId}";
+        $lockTtl = (int) config('vitals.audit_timeout_seconds', 300);
+
+        if (! $this->option('force')) {
+            $lock = Cache::lock($lockKey, $lockTtl);
+
+            if (! $lock->get()) {
+                $this->error("Another audit of [{$label}] is already running. Wait for it to finish or use --force to bypass.");
+                // EX_TEMPFAIL (75) — try again later
+                return 75;
+            }
+        }
+
         try {
             $audit = $vitals->audit($label, $device, sync: true);
         } catch (AuditException $e) {
             $this->error($e->getMessage());
+            if (! $this->option('force') && isset($lock)) {
+                $lock->release();
+            }
             return self::FAILURE;
+        } finally {
+            if (! $this->option('force') && isset($lock)) {
+                $lock->release();
+            }
         }
 
         /** @var Audit $fresh */

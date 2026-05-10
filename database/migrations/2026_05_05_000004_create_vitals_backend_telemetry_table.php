@@ -31,6 +31,7 @@ return new class extends Migration
             $table->json('slow_queries')->nullable();
             $table->unsignedBigInteger('peak_memory_bytes')->nullable();
             $table->boolean('truncated')->default(false);
+            $table->json('events_log')->nullable()->comment('Timeline events: DB queries, view renders, cache hits, job dispatches — used for request trace waterfall');
             $table->boolean('is_demo')->default(false)->index();
             $table->timestamps();
 

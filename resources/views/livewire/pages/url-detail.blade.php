@@ -248,14 +248,15 @@
                     <flux:table.column align="end">Score</flux:table.column>
                     <flux:table.column align="end">LCP</flux:table.column>
                     <flux:table.column align="end">CLS</flux:table.column>
-                    <flux:table.column align="end" class="w-14"></flux:table.column>
+                    <flux:table.column align="end" class="w-32"></flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
-                    @foreach ($history as $a)
+                    @foreach ($history as $loop_index => $a)
                         @php
                             $score = $a->score_performance;
                             $color = \LaravelVitals\Support\Health::colorForScore($score);
                             $grade = \LaravelVitals\Support\Health::grade($score);
+                            $nextAudit = $history[$loop_index + 1] ?? null;
                         @endphp
                         <flux:table.row :key="$a->id">
                             <flux:table.cell variant="strong">
@@ -279,7 +280,18 @@
                                 <span class="tabular-nums">{{ $a->cls !== null ? number_format((float) $a->cls, 2) : '—' }}</span>
                             </flux:table.cell>
                             <flux:table.cell align="end">
-                                <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" />
+                                <div class="flex items-center justify-end gap-1">
+                                    @if ($nextAudit)
+                                        <flux:button
+                                            href="{{ route('vitals.audit.compare', [$nextAudit->id, $a->id]) }}"
+                                            variant="ghost"
+                                            size="sm"
+                                            icon="arrows-right-left"
+                                            title="{{ __('vitals::vitals.compare.compare_with_previous') }}"
+                                        />
+                                    @endif
+                                    <flux:button href="{{ route('vitals.audit', $a) }}" variant="ghost" size="sm" icon="arrow-right" />
+                                </div>
                             </flux:table.cell>
                         </flux:table.row>
                     @endforeach

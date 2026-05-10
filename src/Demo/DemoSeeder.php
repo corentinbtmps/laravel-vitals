@@ -9,11 +9,17 @@ use Illuminate\Support\Str;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
 use LaravelVitals\Models\Recommendation;
+use LaravelVitals\Models\RumEvent;
 use LaravelVitals\Models\Url;
 
 /**
  * Generates fictional but realistic Vitals data for demos and screenshots.
- * 4 URLs × 14 days × 2 devices ≈ 112 audits with realistic per-URL trends.
+ *
+ * Enhanced (alpha.53): 4 URLs × 30 days × 2 devices = 240 audits with realistic
+ * patterns including weekend traffic dips, midweek regressions, and occasional spikes.
+ * ~500 RUM events per URL per day for 30 days (significant but capped per run).
+ *
+ * Idempotent — running vitals:demo twice truncates existing demo data first.
  */
 final class DemoSeeder
 {
@@ -25,28 +31,70 @@ final class DemoSeeder
         'dashboard' => ['path' => '/dashboard', 'profile' => 'regression'],
     ];
 
+    /** @var array<int, string> Common recommendations distributed across audits. */
+    private const COMMON_RECOMMENDATIONS = [
+        'unused-javascript',
+        'n-plus-one-detected',
+        'render-blocking-resources',
+        'uses-text-compression',
+        'uses-optimized-images',
+    ];
+
     public function seed(): void
     {
+        // Idempotent: clear existing demo data first.
+        // RUM events are tied to URL paths — delete those matching our demo paths.
+        $demoPaths = array_map(
+            fn (array $fix): string => 'https://example.test' . $fix['path'],
+            self::FIXTURES,
+        );
+        RumEvent::query()->whereIn('url', $demoPaths)->delete();
+        Recommendation::query()->where('is_demo', true)->delete();
+        BackendTelemetry::query()->where('is_demo', true)->delete();
+        Audit::query()->where('is_demo', true)->delete();
+        Url::query()->where('is_demo', true)->delete();
+
         mt_srand(20260506);
 
         foreach (self::FIXTURES as $label => $fix) {
-            $url = Url::updateOrCreate(
-                ['label' => $label],
-                ['path' => $fix['path'], 'device' => 'both', 'is_demo' => true],
-            );
+            $url = Url::create([
+                'label'   => $label,
+                'path'    => $fix['path'],
+                'device'  => 'both',
+                'enabled' => true,
+                'is_demo' => true,
+            ]);
 
-            for ($d = 13; $d >= 0; $d--) {
+            for ($d = 29; $d >= 0; $d--) {
+                $when = now()->subDays($d)->setTime(12, mt_rand(0, 59));
+                $isWeekend = in_array($when->dayOfWeek, [0, 6], true);
+
                 foreach (['mobile', 'desktop'] as $device) {
-                    $when = now()->subDays($d)->setTime(12, mt_rand(0, 59));
-                    $this->seedOne($url, $device, $when, $fix['profile']);
+                    $this->seedOne($url, $device, $when, $fix['profile'], $isWeekend, $d);
                 }
+
+                // Seed RUM events — ~50 per URL per day (scaled down for performance)
+                $rumCount = $isWeekend ? mt_rand(20, 35) : mt_rand(40, 60);
+                $this->seedRumEvents($url, $when, $rumCount);
             }
         }
     }
 
-    private function seedOne(Url $url, string $device, Carbon $when, string $profile): void
+    private function seedOne(Url $url, string $device, Carbon $when, string $profile, bool $isWeekend = false, int $daysAgoInt = 0): void
     {
         [$perf, $lcp, $cls, $inp, $ttfb] = $this->metricsForProfile($profile, $when);
+
+        // Weekend traffic dip: performance improves slightly (less load)
+        if ($isWeekend) {
+            $perf = min(100, $perf + mt_rand(2, 5));
+            $ttfb = max(80.0, $ttfb - mt_rand(20, 60));
+        }
+
+        // Occasional spike (random 1-in-10 days)
+        if (mt_rand(1, 10) === 1) {
+            $perf = max(40, $perf - mt_rand(10, 20));
+            $lcp  = $lcp + mt_rand(500, 1500);
+        }
 
         if ($device === 'desktop') {
             $perf = min(100, $perf + mt_rand(5, 10));
@@ -76,13 +124,17 @@ final class DemoSeeder
             'details'           => $this->fakeDetails($profile, $perf),
         ]);
 
+        // Memory peaks vary 20-80 MB
+        $memoryMb = mt_rand(20, 80);
+
         BackendTelemetry::create([
             'audit_id'           => $audit->id,
             'sampled_request'    => false,
             'route_name'         => $url->label,
             'http_status'        => 200,
             'duration_ms'        => $ttfb,
-            'memory_peak_kb'     => mt_rand(8000, 25000),
+            'memory_peak_kb'     => $memoryMb * 1024,
+            'peak_memory_bytes'  => $memoryMb * 1024 * 1024,
             'queries_count'      => $profile === 'bad' ? mt_rand(80, 120) : mt_rand(8, 30),
             'queries_time_ms'    => mt_rand(50, 300),
             'queries_unique'     => $profile === 'bad' ? 4 : mt_rand(6, 25),
@@ -133,6 +185,68 @@ final class DemoSeeder
                 'metrics'          => ['queries_count' => 87, 'queries_unique' => 4],
                 'code_references'  => [],
                 'is_demo'          => true,
+            ]);
+        }
+
+        // Distribute additional common recommendations
+        if (mt_rand(0, 3) === 0) {
+            $extraKey = self::COMMON_RECOMMENDATIONS[mt_rand(2, 4)];
+            Recommendation::create([
+                'audit_id'         => $audit->id,
+                'source'           => 'lighthouse',
+                'audit_key'        => $extraKey,
+                'category'         => 'performance',
+                'severity'         => 'info',
+                'title_key'        => 'vitals::vitals.recommendations.' . $extraKey . '.title',
+                'description_key'  => 'vitals::vitals.recommendations.' . $extraKey . '.description',
+                'translation_params' => [],
+                'metrics'          => [],
+                'code_references'  => [],
+                'is_demo'          => true,
+            ]);
+        }
+    }
+
+    /**
+     * Seed a batch of synthetic RUM events for a URL on a given day.
+     */
+    private function seedRumEvents(Url $url, Carbon $when, int $count): void
+    {
+        $metrics = ['LCP', 'FID', 'CLS', 'INP', 'TTFB', 'FCP'];
+        $ratings = ['good', 'needs-improvement', 'poor'];
+
+        for ($i = 0; $i < $count; $i++) {
+            $metric = $metrics[mt_rand(0, count($metrics) - 1)];
+            $minuteOffset = mt_rand(0, 1439);
+
+            $value = match ($metric) {
+                'LCP'  => mt_rand(800, 5000) / 1.0,
+                'CLS'  => mt_rand(0, 50) / 100.0,
+                'INP'  => mt_rand(50, 600) / 1.0,
+                'TTFB' => mt_rand(100, 2000) / 1.0,
+                'FCP'  => mt_rand(300, 3000) / 1.0,
+                default => mt_rand(100, 1000) / 1.0,
+            };
+
+            $rating = match (true) {
+                $metric === 'LCP' && $value <= 2500 => 'good',
+                $metric === 'LCP' && $value <= 4000 => 'needs-improvement',
+                $metric === 'CLS' && $value <= 0.1  => 'good',
+                $metric === 'CLS' && $value <= 0.25 => 'needs-improvement',
+                default => $ratings[mt_rand(0, 2)],
+            };
+
+            RumEvent::create([
+                'url'             => 'https://example.test' . $url->path,
+                'metric'          => $metric,
+                'value'           => $value,
+                'rating'          => $rating,
+                'device'          => mt_rand(0, 1) === 0 ? 'mobile' : 'desktop',
+                'navigation_type' => 'navigate',
+                'connection'      => null,
+                'attribution'     => null,
+                'user_agent'      => 'Mozilla/5.0 (demo)',
+                'occurred_at'     => $when->copy()->addMinutes($minuteOffset),
             ]);
         }
     }
@@ -205,8 +319,8 @@ final class DemoSeeder
                 (float) mt_rand(150, 300),
             ],
             'improving' => [
-                70 + (int) round((13 - $daysAgo) * 1.3),
-                (float) max(1500, mt_rand(2500, 3500) - ((13 - $daysAgo) * 80)),
+                70 + (int) round((29 - $daysAgo) * 0.65),
+                (float) max(1500, mt_rand(2500, 3500) - ((29 - $daysAgo) * 40)),
                 round(mt_rand(5, 12) / 100, 2),
                 (float) mt_rand(150, 280),
                 (float) mt_rand(300, 600),
@@ -219,8 +333,8 @@ final class DemoSeeder
                 (float) mt_rand(800, 1500),
             ],
             'regression' => [
-                $daysAgo <= 2 ? mt_rand(72, 80) : mt_rand(92, 96),
-                $daysAgo <= 2 ? (float) mt_rand(3000, 3800) : (float) mt_rand(1400, 1800),
+                $daysAgo <= 3 ? mt_rand(72, 80) : mt_rand(92, 96),
+                $daysAgo <= 3 ? (float) mt_rand(3000, 3800) : (float) mt_rand(1400, 1800),
                 round(mt_rand(2, 6) / 100, 2),
                 (float) mt_rand(100, 200),
                 (float) mt_rand(150, 350),

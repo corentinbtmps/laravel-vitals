@@ -54,7 +54,8 @@ final class RunAuditJob implements ShouldQueue
 
         $options = AuditOptions::default()
             ->withDevice($audit->device)
-            ->withExtraHeader('X-Vitals-Audit-Id', $headerValue);
+            ->withExtraHeader('X-Vitals-Audit-Id', $headerValue)
+            ->withAuditId($audit->id);
 
         $url = $audit->url;
 

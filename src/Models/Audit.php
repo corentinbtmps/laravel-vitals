@@ -36,6 +36,8 @@ use Spatie\Searchable\SearchResult;
  * @property array<string, mixed>|null $details
  * @property string|null $error
  * @property string|null $slack_message_ts
+ * @property int $api_call_count
+ * @property float $api_call_cost
  * @property \Illuminate\Support\Carbon|null $started_at
  * @property \Illuminate\Support\Carbon|null $completed_at
  */

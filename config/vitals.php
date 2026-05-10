@@ -143,6 +143,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Public status page
+    |--------------------------------------------------------------------------
+    | Set enabled => true to expose /vitals/status as a public status page.
+    | Configure the appearance to match your brand.
+    */
+    'status' => [
+        'enabled'     => env('VITALS_STATUS_ENABLED', false),
+        'title'       => env('VITALS_STATUS_TITLE', null),   // Falls back to config('app.name')
+        'description' => env('VITALS_STATUS_DESCRIPTION', null),
+        'logo_url'    => env('VITALS_STATUS_LOGO_URL', null),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit concurrency lock TTL
+    |--------------------------------------------------------------------------
+    | Maximum number of seconds a single audit is allowed to run.
+    | Used as the lock TTL for the vitals:audit concurrency lock.
+    */
+    'audit_timeout_seconds' => (int) env('VITALS_AUDIT_TIMEOUT_SECONDS', 300),
+
+    /*
+    |--------------------------------------------------------------------------
     | Real User Monitoring (RUM)
     |--------------------------------------------------------------------------
     | RUM collects Core Web Vitals from real visitors via the web-vitals library.

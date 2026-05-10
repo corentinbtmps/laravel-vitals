@@ -686,4 +686,72 @@
             </dl>
         </div>
     @endif
+
+    {{-- Request trace waterfall --}}
+    @if ($audit->telemetry && ! empty($audit->telemetry->events_log))
+        @php
+            $events = $audit->telemetry->events_log;
+            $totalDuration = $audit->telemetry->duration_ms > 0 ? (float) $audit->telemetry->duration_ms : 1000.0;
+            $typeColors = [
+                'query'  => 'accent',
+                'view'   => 'violet',
+                'cache'  => 'emerald',
+                'job'    => 'amber',
+            ];
+        @endphp
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="flex items-center gap-2 mb-4">
+                <flux:icon name="bars-3-bottom-left" class="size-5 text-violet-500" />
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.trace.title') }}</h2>
+                <flux:badge color="zinc" size="sm">{{ count($events) }} {{ __('vitals::vitals.trace.events') }}</flux:badge>
+            </div>
+            {{-- Legend --}}
+            <div class="flex flex-wrap gap-3 mb-4 text-xs text-ink-500">
+                @foreach (['query' => __('vitals::vitals.trace.query'), 'view' => __('vitals::vitals.trace.view'), 'cache' => __('vitals::vitals.trace.cache'), 'job' => __('vitals::vitals.trace.job')] as $type => $label)
+                    <span class="flex items-center gap-1">
+                        <span class="inline-block size-2.5 rounded-sm bg-{{ $typeColors[$type] }}-400"></span>
+                        {{ $label }}
+                    </span>
+                @endforeach
+            </div>
+            {{-- SVG Waterfall --}}
+            @php
+                $rowH = 22;
+                $labelW = 160;
+                $trackW = 500;
+                $svgH = max(60, count($events) * $rowH + 30);
+            @endphp
+            <div class="overflow-x-auto rounded-lg border border-ink-100 dark:border-ink-800">
+                <svg width="{{ $labelW + $trackW + 60 }}" height="{{ $svgH }}" xmlns="http://www.w3.org/2000/svg" aria-label="{{ __('vitals::vitals.trace.waterfall_label') }}">
+                    {{-- Time axis tick marks --}}
+                    @foreach ([0, 25, 50, 75, 100] as $pct)
+                        @php $x = $labelW + (int) ($trackW * $pct / 100); @endphp
+                        <line x1="{{ $x }}" y1="0" x2="{{ $x }}" y2="{{ $svgH }}" stroke="currentColor" stroke-opacity="0.08" stroke-width="1" />
+                        <text x="{{ $x }}" y="{{ $svgH - 4 }}" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.4">{{ number_format($totalDuration * $pct / 100, 0) }}ms</text>
+                    @endforeach
+
+                    @foreach ($events as $i => $ev)
+                        @php
+                            $y = $i * $rowH + 4;
+                            $startPct = min(100, ($ev['start_ms'] ?? 0) / $totalDuration * 100);
+                            $durPct   = max(0.5, min(100 - $startPct, ($ev['duration_ms'] ?? 1) / $totalDuration * 100));
+                            $barX     = $labelW + (int) ($trackW * $startPct / 100);
+                            $barW     = max(2, (int) ($trackW * $durPct / 100));
+                            $type     = $ev['type'] ?? 'query';
+                            $colorMap = ['query' => '#f87171', 'view' => '#a78bfa', 'cache' => '#34d399', 'job' => '#fbbf24'];
+                            $color    = $colorMap[$type] ?? '#94a3b8';
+                            $label    = mb_strimwidth($ev['label'] ?? $type, 0, 28, '…');
+                        @endphp
+                        <text x="{{ $labelW - 6 }}" y="{{ $y + 12 }}" text-anchor="end" font-size="10" fill="currentColor" opacity="0.8" font-family="monospace">{{ $label }}</text>
+                        <rect x="{{ $barX }}" y="{{ $y + 2 }}" width="{{ $barW }}" height="{{ $rowH - 8 }}" rx="2" fill="{{ $color }}" opacity="0.85">
+                            <title>{{ $ev['label'] ?? '' }} — {{ $ev['duration_ms'] ?? 0 }}ms @ {{ $ev['start_ms'] ?? 0 }}ms</title>
+                        </rect>
+                        @if ($barW > 28)
+                            <text x="{{ $barX + 4 }}" y="{{ $y + 12 }}" font-size="9" fill="white" font-family="monospace">{{ $ev['duration_ms'] ?? 0 }}ms</text>
+                        @endif
+                    @endforeach
+                </svg>
+            </div>
+        </div>
+    @endif
 </div>

@@ -139,6 +139,42 @@
         @endforeach
     </div>
 
+    {{-- Daily summary card --}}
+    @if ($dailySummary['audits'] > 0)
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 px-5 py-4">
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                <span class="font-semibold text-ink-700 dark:text-ink-300">{{ __('vitals::vitals.overview.yesterday') }}</span>
+                <span class="text-ink-500">{{ __('vitals::vitals.overview.daily_audits', ['count' => $dailySummary['audits']]) }}</span>
+                @if ($dailySummary['regressions'] > 0)
+                    <span class="text-accent-600 dark:text-accent-400">· {{ __('vitals::vitals.overview.daily_regressions', ['count' => $dailySummary['regressions']]) }}</span>
+                @endif
+                @if ($dailySummary['fixed'] > 0)
+                    <span class="text-emerald-600 dark:text-emerald-400">· {{ __('vitals::vitals.overview.daily_fixed', ['count' => $dailySummary['fixed']]) }}</span>
+                @endif
+                @if ($dailySummary['lcp_improvement_pct'] !== null && $dailySummary['lcp_improvement_pct'] > 0)
+                    <span class="text-violet-600 dark:text-violet-400">· {{ __('vitals::vitals.overview.daily_lcp', ['pct' => $dailySummary['lcp_improvement_pct']]) }}</span>
+                @endif
+            </div>
+        </div>
+    @endif
+
+    {{-- API usage panel (PageSpeed users only) --}}
+    @if ($apiUsage['calls'] > 0)
+        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <flux:icon name="cloud" class="size-4 text-sky-500" />
+                    <span class="text-sm font-semibold">{{ __('vitals::vitals.overview.api_usage') }}</span>
+                </div>
+                <span class="text-xs text-ink-500 tabular-nums">{{ number_format($apiUsage['calls']) }} / {{ number_format($apiUsage['limit']) }}</span>
+            </div>
+            @php $pct = min(100, $apiUsage['calls'] / $apiUsage['limit'] * 100); @endphp
+            <div class="w-full rounded-full h-1.5 bg-ink-100 dark:bg-ink-800">
+                <div class="h-1.5 rounded-full {{ $pct > 80 ? 'bg-accent-400' : 'bg-sky-400' }}" style="width: {{ $pct }}%"></div>
+            </div>
+        </div>
+    @endif
+
     {{-- Active alerts --}}
     @if (count($activeAlerts) > 0)
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">

@@ -89,6 +89,72 @@ The `web-vitals@4` library supports LCP, INP, CLS, TTFB, and FCP. To add a custo
 
 7. **Rebuild assets**: `npm run build`.
 
+## How to add a custom analyzer
+
+Analyzers are the static code analysis step that runs after every Lighthouse audit. Each analyzer inspects your codebase — Blade views, `composer.json`, config files — and attaches file/line references to Lighthouse recommendations. There are currently nine built-in analyzers. Adding a tenth follows the same pattern.
+
+**Step 1: implement `CodeAnalyzer`**
+
+```php
+// src/Analyzers/YourAnalyzer.php
+final class YourAnalyzer implements \LaravelVitals\Contracts\CodeAnalyzer
+{
+    public function supports(string $auditKey): bool
+    {
+        // Return true for the Lighthouse audit keys this analyzer handles.
+        return in_array($auditKey, ['some-lighthouse-audit-id'], true);
+    }
+
+    public function analyze(string $auditKey, array $auditData, AppContext $ctx): CodeReferenceCollection
+    {
+        // $auditData is the raw Lighthouse audit object (items, details, score, etc.)
+        // $ctx->basePath is the root of the host application.
+        // Return a collection of CodeReference objects.
+        return new CodeReferenceCollection([
+            new CodeReference(
+                file: 'app/Http/Middleware/SomeMiddleware.php',
+                lineStart: 14,
+                lineEnd: 14,
+                snippet: '// your offending code here',
+                hint:    'Explanation of what to do differently.',
+            ),
+        ]);
+    }
+}
+```
+
+**Step 2: register it**
+
+Open `src/VitalsServiceProvider.php` and add your analyzer to the `$analyzers` array inside the `RecommendationBuilder` singleton binding:
+
+```php
+$app->make(\LaravelVitals\Analyzers\YourAnalyzer::class),
+```
+
+Alternatively, add it to your host app's `config/vitals.php`:
+
+```php
+'analyzers' => [
+    'custom' => [
+        \App\Vitals\Analyzers\YourAnalyzer::class,
+    ],
+],
+```
+
+**Step 3: add a recommendation descriptor**
+
+In `src/Recommendations/RecommendationDocs.php`, add an entry so the dashboard can surface documentation links, good/bad code examples, and action labels for your new recommendation key.
+
+**Step 4: tests**
+
+Create `tests/Unit/Analyzers/YourAnalyzerTest.php`. At minimum, test that `supports()` returns the right values and that `analyze()` returns `CodeReference` objects when it finds a pattern.
+
+**Step 5: translations**
+
+Add `vitals.recommendations.your-audit-key.title` and `vitals.recommendations.your-audit-key.description` to all four `lang/*/vitals.php` files.
+
+---
+
 ## Reporting issues
 
 [Open an issue](https://github.com/corentinbtmps/laravel-vitals/issues/new/choose) using the relevant template (bug report, feature request, or question). Include your Laravel version, PHP version, Vitals version, and driver type.

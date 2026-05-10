@@ -16,6 +16,7 @@ use LaravelVitals\Commands\DoctorCommand;
 use LaravelVitals\Commands\InstallCommand;
 use LaravelVitals\Commands\InstallHookCommand;
 use LaravelVitals\Commands\PurgeCommand;
+use LaravelVitals\Commands\SelfCheckCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -37,7 +38,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasViewComponents('vitals', \LaravelVitals\View\Components\CodeReference::class)
             ->hasRoute('web')
-            ->hasCommands([AuditCommand::class, BoostDiffCommand::class, BoostInstallCommand::class, CheckRegressionsCommand::class, DemoCommand::class, DigestSendCommand::class, DiscoverCommand::class, DoctorCommand::class, InstallCommand::class, InstallHookCommand::class, PurgeCommand::class]);
+            ->hasCommands([AuditCommand::class, BoostDiffCommand::class, BoostInstallCommand::class, CheckRegressionsCommand::class, DemoCommand::class, DigestSendCommand::class, DiscoverCommand::class, DoctorCommand::class, InstallCommand::class, InstallHookCommand::class, PurgeCommand::class, SelfCheckCommand::class]);
     }
 
     /**
@@ -94,6 +95,8 @@ final class VitalsServiceProvider extends PackageServiceProvider
                 $app->make(\LaravelVitals\Analyzers\ViteConfigAnalyzer::class),
                 $app->make(\LaravelVitals\Analyzers\BladeViewAnalyzer::class),
                 $app->make(\LaravelVitals\Analyzers\EnvironmentAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\CriticalCssAnalyzer::class),
+                $app->make(\LaravelVitals\Analyzers\SecurityHeadersAnalyzer::class),
             ];
 
             foreach ((array) config('vitals.analyzers.custom', []) as $class) {

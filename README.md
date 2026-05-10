@@ -35,6 +35,9 @@ Laravel Vitals runs Google Lighthouse against your own pages, captures what your
 | Self-hosted — your data stays yours | ✗ | ✗ | **✓** |
 | No SaaS lock-in | ✗ | n/a | **✓** |
 | Performance budgets with CI exit codes | ✗ | ✗ | **✓** |
+| Audit comparison (before/after diff) | paid plan | ✗ | **✓** |
+| Security headers audit | ✗ | ✗ | **✓** |
+| Public status page | ✗ | ✗ | **✓** |
 
 ---
 
@@ -491,6 +494,91 @@ php artisan vitals:boost:diff
 
 ---
 
+### 17. Audit comparison
+
+When you fix a bug or deploy a change, you want to know whether performance actually improved. The audit comparison page shows two audits side by side — typically the same URL before and after a deployment.
+
+Go to any URL's history table and click the compare icon next to any audit. The page shows:
+
+- **Score grid**: Performance, Accessibility, Best Practices, SEO for both audits, with `▲ +5` / `▼ -3` / `→` delta badges.
+- **CWV grid**: LCP, INP, CLS, TTFB formatted in milliseconds with directional indicators.
+- **Recommendation diff**: Issues that were in A but not in B ("resolved") and issues that appeared in B but not in A ("new").
+- **Telemetry diff**: Query count, query time, peak memory, and view render time for both audits.
+
+You can also link directly: `/vitals/audits/{audit-id-a}/compare/{audit-id-b}`.
+
+---
+
+### 18. Public status page
+
+Laravel Vitals can serve a public-facing status page at `/vitals/status`. The status page is off by default — add one line to opt in:
+
+```php
+// config/vitals.php
+'status' => [
+    'enabled' => true,
+    'title'   => 'My App Status',
+    'description' => 'Real-time performance and uptime information.',
+    'logo_url' => null,  // Optional: URL to your logo
+],
+```
+
+The page shows:
+- **Uptime %** computed from the last 30 days of RUM events (falls back to audit data when RUM is not enabled).
+- **CWV split** — good / needs improvement / poor distribution across audits in the last 7 days.
+- **Recent incidents** — any audit where the performance score dropped below 70 in the last 7 days.
+- **Last updated** timestamp.
+
+The page uses a simplified layout with no dashboard chrome — suitable for sharing with stakeholders or embedding in a Notion page.
+
+---
+
+### 19. Self-monitoring
+
+Laravel Vitals monitors itself. The `vitals:self-check` command checks table sizes and flags slow telemetry capture:
+
+```bash
+php artisan vitals:self-check
+```
+
+Add it to your scheduler for hourly checks:
+
+```php
+// app/Console/Kernel.php (or routes/console.php)
+Schedule::command('vitals:self-check')->hourly();
+```
+
+Results are also visible in the dashboard at `/vitals/admin/self-check`. The page shows row counts per table and the 10 slowest captured requests so you can spot when Vitals itself is adding overhead.
+
+---
+
+### 20. Security headers audit
+
+Every audit now runs the `SecurityHeadersAnalyzer` alongside the existing Lighthouse analyzers. It checks whether your HTTP responses include six key security headers:
+
+- `Content-Security-Policy` — prevents cross-site scripting
+- `Strict-Transport-Security` — enforces HTTPS
+- `X-Frame-Options` or CSP `frame-ancestors` — prevents clickjacking
+- `X-Content-Type-Options: nosniff` — prevents MIME-type attacks
+- `Referrer-Policy` — controls referrer information
+- `Permissions-Policy` — restricts browser feature access
+
+Each missing or weak header generates a recommendation entry with a link to the relevant MDN or web.dev documentation. To add these headers in Laravel, create a middleware:
+
+```php
+// app/Http/Middleware/SecurityHeaders.php
+public function handle(Request $request, Closure $next): Response
+{
+    $response = $next($request);
+    $response->headers->set('X-Content-Type-Options', 'nosniff');
+    $response->headers->set('X-Frame-Options', 'DENY');
+    $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    return $response;
+}
+```
+
+---
+
 ## Installation
 
 **Minimum setup — four commands:**
@@ -729,6 +817,7 @@ Keys are labels (used in commands and the dashboard). Values are paths relative 
 | `vitals:purge` | Remove ALL vitals data (confirmation required) | Fresh start or database cleanup |
 | `vitals:boost:install` | Re-publish Boost / Claude skill files | After a package upgrade |
 | `vitals:boost:diff` | Check whether installed AI files differ from package | After a package upgrade |
+| `vitals:self-check` | Check Vitals table sizes and slowest telemetry requests | Hourly via scheduler |
 
 **Key options for `vitals:audit`:**
 

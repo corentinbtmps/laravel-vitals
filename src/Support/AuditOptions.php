@@ -18,6 +18,7 @@ final readonly class AuditOptions
         public array $categories,
         public array $extraHeaders,
         public int $timeoutSeconds,
+        public ?string $auditId = null,
     ) {
     }
 
@@ -33,7 +34,7 @@ final readonly class AuditOptions
 
     public function withDevice(string $device): self
     {
-        return new self($device, $this->categories, $this->extraHeaders, $this->timeoutSeconds);
+        return new self($device, $this->categories, $this->extraHeaders, $this->timeoutSeconds, $this->auditId);
     }
 
     public function withExtraHeader(string $name, string $value): self
@@ -43,6 +44,12 @@ final readonly class AuditOptions
             $this->categories,
             [...$this->extraHeaders, $name => $value],
             $this->timeoutSeconds,
+            $this->auditId,
         );
+    }
+
+    public function withAuditId(string $auditId): self
+    {
+        return new self($this->device, $this->categories, $this->extraHeaders, $this->timeoutSeconds, $auditId);
     }
 }

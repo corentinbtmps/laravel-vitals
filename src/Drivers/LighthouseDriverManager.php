@@ -36,6 +36,16 @@ final readonly class LighthouseDriverManager
     ) {
     }
 
+    /**
+     * Resolve a driver by explicit name — alias of driver() for clarity.
+     *
+     * @throws InvalidArgumentException if the name is unknown
+     */
+    public function resolveByName(string $name): LighthouseDriver
+    {
+        return $this->driver($name);
+    }
+
     public function driver(string $name): LighthouseDriver
     {
         if (! isset(self::MAP[$name])) {

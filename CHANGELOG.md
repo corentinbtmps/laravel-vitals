@@ -7,6 +7,102 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.53] - 2026-05-10
+
+### Added
+
+#### Audit comparison (feature 1)
+- New Livewire page `AuditCompare` at `/vitals/audits/{a}/compare/{b}` — side-by-side score grid (4 metrics × 2 audits) with `▲ +N` / `▼ -N` / `→` delta badges.
+- CWV grid (LCP/INP/CLS/TTFB) with ms formatting and directional indicators.
+- Recommendation diff: "Resolved in B" (was in A, not in B) and "New in B" (was not in A, is in B).
+- Telemetry diff table: queries, query time, peak memory, view render time.
+- "Compare with previous" icon button added to every row in the UrlDetail audit history table.
+
+#### Request trace waterfall (feature 2)
+- Audit-detail page gains a "Request trace" panel when `events_log` data is present.
+- Inline SVG waterfall — each event is a colored bar positioned by start time, length = duration. No JS library.
+- Color coding: query=accent, view=violet, cache=emerald, job=amber.
+- New `events_log` JSON column added to `vitals_backend_telemetry` source migration.
+
+#### Public health endpoint (feature 3)
+- `GET /vitals/health` — public JSON endpoint, no auth gate. Returns `status`, `timestamp`, `checks`, and `version`.
+- Checks: `database`, `drivers` (per driver: ok/warn/skip), `queue`, `telemetry_buffer`.
+- HTTP 200 for all ok/skip, HTTP 503 for any error.
+
+#### PageSpeed API cost tracking (feature 4)
+- New `api_call_count` (INT) and `api_call_cost` (DECIMAL 10,4) columns on `vitals_audits` source migration.
+- `PageSpeedApiDriver` increments `api_call_count` on each successful API call.
+- New "API usage this month" panel on the Overview page (budget bar showing calls / 25,000 monthly limit).
+
+#### Rate limiting on vitals:audit (feature 5)
+- `vitals:audit` acquires a `Cache::lock("vitals:audit:{url_id}", ttl)` before running.
+- If another process is already auditing the same URL, the command exits with code 75 (EX_TEMPFAIL) and a clear message.
+- New `--force` flag bypasses the lock (used in tests and CI override scenarios).
+- Lock TTL configurable via `config('vitals.audit_timeout_seconds', 300)`.
+
+#### Self-monitoring (feature 6)
+- New `vitals:self-check` command — checks table sizes and slowest 10 telemetry requests.
+- Exits with FAILURE when any table exceeds threshold or slowest request > 2000ms.
+- New admin panel at `/vitals/admin/self-check` (Livewire page, behind Authorize gate).
+
+#### Public status page (feature 7)
+- New `Status` Livewire page at `/vitals/status` — uses `vitals::layouts.public` minimal layout.
+- Opt-in via `config('vitals.status.enabled', false)`.
+- Shows: app name, uptime % (last 30 days), CWV split (good/needs-improvement/poor), recent incidents, last updated.
+- Brand-customizable via `config('vitals.status.title/description/logo_url')`.
+- New `vitals::layouts.public` Blade layout created.
+
+#### Trends overlay — compare 2 periods (feature 8)
+- `Overview::previousMetricTrends()` computes sparkline data for the previous period.
+- Both datasets passed to the view as `metricTrends` (current) and `previousMetricTrends` (previous).
+
+#### Daily summary card on Overview (feature 9)
+- Horizontal narrative card just below lens cards: "Yesterday — 142 audits run · 3 regressions detected · 2 fixed · LCP improved 8% on average".
+- Computed from yesterday's audits vs. their prior baselines.
+- New `dailySummary()` private method on `Overview`.
+
+#### Demo seeder enrichment (feature 10)
+- `DemoSeeder` now generates 4 URLs × 30 days × 2 devices = 240 audits (was 4 × 14 × 2 = 112).
+- Realistic patterns: weekend traffic dip (minor perf improvement), occasional spikes (1-in-10 days), midweek regression on `dashboard` URL.
+- ~50 RUM events per URL per day for 30 days.
+- Memory peaks vary 20–80 MB.
+- Idempotent: running `vitals:demo` twice truncates existing demo data first.
+
+#### SEO deep dive page (feature 11)
+- New `AuditSeo` Livewire page at `/vitals/audits/{audit}/seo`.
+- Checks: meta description, canonical URL, structured data, HTML lang, title length, H1, sitemap, robots.txt.
+- SEO recommendations filtered from the audit's recommendation set.
+- Linked from audit-detail breadcrumbs.
+
+#### Critical CSS analyzer (feature 12)
+- New `CriticalCssAnalyzer` in the `CodeAnalyzer` pipeline.
+- Parses Blade templates for class names in elements matching above-fold sentinels (hero, header, nav, banner, masthead).
+- Generates "Inline critical CSS" recommendation with found class names.
+- Registered in `VitalsServiceProvider` alongside the 7 existing analyzers.
+
+#### Security headers analyzer (feature 13)
+- New `SecurityHeadersAnalyzer` in the `CodeAnalyzer` pipeline.
+- Checks CSP, HSTS, X-Frame-Options (or CSP frame-ancestors), X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
+- Each missing/weak header generates a recommendation entry with web.dev/MDN doc link.
+- Registered in `VitalsServiceProvider`.
+
+### Schema changes (all folded into source migrations — no ALTER files)
+- `vitals_audits`: added `api_call_count INT default 0`, `api_call_cost DECIMAL(10,4) default 0`
+- `vitals_backend_telemetry`: added `events_log JSON nullable`
+
+### Translations
+- All new user-visible strings added to `lang/en/vitals.php`, `lang/fr/vitals.php`, `lang/de/vitals.php`, `lang/es/vitals.php` under keys: `compare.*`, `trace.*`, `health.*`, `status.*`, `seo.*`, `self_check.*`, `overview.*`, `security_headers.*`.
+
+### Tests
+- 31 new tests added across 8 files. Total: 337 → 368 tests.
+
+### Routes added
+- `GET /vitals/health` (public)
+- `GET /vitals/status` (public, conditional on `vitals.status.enabled`)
+- `GET /vitals/audits/{a}/compare/{b}` (auth)
+- `GET /vitals/audits/{audit}/seo` (auth)
+- `GET /vitals/admin/self-check` (auth)
+
 ## [v1.0.0-alpha.52] - 2026-05-10
 
 ### Changed

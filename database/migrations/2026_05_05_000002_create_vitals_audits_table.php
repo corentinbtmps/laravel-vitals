@@ -35,6 +35,8 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->boolean('is_demo')->default(false)->index();
             $table->string('slack_message_ts')->nullable()->comment('Slack message timestamp — used to post follow-ups as thread replies');
+            $table->unsignedInteger('api_call_count')->default(0)->comment('Number of PageSpeed API calls made for this audit');
+            $table->decimal('api_call_cost', 10, 4)->default(0)->comment('Estimated cost of PageSpeed API calls (informational — API is free up to 25k/day)');
             $table->timestamps();
 
             $table->index(['url_id', 'completed_at']);

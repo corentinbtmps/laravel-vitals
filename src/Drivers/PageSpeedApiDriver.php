@@ -70,7 +70,15 @@ final class PageSpeedApiDriver implements LighthouseDriver
         }
 
         try {
-            return PageSpeedMapper::fromPageSpeedJson($response->body());
+            $report = PageSpeedMapper::fromPageSpeedJson($response->body());
+
+            // Track API usage — increment the audit's call counter.
+            if ($options->auditId !== null) {
+                \LaravelVitals\Models\Audit::where('id', $options->auditId)
+                    ->increment('api_call_count');
+            }
+
+            return $report;
         } catch (Throwable $e) {
             if ($e instanceof AuditException) {
                 throw $e;

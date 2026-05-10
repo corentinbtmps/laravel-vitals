@@ -93,21 +93,29 @@ final class Overview extends Component
         // URLs configured count
         $urlsCount = Url::query()->where('enabled', true)->count();
 
-        $metricTrends = $this->metricTrends();
-        $metricDeltas = $this->metricDeltas($averages);
+        $metricTrends         = $this->metricTrends();
+        $previousMetricTrends = $this->previousMetricTrends();
+        $metricDeltas         = $this->metricDeltas($averages);
+        $previousDeltas       = $this->previousPeriodDeltas($averages);
+        $dailySummary         = $this->dailySummary();
+        $apiUsage             = $this->apiUsageThisMonth();
 
         return view('vitals::livewire.pages.overview', [
-            'recent'             => $recent,
-            'averages'           => $averages,
-            'overall'            => $overall,
-            'overallGrade'       => \LaravelVitals\Support\Health::grade($overall),
-            'overallColor'       => \LaravelVitals\Support\Health::colorForScore($overall),
-            'activeAlerts'       => $activeAlerts,
-            'topRecommendations' => $topRecommendations,
-            'urlsCount'          => $urlsCount,
-            'metricTrends'       => $metricTrends,
-            'metricDeltas'       => $metricDeltas,
-            'periodLabel'        => $this->periodLabel(),
+            'recent'               => $recent,
+            'averages'             => $averages,
+            'overall'              => $overall,
+            'overallGrade'         => \LaravelVitals\Support\Health::grade($overall),
+            'overallColor'         => \LaravelVitals\Support\Health::colorForScore($overall),
+            'activeAlerts'         => $activeAlerts,
+            'topRecommendations'   => $topRecommendations,
+            'urlsCount'            => $urlsCount,
+            'metricTrends'         => $metricTrends,
+            'previousMetricTrends' => $previousMetricTrends,
+            'metricDeltas'         => $metricDeltas,
+            'previousDeltas'       => $previousDeltas,
+            'dailySummary'         => $dailySummary,
+            'apiUsage'             => $apiUsage,
+            'periodLabel'          => $this->periodLabel(),
         ])->layout('vitals::layouts.dashboard');
     }
 
@@ -210,6 +218,134 @@ final class Overview extends Component
             'accessibility'  => $averages['accessibility'] !== null && $prevA !== null ? (int) round($averages['accessibility'] - (float) $prevA) : null,
             'best_practices' => $averages['best_practices'] !== null && $prevB !== null ? (int) round($averages['best_practices'] - (float) $prevB) : null,
             'seo'            => $averages['seo'] !== null && $prevS !== null ? (int) round($averages['seo'] - (float) $prevS) : null,
+        ];
+    }
+
+    /**
+     * Returns sparkline trend data for the PREVIOUS period (for comparison overlay).
+     *
+     * @return array<string, array<int, int>>
+     */
+    private function previousMetricTrends(): array
+    {
+        $cutoff = $this->periodCutoff();
+
+        if ($cutoff === null) {
+            return ['performance' => [], 'accessibility' => [], 'best_practices' => [], 'seo' => []];
+        }
+
+        $periodSeconds = now()->getTimestamp() - $cutoff->getTimestamp();
+        $previousStart = $cutoff->copy()->subSeconds($periodSeconds);
+
+        $bucket = $this->bucketExpression();
+
+        $rows = Audit::query()
+            ->where('status', 'completed')
+            ->whereBetween('completed_at', [$previousStart, $cutoff])
+            ->selectRaw("{$bucket} as bucket, AVG(score_performance) as p, AVG(score_accessibility) as a, AVG(score_best_practices) as b, AVG(score_seo) as s")
+            ->groupBy('bucket')
+            ->orderBy('bucket')
+            ->get();
+
+        return [
+            'performance'    => $rows->pluck('p')->map(fn ($v) => (int) round((float) $v))->values()->all(),
+            'accessibility'  => $rows->pluck('a')->map(fn ($v) => (int) round((float) $v))->values()->all(),
+            'best_practices' => $rows->pluck('b')->map(fn ($v) => (int) round((float) $v))->values()->all(),
+            'seo'            => $rows->pluck('s')->map(fn ($v) => (int) round((float) $v))->values()->all(),
+        ];
+    }
+
+    /**
+     * Computes the "previous period vs current period" delta for the Overview summary.
+     *
+     * @param  array<string, int|null>  $currentAverages
+     * @return array<string, int|null>
+     */
+    private function previousPeriodDeltas(array $currentAverages): array
+    {
+        return $this->metricDeltas($currentAverages);
+    }
+
+    /**
+     * Computes the "Yesterday" narrative summary shown as a horizontal card on the Overview.
+     *
+     * @return array{audits: int, regressions: int, fixed: int, lcp_improvement_pct: int|null}
+     */
+    private function dailySummary(): array
+    {
+        $yesterday = now()->subDay();
+        $dayBefore  = now()->subDays(2);
+
+        $todayAudits = Audit::query()
+            ->where('status', 'completed')
+            ->where('completed_at', '>=', $yesterday)
+            ->count();
+
+        // Regressions: audits where score dropped > 5 vs. previous audit for same URL
+        $regressions = 0;
+        $fixed = 0;
+        $lcpImprovements = [];
+
+        $recentAudits = Audit::query()
+            ->with('url')
+            ->where('status', 'completed')
+            ->where('completed_at', '>=', $yesterday)
+            ->get();
+
+        foreach ($recentAudits as $audit) {
+            $previous = Audit::query()
+                ->where('url_id', $audit->url_id)
+                ->where('device', $audit->device)
+                ->where('status', 'completed')
+                ->where('completed_at', '<', $yesterday)
+                ->orderByDesc('completed_at')
+                ->first();
+
+            if ($previous === null) {
+                continue;
+            }
+
+            $currentScore  = (int) ($audit->score_performance ?? 0);
+            $previousScore = (int) ($previous->score_performance ?? 0);
+
+            if ($previousScore > 0 && ($previousScore - $currentScore) > 5) {
+                $regressions++;
+            } elseif ($previousScore > 0 && ($currentScore - $previousScore) > 5) {
+                $fixed++;
+            }
+
+            // LCP improvement
+            if ($audit->lcp_ms !== null && $previous->lcp_ms !== null && (float) $previous->lcp_ms > 0) {
+                $lcpImprovements[] = (((float) $previous->lcp_ms - (float) $audit->lcp_ms) / (float) $previous->lcp_ms) * 100;
+            }
+        }
+
+        $avgLcpImprovement = $lcpImprovements !== []
+            ? (int) round(array_sum($lcpImprovements) / count($lcpImprovements))
+            : null;
+
+        return [
+            'audits'              => $todayAudits,
+            'regressions'         => $regressions,
+            'fixed'               => $fixed,
+            'lcp_improvement_pct' => $avgLcpImprovement,
+        ];
+    }
+
+    /**
+     * Returns PageSpeed API usage for the current calendar month.
+     *
+     * @return array{calls: int, limit: int}
+     */
+    private function apiUsageThisMonth(): array
+    {
+        $calls = (int) Audit::query()
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->sum('api_call_count');
+
+        return [
+            'calls' => $calls,
+            'limit' => 25_000,
         ];
     }
 
