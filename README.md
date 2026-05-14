@@ -29,13 +29,13 @@ Laravel Vitals runs Google Lighthouse against your own pages, captures what your
 | Lighthouse audits (Performance, Accessibility, SEO, Best Practices) | ✓ | ✓ | **✓** |
 | Backend telemetry — queries, memory, N+1, cache | ✗ | ✗ | **✓** |
 | Source code references — exact file and line in your app | ✗ | ✗ | **✓** |
-| Real User Monitoring | paid plan | ✗ | **✓ self-hosted** |
-| Audit diff (score delta vs prior run) | paid plan | ✗ | **✓** |
+| Real User Monitoring | $ paid | ✗ | **✓ self-hosted** |
+| Audit diff (score delta vs prior run) | $ paid | ✗ | **✓** |
 | GitHub PR auto-comments with score table | ✗ | ✗ | **✓** |
 | Self-hosted — your data stays yours | ✗ | ✗ | **✓** |
 | No SaaS lock-in | ✗ | n/a | **✓** |
 | Performance budgets with CI exit codes | ✗ | ✗ | **✓** |
-| Audit comparison (before/after diff) | paid plan | ✗ | **✓** |
+| Audit comparison (before/after diff) | $ paid | ✗ | **✓** |
 | Security headers audit | ✗ | ✗ | **✓** |
 | Public status page | ✗ | ✗ | **✓** |
 
@@ -78,7 +78,7 @@ Here is the full audit lifecycle from start to finish:
 
 ## Features
 
-### 1. Lighthouse audits, three ways to run them
+### 1. Lighthouse audits — three drivers
 
 Lighthouse is the same engine that powers Chrome DevTools and Google PageSpeed Insights. It simulates a page load under realistic mobile conditions and gives you scores from 0 to 100 across Performance, Accessibility, Best Practices, and SEO.
 
@@ -195,7 +195,7 @@ The data comes from backend telemetry. Memory is captured as `memory_get_peak_us
 
 ---
 
-### 6. Query baselines with regression detection
+### 6. Database query baselines with regression detection
 
 The `/vitals/queries` page answers a question most teams cannot answer today: "Did this recent deployment slow down the database queries on route X?"
 
@@ -205,7 +205,7 @@ For each route that has telemetry data, the page shows:
 - **p75** (75th percentile) — a realistic "typical bad" measure, more useful than the average
 - **p95** (95th percentile) — the worst-case experience for 5% of requests
 
-Routes are then compared to the previous equivalent period (if you are looking at the last 7 days, it compares to the 7 days before that). A route is flagged with a regression badge when its current p75 query count is more than **twice** what it was in the previous period.
+Routes are compared to the previous equivalent period (if you are looking at the last 7 days, it compares to the 7 days before that). A route is flagged with a regression badge when its current p75 query count is more than **twice** what it was in the previous period.
 
 **Example:** Route `orders.index` had a p75 of 12 queries last week. After a deployment, it has a p75 of 31 queries. The dashboard flags it immediately, and you can trace it back to the specific PR.
 
@@ -245,11 +245,11 @@ JUnit XML output integrates with GitHub Actions, Jenkins, CircleCI, and any CI s
 
 ---
 
-### 8. The dashboard at /vitals
+### 8. The dashboard
 
 The dashboard is a Livewire application mounted at `/vitals`. It is built with Flux components and ships pre-compiled CSS and JS — no asset compilation step required in the host app.
 
-**Pages (7 top-level items since alpha.54):**
+**Navigation (7 top-level items):** Overview · URLs · Issues · RUM · Queries · Learn · Budgets
 
 | Page | URL | What you see |
 |---|---|---|
@@ -257,13 +257,11 @@ The dashboard is a Livewire application mounted at `/vitals`. It is built with F
 | **URLs** | `/vitals/urls` | All monitored URLs with latest scores and a star/favourite toggle. |
 | **URL Detail** | `/vitals/urls/{url}` | Audit history chart, per-run score table with delta badges, frequent issue patterns, failed audits panel. |
 | **Audit Detail** | `/vitals/audits/{audit}` | Full Lighthouse result: scores, raw metrics, backend telemetry panel, source code references, third-party cost table, slow queries list. |
-| **Issues** | `/vitals/issues` | Unified page with two tabs: **Top issues** (cross-URL quick wins, worsening/improving URLs, third-party costs) and **All recommendations** (aggregated across audits, sorted by frequency). Since alpha.54, Insights and Recommendations live under this single Issues page with tabs — same data, less to navigate. |
+| **Issues** | `/vitals/issues` | Two tabs: **Top issues** (cross-URL quick wins, worsening/improving URLs, third-party costs) and **All recommendations** (aggregated across audits, sorted by frequency). |
 | **RUM** | `/vitals/rum` | Real user data: per-metric p75, good/needs-improvement/poor distribution, per-URL breakdown, INP attribution panel. |
 | **Queries** | `/vitals/queries` | Route-level query statistics (avg, p75, p95), regression flags, memory hogs panel. |
 | **Learn** | `/vitals/learn` | Browsable knowledge base of all ~42 known issue types, grouped by category, with links to web.dev and Laravel documentation. |
 | **Budgets** | `/vitals/budgets` | Visual display of configured thresholds with pass/fail status. |
-
-> **Backward compatibility:** `/vitals/insights` and `/vitals/recommendations` redirect 301 to `/vitals/issues?tab=top` and `/vitals/issues?tab=all` respectively, so existing bookmarks keep working.
 
 **Access control:** By default the dashboard is available only in the `local` environment. To allow access in production, define the `viewVitals` gate in your `AppServiceProvider`:
 
@@ -278,7 +276,7 @@ public function boot(): void
 
 ---
 
-### 9. Issues, Recommendations and the Learn knowledge base
+### 9. Issues — top issues and every recommendation in one place
 
 Every completed audit generates a list of recommendations. Each recommendation has:
 
@@ -289,19 +287,23 @@ Every completed audit generates a list of recommendations. Each recommendation h
 - A **hint** — one sentence describing how to fix it
 - Links to the relevant **web.dev** documentation and the **Laravel docs** (version-aware)
 
-Since alpha.54, all issue-related data lives under **Issues > Top issues** (cross-URL quick wins) and **Issues > All recommendations** (full aggregated list). The URLs `/vitals/insights` and `/vitals/recommendations` redirect automatically for backward compatibility.
-
-The `/vitals/learn` page is a knowledge base covering approximately 42 known issue types. It is browsable by category. You can read it even before running your first audit to understand what the package can detect.
+The `/vitals/issues` page has two tabs. **Top issues** shows cross-URL quick wins, URLs that are currently worsening or improving, and third-party script cost breakdowns. **All recommendations** shows the full aggregated list across all audits, sorted by frequency — making it easy to find the one fix that would improve the most pages.
 
 The package knows about: Lighthouse findings (unused JS/CSS, render-blocking resources, image format issues, legacy JavaScript, accessibility problems), Laravel-specific issues (missing `config:cache`, debug mode in production, file-based sessions in production, sync queue in production, OPcache disabled), and backend signals (N+1 queries, slow queries, third-party blocking scripts, large payloads).
 
 ---
 
-### 10. Onboarding and Spotlight search
+### 10. Learn — knowledge base for every detection
 
-**Onboarding** — When you first open the dashboard with no data, each page shows an empty state with a clear explanation of what this page does and a copyable artisan command or config snippet to get started. You never face a blank dashboard without guidance.
+The `/vitals/learn` page is a browsable knowledge base covering approximately 42 known issue types, grouped by category. You can read it even before running your first audit to understand what the package can detect — what causes each finding, what impact it has, and how to fix it.
 
-**Spotlight / global search (Cmd+K)** — Add the `@vitalsSpotlight` directive anywhere in your main layout (typically just before `</body>`) to enable keyboard-driven search across URLs, audits, recommendations, and the Learn knowledge base. Press **Cmd+K** on macOS or **Ctrl+K** on Windows/Linux from anywhere in your app to open the palette.
+Each entry links to the relevant web.dev article and (where applicable) the Laravel documentation for the fix. Learn is always up to date with the installed version of the package, so the descriptions and code hints match what your audits will actually report.
+
+---
+
+### 11. Search (Cmd+K)
+
+Add the `@vitalsSpotlight` directive anywhere in your main layout (typically just before `</body>`) to enable keyboard-driven search across URLs, audits, recommendations, and the Learn knowledge base.
 
 ```blade
 {{-- resources/views/layouts/app.blade.php --}}
@@ -311,11 +313,13 @@ The package knows about: Lighthouse findings (unused JS/CSS, render-blocking res
 </body>
 ```
 
-Arrow keys navigate the results. Enter opens. Escape closes. The Spotlight is powered by `spatie/laravel-searchable` and runs server-side searches — no client-side index to build or maintain.
+Press **Cmd+K** on macOS or **Ctrl+K** on Windows/Linux from anywhere in your app to open the palette. Arrow keys navigate. Enter opens. Escape closes. The Spotlight is powered by `spatie/laravel-searchable` and runs server-side searches — no client-side index to build or maintain.
+
+The dashboard also has an empty-state onboarding experience on each page: when you open a page with no data, it shows what the page does and gives you a copyable artisan command or config snippet to get started.
 
 ---
 
-### 11. JSON API
+### 12. JSON API
 
 A read-only JSON API is mounted alongside the dashboard and protected by the same `viewVitals` gate. No separate API tokens are required. The API is intended for CI scripts, custom dashboards, and third-party integrations.
 
@@ -348,7 +352,7 @@ curl -s https://yourapp.com/vitals/api/v1/urls/1/latest \
         "inp_ms": 180,
         "cls": 0.05,
         "ttfb_ms": 450,
-        "completed_at": "2026-05-09T10:00:00+00:00",
+        "completed_at": "2026-05-14T10:00:00+00:00",
         "_links": {
             "self": "https://yourapp.com/vitals/api/v1/audits/uuid",
             "html": "https://yourapp.com/vitals/audits/uuid"
@@ -359,9 +363,9 @@ curl -s https://yourapp.com/vitals/api/v1/urls/1/latest \
 
 ---
 
-### 12. GitHub Action — automatic PR performance comments
+### 13. GitHub Action for PR performance comments
 
-When you open a pull request, this GitHub Action audits the preview deployment URL and posts a score comparison table as a PR comment. Your team sees performance impact before merging, without having to remember to run any manual checks.
+When you open a pull request, this GitHub Action audits the preview deployment URL and posts a score comparison table as a PR comment. Your team sees performance impact before merging, without having to run any manual checks.
 
 ```yaml
 # .github/workflows/pr-perf.yml
@@ -374,7 +378,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: humantocomputer/laravel-vitals/.github/actions/vitals-pr-comment@v1.0.0-alpha.51
+      - uses: humantocomputer/laravel-vitals/.github/actions/vitals-pr-comment@v1.0.0
         with:
           preview-url: ${{ vars.PREVIEW_URL }}
           base-url: https://your-production-app.com
@@ -385,14 +389,14 @@ jobs:
 The comment it posts looks like this:
 
 ```
-## ⚡ Laravel Vitals — preview perf
+## Laravel Vitals — preview perf
 
-| Metric       | Base | Preview | Δ       |
+| Metric       | Base | Preview | Delta    |
 |---|---|---|---|
-| Performance  |   92 |      89 | 🔴 -3   |
-| Accessibility|   95 |      95 | →       |
-| LCP          | 2.1s |    2.4s | 🔴 +300ms |
-| CLS          | 0.02 |    0.02 | →       |
+| Performance  |   92 |      89 | -3       |
+| Accessibility|   95 |      95 | no change|
+| LCP          | 2.1s |    2.4s | +300ms   |
+| CLS          | 0.02 |    0.02 | no change|
 ```
 
 **Available inputs:**
@@ -408,7 +412,7 @@ The comment it posts looks like this:
 
 ---
 
-### 13. Pre-commit hook
+### 14. Pre-commit hook
 
 The pre-commit hook runs `vitals:doctor` before every `git commit`. If any check fails (missing migration, broken asset, mis-configured notification), the commit is blocked and the error is shown. This prevents broken configurations from reaching your repository.
 
@@ -427,26 +431,20 @@ The hook script is a simple bash one-liner (`php artisan vitals:doctor --quiet`)
 
 ---
 
-### 14. Slack threads per audit
+### 15. Slack notifications with audit threads
 
 When notifications are configured with a Slack webhook, each audit creates a **Slack thread**. The initial message is posted when the audit completes. If that audit then triggers a budget violation or a regression alert, those follow-up messages are posted **as replies in the same thread** — keeping the conversation organized and searchable.
 
 ```
 #perf-alerts channel
-  ✅ Audit completed — home — perf 85, LCP 2300ms
-    ↳ ⚠️ Budget violation — home: lcp_ms=2300 (>2500)
-    ↳ 📉 Regression — home: 92 → 85 (-7.6%)
+  Audit completed — home — perf 85, LCP 2300ms
+    Budget violation — home: lcp_ms=2300 (>2500)
+    Regression — home: 92 → 85 (-7.6%)
 ```
 
 The Slack message timestamp (`ts`) is stored in `vitals_audits.slack_message_ts` so subsequent notifications can find the thread.
 
----
-
-### 15. Notifications and integrations
-
-Laravel Vitals sends notifications through Laravel's standard notification system. You configure which channels to use and which events trigger a notification.
-
-**Notification events:**
+**Available notification events:**
 
 | Event | When it fires | Default |
 |---|---|---|
@@ -475,44 +473,32 @@ Schedule::command('vitals:check-regressions')->daily();
 
 ---
 
-### 16. Boost and Claude Code integration
+### 16. Public health endpoint
 
-Laravel Vitals can install context files that help AI coding assistants understand the package:
+`GET /vitals/health` is a public JSON endpoint with no auth gate. It is suitable for uptime monitors such as Uptime Robot, Better Uptime, or your own pinging system.
 
-- **Boost guidelines** (`.ai/guidelines/vitals.blade.php`) — used by Laravel Boost and compatible AI tools. Describes the package's patterns so the AI can generate correct code when you ask it to add a recommendation, a RUM metric, or a new command.
-- **Claude Code skill** (`.claude/skills/laravel-vitals/SKILL.md`) — used by Claude Code (Anthropic's CLI). Teaches the agent how to navigate the package structure, run the correct commands, and interpret audit results.
-
-These files are installed by default when you run `php artisan vitals:install`. You can skip either with flags:
+The endpoint returns the database connectivity status, driver availability per configured driver, queue worker status, and the telemetry buffer state. HTTP 200 means all checks passed; HTTP 503 means at least one check failed.
 
 ```bash
-# Install only the Claude skill, skip Boost guidelines
-php artisan vitals:install --no-boost
+curl https://yourapp.com/vitals/health
+```
 
-# Re-publish both to get the latest version from the package
-php artisan vitals:boost:install --force
-
-# Check whether your installed files differ from the latest package version
-php artisan vitals:boost:diff
+```json
+{
+    "status": "ok",
+    "timestamp": "2026-05-14T10:00:00+00:00",
+    "checks": {
+        "database": "ok",
+        "drivers": { "local": "ok", "pagespeed": "skip" },
+        "queue": "ok",
+        "telemetry_buffer": "ok"
+    }
+}
 ```
 
 ---
 
-### 17. Audit comparison
-
-When you fix a bug or deploy a change, you want to know whether performance actually improved. The audit comparison page shows two audits side by side — typically the same URL before and after a deployment.
-
-Go to any URL's history table and click the compare icon next to any audit. The page shows:
-
-- **Score grid**: Performance, Accessibility, Best Practices, SEO for both audits, with `▲ +5` / `▼ -3` / `→` delta badges.
-- **CWV grid**: LCP, INP, CLS, TTFB formatted in milliseconds with directional indicators.
-- **Recommendation diff**: Issues that were in A but not in B ("resolved") and issues that appeared in B but not in A ("new").
-- **Telemetry diff**: Query count, query time, peak memory, and view render time for both audits.
-
-You can also link directly: `/vitals/audits/{audit-id-a}/compare/{audit-id-b}`.
-
----
-
-### 18. Public status page
+### 17. Public status page
 
 Laravel Vitals can serve a public-facing status page at `/vitals/status`. The status page is off by default — add one line to opt in:
 
@@ -536,7 +522,7 @@ The page uses a simplified layout with no dashboard chrome — suitable for shar
 
 ---
 
-### 19. Self-monitoring
+### 18. Self-monitoring
 
 Laravel Vitals monitors itself. The `vitals:self-check` command checks table sizes and flags slow telemetry capture:
 
@@ -547,7 +533,7 @@ php artisan vitals:self-check
 Add it to your scheduler for hourly checks:
 
 ```php
-// app/Console/Kernel.php (or routes/console.php)
+// routes/console.php
 Schedule::command('vitals:self-check')->hourly();
 ```
 
@@ -555,29 +541,24 @@ Results are also visible in the dashboard at `/vitals/admin/self-check`. The pag
 
 ---
 
-### 20. Security headers audit
+### 19. Boost and Claude Code integration
 
-Every audit now runs the `SecurityHeadersAnalyzer` alongside the existing Lighthouse analyzers. It checks whether your HTTP responses include six key security headers:
+Laravel Vitals can install context files that help AI coding assistants understand the package:
 
-- `Content-Security-Policy` — prevents cross-site scripting
-- `Strict-Transport-Security` — enforces HTTPS
-- `X-Frame-Options` or CSP `frame-ancestors` — prevents clickjacking
-- `X-Content-Type-Options: nosniff` — prevents MIME-type attacks
-- `Referrer-Policy` — controls referrer information
-- `Permissions-Policy` — restricts browser feature access
+- **Boost guidelines** (`.ai/guidelines/vitals.blade.php`) — used by Laravel Boost and compatible AI tools. Describes the package's patterns so the AI can generate correct code when you ask it to add a recommendation, a RUM metric, or a new command.
+- **Claude Code skill** (`.claude/skills/laravel-vitals/SKILL.md`) — used by Claude Code (Anthropic's CLI). Teaches the agent how to navigate the package structure, run the correct commands, and interpret audit results.
 
-Each missing or weak header generates a recommendation entry with a link to the relevant MDN or web.dev documentation. To add these headers in Laravel, create a middleware:
+These files are installed by default when you run `php artisan vitals:install`. You can skip either with flags:
 
-```php
-// app/Http/Middleware/SecurityHeaders.php
-public function handle(Request $request, Closure $next): Response
-{
-    $response = $next($request);
-    $response->headers->set('X-Content-Type-Options', 'nosniff');
-    $response->headers->set('X-Frame-Options', 'DENY');
-    $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    return $response;
-}
+```bash
+# Install only the Claude skill, skip Boost guidelines
+php artisan vitals:install --no-boost
+
+# Re-publish both to get the latest version from the package
+php artisan vitals:boost:install --force
+
+# Check whether your installed files differ from the latest package version
+php artisan vitals:boost:diff
 ```
 
 ---
@@ -805,7 +786,7 @@ Keys are labels (used in commands and the dashboard). Values are paths relative 
 | `vitals:audit {label}` | Run a Lighthouse audit for one URL | Development, CI, or scheduled auditing |
 | `vitals:audit --all` | Audit all enabled URLs (queued batch) | Nightly scheduled job |
 | `vitals:audit --all --sync` | Audit all URLs synchronously | CI pipelines where you need to wait for results |
-| `vitals:doctor` | Run 12 diagnostic checks and report results | After installation or when something breaks |
+| `vitals:doctor` | Run diagnostic checks and report results | After installation or when something breaks |
 | `vitals:doctor --quiet` | Same, but silent on success (for git hooks and CI) | Pre-commit hook, CI preflight |
 | `vitals:install` | Publish Boost guidelines and Claude Code skill | Once after installation |
 | `vitals:install-hook` | Install a git pre-commit hook that runs `vitals:doctor` | Once per developer machine |
@@ -818,8 +799,8 @@ Keys are labels (used in commands and the dashboard). Values are paths relative 
 | `vitals:demo` | Seed fictional audit data for exploration | Onboarding, screenshots |
 | `vitals:purge --demo` | Remove demo data only | After finishing with demo data |
 | `vitals:purge` | Remove ALL vitals data (confirmation required) | Fresh start or database cleanup |
-| `vitals:boost:install` | Re-publish Boost / Claude skill files | After a package upgrade |
-| `vitals:boost:diff` | Check whether installed AI files differ from package | After a package upgrade |
+| `vitals:boost:install` | Re-publish Boost / Claude skill files | After updating the package |
+| `vitals:boost:diff` | Check whether installed AI files differ from package | After updating the package |
 | `vitals:self-check` | Check Vitals table sizes and slowest telemetry requests | Hourly via scheduler |
 
 **Key options for `vitals:audit`:**
@@ -875,60 +856,6 @@ The package is designed to add zero overhead to normal page loads.
 
 ---
 
-## Upgrading
-
-**From any alpha version before alpha.15:**
-Schema migrations were consolidated. Run `php artisan vitals:purge --demo` (if you only have demo data), or export your data first, then drop the four `vitals_*` tables and re-run `php artisan migrate`.
-
-**From alpha.50 to alpha.51:**
-New `vitals_rum_events` table. Run `php artisan migrate`. No data loss.
-
-**From alpha.51 to alpha.52:**
-Documentation-only release. No schema changes. No action required.
-
-**General upgrade steps:**
-```bash
-composer update humantocomputer/laravel-vitals
-php artisan migrate
-php artisan vitals:boost:install --force  # update AI context files
-php artisan vitals:doctor                 # verify everything is healthy
-```
-
----
-
-## Troubleshooting
-
-**1. "URL [home] not found in config or database"**
-You need to declare URLs in `config/vitals.php` before auditing them:
-```php
-'urls' => ['home' => '/'],
-```
-Then run `php artisan vitals:audit home --sync`.
-
-**2. Lighthouse fails with a Chrome error in Docker / Linux**
-Add `--no-sandbox` to the `chrome_flags` configuration:
-```php
-'drivers' => ['local' => ['chrome_flags' => ['--headless', '--no-sandbox']]],
-```
-This is required when running Chrome as root (common in CI containers).
-
-**3. The dashboard shows "Access Denied"**
-The dashboard uses a `viewVitals` gate. In environments other than `local`, you must define this gate in your `AppServiceProvider`:
-```php
-Vitals::authorize(fn ($user) => $user?->is_admin ?? false);
-```
-
-**4. RUM data is not appearing**
-Check that `@vitalsRum` is in your `<head>` section and that `VITALS_RUM_ENABLED=true` is in your `.env`. Open the browser's network tab and look for a POST request to `/vitals/rum/ingest`. If it is blocked, check your Content Security Policy — the ingest endpoint is on the same origin, so it should not require any CSP adjustment.
-
-**5. "php artisan vitals:doctor" shows failing checks**
-Read the output — each failing line includes a remediation hint. Common fixes:
-- `Run php artisan migrate` — you have unpublished migrations
-- `Run npm run build` — the `dist/` assets are missing (only affects package maintainers)
-- `Add VITALS_NOTIFICATIONS_MAIL_TO` — you enabled mail notifications but didn't set a recipient
-
----
-
 ## Pruning old data
 
 All package models implement Eloquent's `Prunable` trait. Add this to your scheduler to automatically delete records older than `VITALS_RETENTION_DAYS` (default: 90 days):
@@ -963,6 +890,39 @@ To customize translations, publish the language files:
 ```bash
 php artisan vendor:publish --tag=vitals-translations
 ```
+
+---
+
+## Troubleshooting
+
+**1. "URL [home] not found in config or database"**
+You need to declare URLs in `config/vitals.php` before auditing them:
+```php
+'urls' => ['home' => '/'],
+```
+Then run `php artisan vitals:audit home --sync`.
+
+**2. Lighthouse fails with a Chrome error in Docker / Linux**
+Add `--no-sandbox` to the `chrome_flags` configuration:
+```php
+'drivers' => ['local' => ['chrome_flags' => ['--headless', '--no-sandbox']]],
+```
+This is required when running Chrome as root (common in CI containers).
+
+**3. The dashboard shows "Access Denied"**
+The dashboard uses a `viewVitals` gate. In environments other than `local`, you must define this gate in your `AppServiceProvider`:
+```php
+Vitals::authorize(fn ($user) => $user?->is_admin ?? false);
+```
+
+**4. RUM data is not appearing**
+Check that `@vitalsRum` is in your `<head>` section and that `VITALS_RUM_ENABLED=true` is in your `.env`. Open the browser's network tab and look for a POST request to `/vitals/rum/ingest`. If it is blocked, check your Content Security Policy — the ingest endpoint is on the same origin, so it should not require any CSP adjustment.
+
+**5. "php artisan vitals:doctor" shows failing checks**
+Read the output — each failing line includes a remediation hint. Common fixes:
+- `Run php artisan migrate` — you have unpublished migrations
+- `Run npm run build` — the `dist/` assets are missing (only affects package maintainers)
+- `Add VITALS_NOTIFICATIONS_MAIL_TO` — you enabled mail notifications but didn't set a recipient
 
 ---
 

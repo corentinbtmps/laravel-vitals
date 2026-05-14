@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.55] - 2026-05-14
+
+### Changed
+
+- **README rewritten as a clean v1.0 document.** Removed the "Upgrading" section entirely (the package has not shipped a stable release, so there is nothing to upgrade from), removed all "since alpha.X" and "in newer releases" annotations, and rewrote every feature section in present tense. Every route, command, and config key verified against the live source. Word count: ~5,700 (within the 4,500–6,000 target).
+- **Logo and navbar spacing.** Logo link gains `mr-8 xl:mr-10` so it breathes away from the nav items at both breakpoints. Navbar gains `gap-1` so items no longer touch at the standard gap.
+
 ## [v1.0.0-alpha.54] - 2026-05-14
 
 ### Changed
