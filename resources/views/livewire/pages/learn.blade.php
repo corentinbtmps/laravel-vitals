@@ -13,18 +13,34 @@
             @foreach ($this->categoryTiles() as $key => $tile)
                 <button type="button"
                         wire:click="setFilter('{{ $key }}')"
-                        class="group rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5 text-left transition-colors duration-150 hover:border-{{ $tile['color'] }}-500/40 hover:bg-{{ $tile['color'] }}-50/30 dark:hover:bg-{{ $tile['color'] }}-900/10">
+                        @class([
+                            'group rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5 text-left transition-colors duration-150',
+                            \LaravelVitals\Support\LearnTileClasses::hoverBorder($tile['color']),
+                            ...\LaravelVitals\Support\LearnTileClasses::hoverBg($tile['color']),
+                        ])>
                     <div class="flex items-center justify-between mb-3">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-{{ $tile['color'] }}-100 dark:bg-{{ $tile['color'] }}-900/30">
-                            <flux:icon name="{{ $tile['icon'] }}" class="size-4 text-{{ $tile['color'] }}-600 dark:text-{{ $tile['color'] }}-400" />
+                        <span @class([
+                            'flex h-8 w-8 items-center justify-center rounded-lg',
+                            ...\LaravelVitals\Support\LearnTileClasses::iconBg($tile['color']),
+                        ])>
+                            <flux:icon name="{{ $tile['icon'] }}" @class([
+                                'size-4',
+                                ...\LaravelVitals\Support\LearnTileClasses::iconText($tile['color']),
+                            ]) />
                         </span>
                         @if ($tile['active'] > 0)
-                            <span class="text-xs font-semibold tabular-nums text-{{ $tile['color'] }}-600 dark:text-{{ $tile['color'] }}-400">
+                            <span @class([
+                                'text-xs font-semibold tabular-nums',
+                                ...\LaravelVitals\Support\LearnTileClasses::countText($tile['color']),
+                            ])>
                                 {{ $tile['active'] }} active
                             </span>
                         @endif
                     </div>
-                    <div class="text-base font-semibold text-ink-900 dark:text-ink-100 group-hover:text-{{ $tile['color'] }}-700 dark:group-hover:text-{{ $tile['color'] }}-300 transition-colors">{{ $tile['label'] }}</div>
+                    <div @class([
+                        'text-base font-semibold text-ink-900 dark:text-ink-100 transition-colors',
+                        ...\LaravelVitals\Support\LearnTileClasses::groupHoverText($tile['color']),
+                    ])>{{ $tile['label'] }}</div>
                     <div class="text-xs text-ink-500 mt-0.5">{{ $tile['count'] }} {{ Str::plural('issue', $tile['count']) }}</div>
                 </button>
             @endforeach
@@ -64,25 +80,16 @@
             {{-- Cards grid --}}
             <div class="space-y-4">
                 @foreach ($items as $entry)
-                    @php
-                        $sevColor = match ($entry['descriptor']->severity) {
-                            'critical' => 'accent',
-                            'warning'  => 'amber',
-                            default    => 'sky',
-                        };
-                        $sevFluxColor = match ($entry['descriptor']->severity) {
-                            'critical' => 'rose',
-                            'warning'  => 'amber',
-                            default    => 'sky',
-                        };
-                    @endphp
                     <article id="{{ $entry['key'] }}"
                              class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 scroll-mt-24">
                         {{-- Header --}}
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="size-2 rounded-full bg-{{ $sevColor }}-500"></span>
+                            <span @class([
+                                'size-2 rounded-full',
+                                \LaravelVitals\Support\SeverityClasses::dotBackground($entry['descriptor']->severity),
+                            ])></span>
                             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
-                            <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $entry['descriptor']->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($entry['descriptor']->severity) }}" size="sm">{{ $entry['descriptor']->severity }}</flux:badge>
                             <code class="ml-auto text-[11px] font-mono text-ink-400">{{ $entry['key'] }}</code>
                         </div>
 

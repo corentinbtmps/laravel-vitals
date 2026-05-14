@@ -12,10 +12,11 @@
                 @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
                     <button
                         wire:click="setPeriod('{{ $val }}')"
-                        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                            {{ $period === $val
-                                ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                                : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                        @class([
+                            'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                            'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900' => $period === $val,
+                            'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $period !== $val,
+                        ])
                     >{{ $label }}</button>
                 @endforeach
             </div>
@@ -170,7 +171,11 @@
             </div>
             @php $pct = min(100, $apiUsage['calls'] / $apiUsage['limit'] * 100); @endphp
             <div class="w-full rounded-full h-1.5 bg-ink-100 dark:bg-ink-800">
-                <div class="h-1.5 rounded-full {{ $pct > 80 ? 'bg-accent-400' : 'bg-sky-400' }}" style="width: {{ $pct }}%"></div>
+                <div @class([
+                    'h-1.5 rounded-full',
+                    'bg-accent-400' => $pct > 80,
+                    'bg-sky-400'    => $pct <= 80,
+                ]) style="width: {{ $pct }}%"></div>
             </div>
         </div>
     @endif
@@ -226,7 +231,7 @@
                 <ul class="space-y-3">
                     @foreach ($topRecommendations as $reco)
                         <li class="flex items-start gap-3">
-                            <flux:badge color="{{ $reco->severity === 'critical' ? 'rose' : ($reco->severity === 'warning' ? 'amber' : 'sky') }}" size="sm">
+                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($reco->severity) }}" size="sm">
                                 {{ $reco->severity }}
                             </flux:badge>
                             <div class="flex-1 min-w-0">
@@ -258,7 +263,10 @@
                         $grade = \LaravelVitals\Support\Health::grade($audit->score_performance);
                     @endphp
                     <li class="py-2.5 flex items-center gap-3">
-                        <span class="size-9 rounded-full bg-{{ $color }}-100 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 flex items-center justify-center font-bold text-sm">{{ $grade }}</span>
+                        <span @class([
+                            'size-9 rounded-full flex items-center justify-center font-bold text-sm',
+                            ...\LaravelVitals\Support\ScoreColorClasses::avatar($audit->score_performance),
+                        ])>{{ $grade }}</span>
                         <div class="flex-1 min-w-0">
                             <a href="{{ route('vitals.audit', $audit) }}" class="text-sm font-medium hover:underline truncate block">{{ $audit->url?->label }}</a>
                             <div class="text-xs text-ink-500">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>

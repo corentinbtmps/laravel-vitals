@@ -21,7 +21,13 @@
                     $seoGrade = \LaravelVitals\Support\Health::grade($audit->score_seo);
                 @endphp
                 <div class="text-right shrink-0">
-                    <div class="text-4xl font-semibold tabular-nums text-{{ $seoColor }}-500 leading-none">{{ $audit->score_seo }}</div>
+                    <div @class([
+                        'text-4xl font-semibold tabular-nums leading-none',
+                        'text-emerald-500' => $seoColor === 'emerald',
+                        'text-amber-500'   => $seoColor === 'amber',
+                        'text-accent-500'  => $seoColor === 'accent',
+                        'text-ink-400'     => $seoColor === 'ink',
+                    ])>{{ $audit->score_seo }}</div>
                     <div class="text-sm text-ink-500 mt-1">SEO score · {{ $seoGrade }}</div>
                 </div>
             @endif
@@ -34,20 +40,34 @@
         <div class="divide-y divide-ink-100 dark:divide-ink-800">
             @foreach ($checks as $check)
                 @php
-                    $icon    = match ($check['status']) { 'pass' => 'check-circle', 'fail' => 'x-circle', 'warn' => 'exclamation-triangle', default => 'minus-circle' };
-                    $color   = match ($check['status']) { 'pass' => 'text-emerald-500', 'fail' => 'text-accent-500', 'warn' => 'text-amber-500', default => 'text-ink-400' };
-                    $bgColor = match ($check['status']) { 'pass' => 'bg-emerald-50 dark:bg-emerald-900/20', 'fail' => 'bg-accent-50 dark:bg-accent-900/20', 'warn' => 'bg-amber-50 dark:bg-amber-900/20', default => '' };
+                    $checkIcon = match ($check['status']) {
+                        'pass'  => 'check-circle',
+                        'fail'  => 'x-circle',
+                        'warn'  => 'exclamation-triangle',
+                        default => 'minus-circle',
+                    };
+                    $checkBadgeColor = match ($check['status']) {
+                        'pass'  => 'emerald',
+                        'fail'  => 'rose',
+                        'warn'  => 'amber',
+                        default => 'zinc',
+                    };
                 @endphp
                 <div class="flex items-center gap-3 py-3">
-                    <flux:icon name="{{ $icon }}" class="size-5 shrink-0 {{ $color }}" />
+                    <flux:icon name="{{ $checkIcon }}" @class([
+                        'size-5 shrink-0',
+                        'text-emerald-500' => $check['status'] === 'pass',
+                        'text-accent-500'  => $check['status'] === 'fail',
+                        'text-amber-500'   => $check['status'] === 'warn',
+                        'text-ink-400'     => ! in_array($check['status'], ['pass', 'fail', 'warn'], true),
+                    ]) />
                     <span class="flex-1 text-sm font-medium">{{ $check['label'] }}</span>
                     @if ($check['value'])
                         <span class="text-xs text-ink-500">{{ $check['value'] }}</span>
                     @endif
-                    <flux:badge
-                        color="{{ match($check['status']) { 'pass' => 'emerald', 'fail' => 'rose', 'warn' => 'amber', default => 'zinc' } }}"
-                        size="sm"
-                    >{{ __('vitals::vitals.seo.status_' . $check['status']) }}</flux:badge>
+                    <flux:badge color="{{ $checkBadgeColor }}" size="sm">
+                        {{ __('vitals::vitals.seo.status_' . $check['status']) }}
+                    </flux:badge>
                 </div>
             @endforeach
         </div>
@@ -61,7 +81,7 @@
                 @foreach ($seoRecos as $r)
                     <li class="rounded-lg border border-ink-100 dark:border-ink-800 p-4">
                         <div class="flex items-start gap-3">
-                            <flux:badge color="{{ $r->severity === 'critical' ? 'rose' : ($r->severity === 'warning' ? 'amber' : 'sky') }}" size="sm">{{ $r->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($r->severity) }}" size="sm">{{ $r->severity }}</flux:badge>
                             <div>
                                 <div class="font-medium text-sm">{{ __($r->title_key) }}</div>
                                 <div class="text-xs text-ink-500 mt-1">{{ __($r->description_key, $r->translation_params ?? []) }}</div>

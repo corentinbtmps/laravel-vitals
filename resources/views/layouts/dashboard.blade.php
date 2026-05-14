@@ -179,42 +179,71 @@
             </div>
             <div class="flex flex-col gap-1">
                 <a href="{{ route('vitals.dashboard') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.dashboard') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.dashboard'),
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.dashboard'),
+                   ])>
                     <flux:icon.squares-2x2 class="size-4" />Overview
                 </a>
                 @if(Route::has('vitals.urls'))
                 <a href="{{ route('vitals.urls') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.url*') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.url*'),
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.url*'),
+                   ])>
                     <flux:icon.link class="size-4" />URLs
                 </a>
                 @endif
                 @if(Route::has('vitals.issues'))
+                @php $issuesActive = request()->routeIs('vitals.issues') || request()->routeIs('vitals.insights') || request()->routeIs('vitals.recommendations'); @endphp
                 <a href="{{ route('vitals.issues') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.issues') || request()->routeIs('vitals.insights') || request()->routeIs('vitals.recommendations') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => $issuesActive,
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! $issuesActive,
+                   ])>
                     <flux:icon.exclamation-triangle class="size-4" />{{ __('vitals::vitals.nav.issues') }}
                 </a>
                 @endif
                 @if(Route::has('vitals.rum'))
                 <a href="{{ route('vitals.rum') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.rum') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.rum'),
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.rum'),
+                   ])>
                     <flux:icon.signal class="size-4" />RUM
                 </a>
                 @endif
                 @if(Route::has('vitals.queries'))
                 <a href="{{ route('vitals.queries') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.queries') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.queries'),
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.queries'),
+                   ])>
                     <flux:icon.circle-stack class="size-4" />Queries
                 </a>
                 @endif
                 @if(Route::has('vitals.learn'))
                 <a href="{{ route('vitals.learn') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.learn') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.learn'),
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.learn'),
+                   ])>
                     <flux:icon.book-open class="size-4" />Learn
                 </a>
                 @endif
                 @if(Route::has('vitals.budgets'))
                 <a href="{{ route('vitals.budgets') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.budgets') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.budgets'),
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.budgets'),
+                   ])>
                     <flux:icon.chart-bar class="size-4" />Budgets
                 </a>
                 @endif

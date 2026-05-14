@@ -18,7 +18,12 @@
 
     {{-- Uptime card --}}
     <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 text-center">
-        <div class="text-5xl font-bold tabular-nums {{ $uptime >= 99 ? 'text-emerald-500' : ($uptime >= 95 ? 'text-amber-500' : 'text-accent-500') }}">
+        <div @class([
+            'text-5xl font-bold tabular-nums',
+            'text-emerald-500' => $uptime >= 99,
+            'text-amber-500'   => $uptime >= 95 && $uptime < 99,
+            'text-accent-500'  => $uptime < 95,
+        ])>
             {{ number_format($uptime, 2) }}%
         </div>
         <div class="text-sm text-ink-500 mt-2">{{ __('vitals::vitals.status.uptime_30d') }}</div>

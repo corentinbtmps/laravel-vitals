@@ -74,13 +74,14 @@
                                     @foreach (['score_performance' => 'Performance', 'score_accessibility' => 'Accessibility', 'score_best_practices' => 'Best Practices', 'score_seo' => 'SEO'] as $col => $colLabel)
                                         @php
                                             $score = $last?->{$col};
-                                            $color = \LaravelVitals\Support\Health::colorForScore($score);
+                                            $badgeClasses = \LaravelVitals\Support\ScoreColorClasses::badge($score);
                                         @endphp
                                         <flux:table.cell align="center">
                                             @if ($score !== null)
-                                                <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums">
-                                                    {{ $score }}
-                                                </span>
+                                                <span @class([
+                                                    'inline-flex items-center justify-center size-9 rounded-xl font-semibold text-sm tabular-nums',
+                                                    ...$badgeClasses,
+                                                ])>{{ $score }}</span>
                                             @else
                                                 <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
                                             @endif
@@ -172,7 +173,11 @@
                                     <flux:tooltip :content="$u->pinned_at ? __('vitals::vitals.tooltip.unpin') : __('vitals::vitals.tooltip.pin')">
                                         <button wire:click="togglePin({{ $u->id }})"
                                                 type="button"
-                                                class="transition-colors duration-150 {{ $u->pinned_at ? 'text-amber-500 hover:text-amber-600' : 'text-ink-300 hover:text-amber-500' }}">
+                                                @class([
+                                                    'transition-colors duration-150',
+                                                    'text-amber-500 hover:text-amber-600' => (bool) $u->pinned_at,
+                                                    'text-ink-300 hover:text-amber-500'   => ! $u->pinned_at,
+                                                ])>
                                             @if ($u->pinned_at)
                                                 <flux:icon.star variant="solid" class="size-4" />
                                             @else
@@ -194,13 +199,14 @@
                                 @foreach (['score_performance' => 'Performance', 'score_accessibility' => 'Accessibility', 'score_best_practices' => 'Best Practices', 'score_seo' => 'SEO'] as $col => $colLabel)
                                     @php
                                         $score = $last?->{$col};
-                                        $color = \LaravelVitals\Support\Health::colorForScore($score);
+                                        $badgeClasses = \LaravelVitals\Support\ScoreColorClasses::badge($score);
                                     @endphp
                                     <flux:table.cell align="center">
                                         @if ($score !== null)
-                                            <span class="inline-flex items-center justify-center size-9 rounded-xl bg-{{ $color }}-50 dark:bg-{{ $color }}-900/30 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold text-sm tabular-nums">
-                                                {{ $score }}
-                                            </span>
+                                            <span @class([
+                                                'inline-flex items-center justify-center size-9 rounded-xl font-semibold text-sm tabular-nums',
+                                                ...$badgeClasses,
+                                            ])>{{ $score }}</span>
                                         @else
                                             <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
                                         @endif

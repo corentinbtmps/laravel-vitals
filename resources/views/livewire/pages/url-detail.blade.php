@@ -23,10 +23,11 @@
                     @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
                         <button
                             wire:click="setPeriod('{{ $val }}')"
-                            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                                {{ $period === $val
-                                    ? 'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900'
-                                    : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                            @class([
+                                'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                                'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900' => $period === $val,
+                                'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $period !== $val,
+                            ])
                         >{{ $label }}</button>
                     @endforeach
                 </div>
@@ -62,10 +63,11 @@
                             <flux:tooltip :content="__($meta['desc_key'])">
                                 <button
                                     wire:click="setMetric('{{ $val }}')"
-                                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                                        {{ $metric === $val
-                                            ? 'bg-accent-500 text-white'
-                                            : 'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' }}"
+                                    @class([
+                                        'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                                        'bg-accent-500 text-white'                                 => $metric === $val,
+                                        'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $metric !== $val,
+                                    ])
                                 >{{ $meta['label'] }}</button>
                             </flux:tooltip>
                         @endforeach
@@ -173,7 +175,10 @@
                         @endphp
                         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 p-4">
                             <div class="flex items-center gap-2 mb-3">
-                                <span class="h-2 w-2 rounded-full bg-{{ $meta['color'] }}-500"></span>
+                                <span @class([
+                                    'h-2 w-2 rounded-full',
+                                    \LaravelVitals\Support\ScoreColorClasses::avgDot($meta['color']),
+                                ])></span>
                                 <span class="text-xs font-medium text-ink-500 uppercase tracking-wide">{{ $meta['label'] }}</span>
                             </div>
                             <div class="text-3xl font-semibold tabular-nums">
@@ -195,15 +200,8 @@
                 </div>
                 <ul class="space-y-2">
                     @foreach ($frequentRecos as $r)
-                        @php
-                            $sevColor = match ($r->severity) {
-                                'critical' => 'rose',
-                                'warning'  => 'amber',
-                                default    => 'sky',
-                            };
-                        @endphp
                         <li class="flex items-center gap-3">
-                            <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($r->severity) }}" size="sm">{{ $r->severity }}</flux:badge>
                             <span class="flex-1 text-sm">{{ __($r->title_key) }}</span>
                             <span class="text-xs text-ink-500">{{ $r->occurrences }}×</span>
                         </li>
@@ -268,9 +266,16 @@
                                 <flux:badge color="zinc" size="sm">{{ $a->device }}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell align="end">
-                                <span class="inline-flex items-center gap-1.5 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-semibold tabular-nums">
+                                @php $historyClasses = \LaravelVitals\Support\ScoreColorClasses::historyRow($score); @endphp
+                                <span @class([
+                                    'inline-flex items-center gap-1.5 font-semibold tabular-nums',
+                                    ...$historyClasses['text'],
+                                ])>
                                     {{ $score ?? '—' }}
-                                    <span class="size-5 rounded bg-{{ $color }}-100 dark:bg-{{ $color }}-900/40 text-xs flex items-center justify-center font-bold">{{ $grade }}</span>
+                                    <span @class([
+                                        'size-5 rounded text-xs flex items-center justify-center font-bold',
+                                        ...$historyClasses['box'],
+                                    ])>{{ $grade }}</span>
                                 </span>
                             </flux:table.cell>
                             <flux:table.cell align="end">

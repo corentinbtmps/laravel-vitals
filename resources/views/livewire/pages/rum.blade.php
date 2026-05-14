@@ -11,7 +11,11 @@
                 @foreach (['all', 'mobile', 'desktop'] as $d)
                     <button
                         wire:click="setDevice('{{ $d }}')"
-                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ $device === $d ? 'bg-accent-500 text-white' : 'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' }}"
+                        @class([
+                            'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
+                            'bg-accent-500 text-white'                                                                        => $device === $d,
+                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $device !== $d,
+                        ])
                     >{{ ucfirst($d) }}</button>
                 @endforeach
             </div>
@@ -20,7 +24,11 @@
                 @foreach (['24h', '7d', '30d', '90d'] as $p)
                     <button
                         wire:click="setPeriod('{{ $p }}')"
-                        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {{ $period === $p ? 'bg-accent-500 text-white' : 'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' }}"
+                        @class([
+                            'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
+                            'bg-accent-500 text-white'                                                                        => $period === $p,
+                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $p,
+                        ])
                     >{{ $p }}</button>
                 @endforeach
             </div>

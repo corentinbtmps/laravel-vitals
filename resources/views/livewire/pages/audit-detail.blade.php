@@ -44,7 +44,13 @@
                 </div>
             </div>
             <div class="text-right shrink-0">
-                <div class="text-6xl font-semibold tabular-nums text-{{ $overallColor }}-500 leading-none">{{ $overallGrade }}</div>
+                <div @class([
+                    'text-6xl font-semibold tabular-nums leading-none',
+                    'text-emerald-500' => $overallColor === 'emerald',
+                    'text-amber-500'   => $overallColor === 'amber',
+                    'text-accent-500'  => $overallColor === 'accent',
+                    'text-ink-400'     => $overallColor === 'ink',
+                ])>{{ $overallGrade }}</div>
                 <div class="mt-1 text-2xl font-semibold tabular-nums text-ink-500">{{ $overallScore }}<span class="text-base font-normal">/100</span></div>
             </div>
         </div>
@@ -63,7 +69,13 @@
                 $color = \LaravelVitals\Support\Health::colorForScore($value);
             @endphp
             <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4 relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-0.5 bg-{{ $color }}-500 rounded-t-2xl"></div>
+                <div @class([
+                    'absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl',
+                    'bg-emerald-500' => $color === 'emerald',
+                    'bg-amber-500'   => $color === 'amber',
+                    'bg-accent-500'  => $color === 'accent',
+                    'bg-ink-400'     => $color === 'ink',
+                ])></div>
                 <div class="flex items-center gap-2 text-xs text-ink-500 mt-1">
                     <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
                     <flux:tooltip :content="__('vitals::vitals.tooltip.score_label', ['label' => $meta['label']])">
@@ -71,7 +83,27 @@
                     </flux:tooltip>
                 </div>
                 @if ($value !== null)
-                    @php $chartId = 'score-' . $col . '-' . uniqid(); @endphp
+                    @php
+                        $chartId    = 'score-' . $col . '-' . uniqid();
+                        $chartColor = match ($color) {
+                            'emerald' => '#10b981',
+                            'amber'   => '#f59e0b',
+                            'accent'  => '#f43f5e',
+                            default   => '#71717a',
+                        };
+                        $trackColor = match ($color) {
+                            'emerald' => '#d1fae5',
+                            'amber'   => '#fef3c7',
+                            'accent'  => '#ffe4e6',
+                            default   => '#e4e4e7',
+                        };
+                        $labelColor = match ($color) {
+                            'emerald' => '#059669',
+                            'amber'   => '#d97706',
+                            'accent'  => '#e11d48',
+                            default   => '#52525b',
+                        };
+                    @endphp
                     <div id="{{ $chartId }}" class="mt-1 -mx-1"></div>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
@@ -79,14 +111,14 @@
                                 chart: { type: 'radialBar', height: 140, sparkline: { enabled: true }, animations: { enabled: false } },
                                 series: [{{ (int) $value }}],
                                 labels: [@json($meta['label'])],
-                                colors: ['{{ $color === 'emerald' ? '#10b981' : ($color === 'amber' ? '#f59e0b' : ($color === 'accent' ? '#f43f5e' : '#71717a')) }}'],
+                                colors: ['{{ $chartColor }}'],
                                 plotOptions: {
                                     radialBar: {
                                         hollow: { size: '62%' },
-                                        track: { background: '{{ $color === 'emerald' ? '#d1fae5' : ($color === 'amber' ? '#fef3c7' : ($color === 'accent' ? '#ffe4e6' : '#e4e4e7')) }}' },
+                                        track: { background: '{{ $trackColor }}' },
                                         dataLabels: {
                                             name: { show: false },
-                                            value: { show: true, fontSize: '24px', fontWeight: 700, offsetY: 8, color: '{{ $color === 'emerald' ? '#059669' : ($color === 'amber' ? '#d97706' : ($color === 'accent' ? '#e11d48' : '#52525b')) }}' },
+                                            value: { show: true, fontSize: '24px', fontWeight: 700, offsetY: 8, color: '{{ $labelColor }}' },
                                         },
                                     },
                                 },
@@ -144,14 +176,32 @@
                     $color = \LaravelVitals\Support\Health::colorForStatus($status);
                     $icon  = \LaravelVitals\Support\Health::iconForStatus($status);
                 @endphp
-                <div class="rounded-lg border border-{{ $color }}-200 dark:border-{{ $color }}-900/40 bg-{{ $color }}-50/40 dark:bg-{{ $color }}-900/10 p-4">
+                <div @class([
+                    'rounded-lg p-4',
+                    'border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-900/10' => $color === 'emerald',
+                    'border border-amber-200 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-900/10'         => $color === 'amber',
+                    'border border-accent-200 dark:border-accent-900/40 bg-accent-50/40 dark:bg-accent-900/10'     => $color === 'accent',
+                    'border border-ink-200 dark:border-ink-900/40 bg-ink-50/40 dark:bg-ink-900/10'                 => $color === 'ink',
+                ])>
                     <div class="flex items-center justify-between mb-2">
                         <flux:tooltip :content="__($cwv['tooltip_key'])">
                             <span class="text-xs font-semibold text-ink-500 cursor-help underline decoration-dotted decoration-ink-300 dark:decoration-ink-700 underline-offset-2">{{ $cwv['label'] }}</span>
                         </flux:tooltip>
-                        <flux:icon name="{{ $icon }}" class="size-4 text-{{ $color }}-500" />
+                        <flux:icon name="{{ $icon }}" @class([
+                            'size-4',
+                            'text-emerald-500' => $color === 'emerald',
+                            'text-amber-500'   => $color === 'amber',
+                            'text-accent-500'  => $color === 'accent',
+                            'text-ink-400'     => $color === 'ink',
+                        ]) />
                     </div>
-                    <div class="text-2xl font-bold text-{{ $color }}-700 dark:text-{{ $color }}-300">
+                    <div @class([
+                        'text-2xl font-bold',
+                        'text-emerald-700 dark:text-emerald-300' => $color === 'emerald',
+                        'text-amber-700 dark:text-amber-300'     => $color === 'amber',
+                        'text-accent-700 dark:text-accent-300'   => $color === 'accent',
+                        'text-ink-700 dark:text-ink-300'         => $color === 'ink',
+                    ])>
                         @if ($valNumeric !== null)
                             {{ $cwv['col'] === 'cls' ? number_format($valNumeric, 2) : (int) round($valNumeric) }}{{ $cwv['unit'] }}
                         @else
@@ -287,26 +337,18 @@
                             <div class="space-y-3">
                                 @foreach ($groupedRecos[$category] as $reco)
                                     @php
-                                        $sevColor = match ($reco->severity) {
-                                            'critical' => 'accent',
-                                            'warning'  => 'amber',
-                                            default    => 'sky',
-                                        };
-                                        // Flux badge only supports standard Tailwind color names
-                                        $sevFluxColor = match ($reco->severity) {
-                                            'critical' => 'rose',
-                                            'warning'  => 'amber',
-                                            default    => 'sky',
-                                        };
-                                        $sevIcon = match ($reco->severity) {
-                                            'critical' => 'exclamation-circle',
-                                            'warning'  => 'exclamation-triangle',
-                                            default    => 'information-circle',
-                                        };
+                                        $sevFluxColor = \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($reco->severity);
+                                        $sevIcon      = \LaravelVitals\Support\SeverityClasses::fluxCalloutIcon($reco->severity);
                                     @endphp
-                                    <div class="rounded-lg border border-{{ $sevColor }}-200 dark:border-{{ $sevColor }}-900/40 bg-{{ $sevColor }}-50/30 dark:bg-{{ $sevColor }}-900/5 p-4">
+                                    <div @class([
+                                        'rounded-lg border p-4',
+                                        ...\LaravelVitals\Support\SeverityClasses::container($reco->severity),
+                                    ])>
                                         <div class="flex items-start gap-3">
-                                            <flux:icon name="{{ $sevIcon }}" class="size-5 text-{{ $sevColor }}-500 shrink-0 mt-0.5" />
+                                            <flux:icon name="{{ $sevIcon }}" @class([
+                                                'size-5 shrink-0 mt-0.5',
+                                                \LaravelVitals\Support\SeverityClasses::iconTextColor($reco->severity),
+                                            ]) />
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2 mb-1 flex-wrap">
                                                     <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_params ?? []) }}</h4>
@@ -424,7 +466,10 @@
                 <div>
                     <div class="text-xs text-ink-500 mb-1">DOM elements</div>
                     @php $domSize = $audit->details['dom_size'] ?? null; @endphp
-                    <div class="text-2xl font-bold {{ $domSize !== null && $domSize > 1500 ? 'text-amber-600 dark:text-amber-400' : '' }}">
+                    <div @class([
+                        'text-2xl font-bold',
+                        'text-amber-600 dark:text-amber-400' => $domSize !== null && $domSize > 1500,
+                    ])>
                         {{ $domSize !== null ? number_format($domSize) : '—' }}
                         @if ($domSize !== null && $domSize > 1500)
                             <flux:icon.exclamation-triangle class="inline size-4 text-amber-500" />
@@ -434,7 +479,10 @@
                 <div>
                     <div class="text-xs text-ink-500 mb-1">Render-blocking</div>
                     @php $rbt = $audit->details['render_blocking_time_ms'] ?? null; @endphp
-                    <div class="text-2xl font-bold {{ $rbt !== null && $rbt > 300 ? 'text-accent-600 dark:text-accent-400' : '' }}">
+                    <div @class([
+                        'text-2xl font-bold',
+                        'text-accent-600 dark:text-accent-400' => $rbt !== null && $rbt > 300,
+                    ])>
                         {{ $rbt !== null ? (int) round($rbt) . 'ms' : '—' }}
                     </div>
                 </div>
@@ -692,12 +740,6 @@
         @php
             $events = $audit->telemetry->events_log;
             $totalDuration = $audit->telemetry->duration_ms > 0 ? (float) $audit->telemetry->duration_ms : 1000.0;
-            $typeColors = [
-                'query'  => 'accent',
-                'view'   => 'violet',
-                'cache'  => 'emerald',
-                'job'    => 'amber',
-            ];
         @endphp
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
@@ -707,10 +749,15 @@
             </div>
             {{-- Legend --}}
             <div class="flex flex-wrap gap-3 mb-4 text-xs text-ink-500">
-                @foreach (['query' => __('vitals::vitals.trace.query'), 'view' => __('vitals::vitals.trace.view'), 'cache' => __('vitals::vitals.trace.cache'), 'job' => __('vitals::vitals.trace.job')] as $type => $label)
+                @foreach ([
+                    'query' => ['label' => __('vitals::vitals.trace.query'), 'dot' => 'bg-accent-400'],
+                    'view'  => ['label' => __('vitals::vitals.trace.view'),  'dot' => 'bg-violet-400'],
+                    'cache' => ['label' => __('vitals::vitals.trace.cache'), 'dot' => 'bg-emerald-400'],
+                    'job'   => ['label' => __('vitals::vitals.trace.job'),   'dot' => 'bg-amber-400'],
+                ] as $type => $legendMeta)
                     <span class="flex items-center gap-1">
-                        <span class="inline-block size-2.5 rounded-sm bg-{{ $typeColors[$type] }}-400"></span>
-                        {{ $label }}
+                        <span @class(['inline-block size-2.5 rounded-sm', $legendMeta['dot']])></span>
+                        {{ $legendMeta['label'] }}
                     </span>
                 @endforeach
             </div>

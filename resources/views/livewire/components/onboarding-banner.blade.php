@@ -28,13 +28,21 @@
         @foreach ($steps as $step)
             @php $done = $step->complete(); @endphp
             <div class="flex items-center gap-3 py-1.5">
-                <div class="flex h-5 w-5 items-center justify-center rounded-full {{ $done ? 'bg-emerald-500' : 'bg-ink-200 dark:bg-ink-800' }} shrink-0">
+                <div @class([
+                    'flex h-5 w-5 items-center justify-center rounded-full shrink-0',
+                    'bg-emerald-500'          => $done,
+                    'bg-ink-200 dark:bg-ink-800' => ! $done,
+                ])>
                     @if ($done)
                         <flux:icon.check class="size-3 text-white" />
                     @endif
                 </div>
                 <div class="flex-1 min-w-0">
-                    <div class="text-sm {{ $done ? 'text-ink-400 line-through' : 'text-ink-800 dark:text-ink-200' }}">
+                    <div @class([
+                        'text-sm',
+                        'text-ink-400 line-through'     => $done,
+                        'text-ink-800 dark:text-ink-200' => ! $done,
+                    ])>
                         {{ $step->title }}
                     </div>
                     @if (! $done && $step->attribute('hint'))

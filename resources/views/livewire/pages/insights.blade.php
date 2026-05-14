@@ -22,19 +22,10 @@
         @else
             <div class="space-y-2">
                 @foreach ($quickWins as $w)
-                    @php
-                        $variant = match ($w->severity) {
-                            'critical' => 'danger',
-                            'warning'  => 'warning',
-                            default    => 'secondary',
-                        };
-                        $icon = match ($w->severity) {
-                            'critical' => 'exclamation-circle',
-                            'warning'  => 'exclamation-triangle',
-                            default    => 'information-circle',
-                        };
-                    @endphp
-                    <flux:callout variant="{{ $variant }}" icon="{{ $icon }}">
+                    <flux:callout
+                        variant="{{ \LaravelVitals\Support\SeverityClasses::fluxCalloutVariant($w->severity) }}"
+                        icon="{{ \LaravelVitals\Support\SeverityClasses::fluxCalloutIcon($w->severity) }}"
+                    >
                         <flux:callout.heading>{{ __($w->title_key) }}</flux:callout.heading>
                         <flux:callout.text>
                             {{ $w->occurrences }} {{ Str::plural('occurrence', $w->occurrences) }} across {{ $w->audit_count }} {{ Str::plural('audit', $w->audit_count) }}

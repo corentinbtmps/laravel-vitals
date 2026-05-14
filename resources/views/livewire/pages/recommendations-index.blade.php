@@ -28,20 +28,13 @@
                 </flux:table.columns>
                 <flux:table.rows>
                     @foreach ($rows as $r)
-                        @php
-                            $sevColor = match ($r->severity) {
-                                'critical' => 'rose',
-                                'warning'  => 'amber',
-                                default    => 'sky',
-                            };
-                        @endphp
-                        <flux:table.row :key="$r->audit_key">
+                            <flux:table.row :key="$r->audit_key">
                             <flux:table.cell variant="strong">{{ __($r->title_key) }}</flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell>
-                                <flux:badge color="{{ $sevColor }}" size="sm">{{ $r->severity }}</flux:badge>
+                                <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($r->severity) }}" size="sm">{{ $r->severity }}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell align="end">
                                 <span class="font-semibold tabular-nums">{{ $r->occurrences }}</span>

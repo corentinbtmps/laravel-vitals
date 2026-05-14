@@ -15,13 +15,15 @@
         </div>
         <div class="divide-y divide-ink-100 dark:divide-ink-800">
             @foreach ($tableSizes as $table => $count)
-                @php
-                    $warnThreshold = str_contains($table, 'rum') ? 500_000 : 50_000;
-                    $color = $count < 0 ? 'text-ink-400' : ($count > $warnThreshold ? 'text-amber-600 dark:text-amber-400' : 'text-ink-900 dark:text-ink-100');
-                @endphp
+                @php $warnThreshold = str_contains($table, 'rum') ? 500_000 : 50_000; @endphp
                 <div class="flex items-center justify-between py-2.5">
                     <code class="text-xs text-ink-600 dark:text-ink-400">{{ $table }}</code>
-                    <span class="font-semibold tabular-nums text-sm {{ $color }}">
+                    <span @class([
+                        'font-semibold tabular-nums text-sm',
+                        'text-ink-400'                       => $count < 0,
+                        'text-amber-600 dark:text-amber-400' => $count > $warnThreshold,
+                        'text-ink-900 dark:text-ink-100'     => $count >= 0 && $count <= $warnThreshold,
+                    ])>
                         {{ $count < 0 ? '—' : number_format($count) }}
                     </span>
                 </div>
@@ -52,7 +54,10 @@
                                 <code class="text-xs">{{ $t->route_name ?? '—' }}</code>
                             </flux:table.cell>
                             <flux:table.cell align="end">
-                                <span class="tabular-nums font-semibold {{ $t->duration_ms > 1000 ? 'text-accent-600 dark:text-accent-400' : '' }}">
+                                <span @class([
+                    'tabular-nums font-semibold',
+                    'text-accent-600 dark:text-accent-400' => $t->duration_ms > 1000,
+                ])>
                                     {{ number_format((float) $t->duration_ms, 0) }}ms
                                 </span>
                             </flux:table.cell>
@@ -80,9 +85,11 @@
         @else
             <ul class="space-y-2">
                 @foreach ($recentRuns as $run)
-                    @php $color = \LaravelVitals\Support\Health::colorForScore($run->score_performance); @endphp
                     <li class="flex items-center gap-3 text-sm">
-                        <span class="inline-block size-2 rounded-full bg-{{ $color }}-400 shrink-0"></span>
+                        <span @class([
+                            'inline-block size-2 rounded-full shrink-0',
+                            \LaravelVitals\Support\ScoreColorClasses::dot($run->score_performance),
+                        ])></span>
                         <a href="{{ route('vitals.audit', $run->id) }}" class="hover:underline text-ink-700 dark:text-ink-300 flex-1">
                             {{ $run->url?->label ?? $run->id }}
                         </a>
