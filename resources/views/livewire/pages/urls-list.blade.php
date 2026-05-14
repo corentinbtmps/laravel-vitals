@@ -1,8 +1,8 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold">URLs</h1>
-            <p class="text-sm text-ink-500 mt-1">Monitored pages and their latest scores</p>
+            <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.urls.title') }}</h1>
+            <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.urls.subtitle') }}</p>
         </div>
         <flux:badge color="zinc">{{ $urls->count() }} configured</flux:badge>
     </div>

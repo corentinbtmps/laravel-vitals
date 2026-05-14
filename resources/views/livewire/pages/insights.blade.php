@@ -1,9 +1,4 @@
 <div class="space-y-6">
-    <div>
-        <h1 class="text-2xl font-semibold">Insights</h1>
-        <p class="text-sm text-ink-500 mt-1">Cross-URL trends and opportunities aggregated from the last 7 days</p>
-    </div>
-
     @if ($quickWins->isEmpty() && empty($worsening) && empty($improving))
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">

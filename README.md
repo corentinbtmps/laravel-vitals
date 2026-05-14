@@ -249,7 +249,7 @@ JUnit XML output integrates with GitHub Actions, Jenkins, CircleCI, and any CI s
 
 The dashboard is a Livewire application mounted at `/vitals`. It is built with Flux components and ships pre-compiled CSS and JS — no asset compilation step required in the host app.
 
-**Pages:**
+**Pages (7 top-level items since alpha.54):**
 
 | Page | URL | What you see |
 |---|---|---|
@@ -257,12 +257,13 @@ The dashboard is a Livewire application mounted at `/vitals`. It is built with F
 | **URLs** | `/vitals/urls` | All monitored URLs with latest scores and a star/favourite toggle. |
 | **URL Detail** | `/vitals/urls/{url}` | Audit history chart, per-run score table with delta badges, frequent issue patterns, failed audits panel. |
 | **Audit Detail** | `/vitals/audits/{audit}` | Full Lighthouse result: scores, raw metrics, backend telemetry panel, source code references, third-party cost table, slow queries list. |
-| **Budgets** | `/vitals/budgets` | Visual display of configured thresholds with pass/fail status. |
-| **Insights** | `/vitals/insights` | Cross-URL analysis: quick wins (highest-impact fixes), worsening URLs, improving URLs, top third-party scripts by blocking time. |
-| **Recommendations** | `/vitals/recommendations` | All recommendations aggregated across audits, sorted by frequency. |
-| **Learn** | `/vitals/learn` | Browsable knowledge base of all ~42 known issue types, grouped by category, with links to web.dev and Laravel documentation. |
+| **Issues** | `/vitals/issues` | Unified page with two tabs: **Top issues** (cross-URL quick wins, worsening/improving URLs, third-party costs) and **All recommendations** (aggregated across audits, sorted by frequency). Since alpha.54, Insights and Recommendations live under this single Issues page with tabs — same data, less to navigate. |
 | **RUM** | `/vitals/rum` | Real user data: per-metric p75, good/needs-improvement/poor distribution, per-URL breakdown, INP attribution panel. |
 | **Queries** | `/vitals/queries` | Route-level query statistics (avg, p75, p95), regression flags, memory hogs panel. |
+| **Learn** | `/vitals/learn` | Browsable knowledge base of all ~42 known issue types, grouped by category, with links to web.dev and Laravel documentation. |
+| **Budgets** | `/vitals/budgets` | Visual display of configured thresholds with pass/fail status. |
+
+> **Backward compatibility:** `/vitals/insights` and `/vitals/recommendations` redirect 301 to `/vitals/issues?tab=top` and `/vitals/issues?tab=all` respectively, so existing bookmarks keep working.
 
 **Access control:** By default the dashboard is available only in the `local` environment. To allow access in production, define the `viewVitals` gate in your `AppServiceProvider`:
 
@@ -277,7 +278,7 @@ public function boot(): void
 
 ---
 
-### 9. Recommendations and the Learn knowledge base
+### 9. Issues, Recommendations and the Learn knowledge base
 
 Every completed audit generates a list of recommendations. Each recommendation has:
 
@@ -287,6 +288,8 @@ Every completed audit generates a list of recommendations. Each recommendation h
 - A **source code reference** — the exact file and line that triggered it
 - A **hint** — one sentence describing how to fix it
 - Links to the relevant **web.dev** documentation and the **Laravel docs** (version-aware)
+
+Since alpha.54, all issue-related data lives under **Issues > Top issues** (cross-URL quick wins) and **Issues > All recommendations** (full aggregated list). The URLs `/vitals/insights` and `/vitals/recommendations` redirect automatically for backward compatibility.
 
 The `/vitals/learn` page is a knowledge base covering approximately 42 known issue types. It is browsable by category. You can read it even before running your first audit to understand what the package can detect.
 

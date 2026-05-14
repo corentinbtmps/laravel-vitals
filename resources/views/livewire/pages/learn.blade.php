@@ -1,8 +1,8 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
-            <h1 class="text-2xl font-semibold">Learn</h1>
-            <p class="text-sm text-ink-500 mt-1">Reference for every issue Laravel Vitals can detect</p>
+            <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.learn.title') }}</h1>
+            <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.learn.subtitle') }}</p>
         </div>
         <flux:badge color="zinc">{{ $allCount }} known issues</flux:badge>
     </div>

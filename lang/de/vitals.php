@@ -406,13 +406,50 @@ return [
         'recent_audits'    => 'Aktuelle Audit-Läufe',
         'no_data'          => 'Noch keine Daten aufgezeichnet.',
     ],
+    'nav' => [
+        'issues' => 'Probleme',
+    ],
+    'pages' => [
+        'overview' => [
+            'title'    => 'Vitals',
+            'subtitle' => 'Schneller Gesundheitsüberblick über alle überwachten URLs',
+        ],
+        'urls' => [
+            'title'    => 'URLs',
+            'subtitle' => 'Alle überwachten URLs mit ihren neuesten Scores',
+        ],
+        'issues' => [
+            'title'    => 'Probleme',
+            'subtitle' => 'Alles, was behoben werden muss, priorisiert',
+            'tab_top'  => 'Wichtigste Probleme',
+            'tab_all'  => 'Alle Empfehlungen',
+        ],
+        'rum' => [
+            'title'    => 'Real User Monitoring',
+            'subtitle' => 'Was Ihre echten Besucher tatsächlich erleben',
+        ],
+        'queries' => [
+            'title'    => 'Abfragen',
+            'subtitle' => 'Datenbank-Query-Baselines und Regressionserkennung',
+        ],
+        'learn' => [
+            'title'    => 'Lernen',
+            'subtitle' => 'Referenz für jedes Problem, das Laravel Vitals erkennen kann',
+        ],
+        'budgets' => [
+            'title'    => 'Budgets',
+            'subtitle' => 'Performance-Schwellenwerte, die Ihre CI zum Scheitern bringen',
+        ],
+    ],
     'overview' => [
-        'yesterday'         => 'Gestern',
-        'daily_audits'      => ':count Audits durchgeführt',
-        'daily_regressions' => ':count Regression(en) erkannt',
-        'daily_fixed'       => ':count behoben',
-        'daily_lcp'         => 'LCP um durchschnittlich :pct% verbessert',
-        'api_usage'         => 'PageSpeed API-Nutzung diesen Monat',
+        'yesterday'                => 'Gestern',
+        'daily_audits'             => ':count Audits durchgeführt',
+        'daily_regressions'        => ':count Regression(en) erkannt',
+        'daily_fixed'              => ':count behoben',
+        'daily_lcp'                => 'LCP um durchschnittlich :pct% verbessert',
+        'api_usage'                => 'PageSpeed API-Nutzung diesen Monat',
+        'view_all_alerts'          => 'Alle Probleme anzeigen',
+        'view_all_recommendations' => 'Alle Empfehlungen anzeigen',
     ],
     'security_headers' => [
         'csp'            => 'Content-Security-Policy',

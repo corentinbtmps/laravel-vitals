@@ -4,8 +4,8 @@
     {{-- Page header + period control --}}
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-semibold">Vitals</h1>
-            <p class="text-sm text-ink-500 mt-1">Performance health across all monitored URLs</p>
+            <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.overview.title') }}</h1>
+            <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.overview.subtitle') }}</p>
         </div>
         <div class="overflow-x-auto -mx-2 md:mx-0">
             <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 md:mx-0">
@@ -201,6 +201,13 @@
                     </flux:callout>
                 @endforeach
             </div>
+            @if (count($activeAlerts) >= 3)
+                <div class="mt-3 text-right">
+                    <a href="{{ route('vitals.issues', ['tab' => 'top']) }}" class="text-xs text-ink-500 hover:text-accent-600 transition-colors">
+                        {{ __('vitals::vitals.overview.view_all_alerts') }} →
+                    </a>
+                </div>
+            @endif
         </div>
     @endif
 
@@ -229,6 +236,11 @@
                         </li>
                     @endforeach
                 </ul>
+                <div class="mt-3 text-right">
+                    <a href="{{ route('vitals.issues', ['tab' => 'all']) }}" class="text-xs text-ink-500 hover:text-accent-600 transition-colors">
+                        {{ __('vitals::vitals.overview.view_all_recommendations') }} →
+                    </a>
+                </div>
             @endif
         </div>
 

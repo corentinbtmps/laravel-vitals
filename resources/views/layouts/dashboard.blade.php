@@ -62,20 +62,12 @@
         >URLs</flux:navbar.item>
         @endif
 
-        @if(Route::has('vitals.recommendations'))
+        @if(Route::has('vitals.issues'))
         <flux:navbar.item
-            href="{{ route('vitals.recommendations') }}"
-            icon="light-bulb"
-            :current="request()->routeIs('vitals.recommendations')"
-        >Recommendations</flux:navbar.item>
-        @endif
-
-        @if(Route::has('vitals.insights'))
-        <flux:navbar.item
-            href="{{ route('vitals.insights') }}"
-            icon="sparkles"
-            :current="request()->routeIs('vitals.insights')"
-        >Insights</flux:navbar.item>
+            href="{{ route('vitals.issues') }}"
+            icon="exclamation-triangle"
+            :current="request()->routeIs('vitals.issues') || request()->routeIs('vitals.insights') || request()->routeIs('vitals.recommendations')"
+        >{{ __('vitals::vitals.nav.issues') }}</flux:navbar.item>
         @endif
 
         @if(Route::has('vitals.rum'))
@@ -111,7 +103,9 @@
         @endif
     </flux:navbar>
 
-    {{-- Spotlight trigger — full button with kbd hint (desktop only) --}}
+    <flux:spacer />
+
+    {{-- Spotlight trigger — full button with kbd hint (desktop only, right-aligned) --}}
     <button
         type="button"
         x-data
@@ -125,8 +119,6 @@
             <span></span>K
         </kbd>
     </button>
-
-    <flux:spacer />
 
     <flux:button
         variant="ghost"
@@ -196,16 +188,10 @@
                     <flux:icon.link class="size-4" />URLs
                 </a>
                 @endif
-                @if(Route::has('vitals.recommendations'))
-                <a href="{{ route('vitals.recommendations') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.recommendations') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
-                    <flux:icon.light-bulb class="size-4" />Recommendations
-                </a>
-                @endif
-                @if(Route::has('vitals.insights'))
-                <a href="{{ route('vitals.insights') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.insights') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
-                    <flux:icon.sparkles class="size-4" />Insights
+                @if(Route::has('vitals.issues'))
+                <a href="{{ route('vitals.issues') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors {{ request()->routeIs('vitals.issues') || request()->routeIs('vitals.insights') || request()->routeIs('vitals.recommendations') ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' : 'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' }}">
+                    <flux:icon.exclamation-triangle class="size-4" />{{ __('vitals::vitals.nav.issues') }}
                 </a>
                 @endif
                 @if(Route::has('vitals.rum'))

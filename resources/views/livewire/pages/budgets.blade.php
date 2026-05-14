@@ -1,8 +1,8 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold">Performance budgets</h1>
-            <p class="text-sm text-ink-500 mt-1">Thresholds that trigger alerts when exceeded</p>
+            <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.budgets.title') }}</h1>
+            <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.budgets.subtitle') }}</p>
         </div>
         <flux:badge color="zinc">{{ count($budgets) }} metrics</flux:badge>
     </div>

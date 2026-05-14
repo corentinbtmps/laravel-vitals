@@ -1,13 +1,9 @@
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-semibold">Recommendations</h1>
-            <p class="text-sm text-ink-500 mt-1">Aggregated issues across all audits</p>
-        </div>
-        @if ($rows->isNotEmpty())
+    @if ($rows->isNotEmpty())
+        <div class="flex justify-end">
             <flux:badge color="amber">{{ $rows->sum('occurrences') }} total</flux:badge>
-        @endif
-    </div>
+        </div>
+    @endif
 
     @if ($rows->isEmpty())
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">

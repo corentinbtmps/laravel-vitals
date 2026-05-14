@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.54] - 2026-05-14
+
+### Changed
+
+#### Nav simplification — 8 → 7 top-level items
+
+- **Merged Insights + Recommendations into a single Issues page** at `/vitals/issues` with two tabs: "Top issues" (cross-URL quick wins, worsening/improving URLs, third-party costs) and "All recommendations" (aggregated across audits, sorted by frequency). Saves one nav slot without losing any data.
+- Old routes `/vitals/insights` and `/vitals/recommendations` now 301-redirect to `/vitals/issues?tab=top` and `/vitals/issues?tab=all` respectively. Route names `vitals.insights` and `vitals.recommendations` are preserved so any `route('vitals.insights')` call in host apps keeps working.
+- New nav order: **Overview · URLs · Issues · RUM · Queries · Learn · Budgets** (was 8 items).
+- **Search button moved right of the spacer** — it now appears right-aligned in the header alongside the dark mode toggle, matching Linear/Notion convention. Was previously left-of-spacer.
+
+#### Centralized page subtitles
+
+- Added `vitals::vitals.pages.X.title` and `vitals::vitals.pages.X.subtitle` translation keys for all 7 top-level pages (EN/FR/DE/ES).
+- Overview, URLs, Learn, and Budgets pages now read their title/subtitle from the centralized keys.
+- Added `vitals::vitals.nav.issues` translation key (EN/FR/DE/ES) for the new Issues nav item.
+
+#### Overview de-duplication
+
+- "Active alerts" section now shows a "View all issues →" link when 3+ alerts are present, pointing to `/vitals/issues?tab=top`.
+- "Top recommendations" section now shows a "View all recommendations →" link pointing to `/vitals/issues?tab=all`.
+
+### Added
+
+- New Livewire page `Issues` (`LaravelVitals\Livewire\Pages\Issues`) with `#[Url]`-backed tab state.
+- New route `GET /vitals/issues` → `vitals.issues`.
+- New tests: `IssuesTest` (5), `RedirectsTest` (3), `SearchButtonPositionTest` (1) — 9 new tests total.
+
 ## [v1.0.0-alpha.53] - 2026-05-10
 
 ### Added

@@ -412,13 +412,50 @@ return [
         'recent_audits'   => 'Recent audit runs',
         'no_data'         => 'No data recorded yet.',
     ],
+    'nav' => [
+        'issues' => 'Issues',
+    ],
+    'pages' => [
+        'overview' => [
+            'title'    => 'Vitals',
+            'subtitle' => 'Quick health snapshot across all monitored URLs',
+        ],
+        'urls' => [
+            'title'    => 'URLs',
+            'subtitle' => 'All monitored URLs with their latest scores',
+        ],
+        'issues' => [
+            'title'    => 'Issues',
+            'subtitle' => 'Everything you need to fix, prioritized',
+            'tab_top'  => 'Top issues',
+            'tab_all'  => 'All recommendations',
+        ],
+        'rum' => [
+            'title'    => 'Real User Monitoring',
+            'subtitle' => 'What your real visitors actually experience',
+        ],
+        'queries' => [
+            'title'    => 'Queries',
+            'subtitle' => 'Database query baselines and regression detection',
+        ],
+        'learn' => [
+            'title'    => 'Learn',
+            'subtitle' => 'Reference for every issue Laravel Vitals can detect',
+        ],
+        'budgets' => [
+            'title'    => 'Budgets',
+            'subtitle' => 'Performance thresholds that fail your CI',
+        ],
+    ],
     'overview' => [
-        'yesterday'           => 'Yesterday',
-        'daily_audits'        => ':count audits run',
-        'daily_regressions'   => ':count regression(s) detected',
-        'daily_fixed'         => ':count fixed',
-        'daily_lcp'           => 'LCP improved :pct% on average',
-        'api_usage'           => 'PageSpeed API usage this month',
+        'yesterday'               => 'Yesterday',
+        'daily_audits'            => ':count audits run',
+        'daily_regressions'       => ':count regression(s) detected',
+        'daily_fixed'             => ':count fixed',
+        'daily_lcp'               => 'LCP improved :pct% on average',
+        'api_usage'               => 'PageSpeed API usage this month',
+        'view_all_alerts'         => 'View all issues',
+        'view_all_recommendations' => 'View all recommendations',
     ],
     'security_headers' => [
         'csp'              => 'Content-Security-Policy',

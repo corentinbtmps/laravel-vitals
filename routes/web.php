@@ -12,6 +12,7 @@ use LaravelVitals\Livewire\Pages\AuditDetail;
 use LaravelVitals\Livewire\Pages\AuditSeo;
 use LaravelVitals\Livewire\Pages\Budgets;
 use LaravelVitals\Livewire\Pages\Insights;
+use LaravelVitals\Livewire\Pages\Issues;
 use LaravelVitals\Livewire\Pages\Learn;
 use LaravelVitals\Livewire\Pages\Overview;
 use LaravelVitals\Livewire\Pages\Queries;
@@ -49,8 +50,10 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/audits/{a}/compare/{b}',            AuditCompare::class)        ->name('vitals.audit.compare');
             Route::get('/audits/{audit}/seo',                AuditSeo::class)            ->name('vitals.audit.seo');
             Route::get('/budgets',                           Budgets::class)             ->name('vitals.budgets');
-            Route::get('/insights',                          Insights::class)            ->name('vitals.insights');
-            Route::get('/recommendations',                   RecommendationsIndex::class)->name('vitals.recommendations');
+            Route::get('/issues',                            Issues::class)              ->name('vitals.issues');
+            // Backward-compat redirects (301) — keep external bookmarks working
+            Route::get('/insights',        fn () => redirect()->route('vitals.issues', ['tab' => 'top'], 301))  ->name('vitals.insights');
+            Route::get('/recommendations', fn () => redirect()->route('vitals.issues', ['tab' => 'all'], 301))  ->name('vitals.recommendations');
             Route::get('/learn',                             Learn::class)               ->name('vitals.learn');
             Route::get('/rum',                               Rum::class)                 ->name('vitals.rum');
             Route::get('/queries',                           Queries::class)             ->name('vitals.queries');
