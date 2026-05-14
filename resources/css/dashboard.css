@@ -81,6 +81,10 @@
    Scope tightly to what views actually emit. */
 
 /* Severity quick-wins / recommendation borders + tinted backgrounds */
+/* Base borders (no opacity) — used on the audit-detail recommendation cards in light mode */
+@source inline("{,dark:}border-{accent,amber,sky,emerald,violet}-{100,200,300}");
+@source inline("{,dark:}border-{accent,amber,sky,emerald,violet}-{800,900}");
+/* Opacity variants used in dark mode + soft tints */
 @source inline("{,dark:}border-{accent,amber,sky,emerald,violet}-200/60");
 @source inline("{,dark:}border-{accent,amber,sky,emerald,violet}-900/40");
 @source inline("{,dark:}bg-{accent,amber,sky,emerald,violet}-50/{30,40}");
