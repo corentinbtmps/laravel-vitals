@@ -6,6 +6,7 @@ namespace LaravelVitals\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Models\Url;
@@ -31,7 +32,7 @@ final class VitalsApiController
 
         $query = Audit::query()
             ->with('url')
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->orderByDesc('completed_at');
 
         if ($since = $request->query('since')) {
@@ -96,7 +97,7 @@ final class VitalsApiController
             'id'      => $u->id,
             'label'   => $u->label,
             'path'    => $u->path,
-            'device'  => $u->device,
+            'device'  => $u->device->value,
             'enabled' => $u->enabled,
             '_links'  => [
                 'html'        => url(route('vitals.url', $u->id, false)),
@@ -133,7 +134,7 @@ final class VitalsApiController
         $audit = Audit::query()
             ->with('url')
             ->where('url_id', $urlRecord->id)
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->orderByDesc('completed_at')
             ->first();
 
@@ -182,7 +183,7 @@ final class VitalsApiController
             ] : null,
             'audit_key'   => $r->audit_key,
             'category'    => $r->category,
-            'severity'    => $r->severity,
+            'severity'    => $r->severity->value,
             'title'       => __($r->title_key, (array) ($r->translation_params ?? [])),
             'description' => __($r->description_key, (array) ($r->translation_params ?? [])),
             '_links'      => [
@@ -213,7 +214,7 @@ final class VitalsApiController
                 'label' => $audit->url->label,
                 'path'  => $audit->url->path,
             ] : null,
-            'device'               => $audit->device,
+            'device'               => $audit->device->value,
             'score_performance'    => $audit->score_performance,
             'score_accessibility'  => $audit->score_accessibility,
             'score_best_practices' => $audit->score_best_practices,
@@ -235,7 +236,7 @@ final class VitalsApiController
                 'id'        => $r->id,
                 'audit_key' => $r->audit_key,
                 'category'  => $r->category,
-                'severity'  => $r->severity,
+                'severity'  => $r->severity->value,
                 'title'     => __($r->title_key, (array) ($r->translation_params ?? [])),
             ])->values()->all();
         }

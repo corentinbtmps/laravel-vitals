@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelVitals\Contracts\LighthouseDriver;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Storage\ReportRepository;
 use LaravelVitals\Support\AuditException;
@@ -47,7 +48,7 @@ final class RunAuditJob implements ShouldQueue
     {
         $audit = Audit::with('url')->findOrFail($this->auditId);
 
-        $audit->update(['status' => 'running', 'started_at' => now()]);
+        $audit->update(['status' => AuditStatus::Running, 'started_at' => now()]);
 
         $signature = hash_hmac('sha256', $audit->id, (string) config('app.key'));
         $headerValue = $audit->id . '.' . $signature;
@@ -61,7 +62,7 @@ final class RunAuditJob implements ShouldQueue
 
         if ($url === null) {
             $audit->update([
-                'status' => 'failed',
+                'status' => AuditStatus::Failed,
                 'error'  => 'Associated URL record not found.',
                 'completed_at' => now(),
             ]);
@@ -79,7 +80,7 @@ final class RunAuditJob implements ShouldQueue
             $details = \LaravelVitals\Support\LighthouseReport::extractDetails($report->rawJson);
 
             $audit->update([
-                'status'               => 'completed',
+                'status'               => AuditStatus::Completed,
                 'score_performance'    => $report->scores['performance'],
                 'score_accessibility'  => $report->scores['accessibility'],
                 'score_best_practices' => $report->scores['best_practices'],
@@ -102,7 +103,7 @@ final class RunAuditJob implements ShouldQueue
             $notifier->send('audit_completed', new \LaravelVitals\Notifications\AuditCompleted($audit->refresh()));
         } catch (AuditException $e) {
             $audit->update([
-                'status' => 'failed',
+                'status' => AuditStatus::Failed,
                 'error'  => $e->getMessage(),
                 'completed_at' => now(),
             ]);
@@ -110,7 +111,7 @@ final class RunAuditJob implements ShouldQueue
             throw $e;
         } catch (Throwable $e) {
             $audit->update([
-                'status' => 'failed',
+                'status' => AuditStatus::Failed,
                 'error'  => $e->getMessage(),
                 'completed_at' => now(),
             ]);

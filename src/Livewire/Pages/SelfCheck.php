@@ -6,6 +6,7 @@ namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
 use LaravelVitals\Models\Recommendation;
@@ -24,7 +25,7 @@ final class SelfCheck extends Component
     {
         $tableSizes  = $this->tableSizes();
         $recentRuns  = Audit::query()
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->orderByDesc('completed_at')
             ->limit(5)
             ->get(['id', 'url_id', 'driver', 'device', 'completed_at', 'score_performance']);

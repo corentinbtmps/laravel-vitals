@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use LaravelVitals\Support\SeverityClasses;
+use LaravelVitals\Enums\Severity;
 
-it('container returns accent classes for critical severity', function (): void {
-    $classes = SeverityClasses::container('critical');
+it('containerClasses returns accent classes for critical severity', function (): void {
+    $classes = Severity::Critical->containerClasses();
 
     expect($classes)->toContain('border-accent-200')
         ->and($classes)->toContain('bg-accent-50/30')
@@ -13,71 +13,53 @@ it('container returns accent classes for critical severity', function (): void {
         ->and($classes)->toContain('dark:bg-accent-900/5');
 });
 
-it('container returns amber classes for warning severity', function (): void {
-    $classes = SeverityClasses::container('warning');
+it('containerClasses returns amber classes for warning severity', function (): void {
+    $classes = Severity::Warning->containerClasses();
 
     expect($classes)->toContain('border-amber-200')
         ->and($classes)->toContain('bg-amber-50/30');
 });
 
-it('container returns sky classes for info (default) severity', function (): void {
-    $classes = SeverityClasses::container('info');
+it('containerClasses returns sky classes for info severity', function (): void {
+    $classes = Severity::Info->containerClasses();
 
     expect($classes)->toContain('border-sky-200')
         ->and($classes)->toContain('bg-sky-50/30');
 });
 
-it('container returns sky classes for any unknown severity', function (): void {
-    $classes = SeverityClasses::container('unknown');
+it('fromString falls back to Info for unknown values', function (): void {
+    $result = Severity::fromString('unknown');
 
-    expect($classes)->toContain('border-sky-200');
+    expect($result)->toBe(Severity::Info)
+        ->and($result->containerClasses())->toContain('border-sky-200');
 });
 
 it('dotBackground returns correct class for each severity', function (): void {
-    expect(SeverityClasses::dotBackground('critical'))->toBe('bg-accent-500')
-        ->and(SeverityClasses::dotBackground('warning'))->toBe('bg-amber-500')
-        ->and(SeverityClasses::dotBackground('info'))->toBe('bg-sky-500')
-        ->and(SeverityClasses::dotBackground('other'))->toBe('bg-sky-500');
+    expect(Severity::Critical->dotBackground())->toBe('bg-accent-500')
+        ->and(Severity::Warning->dotBackground())->toBe('bg-amber-500')
+        ->and(Severity::Info->dotBackground())->toBe('bg-sky-500');
 });
 
 it('fluxBadgeColor returns correct flux color for each severity', function (): void {
-    expect(SeverityClasses::fluxBadgeColor('critical'))->toBe('rose')
-        ->and(SeverityClasses::fluxBadgeColor('warning'))->toBe('amber')
-        ->and(SeverityClasses::fluxBadgeColor('info'))->toBe('sky')
-        ->and(SeverityClasses::fluxBadgeColor('other'))->toBe('sky');
+    expect(Severity::Critical->fluxBadgeColor())->toBe('rose')
+        ->and(Severity::Warning->fluxBadgeColor())->toBe('amber')
+        ->and(Severity::Info->fluxBadgeColor())->toBe('sky');
 });
 
 it('fluxCalloutVariant returns correct variant for each severity', function (): void {
-    expect(SeverityClasses::fluxCalloutVariant('critical'))->toBe('danger')
-        ->and(SeverityClasses::fluxCalloutVariant('warning'))->toBe('warning')
-        ->and(SeverityClasses::fluxCalloutVariant('info'))->toBe('secondary')
-        ->and(SeverityClasses::fluxCalloutVariant('other'))->toBe('secondary');
+    expect(Severity::Critical->fluxCalloutVariant())->toBe('danger')
+        ->and(Severity::Warning->fluxCalloutVariant())->toBe('warning')
+        ->and(Severity::Info->fluxCalloutVariant())->toBe('secondary');
 });
 
 it('fluxCalloutIcon returns correct icon for each severity', function (): void {
-    expect(SeverityClasses::fluxCalloutIcon('critical'))->toBe('exclamation-circle')
-        ->and(SeverityClasses::fluxCalloutIcon('warning'))->toBe('exclamation-triangle')
-        ->and(SeverityClasses::fluxCalloutIcon('info'))->toBe('information-circle')
-        ->and(SeverityClasses::fluxCalloutIcon('other'))->toBe('information-circle');
+    expect(Severity::Critical->fluxCalloutIcon())->toBe('exclamation-circle')
+        ->and(Severity::Warning->fluxCalloutIcon())->toBe('exclamation-triangle')
+        ->and(Severity::Info->fluxCalloutIcon())->toBe('information-circle');
 });
 
 it('iconTextColor returns correct text color class for each severity', function (): void {
-    expect(SeverityClasses::iconTextColor('critical'))->toBe('text-accent-500')
-        ->and(SeverityClasses::iconTextColor('warning'))->toBe('text-amber-500')
-        ->and(SeverityClasses::iconTextColor('info'))->toBe('text-sky-500')
-        ->and(SeverityClasses::iconTextColor('other'))->toBe('text-sky-500');
-});
-
-it('cwvContainer returns emerald classes for good status', function (): void {
-    $classes = SeverityClasses::cwvContainer('good');
-
-    expect($classes)->toContain('border-emerald-200')
-        ->and($classes)->toContain('bg-emerald-50/40');
-});
-
-it('cwvContainer returns accent classes for critical status', function (): void {
-    $classes = SeverityClasses::cwvContainer('critical');
-
-    expect($classes)->toContain('border-accent-200')
-        ->and($classes)->toContain('bg-accent-50/40');
+    expect(Severity::Critical->iconTextColor())->toBe('text-accent-500')
+        ->and(Severity::Warning->iconTextColor())->toBe('text-amber-500')
+        ->and(Severity::Info->iconTextColor())->toBe('text-sky-500');
 });

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Search;
 
 use Illuminate\Support\Collection;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use Spatie\Searchable\SearchAspect;
 
@@ -22,7 +23,7 @@ final class AuditSearchAspect extends SearchAspect
                 $q->where('label', 'like', "%{$term}%")
                   ->orWhere('path', 'like', "%{$term}%");
             })
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->orderByDesc('completed_at')
             ->limit(10)
             ->get();

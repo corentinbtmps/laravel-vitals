@@ -6,6 +6,7 @@ namespace LaravelVitals\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 use LaravelVitals\Support\AuditException;
@@ -69,7 +70,7 @@ final class AuditCommand extends Command
         }
 
         $device = $this->option('device');
-        $device = is_string($device) ? $device : 'mobile';
+        $device = is_string($device) && $device !== '' ? $device : 'mobile';
 
         // Concurrency lock — prevent parallel audits of the same URL.
         $urlId  = $url !== null ? $url->id : md5($label);
@@ -114,10 +115,10 @@ final class AuditCommand extends Command
                     ->send('budget_violation', new \LaravelVitals\Notifications\BudgetViolated($fresh, $violations));
             }
 
-            if ($worst === 'critical') {
+            if ($worst === Severity::Critical) {
                 return 2;
             }
-            if ($worst === 'warning') {
+            if ($worst === Severity::Warning) {
                 return 1;
             }
         }
@@ -128,7 +129,7 @@ final class AuditCommand extends Command
     private function handleAll(Vitals $vitals): int
     {
         $rawDevice = $this->option('device');
-        $device = is_string($rawDevice) ? $rawDevice : 'mobile';
+        $device = is_string($rawDevice) && $rawDevice !== '' ? $rawDevice : 'mobile';
 
         if ($this->option('sync')) {
             // Synchronous mode: build one audit per URL ourselves and run them inline.
@@ -152,18 +153,18 @@ final class AuditCommand extends Command
                     }
 
                     $sev = $violations->worstSeverity();
-                    if ($sev === 'critical') {
-                        $worst = 'critical';
+                    if ($sev === Severity::Critical) {
+                        $worst = Severity::Critical;
                         break;
                     }
-                    if ($sev === 'warning') {
-                        $worst = 'warning';
+                    if ($sev === Severity::Warning) {
+                        $worst = Severity::Warning;
                     }
                 }
-                if ($worst === 'critical') {
+                if ($worst === Severity::Critical) {
                     return 2;
                 }
-                if ($worst === 'warning') {
+                if ($worst === Severity::Warning) {
                     return 1;
                 }
             }
@@ -187,7 +188,7 @@ final class AuditCommand extends Command
                 'audits' => array_map(static fn (Audit $a): array => [
                     'id'     => $a->id,
                     'label'  => $a->url?->label,
-                    'status' => $a->status,
+                    'status' => $a->status->value,
                     'scores' => [
                         'performance'    => $a->score_performance,
                         'accessibility'  => $a->score_accessibility,
@@ -226,8 +227,8 @@ final class AuditCommand extends Command
             ['Label', 'Device', 'Status', 'Perf', 'A11y', 'BP', 'SEO', 'LCP', 'CLS', 'INP'],
             array_map(static fn (Audit $a): array => [
                 $a->url?->label,
-                $a->device,
-                $a->status,
+                $a->device->value,
+                $a->status->value,
                 $a->score_performance,
                 $a->score_accessibility,
                 $a->score_best_practices,
@@ -240,7 +241,7 @@ final class AuditCommand extends Command
 
         foreach ($audits as $audit) {
             $this->info('Audit for [' . $audit->url?->label . ']:');
-            $this->info('  status: ' . $audit->status);
+            $this->info('  status: ' . $audit->status->value);
         }
     }
 }

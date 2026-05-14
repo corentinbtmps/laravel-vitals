@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Storage;
 use LaravelVitals\Contracts\LighthouseDriver;
 use LaravelVitals\Drivers\Stubs\StubLighthouseDriver;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 
@@ -22,7 +23,7 @@ it('audits a single URL by label', function (): void {
         ->assertSuccessful();
 
     expect(Audit::count())->toBe(1)
-        ->and(Audit::first()->status)->toBe('completed');
+        ->and(Audit::first()->status)->toBe(AuditStatus::Completed);
 });
 
 it('errors when the label is unknown and not in config', function (): void {
@@ -44,5 +45,5 @@ it('runs successfully with --format=json', function (): void {
     $this->artisan('vitals:audit', ['label' => 'home', '--format' => 'json', '--sync' => true])
         ->assertSuccessful();
 
-    expect(Audit::first()->status)->toBe('completed');
+    expect(Audit::first()->status)->toBe(AuditStatus::Completed);
 });

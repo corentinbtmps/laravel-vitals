@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -19,8 +21,8 @@ use Spatie\Searchable\SearchResult;
  * @property int $url_id
  * @property string|null $batch_id
  * @property string $driver
- * @property string $device
- * @property string $status
+ * @property \LaravelVitals\Enums\Device $device
+ * @property \LaravelVitals\Enums\AuditStatus $status
  * @property int|null $score_performance
  * @property int|null $score_accessibility
  * @property int|null $score_best_practices
@@ -66,6 +68,8 @@ final class Audit extends Model implements Searchable
     protected function casts(): array
     {
         return [
+            'status'               => AuditStatus::class,
+            'device'               => Device::class,
             'score_performance'    => 'integer',
             'score_accessibility'  => 'integer',
             'score_best_practices' => 'integer',

@@ -6,6 +6,7 @@ namespace LaravelVitals;
 
 use Illuminate\Support\Facades\Gate;
 use LaravelVitals\Commands\AuditCommand;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Commands\BoostDiffCommand;
 use LaravelVitals\Commands\BoostInstallCommand;
 use LaravelVitals\Commands\CheckRegressionsCommand;
@@ -219,7 +220,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ->link('/' . config('vitals.path', 'vitals') . '/urls')
             ->cta(__('vitals::vitals.onboarding.steps.audit.cta'))
             ->attributes(['hint' => 'php artisan vitals:audit'])
-            ->completeIf(fn (): bool => \LaravelVitals\Models\Audit::query()->where('status', 'completed')->exists());
+            ->completeIf(fn (): bool => \LaravelVitals\Models\Audit::query()->where('status', AuditStatus::Completed)->exists());
 
         \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.notifications.title'))
             ->link('/' . config('vitals.path', 'vitals'))

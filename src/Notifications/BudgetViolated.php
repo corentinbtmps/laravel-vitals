@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
 use Illuminate\Notifications\Slack\SlackMessage;
 use LaravelVitals\Budgets\BudgetViolations;
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Notifications\Concerns\ResolvesAuditThread;
 
@@ -32,11 +33,11 @@ final class BudgetViolated extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $worst = $this->violations->worstSeverity() ?? 'warning';
+        $worst = $this->violations->worstSeverity() ?? Severity::Warning;
 
         return (new MailMessage())
             ->error()
-            ->subject("Budget violation ({$worst}): {$this->audit->url?->label}")
+            ->subject("Budget violation ({$worst->value}): {$this->audit->url?->label}")
             ->markdown('vitals::mail.budget-violated', [
                 'audit' => $this->audit,
                 'violations' => $this->violations,
@@ -45,8 +46,8 @@ final class BudgetViolated extends Notification
 
     public function toSlack(object $notifiable): SlackMessage
     {
-        $worst = $this->violations->worstSeverity() ?? 'warning';
-        $emoji = $worst === 'critical' ? '🚨' : '⚠️';
+        $worst = $this->violations->worstSeverity() ?? Severity::Warning;
+        $emoji = $worst === Severity::Critical ? '🚨' : '⚠️';
         $label = $this->audit->url->label ?? 'unknown';
 
         $list = collect($this->violations->all())

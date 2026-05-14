@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Livewire\Pages;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Period;
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Models\Url;
@@ -13,41 +15,22 @@ use Livewire\Component;
 
 final class Overview extends Component
 {
-    public string $period = '7d';
+    public Period $period = Period::D7;
 
     public function setPeriod(string $period): void
     {
-        if (! in_array($period, ['24h', '7d', '30d', '90d', '1y', 'all'], true)) {
-            return;
-        }
-        $this->period = $period;
+        $this->period = Period::tryFrom($period) ?? $this->period;
         $this->dispatch('sparklineUpdated', trends: $this->metricTrends());
     }
 
-    private function periodCutoff(): ?Carbon
+    private function periodCutoff(): ?\Carbon\Carbon
     {
-        return match ($this->period) {
-            '24h'   => now()->subDay(),
-            '7d'    => now()->subDays(7),
-            '30d'   => now()->subDays(30),
-            '90d'   => now()->subDays(90),
-            '1y'    => now()->subYear(),
-            'all'   => null,
-            default => now()->subDays(7),
-        };
+        return $this->period->cutoff();
     }
 
     private function periodLabel(): string
     {
-        return match ($this->period) {
-            '24h' => 'Last 24 hours',
-            '7d'  => 'Last 7 days',
-            '30d' => 'Last 30 days',
-            '90d' => 'Last 90 days',
-            '1y'  => 'Last year',
-            'all' => 'All time',
-            default => 'Last 7 days',
-        };
+        return $this->period->label();
     }
 
     public function render(): View
@@ -56,7 +39,7 @@ final class Overview extends Component
 
         $recentQuery = Audit::query()
             ->with('url')
-            ->where('status', 'completed');
+            ->where('status', AuditStatus::Completed);
 
         if ($cutoff !== null) {
             $recentQuery->where('completed_at', '>=', $cutoff);
@@ -129,7 +112,7 @@ final class Overview extends Component
         $cutoff = $this->periodCutoff();
 
         $query = Audit::query()
-            ->where('status', 'completed');
+            ->where('status', AuditStatus::Completed);
 
         if ($cutoff !== null) {
             $query->where('completed_at', '>=', $cutoff);
@@ -166,7 +149,7 @@ final class Overview extends Component
      */
     private function bucketExpression(): string
     {
-        $hourly = $this->period === '24h';
+        $hourly = $this->period === Period::H24;
         $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
 
         return match ($driver) {
@@ -199,7 +182,7 @@ final class Overview extends Component
         $previousStart = $cutoff->copy()->subSeconds($periodSeconds);
 
         $previous = Audit::query()
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->whereBetween('completed_at', [$previousStart, $cutoff])
             ->selectRaw('AVG(score_performance) as p, AVG(score_accessibility) as a, AVG(score_best_practices) as b, AVG(score_seo) as s')
             ->first();
@@ -240,7 +223,7 @@ final class Overview extends Component
         $bucket = $this->bucketExpression();
 
         $rows = Audit::query()
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->whereBetween('completed_at', [$previousStart, $cutoff])
             ->selectRaw("{$bucket} as bucket, AVG(score_performance) as p, AVG(score_accessibility) as a, AVG(score_best_practices) as b, AVG(score_seo) as s")
             ->groupBy('bucket')
@@ -277,7 +260,7 @@ final class Overview extends Component
         $dayBefore  = now()->subDays(2);
 
         $todayAudits = Audit::query()
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', $yesterday)
             ->count();
 
@@ -288,7 +271,7 @@ final class Overview extends Component
 
         $recentAudits = Audit::query()
             ->with('url')
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', $yesterday)
             ->get();
 
@@ -296,7 +279,7 @@ final class Overview extends Component
             $previous = Audit::query()
                 ->where('url_id', $audit->url_id)
                 ->where('device', $audit->device)
-                ->where('status', 'completed')
+                ->where('status', AuditStatus::Completed)
                 ->where('completed_at', '<', $yesterday)
                 ->orderByDesc('completed_at')
                 ->first();
@@ -368,7 +351,7 @@ final class Overview extends Component
         // Budget violations: any audit in last 24h whose perf < 70 (rough proxy without re-evaluating budgets here)
         $criticalAudits = Audit::query()
             ->with('url')
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', now()->subDay())
             ->where(function ($q): void {
                 $q->where('score_performance', '<', 70)
@@ -383,8 +366,8 @@ final class Overview extends Component
                 continue;
             }
             $alerts[] = [
-                'type'     => 'critical',
-                'severity' => 'danger',
+                'type'     => Severity::Critical->value,
+                'severity' => Severity::Critical->fluxCalloutVariant(),
                 'title'    => "Performance critical on {$a->url?->label} (score {$a->score_performance})",
                 'when'     => $a->completed_at,
                 'link'     => route('vitals.audit', $a),
@@ -394,8 +377,8 @@ final class Overview extends Component
         // Regressions: latest score vs 7-day baseline drop > 10%
         $threshold = 10.0;
         foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $latest = $url->audits()->where('status', 'completed')->orderByDesc('completed_at')->first();
-            $baseline = $url->audits()->where('status', 'completed')
+            $latest = $url->audits()->where('status', AuditStatus::Completed)->orderByDesc('completed_at')->first();
+            $baseline = $url->audits()->where('status', AuditStatus::Completed)
                 ->where('completed_at', '<=', now()->subDays(7))
                 ->orderByDesc('completed_at')->first();
 
@@ -409,7 +392,7 @@ final class Overview extends Component
             if ($baselineScore > 0 && (($baselineScore - $latestScore) / $baselineScore) * 100 > $threshold) {
                 $alerts[] = [
                     'type'     => 'regression',
-                    'severity' => 'warning',
+                    'severity' => Severity::Warning->fluxCalloutVariant(),
                     'title'    => "Regression on {$url->label}: {$baselineScore} → {$latestScore}",
                     'when'     => $latest->completed_at,
                     'link'     => route('vitals.audit', $latest),

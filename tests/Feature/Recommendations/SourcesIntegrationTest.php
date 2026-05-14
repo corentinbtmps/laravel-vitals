@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Support\Str;
 use LaravelVitals\Contracts\TelemetrySource;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Models\Url;
@@ -17,8 +19,8 @@ beforeEach(function (): void {
         'id'                => Str::uuid()->toString(),
         'url_id'            => $this->url->id,
         'driver'            => 'stub',
-        'device'            => 'mobile',
-        'status'            => 'completed',
+        'device'            => Device::Mobile,
+        'status'            => AuditStatus::Completed,
         'score_performance' => 95,
         'lcp_ms'            => 1500.0,
         'ttfb_ms'           => 200.0,

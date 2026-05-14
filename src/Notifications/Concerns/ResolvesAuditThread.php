@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Notifications\Concerns;
 
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 
 /**
@@ -23,7 +24,7 @@ trait ResolvesAuditThread
     {
         $audit = Audit::query()
             ->where('url_id', $urlId)
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->whereNotNull('slack_message_ts')
             ->orderByDesc('completed_at')
             ->value('slack_message_ts');

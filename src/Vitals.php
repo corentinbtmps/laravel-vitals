@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use InvalidArgumentException;
 use LaravelVitals\Contracts\LighthouseDriver;
 use LaravelVitals\Drivers\LighthouseDriverManager;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Jobs\RunAuditJob;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
@@ -66,14 +68,14 @@ final class Vitals
             : Url::where('label', $urlOrLabel)->firstOrFail();
 
         if ($device === null) {
-            if ($url->device === 'both') {
-                $this->audit($url, 'mobile', $sync);
-                return $this->audit($url, 'desktop', $sync);
+            if ($url->device === Device::Both) {
+                $this->audit($url, Device::Mobile->value, $sync);
+                return $this->audit($url, Device::Desktop->value, $sync);
             }
-            $device = $url->device;
+            $device = $url->device->value;
         }
 
-        if (! in_array($device, ['mobile', 'desktop'], true)) {
+        if (! in_array($device, [Device::Mobile->value, Device::Desktop->value], true)) {
             throw new InvalidArgumentException("Device must be 'mobile' or 'desktop'.");
         }
 
@@ -84,7 +86,7 @@ final class Vitals
             'url_id' => $url->id,
             'driver' => $driverName ?? (string) config('vitals.driver', 'auto'),
             'device' => $device,
-            'status' => 'pending',
+            'status' => AuditStatus::Pending,
         ]);
 
         $this->driverOverride = null;
@@ -119,7 +121,7 @@ final class Vitals
         $jobs = [];
 
         foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $devices = $device !== null ? [$device] : ($url->device === 'both' ? ['mobile', 'desktop'] : [$url->device]);
+            $devices = $device !== null ? [$device] : ($url->device === Device::Both ? [Device::Mobile->value, Device::Desktop->value] : [$url->device->value]);
 
             foreach ($devices as $effectiveDevice) {
                 $audit = Audit::create([
@@ -127,7 +129,7 @@ final class Vitals
                     'url_id' => $url->id,
                     'driver' => $this->driverOverride ?? (string) config('vitals.driver', 'auto'),
                     'device' => $effectiveDevice,
-                    'status' => 'pending',
+                    'status' => AuditStatus::Pending,
                 ]);
 
                 $jobs[] = new RunAuditJob($audit->id);

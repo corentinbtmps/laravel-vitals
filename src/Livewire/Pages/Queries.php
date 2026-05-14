@@ -6,6 +6,7 @@ namespace LaravelVitals\Livewire\Pages;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Enums\Period;
 use LaravelVitals\Models\BackendTelemetry;
 use Livewire\Component;
 
@@ -17,36 +18,21 @@ use Livewire\Component;
  */
 final class Queries extends Component
 {
-    public string $period = '7d';
+    public Period $period = Period::D7;
 
     public function setPeriod(string $period): void
     {
-        if (! in_array($period, ['24h', '7d', '30d', '90d'], true)) {
-            return;
-        }
-        $this->period = $period;
+        $this->period = Period::tryFrom($period) ?? $this->period;
     }
 
     private function periodCutoff(): Carbon
     {
-        return match ($this->period) {
-            '24h' => now()->subDay(),
-            '7d'  => now()->subDays(7),
-            '30d' => now()->subDays(30),
-            '90d' => now()->subDays(90),
-            default => now()->subDays(7),
-        };
+        return $this->period->cutoff() ?? now()->subDays(7);
     }
 
     private function periodLabel(): string
     {
-        return match ($this->period) {
-            '24h' => __('vitals::vitals.rum.period_24h'),
-            '7d'  => __('vitals::vitals.rum.period_7d'),
-            '30d' => __('vitals::vitals.rum.period_30d'),
-            '90d' => __('vitals::vitals.rum.period_90d'),
-            default => __('vitals::vitals.rum.period_7d'),
-        };
+        return $this->period->label();
     }
 
     public function render(): View

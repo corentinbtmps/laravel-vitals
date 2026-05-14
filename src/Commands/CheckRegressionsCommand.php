@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Commands;
 
 use Illuminate\Console\Command;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 use LaravelVitals\Notifications\Channels\VitalsNotifier;
@@ -42,7 +43,7 @@ final class CheckRegressionsCommand extends Command
 
         $audits = Audit::query()
             ->whereIn('url_id', $urlIds)
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->orderByDesc('completed_at')
             ->get(['id', 'url_id', 'score_performance', 'completed_at']);
 

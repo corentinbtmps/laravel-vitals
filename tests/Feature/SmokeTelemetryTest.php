@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Http\Middleware\CaptureVitalsTelemetry;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
@@ -37,8 +39,8 @@ it('captures a request from /vitals-test into vitals_backend_telemetry', functio
         'id'     => Str::uuid()->toString(),
         'url_id' => $url->id,
         'driver' => 'stub',
-        'device' => 'mobile',
-        'status' => 'pending',
+        'device' => Device::Mobile,
+        'status' => AuditStatus::Pending,
     ]);
 
     $this->withHeader('X-Vitals-Audit-Id', SignedHeader::sign($audit->id))

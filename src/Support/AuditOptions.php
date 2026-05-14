@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Support;
 
+use LaravelVitals\Enums\Device;
+
 /**
  * Immutable options passed to a LighthouseDriver per audit run.
  */
@@ -32,9 +34,10 @@ final readonly class AuditOptions
         );
     }
 
-    public function withDevice(string $device): self
+    public function withDevice(string|Device $device): self
     {
-        return new self($device, $this->categories, $this->extraHeaders, $this->timeoutSeconds, $this->auditId);
+        $deviceStr = $device instanceof Device ? $device->value : $device;
+        return new self($deviceStr, $this->categories, $this->extraHeaders, $this->timeoutSeconds, $this->auditId);
     }
 
     public function withExtraHeader(string $name, string $value): self

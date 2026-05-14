@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Budgets;
 
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 
 final class PerfBudget
@@ -67,17 +68,17 @@ final class PerfBudget
 
         if ($belowBad) {
             if ($critical !== null && $actual < $critical) {
-                return 'critical';
+                return Severity::Critical->value;
             }
             if ($warning !== null && $actual < $warning) {
-                return 'warning';
+                return Severity::Warning->value;
             }
         } else {
             if ($critical !== null && $actual > $critical) {
-                return 'critical';
+                return Severity::Critical->value;
             }
             if ($warning !== null && $actual > $warning) {
-                return 'warning';
+                return Severity::Warning->value;
             }
         }
 

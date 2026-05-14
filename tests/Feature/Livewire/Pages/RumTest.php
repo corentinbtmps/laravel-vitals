@@ -49,7 +49,7 @@ it('ignores invalid period values', function (): void {
     $component = Livewire::test(Rum::class)
         ->call('setPeriod', 'invalid');
 
-    expect($component->get('period'))->toBe('7d');
+    expect($component->get('period'))->toBe(\LaravelVitals\Enums\Period::D7);
 });
 
 it('calculates p75 correctly', function (): void {

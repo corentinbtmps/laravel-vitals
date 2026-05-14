@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelVitals\Contracts\LighthouseDriver;
 use LaravelVitals\Drivers\Stubs\StubLighthouseDriver;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Jobs\RunAuditJob;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
@@ -25,8 +27,8 @@ it('runs the audit, persists raw JSON, and updates the audit row', function (): 
         'id'     => Str::uuid()->toString(),
         'url_id' => $url->id,
         'driver' => 'stub',
-        'device' => 'mobile',
-        'status' => 'pending',
+        'device' => Device::Mobile,
+        'status' => AuditStatus::Pending,
     ]);
 
     (new RunAuditJob($audit->id))->handle(
@@ -38,7 +40,7 @@ it('runs the audit, persists raw JSON, and updates the audit row', function (): 
 
     $audit->refresh();
 
-    expect($audit->status)->toBe('completed')
+    expect($audit->status)->toBe(AuditStatus::Completed)
         ->and($audit->score_performance)->toBe(95)
         ->and((float) $audit->lcp_ms)->toBe(1500.0)
         ->and($audit->report_path)->toBeString()
@@ -54,8 +56,8 @@ it('marks the audit failed when the driver throws', function (): void {
         'id'     => Str::uuid()->toString(),
         'url_id' => $url->id,
         'driver' => 'stub',
-        'device' => 'mobile',
-        'status' => 'pending',
+        'device' => Device::Mobile,
+        'status' => AuditStatus::Pending,
     ]);
 
     $boomDriver = new class implements LighthouseDriver {
@@ -71,7 +73,7 @@ it('marks the audit failed when the driver throws', function (): void {
 
     $audit->refresh();
 
-    expect($audit->status)->toBe('failed')
+    expect($audit->status)->toBe(AuditStatus::Failed)
         ->and($audit->error)->toContain('boom');
 });
 
@@ -81,8 +83,8 @@ it('injects the X-Vitals-Audit-Id header into AuditOptions passed to the driver'
         'id'     => Str::uuid()->toString(),
         'url_id' => $url->id,
         'driver' => 'stub',
-        'device' => 'mobile',
-        'status' => 'pending',
+        'device' => Device::Mobile,
+        'status' => AuditStatus::Pending,
     ]);
 
     $captured = null;

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Str;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
 use LaravelVitals\Models\Url;
@@ -13,8 +15,8 @@ it('persists a BackendTelemetry row with slow_queries cast as array', function (
         'id'     => Str::uuid()->toString(),
         'url_id' => $url->id,
         'driver' => 'local',
-        'device' => 'mobile',
-        'status' => 'completed',
+        'device' => Device::Mobile,
+        'status' => AuditStatus::Completed,
     ]);
 
     $telemetry = BackendTelemetry::create([

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use Livewire\Component;
 
@@ -27,7 +28,7 @@ final class AuditDetail extends Component
         $previous = Audit::query()
             ->where('url_id', $auditModel->url_id)
             ->where('device', $auditModel->device)
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('id', '!=', $auditModel->id)
             ->where(function ($q) use ($auditModel): void {
                 if ($auditModel->completed_at !== null) {

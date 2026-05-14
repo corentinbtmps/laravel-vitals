@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Str;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
 use LaravelVitals\Models\Url;
@@ -17,8 +19,8 @@ it('splits LCP into TTFB and render components', function (): void {
         'id'      => Str::uuid()->toString(),
         'url_id'  => $this->url->id,
         'driver'  => 'stub',
-        'device'  => 'mobile',
-        'status'  => 'completed',
+        'device'  => Device::Mobile,
+        'status'  => AuditStatus::Completed,
         'lcp_ms'  => 3000.0,
         'ttfb_ms' => 1800.0,
     ]);
@@ -34,7 +36,7 @@ it('splits LCP into TTFB and render components', function (): void {
 it('flags backend-bound when TTFB share >= 50%', function (): void {
     $audit = Audit::create([
         'id' => Str::uuid()->toString(), 'url_id' => $this->url->id,
-        'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed',
+        'driver' => 'stub', 'device' => Device::Mobile, 'status' => AuditStatus::Completed,
         'lcp_ms' => 3000.0, 'ttfb_ms' => 1800.0,
     ]);
 
@@ -42,7 +44,7 @@ it('flags backend-bound when TTFB share >= 50%', function (): void {
 
     $audit2 = Audit::create([
         'id' => Str::uuid()->toString(), 'url_id' => $this->url->id,
-        'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed',
+        'driver' => 'stub', 'device' => Device::Mobile, 'status' => AuditStatus::Completed,
         'lcp_ms' => 3000.0, 'ttfb_ms' => 800.0,
     ]);
 
@@ -52,7 +54,7 @@ it('flags backend-bound when TTFB share >= 50%', function (): void {
 it('estimates LCP gain from query fix when N+1 suspected', function (): void {
     $audit = Audit::create([
         'id' => Str::uuid()->toString(), 'url_id' => $this->url->id,
-        'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed',
+        'driver' => 'stub', 'device' => Device::Mobile, 'status' => AuditStatus::Completed,
     ]);
 
     $telemetry = BackendTelemetry::create([
@@ -71,7 +73,7 @@ it('estimates LCP gain from query fix when N+1 suspected', function (): void {
 it('returns null estimated gain when no N+1 and no slow queries', function (): void {
     $audit = Audit::create([
         'id' => Str::uuid()->toString(), 'url_id' => $this->url->id,
-        'driver' => 'stub', 'device' => 'mobile', 'status' => 'completed',
+        'driver' => 'stub', 'device' => Device::Mobile, 'status' => AuditStatus::Completed,
     ]);
 
     $telemetry = BackendTelemetry::create([

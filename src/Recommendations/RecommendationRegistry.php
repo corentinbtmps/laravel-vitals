@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Recommendations;
 
+use LaravelVitals\Enums\Severity;
+
 final class RecommendationRegistry
 {
     /** @var array<string, RecommendationDescriptor> */
@@ -12,67 +14,67 @@ final class RecommendationRegistry
     public function __construct()
     {
         foreach ([
-            'unused-javascript'         => 'warning',
-            'unused-css-rules'          => 'warning',
-            'unminified-javascript'     => 'warning',
-            'unminified-css'            => 'warning',
-            'render-blocking-resources' => 'warning',
-            'modern-image-formats'      => 'info',
-            'uses-responsive-images'    => 'info',
-            'efficient-animated-content'=> 'info',
-            'offscreen-images'          => 'info',
-            'legacy-javascript'         => 'warning',
-            'duplicated-javascript'     => 'info',
+            'unused-javascript'         => Severity::Warning,
+            'unused-css-rules'          => Severity::Warning,
+            'unminified-javascript'     => Severity::Warning,
+            'unminified-css'            => Severity::Warning,
+            'render-blocking-resources' => Severity::Warning,
+            'modern-image-formats'      => Severity::Info,
+            'uses-responsive-images'    => Severity::Info,
+            'efficient-animated-content'=> Severity::Info,
+            'offscreen-images'          => Severity::Info,
+            'legacy-javascript'         => Severity::Warning,
+            'duplicated-javascript'     => Severity::Info,
         ] as $key => $sev) {
             $this->register($key, 'lighthouse', 'performance', $sev);
         }
 
         foreach ([
-            'color-contrast'   => 'warning',
-            'image-alt'        => 'warning',
-            'document-title'   => 'critical',
-            'html-has-lang'    => 'critical',
+            'color-contrast'   => Severity::Warning,
+            'image-alt'        => Severity::Warning,
+            'document-title'   => Severity::Critical,
+            'html-has-lang'    => Severity::Critical,
         ] as $key => $sev) {
             $this->register($key, 'lighthouse', 'accessibility', $sev);
         }
 
-        $this->register('errors-in-console', 'lighthouse', 'best_practices', 'info');
-        $this->register('no-vulnerable-libraries', 'lighthouse', 'best_practices', 'critical');
-        $this->register('meta-description', 'lighthouse', 'seo', 'warning');
+        $this->register('errors-in-console', 'lighthouse', 'best_practices', Severity::Info);
+        $this->register('no-vulnerable-libraries', 'lighthouse', 'best_practices', Severity::Critical);
+        $this->register('meta-description', 'lighthouse', 'seo', Severity::Warning);
 
-        $this->register('config-cache-disabled', 'config', 'best_practices', 'warning');
-        $this->register('route-cache-disabled', 'config', 'best_practices', 'warning');
-        $this->register('view-cache-disabled', 'config', 'best_practices', 'info');
-        $this->register('debug-on-prod', 'config', 'best_practices', 'critical');
-        $this->register('opcache-disabled', 'config', 'best_practices', 'warning');
+        $this->register('config-cache-disabled', 'config', 'best_practices', Severity::Warning);
+        $this->register('route-cache-disabled', 'config', 'best_practices', Severity::Warning);
+        $this->register('view-cache-disabled', 'config', 'best_practices', Severity::Info);
+        $this->register('debug-on-prod', 'config', 'best_practices', Severity::Critical);
+        $this->register('opcache-disabled', 'config', 'best_practices', Severity::Warning);
 
-        $this->register('missing-php-version', 'static', 'best_practices', 'info');
+        $this->register('missing-php-version', 'static', 'best_practices', Severity::Info);
 
-        $this->register('session-driver-file', 'config', 'best_practices', 'info');
-        $this->register('cache-driver-file', 'config', 'best_practices', 'info');
-        $this->register('queue-driver-sync-prod', 'config', 'best_practices', 'warning');
+        $this->register('session-driver-file', 'config', 'best_practices', Severity::Info);
+        $this->register('cache-driver-file', 'config', 'best_practices', Severity::Info);
+        $this->register('queue-driver-sync-prod', 'config', 'best_practices', Severity::Warning);
 
-        $this->register('n-plus-one-detected', 'backend', 'performance', 'warning');
-        $this->register('slow-queries-detected', 'backend', 'performance', 'warning');
-        $this->register('slow-views', 'backend', 'performance', 'info');
-        $this->register('real-world-perf-degraded', 'backend', 'performance', 'warning');
+        $this->register('n-plus-one-detected', 'backend', 'performance', Severity::Warning);
+        $this->register('slow-queries-detected', 'backend', 'performance', Severity::Warning);
+        $this->register('slow-views', 'backend', 'performance', Severity::Info);
+        $this->register('real-world-perf-degraded', 'backend', 'performance', Severity::Warning);
 
         // Detail-driven (alpha.12)
-        $this->register('excessive-dom-size',     'static',  'best_practices', 'warning');
-        $this->register('cache-policy-short',     'static',  'best_practices', 'info');
-        $this->register('third-party-blocking',   'backend', 'performance',    'warning');
-        $this->register('large-payload',          'static',  'performance',    'warning');
-        $this->register('bootup-time-high',       'static',  'performance',    'warning');
+        $this->register('excessive-dom-size',     'static',  'best_practices', Severity::Warning);
+        $this->register('cache-policy-short',     'static',  'best_practices', Severity::Info);
+        $this->register('third-party-blocking',   'backend', 'performance',    Severity::Warning);
+        $this->register('large-payload',          'static',  'performance',    Severity::Warning);
+        $this->register('bootup-time-high',       'static',  'performance',    Severity::Warning);
 
         // Lighthouse - additional CWV (alpha.14)
-        $this->register('unsized-images',          'lighthouse', 'performance',    'warning');
-        $this->register('font-display',            'lighthouse', 'performance',    'info');
-        $this->register('uses-rel-preload',        'lighthouse', 'performance',    'info');
-        $this->register('uses-http2',              'lighthouse', 'best_practices', 'info');
+        $this->register('unsized-images',          'lighthouse', 'performance',    Severity::Warning);
+        $this->register('font-display',            'lighthouse', 'performance',    Severity::Info);
+        $this->register('uses-rel-preload',        'lighthouse', 'performance',    Severity::Info);
+        $this->register('uses-http2',              'lighthouse', 'best_practices', Severity::Info);
 
         // Custom Laravel - alpha.14
-        $this->register('octane-not-running',      'config', 'performance',     'info');
-        $this->register('assets-not-hashed',       'static', 'best_practices',  'warning');
+        $this->register('octane-not-running',      'config', 'performance',     Severity::Info);
+        $this->register('assets-not-hashed',       'static', 'best_practices',  Severity::Warning);
     }
 
     public function get(string $auditKey): ?RecommendationDescriptor
@@ -86,13 +88,13 @@ final class RecommendationRegistry
         return array_keys($this->map);
     }
 
-    private function register(string $key, string $source, string $category, string $severity): void
+    private function register(string $key, string $source, string $category, Severity $severity): void
     {
         $this->map[$key] = new RecommendationDescriptor(
             auditKey:       $key,
             source:         $source,
             category:       $category,
-            severity:       $severity,
+            severity:       $severity->value,
             titleKey:       "vitals::vitals.recommendations.$key.title",
             descriptionKey: "vitals::vitals.recommendations.$key.description",
         );

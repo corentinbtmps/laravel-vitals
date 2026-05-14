@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Storage;
 use LaravelVitals\Contracts\LighthouseDriver;
 use LaravelVitals\Drivers\Stubs\StubLighthouseDriver;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 
 it('runs a full happy-path audit end-to-end via the artisan command', function (): void {
@@ -20,7 +21,7 @@ it('runs a full happy-path audit end-to-end via the artisan command', function (
     $audit = Audit::first();
 
     expect($audit)->not->toBeNull()
-        ->and($audit->status)->toBe('completed')
+        ->and($audit->status)->toBe(AuditStatus::Completed)
         ->and($audit->score_performance)->toBe(95)
         ->and($audit->report_path)->toBeString();
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\RumEvent;
 use Livewire\Component;
@@ -57,7 +58,7 @@ final class Status extends Component
         if ($activeDays === 0) {
             // No RUM data — compute from audits as fallback.
             $activeDays = Audit::query()
-                ->where('status', 'completed')
+                ->where('status', AuditStatus::Completed)
                 ->where('completed_at', '>=', now()->subDays($totalDays))
                 ->selectRaw("DATE(completed_at) as day")
                 ->groupBy('day')
@@ -75,7 +76,7 @@ final class Status extends Component
     private function computeCwvSplit(): array
     {
         $audits = Audit::query()
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', now()->subDays(7))
             ->get(['lcp_ms', 'cls', 'inp_ms']);
 
@@ -114,7 +115,7 @@ final class Status extends Component
     {
         return Audit::query()
             ->with('url')
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', now()->subDays(7))
             ->where('score_performance', '<', 70)
             ->orderByDesc('completed_at')

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Models\Url;
 
 it('persists a Url with the expected casts', function (): void {
@@ -16,7 +17,7 @@ it('persists a Url with the expected casts', function (): void {
     expect($url->fresh())
         ->label->toBe('home')
         ->path->toBe('/')
-        ->device->toBe('both')
+        ->device->toBe(Device::Both)
         ->options->toBe(['categories' => ['performance']])
         ->enabled->toBeTrue();
 });

@@ -114,5 +114,5 @@ it('ignores invalid period values', function (): void {
     $component = Livewire::test(Queries::class)
         ->call('setPeriod', 'invalid');
 
-    expect($component->get('period'))->toBe('7d');
+    expect($component->get('period'))->toBe(\LaravelVitals\Enums\Period::D7);
 });

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use LaravelVitals\Enums\Severity;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -17,7 +18,7 @@ use Spatie\Searchable\SearchResult;
  * @property string $source
  * @property string $audit_key
  * @property string $category
- * @property string $severity
+ * @property \LaravelVitals\Enums\Severity $severity
  * @property string $title_key
  * @property string $description_key
  * @property array<string, mixed>|null $translation_params
@@ -42,6 +43,7 @@ final class Recommendation extends Model implements Searchable
     protected function casts(): array
     {
         return [
+            'severity'           => Severity::class,
             'translation_params' => 'array',
             'metrics'            => 'array',
             'code_references'    => 'array',

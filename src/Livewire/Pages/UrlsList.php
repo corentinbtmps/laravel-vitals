@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 use Livewire\Component;
@@ -44,7 +45,7 @@ final class UrlsList extends Component
         // Latest completed audit per url_id, regardless of device.
         $lastAudits = Audit::query()
             ->whereIn('url_id', $urlIds)
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->orderByDesc('completed_at')
             ->get([
                 'url_id', 'score_performance', 'score_accessibility',
@@ -57,7 +58,7 @@ final class UrlsList extends Component
         $sevenDaysAgo = now()->subDays(7);
         $trendRows = Audit::query()
             ->whereIn('url_id', $urlIds)
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', $sevenDaysAgo)
             ->selectRaw('url_id, DATE(completed_at) as day, AVG(score_performance) as avg_score')
             ->groupBy('url_id', 'day')

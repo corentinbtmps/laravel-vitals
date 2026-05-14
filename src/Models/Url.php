@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use LaravelVitals\Enums\Device;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -17,7 +18,7 @@ use Spatie\Searchable\SearchResult;
  * @property int $id
  * @property string $label
  * @property string $path
- * @property string $device
+ * @property \LaravelVitals\Enums\Device $device
  * @property array<string, mixed>|null $options
  * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $pinned_at
@@ -42,6 +43,7 @@ final class Url extends Model implements Searchable
     protected function casts(): array
     {
         return [
+            'device'    => Device::class,
             'options'   => 'array',
             'enabled'   => 'boolean',
             'is_demo'   => 'boolean',

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Livewire\Pages;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Period;
 use LaravelVitals\Models\Url;
 use Livewire\Component;
 
@@ -13,7 +14,7 @@ final class UrlDetail extends Component
 {
     public int $url = 0;
 
-    public string $period = '30d';
+    public Period $period = Period::D30;
 
     public string $metric = 'performance';
 
@@ -24,10 +25,7 @@ final class UrlDetail extends Component
 
     public function setPeriod(string $period): void
     {
-        if (! in_array($period, ['24h', '7d', '30d', '90d', '1y', 'all'], true)) {
-            return;
-        }
-        $this->period = $period;
+        $this->period = Period::tryFrom($period) ?? $this->period;
         $this->dispatchChartUpdate();
     }
 
@@ -45,30 +43,14 @@ final class UrlDetail extends Component
         $this->dispatch('chartUpdated', metric: $this->metric, series: $this->metricSeries());
     }
 
-    private function periodCutoff(): ?Carbon
+    private function periodCutoff(): ?\Carbon\Carbon
     {
-        return match ($this->period) {
-            '24h'   => now()->subDay(),
-            '7d'    => now()->subDays(7),
-            '30d'   => now()->subDays(30),
-            '90d'   => now()->subDays(90),
-            '1y'    => now()->subYear(),
-            'all'   => null,
-            default => now()->subDays(30),
-        };
+        return $this->period->cutoff();
     }
 
     private function periodLabel(): string
     {
-        return match ($this->period) {
-            '24h' => 'Last 24 hours',
-            '7d'  => 'Last 7 days',
-            '30d' => 'Last 30 days',
-            '90d' => 'Last 90 days',
-            '1y'  => 'Last year',
-            'all' => 'All time',
-            default => 'Last 30 days',
-        };
+        return $this->period->label();
     }
 
     /**
@@ -80,7 +62,7 @@ final class UrlDetail extends Component
         $cutoff = $this->periodCutoff();
 
         $query = $urlModel->audits()
-            ->where('status', 'completed');
+            ->where('status', AuditStatus::Completed);
 
         if ($cutoff !== null) {
             $query->where('completed_at', '>=', $cutoff);
@@ -108,7 +90,7 @@ final class UrlDetail extends Component
         $cutoff = $this->periodCutoff();
 
         $historyQuery = $urlModel->audits()
-            ->where('status', 'completed');
+            ->where('status', AuditStatus::Completed);
 
         if ($cutoff !== null) {
             $historyQuery->where('completed_at', '>=', $cutoff);
@@ -120,7 +102,7 @@ final class UrlDetail extends Component
             ->get();
 
         $periodAudits = $urlModel->audits()
-            ->where('status', 'completed');
+            ->where('status', AuditStatus::Completed);
 
         if ($cutoff !== null) {
             $periodAudits->where('completed_at', '>=', $cutoff);
@@ -146,7 +128,7 @@ final class UrlDetail extends Component
 
         // Failed audits in the selected period
         $failedQuery = $urlModel->audits()
-            ->where('status', 'failed');
+            ->where('status', AuditStatus::Failed);
 
         if ($cutoff !== null) {
             $failedQuery->where('created_at', '>=', $cutoff);

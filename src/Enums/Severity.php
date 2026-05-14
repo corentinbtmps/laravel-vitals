@@ -101,10 +101,13 @@ enum Severity: string
     }
 
     /**
-     * Construct from a raw string, falling back to Info for unknown values.
+     * Construct from a raw string or enum instance, falling back to Info for unknown values.
      */
-    public static function fromString(string $value): self
+    public static function fromString(string|self $value): self
     {
+        if ($value instanceof self) {
+            return $value;
+        }
         return self::tryFrom($value) ?? self::Info;
     }
 }

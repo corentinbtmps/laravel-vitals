@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Storage;
 use LaravelVitals\Contracts\LighthouseDriver;
 use LaravelVitals\Drivers\Stubs\StubLighthouseDriver;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Models\Url;
@@ -29,7 +30,7 @@ it('produces enriched recommendations rows after a full audit run', function ():
     $this->artisan('vitals:audit', ['label' => 'home', '--sync' => true])->assertSuccessful();
 
     $audit = Audit::first();
-    expect($audit->status)->toBe('completed');
+    expect($audit->status)->toBe(AuditStatus::Completed);
 
     $recos = Recommendation::where('audit_id', $audit->id)->get();
     expect($recos->count())->toBeGreaterThanOrEqual(1);

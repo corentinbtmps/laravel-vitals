@@ -6,6 +6,9 @@ namespace LaravelVitals\Demo;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
 use LaravelVitals\Models\Recommendation;
@@ -60,7 +63,7 @@ final class DemoSeeder
             $url = Url::create([
                 'label'   => $label,
                 'path'    => $fix['path'],
-                'device'  => 'both',
+                'device'  => Device::Both,
                 'enabled' => true,
                 'is_demo' => true,
             ]);
@@ -106,7 +109,7 @@ final class DemoSeeder
             'url_id'            => $url->id,
             'driver'            => 'demo',
             'device'            => $device,
-            'status'            => 'completed',
+            'status'            => AuditStatus::Completed,
             'score_performance' => $perf,
             'score_accessibility'  => mt_rand(85, 98),
             'score_best_practices' => mt_rand(85, 100),
@@ -154,7 +157,7 @@ final class DemoSeeder
                 'source'           => 'lighthouse',
                 'audit_key'        => 'unused-javascript',
                 'category'         => 'performance',
-                'severity'         => 'warning',
+                'severity'         => Severity::Warning,
                 'title_key'        => 'vitals::vitals.recommendations.unused-javascript.title',
                 'description_key'  => 'vitals::vitals.recommendations.unused-javascript.description',
                 'translation_params' => ['size' => '180 KB'],
@@ -178,7 +181,7 @@ final class DemoSeeder
                 'source'           => 'backend',
                 'audit_key'        => 'n-plus-one-detected',
                 'category'         => 'performance',
-                'severity'         => 'warning',
+                'severity'         => Severity::Warning,
                 'title_key'        => 'vitals::vitals.recommendations.n-plus-one-detected.title',
                 'description_key'  => 'vitals::vitals.recommendations.n-plus-one-detected.description',
                 'translation_params' => ['count' => 87],
@@ -196,7 +199,7 @@ final class DemoSeeder
                 'source'           => 'lighthouse',
                 'audit_key'        => $extraKey,
                 'category'         => 'performance',
-                'severity'         => 'info',
+                'severity'         => Severity::Info,
                 'title_key'        => 'vitals::vitals.recommendations.' . $extraKey . '.title',
                 'description_key'  => 'vitals::vitals.recommendations.' . $extraKey . '.description',
                 'translation_params' => [],

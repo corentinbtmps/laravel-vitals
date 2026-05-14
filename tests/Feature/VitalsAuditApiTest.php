@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use LaravelVitals\Contracts\LighthouseDriver;
 use LaravelVitals\Drivers\Stubs\StubLighthouseDriver;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Facades\Vitals as VitalsFacade;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
@@ -23,7 +24,7 @@ it('Vitals::audit creates an Audit row and runs synchronously when sync is true'
     $audit = VitalsFacade::audit('home');
 
     expect($audit)->toBeInstanceOf(Audit::class)
-        ->and($audit->refresh()->status)->toBe('completed');
+        ->and($audit->refresh()->status)->toBe(AuditStatus::Completed);
 });
 
 it('Vitals::auditAll dispatches a Bus batch of RunAuditJobs', function (): void {
@@ -44,7 +45,7 @@ it('Vitals::audit dispatches two audits when URL device is "both" and no device 
     VitalsFacade::audit('home');
 
     expect(Audit::count())->toBe(2);
-    expect(Audit::pluck('device')->sort()->values()->all())
+    expect(Audit::all()->pluck('device')->map(fn ($d) => $d->value)->sort()->values()->all())
         ->toBe(['desktop', 'mobile']);
 });
 

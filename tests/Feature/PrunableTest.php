@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\BackendTelemetry;
 use LaravelVitals\Models\Recommendation;
@@ -18,12 +21,12 @@ it('prunes audits older than the retention window and cascades to children', fun
         'id'     => Str::uuid()->toString(),
         'url_id' => $url->id,
         'driver' => 'local',
-        'device' => 'mobile',
-        'status' => 'completed',
+        'device' => Device::Mobile,
+        'status' => AuditStatus::Completed,
     ]);
     Recommendation::create([
         'audit_id' => $oldAudit->id, 'source' => 'lighthouse', 'audit_key' => 'k',
-        'category' => 'performance', 'severity' => 'info',
+        'category' => 'performance', 'severity' => Severity::Info,
         'title_key' => 't', 'description_key' => 'd',
     ]);
     BackendTelemetry::create([

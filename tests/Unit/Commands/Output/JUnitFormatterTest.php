@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Illuminate\Support\Str;
 use LaravelVitals\Budgets\BudgetViolations;
 use LaravelVitals\Commands\Output\JUnitFormatter;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 
@@ -14,8 +16,8 @@ it('produces a JUnit XML document with one testsuite per audit', function (): vo
         'id'                => Str::uuid()->toString(),
         'url_id'            => $url->id,
         'driver'            => 'stub',
-        'device'            => 'mobile',
-        'status'            => 'completed',
+        'device'            => Device::Mobile,
+        'status'            => AuditStatus::Completed,
         'score_performance' => 95,
         'lcp_ms'            => 1500.0,
     ]);

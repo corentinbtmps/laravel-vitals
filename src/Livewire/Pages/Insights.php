@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Models\Url;
@@ -18,14 +20,14 @@ final class Insights extends Component
         $fourteenDaysAgo = now()->subDays(14);
 
         $recentAudits = Audit::query()
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', $sevenDaysAgo)
             ->get(['id', 'url_id', 'score_performance', 'completed_at', 'details']);
 
         // Quick wins: top 5 audit_keys (warning/critical) sorted by occurrences across URLs
         $quickWins = Recommendation::query()
             ->whereIn('audit_id', $recentAudits->pluck('id'))
-            ->whereIn('severity', ['warning', 'critical'])
+            ->whereIn('severity', [Severity::Warning->value, Severity::Critical->value])
             ->selectRaw('audit_key, severity, title_key, count(*) as occurrences, count(distinct audit_id) as audit_count')
             ->groupBy('audit_key', 'severity', 'title_key')
             ->orderByDesc('occurrences')
@@ -35,10 +37,10 @@ final class Insights extends Component
         // Worsening URLs: latest 7d avg perf vs prior 7d avg perf
         $worsening = [];
         foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $latest = $url->audits()->where('status', 'completed')
+            $latest = $url->audits()->where('status', AuditStatus::Completed)
                 ->where('completed_at', '>=', $sevenDaysAgo)
                 ->avg('score_performance');
-            $prior = $url->audits()->where('status', 'completed')
+            $prior = $url->audits()->where('status', AuditStatus::Completed)
                 ->whereBetween('completed_at', [$fourteenDaysAgo, $sevenDaysAgo])
                 ->avg('score_performance');
 
@@ -63,10 +65,10 @@ final class Insights extends Component
         // Improving URLs (mirror of worsening)
         $improving = [];
         foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $latest = $url->audits()->where('status', 'completed')
+            $latest = $url->audits()->where('status', AuditStatus::Completed)
                 ->where('completed_at', '>=', $sevenDaysAgo)
                 ->avg('score_performance');
-            $prior = $url->audits()->where('status', 'completed')
+            $prior = $url->audits()->where('status', AuditStatus::Completed)
                 ->whereBetween('completed_at', [$fourteenDaysAgo, $sevenDaysAgo])
                 ->avg('score_performance');
 

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use Illuminate\Support\Str;
 use LaravelVitals\Budgets\PerfBudget;
+use LaravelVitals\Enums\AuditStatus;
+use LaravelVitals\Enums\Device;
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 
@@ -23,8 +26,8 @@ function makeAudit(array $overrides = []): Audit
         'id'     => Str::uuid()->toString(),
         'url_id' => $url->id,
         'driver' => 'stub',
-        'device' => 'mobile',
-        'status' => 'completed',
+        'device' => Device::Mobile,
+        'status' => AuditStatus::Completed,
     ], $overrides));
 }
 
@@ -85,5 +88,5 @@ it('exposes worst severity for CI exit codes', function (): void {
 
     $violations = PerfBudget::evaluate($audit);
 
-    expect($violations->worstSeverity())->toBe('critical');
+    expect($violations->worstSeverity())->toBe(Severity::Critical);
 });

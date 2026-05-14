@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Commands;
 
 use Illuminate\Console\Command;
+use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Notifications\Channels\VitalsNotifier;
 use LaravelVitals\Notifications\WeeklyDigest;
@@ -29,7 +30,7 @@ final class DigestSendCommand extends Command
 
         $audits = Audit::query()
             ->with('url')
-            ->where('status', 'completed')
+            ->where('status', AuditStatus::Completed)
             ->where('completed_at', '>=', now()->subDays($days))
             ->get();
 

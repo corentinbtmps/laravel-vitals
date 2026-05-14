@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Budgets;
 
+use LaravelVitals\Enums\Severity;
+
 final readonly class BudgetViolations
 {
     /**
@@ -27,14 +29,14 @@ final readonly class BudgetViolations
         return $this->items === [];
     }
 
-    public function worstSeverity(): ?string
+    public function worstSeverity(): ?Severity
     {
         $worst = null;
         foreach ($this->items as $item) {
-            if ($item['severity'] === 'critical') {
-                return 'critical';
+            if ($item['severity'] === Severity::Critical->value) {
+                return Severity::Critical;
             }
-            $worst = 'warning';
+            $worst = Severity::Warning;
         }
         return $worst;
     }
