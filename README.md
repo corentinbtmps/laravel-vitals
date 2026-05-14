@@ -12,6 +12,50 @@
 
 Laravel Vitals runs Google Lighthouse against your own pages, captures what your server was doing at that exact moment (queries, memory, N+1 problems), and then points directly at the lines of code responsible. Everything lands in a dashboard at `/vitals` that any team member can read and act on.
 
+<p align="center">
+  <img src="docs/screenshots/overview-dark.png" alt="Laravel Vitals — Overview dashboard in dark mode" width="900">
+  <br/>
+  <em>Overview dashboard — lens cards with sparklines, onboarding progress, active alerts</em>
+</p>
+
+---
+
+## Table of contents
+
+- [At a glance](#at-a-glance)
+- [Why Laravel Vitals](#why-laravel-vitals)
+- [How it works](#how-it-works)
+- [Features](#features)
+  - [1. Lighthouse audits — three drivers](#1-lighthouse-audits--three-drivers)
+  - [2. Backend telemetry that lines up with the audit](#2-backend-telemetry-that-lines-up-with-the-audit)
+  - [3. Source code references in your app](#3-source-code-references-in-your-app)
+  - [4. Real User Monitoring (RUM)](#4-real-user-monitoring-rum)
+  - [5. Memory profiling per route](#5-memory-profiling-per-route)
+  - [6. Database query baselines](#6-database-query-baselines)
+  - [7. Performance budgets](#7-performance-budgets)
+  - [8. The dashboard](#8-the-dashboard)
+  - [9. Issues — top issues + every recommendation](#9-issues--top-issues--every-recommendation)
+  - [10. Learn — knowledge base](#10-learn--knowledge-base)
+  - [11. Search (Cmd+K)](#11-search-cmdk)
+  - [12. JSON API](#12-json-api)
+  - [13. GitHub Action for PR perf comments](#13-github-action-for-pr-perf-comments)
+  - [14. Pre-commit hook](#14-pre-commit-hook)
+  - [15. Slack notifications with audit threads](#15-slack-notifications-with-audit-threads)
+  - [16. Public health endpoint](#16-public-health-endpoint)
+  - [17. Public status page](#17-public-status-page)
+  - [18. Self-monitoring](#18-self-monitoring)
+  - [19. Boost and Claude Code integration](#19-boost-and-claude-code-integration)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Artisan commands](#artisan-commands)
+- [Privacy and data](#privacy-and-data)
+- [Performance impact](#performance-impact)
+- [Pruning old data](#pruning-old-data)
+- [Translations](#translations)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License and credits](#license-and-credits)
+
 ---
 
 ## At a glance
@@ -42,6 +86,10 @@ Laravel Vitals runs Google Lighthouse against your own pages, captures what your
 ---
 
 ## How it works
+
+<p align="center">
+  <img src="docs/screenshots/architecture.svg" alt="Laravel Vitals architecture diagram" width="100%">
+</p>
 
 Here is the full audit lifecycle from start to finish:
 
@@ -249,6 +297,12 @@ JUnit XML output integrates with GitHub Actions, Jenkins, CircleCI, and any CI s
 
 The dashboard is a Livewire application mounted at `/vitals`. It is built with Flux components and ships pre-compiled CSS and JS — no asset compilation step required in the host app.
 
+<p align="center">
+  <img src="docs/screenshots/url-detail-dark.png" alt="URL detail page — performance trend over 30 days with score annotations" width="900">
+  <br/>
+  <em>URL detail — area chart with daily scores annotated, metric toggle (Score / LCP / INP / CLS / TTFB), and period selector</em>
+</p>
+
 **Navigation (7 top-level items):** Overview · URLs · Issues · RUM · Queries · Learn · Budgets
 
 | Page | URL | What you see |
@@ -289,6 +343,12 @@ Every completed audit generates a list of recommendations. Each recommendation h
 
 The `/vitals/issues` page has two tabs. **Top issues** shows cross-URL quick wins, URLs that are currently worsening or improving, and third-party script cost breakdowns. **All recommendations** shows the full aggregated list across all audits, sorted by frequency — making it easy to find the one fix that would improve the most pages.
 
+<p align="center">
+  <img src="docs/screenshots/issues-dark.png" alt="Issues page — Top issues tab with Quick Wins callouts" width="900">
+  <br/>
+  <em>Issues — Top issues tab: Quick Wins, Worsening URLs, Improving URLs, third-party costs</em>
+</p>
+
 The package knows about: Lighthouse findings (unused JS/CSS, render-blocking resources, image format issues, legacy JavaScript, accessibility problems), Laravel-specific issues (missing `config:cache`, debug mode in production, file-based sessions in production, sync queue in production, OPcache disabled), and backend signals (N+1 queries, slow queries, third-party blocking scripts, large payloads).
 
 ---
@@ -298,6 +358,12 @@ The package knows about: Lighthouse findings (unused JS/CSS, render-blocking res
 The `/vitals/learn` page is a browsable knowledge base covering approximately 42 known issue types, grouped by category. You can read it even before running your first audit to understand what the package can detect — what causes each finding, what impact it has, and how to fix it.
 
 Each entry links to the relevant web.dev article and (where applicable) the Laravel documentation for the fix. Learn is always up to date with the installed version of the package, so the descriptions and code hints match what your audits will actually report.
+
+<p align="center">
+  <img src="docs/screenshots/learn-dark.png" alt="Learn knowledge base with category tiles + recommendation cards" width="900">
+  <br/>
+  <em>Learn — every recommendation explained with web.dev / Laravel doc links + recommended vs avoid code samples</em>
+</p>
 
 ---
 

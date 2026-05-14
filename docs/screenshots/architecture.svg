@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#e11d48"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9ca3af"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #e5e7eb; stroke-width: 1.5; rx: 12; }
+      .label { fill: #111827; font-size: 14px; font-weight: 600; }
+      .sub { fill: #6b7280; font-size: 12px; }
+      .pill { fill: #fef3f2; stroke: #fbcfe8; stroke-width: 1; rx: 6; }
+      .pill-text { fill: #be185d; font-size: 11px; font-weight: 500; }
+      .arrow { stroke: #9ca3af; stroke-width: 1.5; fill: none; }
+      .accent { fill: url(#accent); }
+    </style>
+  </defs>
+
+  <!-- title -->
+  <text x="600" y="32" text-anchor="middle" class="label" font-size="18">How Laravel Vitals works</text>
+  <text x="600" y="52" text-anchor="middle" class="sub">From a single audit trigger to the dashboard</text>
+
+  <!-- HOST APP -->
+  <rect x="40" y="90" width="220" height="180" class="box"/>
+  <text x="150" y="118" text-anchor="middle" class="label">Your Laravel app</text>
+  <text x="150" y="138" text-anchor="middle" class="sub">runs as usual</text>
+  <rect x="60" y="160" width="180" height="28" class="pill"/>
+  <text x="150" y="178" text-anchor="middle" class="pill-text">HTTP request</text>
+  <rect x="60" y="196" width="180" height="28" class="pill"/>
+  <text x="150" y="214" text-anchor="middle" class="pill-text">Vitals middleware</text>
+  <rect x="60" y="232" width="180" height="28" class="pill"/>
+  <text x="150" y="250" text-anchor="middle" class="pill-text">Response</text>
+
+  <!-- DRIVERS -->
+  <rect x="320" y="90" width="240" height="180" class="box"/>
+  <text x="440" y="118" text-anchor="middle" class="label">Lighthouse driver</text>
+  <text x="440" y="138" text-anchor="middle" class="sub">three to choose from</text>
+  <rect x="340" y="160" width="200" height="28" class="pill"/>
+  <text x="440" y="178" text-anchor="middle" class="pill-text">local · binary on $PATH</text>
+  <rect x="340" y="196" width="200" height="28" class="pill"/>
+  <text x="440" y="214" text-anchor="middle" class="pill-text">playwright · headless</text>
+  <rect x="340" y="232" width="200" height="28" class="pill"/>
+  <text x="440" y="250" text-anchor="middle" class="pill-text">pagespeed · Google API</text>
+
+  <!-- TELEMETRY + ANALYZERS -->
+  <rect x="620" y="90" width="240" height="180" class="box"/>
+  <text x="740" y="118" text-anchor="middle" class="label">Telemetry &amp; analyzers</text>
+  <text x="740" y="138" text-anchor="middle" class="sub">backend signals + code refs</text>
+  <rect x="640" y="160" width="200" height="28" class="pill"/>
+  <text x="740" y="178" text-anchor="middle" class="pill-text">queries · N+1 · memory</text>
+  <rect x="640" y="196" width="200" height="28" class="pill"/>
+  <text x="740" y="214" text-anchor="middle" class="pill-text">jobs · cache · views</text>
+  <rect x="640" y="232" width="200" height="28" class="pill"/>
+  <text x="740" y="250" text-anchor="middle" class="pill-text">file:line in your code</text>
+
+  <!-- STORAGE + SURFACES -->
+  <rect x="920" y="90" width="240" height="180" class="box"/>
+  <text x="1040" y="118" text-anchor="middle" class="label">Dashboard &amp; API</text>
+  <text x="1040" y="138" text-anchor="middle" class="sub">where you look at the data</text>
+  <rect x="940" y="160" width="200" height="28" class="pill"/>
+  <text x="1040" y="178" text-anchor="middle" class="pill-text">/vitals · Livewire</text>
+  <rect x="940" y="196" width="200" height="28" class="pill"/>
+  <text x="1040" y="214" text-anchor="middle" class="pill-text">JSON API v1</text>
+  <rect x="940" y="232" width="200" height="28" class="pill"/>
+  <text x="1040" y="250" text-anchor="middle" class="pill-text">Slack · Mail · Webhook</text>
+
+  <!-- arrows between boxes -->
+  <path d="M260 180 L320 180" class="arrow" marker-end="url(#arrow)"/>
+  <path d="M560 180 L620 180" class="arrow" marker-end="url(#arrow)"/>
+  <path d="M860 180 L920 180" class="arrow" marker-end="url(#arrow)"/>
+
+  <!-- RUM lane -->
+  <rect x="40" y="320" width="1120" height="120" class="box" fill="#fdf2f8" stroke="#fbcfe8"/>
+  <text x="600" y="350" text-anchor="middle" class="label">Optional: Real User Monitoring</text>
+  <text x="600" y="370" text-anchor="middle" class="sub">Tiny JS beacon collects CWV from real visitors, no PII</text>
+
+  <rect x="80" y="390" width="180" height="30" class="pill" fill="#ffffff"/>
+  <text x="170" y="409" text-anchor="middle" class="pill-text">@vitalsRum directive</text>
+
+  <path d="M260 405 L340 405" class="arrow" marker-end="url(#arrow)"/>
+
+  <rect x="340" y="390" width="180" height="30" class="pill" fill="#ffffff"/>
+  <text x="430" y="409" text-anchor="middle" class="pill-text">web-vitals beacon (4 KB)</text>
+
+  <path d="M520 405 L600 405" class="arrow" marker-end="url(#arrow)"/>
+
+  <rect x="600" y="390" width="180" height="30" class="pill" fill="#ffffff"/>
+  <text x="690" y="409" text-anchor="middle" class="pill-text">POST /vitals/rum/ingest</text>
+
+  <path d="M780 405 L860 405" class="arrow" marker-end="url(#arrow)"/>
+
+  <rect x="860" y="390" width="240" height="30" class="pill" fill="#ffffff"/>
+  <text x="980" y="409" text-anchor="middle" class="pill-text">/vitals/rum · per-URL p75 trends</text>
+</svg>
