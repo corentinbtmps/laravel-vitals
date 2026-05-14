@@ -141,7 +141,7 @@
                 <ul class="space-y-2">
                     @foreach ($resolved as $r)
                         <li class="flex items-center gap-2 text-sm">
-                            <flux:badge color="{{ $r->severity === 'critical' ? 'rose' : 'amber' }}" size="sm">{{ $r->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->label() }}</flux:badge>
                             <span class="text-emerald-700 dark:text-emerald-300 line-through opacity-70">{{ __($r->title_key) }}</span>
                         </li>
                     @endforeach
@@ -162,7 +162,7 @@
                 <ul class="space-y-2">
                     @foreach ($newInB as $r)
                         <li class="flex items-center gap-2 text-sm">
-                            <flux:badge color="{{ $r->severity === 'critical' ? 'rose' : 'amber' }}" size="sm">{{ $r->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->label() }}</flux:badge>
                             <span>{{ __($r->title_key) }}</span>
                         </li>
                     @endforeach

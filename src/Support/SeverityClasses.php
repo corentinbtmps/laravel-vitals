@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Support;
 
+use LaravelVitals\Enums\Severity;
+
 /**
  * Single source of truth for severity → Tailwind class mappings.
+ *
+ * @deprecated Use \LaravelVitals\Enums\Severity instead.
+ * This class now delegates to the Severity enum.
+ * It is kept for backward compatibility but will be removed in v1.0.0.
  *
  * All strings are static literals so Tailwind 4's content scanner detects
  * them without any @source inline() workarounds.
@@ -20,11 +26,7 @@ final class SeverityClasses
      */
     public static function container(string $severity): array
     {
-        return match ($severity) {
-            'critical' => ['border-accent-200', 'dark:border-accent-900/40', 'bg-accent-50/30', 'dark:bg-accent-900/5'],
-            'warning'  => ['border-amber-200',  'dark:border-amber-900/40',  'bg-amber-50/30',  'dark:bg-amber-900/5'],
-            default    => ['border-sky-200',    'dark:border-sky-900/40',    'bg-sky-50/30',    'dark:bg-sky-900/5'],
-        };
+        return Severity::fromString($severity)->containerClasses();
     }
 
     /**
@@ -47,11 +49,7 @@ final class SeverityClasses
      */
     public static function dotBackground(string $severity): string
     {
-        return match ($severity) {
-            'critical' => 'bg-accent-500',
-            'warning'  => 'bg-amber-500',
-            default    => 'bg-sky-500',
-        };
+        return Severity::fromString($severity)->dotBackground();
     }
 
     /**
@@ -60,11 +58,7 @@ final class SeverityClasses
      */
     public static function fluxBadgeColor(string $severity): string
     {
-        return match ($severity) {
-            'critical' => 'rose',
-            'warning'  => 'amber',
-            default    => 'sky',
-        };
+        return Severity::fromString($severity)->fluxBadgeColor();
     }
 
     /**
@@ -72,11 +66,7 @@ final class SeverityClasses
      */
     public static function fluxCalloutVariant(string $severity): string
     {
-        return match ($severity) {
-            'critical' => 'danger',
-            'warning'  => 'warning',
-            default    => 'secondary',
-        };
+        return Severity::fromString($severity)->fluxCalloutVariant();
     }
 
     /**
@@ -84,11 +74,7 @@ final class SeverityClasses
      */
     public static function fluxCalloutIcon(string $severity): string
     {
-        return match ($severity) {
-            'critical' => 'exclamation-circle',
-            'warning'  => 'exclamation-triangle',
-            default    => 'information-circle',
-        };
+        return Severity::fromString($severity)->fluxCalloutIcon();
     }
 
     /**
@@ -96,10 +82,6 @@ final class SeverityClasses
      */
     public static function iconTextColor(string $severity): string
     {
-        return match ($severity) {
-            'critical' => 'text-accent-500',
-            'warning'  => 'text-amber-500',
-            default    => 'text-sky-500',
-        };
+        return Severity::fromString($severity)->iconTextColor();
     }
 }

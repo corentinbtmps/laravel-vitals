@@ -13,22 +13,22 @@
     <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-start justify-between mb-4">
             <div>
-                <h3 class="text-base font-semibold">Quick wins</h3>
-                <p class="text-sm text-ink-500 mt-1">Most impactful issues to fix first</p>
+                <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.quick_wins') }}</h3>
+                <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.insights.quick_wins_subtitle') }}</p>
             </div>
         </div>
         @if ($quickWins->isEmpty())
-            <p class="text-sm text-ink-500">No prioritized issues found in the last 7 days.</p>
+            <p class="text-sm text-ink-500">{{ __('vitals::vitals.insights.no_quick_wins') }}</p>
         @else
             <div class="space-y-2">
                 @foreach ($quickWins as $w)
                     <flux:callout
-                        variant="{{ \LaravelVitals\Support\SeverityClasses::fluxCalloutVariant($w->severity) }}"
-                        icon="{{ \LaravelVitals\Support\SeverityClasses::fluxCalloutIcon($w->severity) }}"
+                        variant="{{ \LaravelVitals\Enums\Severity::fromString($w->severity)->fluxCalloutVariant() }}"
+                        icon="{{ \LaravelVitals\Enums\Severity::fromString($w->severity)->fluxCalloutIcon() }}"
                     >
                         <flux:callout.heading>{{ __($w->title_key) }}</flux:callout.heading>
                         <flux:callout.text>
-                            {{ $w->occurrences }} {{ Str::plural('occurrence', $w->occurrences) }} across {{ $w->audit_count }} {{ Str::plural('audit', $w->audit_count) }}
+                            {{ $w->occurrences }} {{ __('vitals::vitals.insights.occurrences') }} — {{ $w->audit_count }} {{ __('vitals::vitals.insights.audit_count') }}
                         </flux:callout.text>
                     </flux:callout>
                 @endforeach
@@ -41,12 +41,12 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-base font-semibold">Worsening URLs</h3>
-                    <p class="text-sm text-ink-500 mt-1">Regressions detected</p>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.worsening_urls') }}</h3>
+                    <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.insights.regressions_detected') }}</p>
                 </div>
             </div>
             @if (empty($worsening))
-                <p class="text-sm text-ink-500">No regressions detected.</p>
+                <p class="text-sm text-ink-500">{{ __('vitals::vitals.insights.no_regressions') }}</p>
             @else
                 <ul class="divide-y divide-ink-100 dark:divide-ink-800">
                     @foreach ($worsening as $w)
@@ -56,7 +56,7 @@
                                 <div class="text-xs text-ink-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
                             <flux:badge color="rose" size="sm">{{ $w['delta'] }}</flux:badge>
-                            <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
+                            <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" :tooltip="__('vitals::vitals.actions.view_url')" />
                         </li>
                     @endforeach
                 </ul>
@@ -66,12 +66,12 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-base font-semibold">Improving URLs</h3>
-                    <p class="text-sm text-ink-500 mt-1">Positive score changes</p>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.improving_urls') }}</h3>
+                    <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.insights.positive_score_changes') }}</p>
                 </div>
             </div>
             @if (empty($improving))
-                <p class="text-sm text-ink-500">No improvements yet.</p>
+                <p class="text-sm text-ink-500">{{ __('vitals::vitals.insights.no_improvements') }}</p>
             @else
                 <ul class="divide-y divide-ink-100 dark:divide-ink-800">
                     @foreach ($improving as $w)
@@ -81,7 +81,7 @@
                                 <div class="text-xs text-ink-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
                             </a>
                             <flux:badge color="emerald" size="sm">+{{ $w['delta'] }}</flux:badge>
-                            <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" tooltip="View URL" />
+                            <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" :tooltip="__('vitals::vitals.actions.view_url')" />
                         </li>
                     @endforeach
                 </ul>
@@ -94,15 +94,15 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-base font-semibold">Top third-party costs</h3>
-                    <p class="text-sm text-ink-500 mt-1">Scripts and resources from external domains</p>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.top_third_parties') }}</h3>
+                    <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.insights.third_party_subtitle') }}</p>
                 </div>
             </div>
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column>Entity</flux:table.column>
-                    <flux:table.column align="end">Audits with</flux:table.column>
-                    <flux:table.column align="end">Total blocking</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.entity') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.rum.col_samples') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.blocking') }}</flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
                     @foreach ($topThirdParties as $tp)

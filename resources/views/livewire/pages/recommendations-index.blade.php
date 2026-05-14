@@ -20,10 +20,10 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column>Recommendation</flux:table.column>
-                    <flux:table.column>Category</flux:table.column>
-                    <flux:table.column>Severity</flux:table.column>
-                    <flux:table.column align="end">Occurrences</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.recommendation') }}</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.category') }}</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.metric') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.occurrences') }}</flux:table.column>
                     <flux:table.column align="end" class="w-14"></flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
@@ -34,7 +34,7 @@
                                 <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell>
-                                <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($r->severity) }}" size="sm">{{ $r->severity }}</flux:badge>
+                                <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->label() }}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell align="end">
                                 <span class="font-semibold tabular-nums">{{ $r->occurrences }}</span>

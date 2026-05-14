@@ -39,7 +39,7 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="text-center py-8">
                 <flux:icon name="clock" class="size-12 text-ink-300 dark:text-ink-700 mx-auto mb-3" />
-                <p class="text-sm text-ink-500">No completed audits yet for this URL.</p>
+                <p class="text-sm text-ink-500">{{ __('vitals::vitals.url_detail.no_audits') }}</p>
             </div>
         </div>
     @else
@@ -47,7 +47,7 @@
         <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 md:p-8">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
                 <div>
-                    <h3 class="text-base font-semibold">Performance over time</h3>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.perf_over_time') }}</h3>
                     <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }}</p>
                 </div>
                 {{-- Metric toggle --}}
@@ -159,7 +159,7 @@
             <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <h3 class="text-base font-semibold">Average scores</h3>
+                        <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.average_scores') }}</h3>
                         <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }} — {{ $periodCount }} audits</p>
                     </div>
                 </div>
@@ -194,14 +194,14 @@
             <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <h3 class="text-base font-semibold">Most frequent issues</h3>
-                        <p class="text-sm text-ink-500 mt-1">Recurring findings on this URL</p>
+                        <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.most_frequent_issues') }}</h3>
+                        <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.url_detail.recurring_findings') }}</p>
                     </div>
                 </div>
                 <ul class="space-y-2">
                     @foreach ($frequentRecos as $r)
                         <li class="flex items-center gap-3">
-                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($r->severity) }}" size="sm">{{ $r->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->label() }}</flux:badge>
                             <span class="flex-1 text-sm">{{ __($r->title_key) }}</span>
                             <span class="text-xs text-ink-500">{{ $r->occurrences }}×</span>
                         </li>
@@ -213,7 +213,7 @@
         @if ($failedAudits->isNotEmpty())
             <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
                 <div class="flex items-center gap-2 mb-4">
-                    <h3 class="text-base font-semibold">Recent failed audits</h3>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.recent_failed_audits') }}</h3>
                     <flux:badge color="rose" size="sm">{{ $failedAudits->count() }}</flux:badge>
                 </div>
                 <ul class="space-y-2">
@@ -235,15 +235,15 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-base font-semibold">Audit history</h3>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.audit_history') }}</h3>
                     <p class="text-sm text-ink-500 mt-1">{{ $history->count() }} audits — {{ $periodLabel }}</p>
                 </div>
             </div>
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column>Date</flux:table.column>
-                    <flux:table.column>Device</flux:table.column>
-                    <flux:table.column align="end">Score</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.date') }}</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.device') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.score') }}</flux:table.column>
                     <flux:table.column align="end">LCP</flux:table.column>
                     <flux:table.column align="end">CLS</flux:table.column>
                     <flux:table.column align="end" class="w-32"></flux:table.column>

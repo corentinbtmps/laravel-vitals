@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.learn.title') }}</h1>
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.learn.subtitle') }}</p>
         </div>
-        <flux:badge color="zinc">{{ $allCount }} known issues</flux:badge>
+        <flux:badge color="zinc">{{ $allCount }} {{ __('vitals::vitals.learn_page.known_issues') }}</flux:badge>
     </div>
 
     {{-- Browse tile grid (shown when filter = all) --}}
@@ -33,7 +33,7 @@
                                 'text-xs font-semibold tabular-nums',
                                 ...\LaravelVitals\Support\LearnTileClasses::countText($tile['color']),
                             ])>
-                                {{ $tile['active'] }} active
+                                {{ $tile['active'] }} {{ __('vitals::vitals.learn_page.active') }}
                             </span>
                         @endif
                     </div>
@@ -48,8 +48,8 @@
     @else
         {{-- Back to browse link --}}
         <div class="flex items-center gap-3">
-            <flux:button wire:click="setFilter('all')" variant="ghost" size="sm" icon="arrow-left">All categories</flux:button>
-            <span class="text-sm text-ink-500">Showing {{ ucfirst(str_replace('_', ' ', $filter)) }}</span>
+            <flux:button wire:click="setFilter('all')" variant="ghost" size="sm" icon="arrow-left">{{ __('vitals::vitals.learn_page.all_categories_label') }}</flux:button>
+            <span class="text-sm text-ink-500">{{ __('vitals::vitals.learn_page.showing') }} {{ ucfirst(str_replace('_', ' ', $filter)) }}</span>
         </div>
     @endif
 
@@ -73,7 +73,7 @@
                 <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-400">
                     {{ str_replace('_', ' ', $category) }}
                 </h2>
-                <span class="text-xs text-ink-500">{{ count($items) }} {{ Str::plural('item', count($items)) }}</span>
+                <span class="text-xs text-ink-500">{{ count($items) }} {{ __('vitals::vitals.learn_page.item') }}</span>
                 <div class="flex-1 h-px bg-ink-200/60 dark:bg-ink-800/60"></div>
             </div>
 
@@ -86,10 +86,10 @@
                         <div class="flex items-center gap-2 flex-wrap">
                             <span @class([
                                 'size-2 rounded-full',
-                                \LaravelVitals\Support\SeverityClasses::dotBackground($entry['descriptor']->severity),
+                                \LaravelVitals\Enums\Severity::fromString($entry['descriptor']->severity)->dotBackground(),
                             ])></span>
                             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
-                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($entry['descriptor']->severity) }}" size="sm">{{ $entry['descriptor']->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($entry['descriptor']->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($entry['descriptor']->severity)->label() }}</flux:badge>
                             <code class="ml-auto text-[11px] font-mono text-ink-400">{{ $entry['key'] }}</code>
                         </div>
 
@@ -134,7 +134,7 @@
                                         <div class="rounded-2xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-900/10 overflow-hidden">
                                             <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border-b border-emerald-200/60 dark:border-emerald-900/40">
                                                 <flux:icon.check-circle class="size-3.5" />
-                                                Recommended
+                                                {{ __('vitals::vitals.audit_detail.recommended') }}
                                             </div>
                                             <pre class="p-3 text-[11px] leading-snug overflow-x-auto"><code class="text-emerald-800 dark:text-emerald-200">{{ $entry['docs']['good'] }}</code></pre>
                                         </div>
@@ -143,7 +143,7 @@
                                         <div class="rounded-2xl border border-accent-200/60 dark:border-accent-900/40 bg-accent-50/40 dark:bg-accent-900/10 overflow-hidden">
                                             <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-300 border-b border-accent-200/60 dark:border-accent-900/40">
                                                 <flux:icon.x-circle class="size-3.5" />
-                                                Avoid
+                                                {{ __('vitals::vitals.audit_detail.avoid') }}
                                             </div>
                                             <pre class="p-3 text-[11px] leading-snug overflow-x-auto"><code class="text-accent-800 dark:text-accent-200">{{ $entry['docs']['bad'] }}</code></pre>
                                         </div>

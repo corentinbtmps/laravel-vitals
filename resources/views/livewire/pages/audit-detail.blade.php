@@ -59,10 +59,10 @@
     {{-- Score breakdown: 4 cards --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach ([
-            'score_performance'    => ['label' => 'Performance',    'icon' => 'bolt'],
-            'score_accessibility'  => ['label' => 'Accessibility',  'icon' => 'eye'],
-            'score_best_practices' => ['label' => 'Best Practices', 'icon' => 'shield-check'],
-            'score_seo'            => ['label' => 'SEO',            'icon' => 'magnifying-glass'],
+            'score_performance'    => ['label' => __('vitals::vitals.compare.performance'),    'icon' => 'bolt'],
+            'score_accessibility'  => ['label' => __('vitals::vitals.compare.accessibility'),  'icon' => 'eye'],
+            'score_best_practices' => ['label' => __('vitals::vitals.compare.best_practices'), 'icon' => 'shield-check'],
+            'score_seo'            => ['label' => __('vitals::vitals.compare.seo'),            'icon' => 'magnifying-glass'],
         ] as $col => $meta)
             @php
                 $value = $audit->{$col};
@@ -138,7 +138,7 @@
                                 <flux:icon.arrow-trending-down class="size-3 text-accent-500" />
                                 <span class="text-accent-600 dark:text-accent-400 font-medium">{{ $scoreDelta }}</span>
                             @endif
-                            <span class="text-ink-400">vs prev</span>
+                            <span class="text-ink-400">{{ __('vitals::vitals.audit_detail.vs_prev') }}</span>
                         </div>
                     @endif
                 @else
@@ -152,7 +152,7 @@
     <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-center gap-2 mb-4">
             <flux:icon.heart class="size-5 text-accent-500" />
-            <h2 class="text-base font-semibold">Core Web Vitals</h2>
+            <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.cwv_title') }}</h2>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach ([
@@ -168,6 +168,7 @@
                 ['col' => 'ttfb_ms', 'label' => 'TTFB', 'unit' => 'ms', 'desc' => 'Time to First Byte',
                  'tooltip_key' => 'vitals::vitals.tooltip.cwv_ttfb',
                  'doc' => 'https://web.dev/articles/ttfb'],
+                // Note: 'desc' is the technical abbreviation expansion shown inline — intentionally not translated
             ] as $cwv)
                 @php
                     $val = $audit->{$cwv['col']};
@@ -219,13 +220,13 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.signal class="size-5 text-sky-500" />
-                <h2 class="text-base font-semibold">Front-end ↔ Back-end breakdown</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.frontend_backend_title') }}</h2>
             </div>
 
             {{-- Stacked horizontal bar --}}
             <div class="space-y-3">
                 <div class="flex items-baseline justify-between">
-                    <span class="text-sm text-ink-500">LCP composition</span>
+                    <span class="text-sm text-ink-500">{{ __('vitals::vitals.audit_detail.lcp_composition') }}</span>
                     <span class="text-sm font-semibold">{{ (int) round($breakdown['lcp_ms']) }}ms total</span>
                 </div>
                 <div class="h-8 w-full bg-ink-100 dark:bg-ink-800 rounded-md overflow-hidden flex">
@@ -243,20 +244,20 @@
 
                 @if ($isBackendBound)
                     <flux:callout variant="warning" icon="cpu-chip">
-                        <flux:callout.heading>Backend is the bottleneck</flux:callout.heading>
+                        <flux:callout.heading>{{ __('vitals::vitals.audit_detail.backend_bottleneck') }}</flux:callout.heading>
                         <flux:callout.text>
-                            {{ $breakdown['ttfb_share'] }}% of your LCP is server processing time. Frontend optimizations alone won't move the needle — focus on backend.
+                            {{ __('vitals::vitals.audit_detail.backend_bottleneck_body', ['pct' => $breakdown['ttfb_share']]) }}
                         </flux:callout.text>
                     </flux:callout>
                 @endif
 
                 @if ($audit->telemetry->n_plus_one_suspect)
                     <flux:callout variant="danger" icon="circle-stack">
-                        <flux:callout.heading>N+1 query pattern detected</flux:callout.heading>
+                        <flux:callout.heading>{{ __('vitals::vitals.audit_detail.nplus1_heading') }}</flux:callout.heading>
                         <flux:callout.text>
-                            {{ $audit->telemetry->queries_count }} queries executed in {{ (int) round((float) $audit->telemetry->queries_time_ms) }}ms ({{ $audit->telemetry->queries_unique }} unique patterns).
+                            {{ __('vitals::vitals.audit_detail.nplus1_body', ['queries' => $audit->telemetry->queries_count, 'time' => (int) round((float) $audit->telemetry->queries_time_ms), 'unique' => $audit->telemetry->queries_unique]) }}
                             @if ($estimatedGain !== null)
-                                Fixing this could shave <strong>~{{ $estimatedGain }}ms</strong> off your TTFB.
+                                {{ __('vitals::vitals.audit_detail.nplus1_gain', ['gain' => $estimatedGain]) }}
                             @endif
                         </flux:callout.text>
                     </flux:callout>
@@ -270,26 +271,26 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="server-stack" class="size-5 text-violet-500" />
-                <h2 class="text-base font-semibold">Backend telemetry</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.telemetry_title') }}</h2>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">Queries</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.queries') }}</div>
                     <div class="text-xl font-bold flex items-baseline gap-1">
                         {{ $audit->telemetry->queries_count }}
-                        <span class="text-xs text-ink-400">({{ $audit->telemetry->queries_unique }} unique)</span>
+                        <span class="text-xs text-ink-400">({{ $audit->telemetry->queries_unique }} {{ __('vitals::vitals.audit_detail.unique') }})</span>
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">Query time</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.query_time') }}</div>
                     <div class="text-xl font-bold">{{ (int) round((float) $audit->telemetry->queries_time_ms) }}ms</div>
                 </div>
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">Memory peak</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.memory_peak') }}</div>
                     <div class="text-xl font-bold">{{ number_format($audit->telemetry->memory_peak_kb / 1024, 1) }}MB</div>
                 </div>
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">Cache hit rate</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.cache_hit_rate') }}</div>
                     @php
                         $hits = (int) $audit->telemetry->cache_hits;
                         $misses = (int) $audit->telemetry->cache_misses;
@@ -302,7 +303,7 @@
 
             @if (! empty($audit->telemetry->slow_queries))
                 <div class="mt-6">
-                    <div class="text-sm font-semibold text-ink-700 dark:text-ink-300 mb-2">Slowest queries</div>
+                    <div class="text-sm font-semibold text-ink-700 dark:text-ink-300 mb-2">{{ __('vitals::vitals.audit_detail.slowest_queries') }}</div>
                     <div class="space-y-2">
                         @foreach (array_slice($audit->telemetry->slow_queries, 0, 5) as $q)
                             <div class="rounded border border-ink-200/60 dark:border-ink-800/60 bg-ink-50 dark:bg-ink-900 p-3">
@@ -324,7 +325,7 @@
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <flux:icon.light-bulb class="size-5 text-amber-500" />
-                    <h2 class="text-base font-semibold">Recommendations</h2>
+                    <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.recommendations_title') }}</h2>
                 </div>
                 <flux:badge color="amber">{{ $audit->recommendations->count() }}</flux:badge>
             </div>
@@ -337,22 +338,23 @@
                             <div class="space-y-3">
                                 @foreach ($groupedRecos[$category] as $reco)
                                     @php
-                                        $sevFluxColor = \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($reco->severity);
-                                        $sevIcon      = \LaravelVitals\Support\SeverityClasses::fluxCalloutIcon($reco->severity);
+                                        $sev          = \LaravelVitals\Enums\Severity::fromString($reco->severity);
+                                        $sevFluxColor = $sev->fluxBadgeColor();
+                                        $sevIcon      = $sev->fluxCalloutIcon();
                                     @endphp
                                     <div @class([
                                         'rounded-lg border p-4',
-                                        ...\LaravelVitals\Support\SeverityClasses::container($reco->severity),
+                                        ...$sev->containerClasses(),
                                     ])>
                                         <div class="flex items-start gap-3">
                                             <flux:icon name="{{ $sevIcon }}" @class([
                                                 'size-5 shrink-0 mt-0.5',
-                                                \LaravelVitals\Support\SeverityClasses::iconTextColor($reco->severity),
+                                                $sev->iconTextColor(),
                                             ]) />
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2 mb-1 flex-wrap">
                                                     <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_params ?? []) }}</h4>
-                                                    <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $reco->severity }}</flux:badge>
+                                                    <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($reco->severity)->label() }}</flux:badge>
                                                 </div>
                                                 <p class="text-sm text-ink-500 dark:text-ink-400">{{ __($reco->description_key, $reco->translation_params ?? []) }}</p>
 
@@ -396,7 +398,7 @@
                                                                 <div class="rounded border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-900/10 overflow-hidden">
                                                                     <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border-b border-emerald-200 dark:border-emerald-900/40">
                                                                         <flux:icon.check-circle class="size-3.5" />
-                                                                        Recommended
+                                                                        {{ __('vitals::vitals.audit_detail.recommended') }}
                                                                     </div>
                                                                     <pre class="p-3 text-[11px] leading-snug overflow-x-auto"><code class="text-emerald-800 dark:text-emerald-200">{{ $docs['good'] }}</code></pre>
                                                                 </div>
@@ -405,7 +407,7 @@
                                                                 <div class="rounded border border-accent-200 dark:border-accent-900/40 bg-accent-50/40 dark:bg-accent-900/10 overflow-hidden">
                                                                     <div class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-300 border-b border-accent-200 dark:border-accent-900/40">
                                                                         <flux:icon.x-circle class="size-3.5" />
-                                                                        Avoid
+                                                                        {{ __('vitals::vitals.audit_detail.avoid') }}
                                                                     </div>
                                                                     <pre class="p-3 text-[11px] leading-snug overflow-x-auto"><code class="text-accent-800 dark:text-accent-200">{{ $docs['bad'] }}</code></pre>
                                                                 </div>
@@ -419,7 +421,7 @@
                                                     <div class="mt-4">
                                                         <div class="flex items-center gap-1.5 text-xs font-medium text-ink-500 dark:text-ink-400 mb-2">
                                                             <flux:icon name="code-bracket" class="size-3.5" />
-                                                            Found in your application
+                                                            {{ __('vitals::vitals.audit_detail.found_in_app') }}
                                                         </div>
                                                         <div class="space-y-2">
                                                             @foreach ($reco->code_references as $ref)
@@ -445,11 +447,11 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="document-magnifying-glass" class="size-5 text-violet-500" />
-                <h2 class="text-base font-semibold">Page details</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.page_details_title') }}</h2>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">Page weight</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.page_weight') }}</div>
                     <div class="text-2xl font-bold">
                         @if (! empty($audit->details['page_weight_bytes']))
                             {{ number_format($audit->details['page_weight_bytes'] / 1024, 0) }}
@@ -460,11 +462,11 @@
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">HTTP requests</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.http_requests') }}</div>
                     <div class="text-2xl font-bold">{{ $audit->details['request_count'] ?? '—' }}</div>
                 </div>
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">DOM elements</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.dom_elements') }}</div>
                     @php $domSize = $audit->details['dom_size'] ?? null; @endphp
                     <div @class([
                         'text-2xl font-bold',
@@ -477,7 +479,7 @@
                     </div>
                 </div>
                 <div>
-                    <div class="text-xs text-ink-500 mb-1">Render-blocking</div>
+                    <div class="text-xs text-ink-500 mb-1">{{ __('vitals::vitals.audit_detail.render_blocking') }}</div>
                     @php $rbt = $audit->details['render_blocking_time_ms'] ?? null; @endphp
                     <div @class([
                         'text-2xl font-bold',
@@ -491,7 +493,7 @@
             @if (! empty($audit->details['lcp_element']['selector']))
                 <div class="mt-6 pt-4 border-t border-ink-200/60 dark:border-ink-800/60">
                     <div class="text-xs text-ink-500 mb-2 flex items-center gap-1.5">
-                        <flux:icon.heart class="size-3.5 text-accent-500" /> LCP element
+                        <flux:icon.heart class="size-3.5 text-accent-500" /> {{ __('vitals::vitals.audit_detail.lcp_element') }}
                     </div>
                     <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200/60 dark:border-ink-800/60 overflow-x-auto">{{ $audit->details['lcp_element']['selector'] }}</code>
                     @if (! empty($audit->details['lcp_element']['snippet']))
@@ -507,7 +509,7 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.archive-box class="size-5 text-sky-500" />
-                <h2 class="text-base font-semibold">Resource breakdown</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.resource_breakdown') }}</h2>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
                 @php
@@ -543,9 +545,9 @@
 
                 <flux:table>
                     <flux:table.columns>
-                        <flux:table.column>Type</flux:table.column>
-                        <flux:table.column align="end">Count</flux:table.column>
-                        <flux:table.column align="end">Size</flux:table.column>
+                        <flux:table.column>{{ __('vitals::vitals.tables.type') }}</flux:table.column>
+                        <flux:table.column align="end">{{ __('vitals::vitals.tables.count') }}</flux:table.column>
+                        <flux:table.column align="end">{{ __('vitals::vitals.tables.size') }}</flux:table.column>
                     </flux:table.columns>
                     <flux:table.rows>
                         @foreach ($audit->details['resource_summary'] as $row)
@@ -566,15 +568,15 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.globe-alt class="size-5 text-pink-500" />
-                <h2 class="text-base font-semibold">Third-party impact</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.third_party_title') }}</h2>
                 <flux:badge color="pink" size="sm">{{ count($audit->details['third_parties']) }}</flux:badge>
             </div>
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column>Entity</flux:table.column>
-                    <flux:table.column align="end">Transfer</flux:table.column>
-                    <flux:table.column align="end">Blocking</flux:table.column>
-                    <flux:table.column align="end">Main thread</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.entity') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.transfer') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.blocking') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.main_thread') }}</flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
                     @foreach ($audit->details['third_parties'] as $tp)
@@ -602,7 +604,7 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.cpu-chip class="size-5 text-violet-500" />
-                <h2 class="text-base font-semibold">Main thread breakdown</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.main_thread_title') }}</h2>
             </div>
             @php
                 $mtCategories = collect($audit->details['main_thread'])->pluck('category')->all();
@@ -631,14 +633,14 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.clock class="size-5 text-amber-500" />
-                <h2 class="text-base font-semibold">Slowest requests</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.slowest_requests_title') }}</h2>
             </div>
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column>URL</flux:table.column>
-                    <flux:table.column align="end">Type</flux:table.column>
-                    <flux:table.column align="end">Size</flux:table.column>
-                    <flux:table.column align="end">Duration</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.url') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.type') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.size') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.duration') }}</flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
                     @foreach (array_slice($audit->details['slow_requests'], 0, 10) as $req)
@@ -672,10 +674,10 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="archive-box" class="size-5 text-amber-500" />
-                <h2 class="text-base font-semibold">Cache policy issues</h2>
-                <flux:badge color="amber" size="sm">{{ count($audit->details['cache_policy']) }} resource(s)</flux:badge>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.cache_policy_title') }}</h2>
+                <flux:badge color="amber" size="sm">{{ count($audit->details['cache_policy']) }}</flux:badge>
             </div>
-            <p class="text-sm text-ink-500 mb-3">Resources with cache TTL under 30 days. Long-term caching reduces repeat-visit load times.</p>
+            <p class="text-sm text-ink-500 mb-3">{{ __('vitals::vitals.audit_detail.cache_policy_body') }}</p>
             <ul class="space-y-1.5">
                 @foreach (array_slice($audit->details['cache_policy'], 0, 8) as $row)
                     @php $ttl = (int) ($row['ttl_seconds'] ?? 0); @endphp
@@ -683,7 +685,7 @@
                         <code class="truncate flex-1 text-ink-700 dark:text-ink-300">{{ $row['url'] }}</code>
                         <flux:badge color="amber" size="sm">
                             @if ($ttl === 0)
-                                no cache
+                                {{ __('vitals::vitals.audit_detail.no_cache') }}
                             @elseif ($ttl < 3600)
                                 {{ $ttl }}s
                             @elseif ($ttl < 86400)
@@ -703,22 +705,22 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="beaker" class="size-5 text-sky-500" />
-                <h2 class="text-base font-semibold">Diagnostics</h2>
+                <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.diagnostics_title') }}</h2>
             </div>
             <dl class="space-y-3 text-sm">
                 @if (! empty($audit->details['critical_chain_depth']))
                     @php $depth = (int) $audit->details['critical_chain_depth']; @endphp
                     <div class="flex items-center justify-between">
-                        <dt class="text-ink-500 dark:text-ink-400">Critical request chain depth</dt>
+                        <dt class="text-ink-500 dark:text-ink-400">{{ __('vitals::vitals.audit_detail.critical_chain_depth') }}</dt>
                         <dd>
-                            <flux:badge color="{{ $depth > 3 ? 'rose' : ($depth > 2 ? 'amber' : 'emerald') }}" size="sm">{{ $depth }} levels</flux:badge>
+                            <flux:badge color="{{ $depth > 3 ? 'rose' : ($depth > 2 ? 'amber' : 'emerald') }}" size="sm">{{ $depth }} {{ __('vitals::vitals.audit_detail.levels') }}</flux:badge>
                         </dd>
                     </div>
                 @endif
 
                 @if (! empty($audit->details['bootup_time']))
                     <div>
-                        <dt class="text-ink-500 dark:text-ink-400 mb-1.5">Top JS execution costs</dt>
+                        <dt class="text-ink-500 dark:text-ink-400 mb-1.5">{{ __('vitals::vitals.audit_detail.top_js_costs') }}</dt>
                         <dd>
                             <ul class="space-y-1">
                                 @foreach (array_slice($audit->details['bootup_time'], 0, 5) as $b)

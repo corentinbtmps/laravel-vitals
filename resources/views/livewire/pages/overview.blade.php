@@ -186,7 +186,7 @@
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <flux:icon.bell class="size-5 text-accent-500" />
-                    <h2 class="text-base font-semibold">Active alerts</h2>
+                    <h2 class="text-base font-semibold">{{ __('vitals::vitals.overview_page.active_alerts') }}</h2>
                 </div>
                 <flux:badge color="rose">{{ count($activeAlerts) }}</flux:badge>
             </div>
@@ -200,7 +200,7 @@
                         <flux:callout.text>
                             {{ $alert['when']->diffForHumans() }} —
                             @if ($alert['link'])
-                                <a href="{{ $alert['link'] }}" class="underline">View audit</a>
+                                <a href="{{ $alert['link'] }}" class="underline">{{ __('vitals::vitals.actions.view_audit') }}</a>
                             @endif
                         </flux:callout.text>
                     </flux:callout>
@@ -221,22 +221,22 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-base font-semibold">Top issues to fix</h3>
-                    <p class="text-sm text-ink-500 mt-1">Most impactful issues to fix first</p>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.overview_page.top_issues') }}</h3>
+                    <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.overview_page.top_issues_subtitle') }}</p>
                 </div>
             </div>
             @if ($topRecommendations->isEmpty())
-                <p class="text-sm text-ink-500">No recommendations yet. Run an audit to see suggestions.</p>
+                <p class="text-sm text-ink-500">{{ __('vitals::vitals.overview_page.no_recommendations') }}</p>
             @else
                 <ul class="space-y-3">
                     @foreach ($topRecommendations as $reco)
                         <li class="flex items-start gap-3">
-                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($reco->severity) }}" size="sm">
-                                {{ $reco->severity }}
+                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($reco->severity)->fluxBadgeColor() }}" size="sm">
+                                {{ \LaravelVitals\Enums\Severity::fromString($reco->severity)->label() }}
                             </flux:badge>
                             <div class="flex-1 min-w-0">
                                 <div class="text-sm font-medium">{{ __($reco->title_key) }}</div>
-                                <div class="text-xs text-ink-500">{{ $reco->occurrences }} occurrence(s)</div>
+                                <div class="text-xs text-ink-500">{{ $reco->occurrences }} {{ __('vitals::vitals.overview_page.occurrence') }}</div>
                             </div>
                         </li>
                     @endforeach
@@ -252,7 +252,7 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-base font-semibold">Recent audits</h3>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.overview_page.recent_audits') }}</h3>
                     <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }}</p>
                 </div>
             </div>

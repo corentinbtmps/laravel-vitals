@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.urls.title') }}</h1>
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.urls.subtitle') }}</p>
         </div>
-        <flux:badge color="zinc">{{ $urls->count() }} configured</flux:badge>
+        <flux:badge color="zinc">{{ $urls->count() }} {{ __('vitals::vitals.overview_page.configured') }}</flux:badge>
     </div>
 
     @if ($urls->isEmpty())
@@ -30,7 +30,7 @@
         @if ($pinnedUrls->isNotEmpty())
             <div>
                 <div class="flex items-baseline gap-3 mb-3">
-                    <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-amber-600 dark:text-amber-500">Favorites</h2>
+                    <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-amber-600 dark:text-amber-500">{{ __('vitals::vitals.urls_page.favorites') }}</h2>
                     <span class="text-xs text-ink-500">{{ $pinnedUrls->count() }}</span>
                 </div>
                 <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
@@ -42,9 +42,9 @@
                             <flux:table.column align="center">A11y</flux:table.column>
                             <flux:table.column align="center">BP</flux:table.column>
                             <flux:table.column align="center">SEO</flux:table.column>
-                            <flux:table.column align="center">Trend</flux:table.column>
-                            <flux:table.column align="end">Last</flux:table.column>
-                            <flux:table.column align="end">Audits</flux:table.column>
+                            <flux:table.column align="center">{{ __('vitals::vitals.tables.trend') }}</flux:table.column>
+                            <flux:table.column align="end">{{ __('vitals::vitals.tables.last') }}</flux:table.column>
+                            <flux:table.column align="end">{{ __('vitals::vitals.tables.audits') }}</flux:table.column>
                             <flux:table.column align="end" class="w-20"></flux:table.column>
                         </flux:table.columns>
                         <flux:table.rows>
@@ -132,7 +132,7 @@
 
                                     {{-- Action --}}
                                     <flux:table.cell align="end">
-                                        <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
+                                        <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">{{ __('vitals::vitals.actions.view') }}</flux:button>
                                     </flux:table.cell>
                                 </flux:table.row>
                             @endforeach
@@ -146,7 +146,7 @@
         <div class="{{ $pinnedUrls->isNotEmpty() ? 'mt-8' : '' }}">
             @if ($pinnedUrls->isNotEmpty())
                 <div class="flex items-baseline gap-3 mb-3">
-                    <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-400">All URLs</h2>
+                    <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-400">{{ __('vitals::vitals.urls_page.all_urls') }}</h2>
                     <span class="text-xs text-ink-500">{{ $allUrls->count() }}</span>
                 </div>
             @endif
@@ -159,9 +159,9 @@
                         <flux:table.column align="center">A11y</flux:table.column>
                         <flux:table.column align="center">BP</flux:table.column>
                         <flux:table.column align="center">SEO</flux:table.column>
-                        <flux:table.column align="center">Trend</flux:table.column>
-                        <flux:table.column align="end">Last</flux:table.column>
-                        <flux:table.column align="end">Audits</flux:table.column>
+                        <flux:table.column align="center">{{ __('vitals::vitals.tables.trend') }}</flux:table.column>
+                        <flux:table.column align="end">{{ __('vitals::vitals.tables.last') }}</flux:table.column>
+                        <flux:table.column align="end">{{ __('vitals::vitals.tables.audits') }}</flux:table.column>
                         <flux:table.column align="end" class="w-20"></flux:table.column>
                     </flux:table.columns>
                     <flux:table.rows>
@@ -257,7 +257,7 @@
 
                                 {{-- Action --}}
                                 <flux:table.cell align="end">
-                                    <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">View</flux:button>
+                                    <flux:button href="{{ route('vitals.url', $u->id) }}" variant="ghost" size="sm" icon="arrow-right">{{ __('vitals::vitals.actions.view') }}</flux:button>
                                 </flux:table.cell>
                             </flux:table.row>
                         @endforeach

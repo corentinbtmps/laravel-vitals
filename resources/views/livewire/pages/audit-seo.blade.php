@@ -81,7 +81,7 @@
                 @foreach ($seoRecos as $r)
                     <li class="rounded-lg border border-ink-100 dark:border-ink-800 p-4">
                         <div class="flex items-start gap-3">
-                            <flux:badge color="{{ \LaravelVitals\Support\SeverityClasses::fluxBadgeColor($r->severity) }}" size="sm">{{ $r->severity }}</flux:badge>
+                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->label() }}</flux:badge>
                             <div>
                                 <div class="font-medium text-sm">{{ __($r->title_key) }}</div>
                                 <div class="text-xs text-ink-500 mt-1">{{ __($r->description_key, $r->translation_params ?? []) }}</div>

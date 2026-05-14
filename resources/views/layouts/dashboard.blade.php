@@ -125,7 +125,7 @@
         icon="moon"
         x-data
         x-on:click="$flux.dark = ! $flux.dark"
-        tooltip="Toggle theme"
+        :tooltip="__('vitals::vitals.layout.toggle_theme')"
     />
 
     {{-- Mobile: search icon + burger menu (shown on max-lg screens) --}}
@@ -144,7 +144,7 @@
             type="button"
             x-on:click="open = !open"
             class="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
-            aria-label="Open navigation"
+            aria-label="{{ __('vitals::vitals.layout.open_navigation') }}"
         >
             <flux:icon.bars-3 x-show="!open" class="size-5" />
             <flux:icon.x-mark x-show="open" class="size-5" x-cloak />

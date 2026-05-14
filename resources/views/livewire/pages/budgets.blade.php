@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.budgets.title') }}</h1>
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.budgets.subtitle') }}</p>
         </div>
-        <flux:badge color="zinc">{{ count($budgets) }} metrics</flux:badge>
+        <flux:badge color="zinc">{{ count($budgets) }} {{ __('vitals::vitals.budgets_page.metrics') }}</flux:badge>
     </div>
 
     @if (empty($budgets))
@@ -31,9 +31,9 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column>Metric</flux:table.column>
-                    <flux:table.column align="end">Warning</flux:table.column>
-                    <flux:table.column align="end">Critical</flux:table.column>
+                    <flux:table.column>{{ __('vitals::vitals.tables.metric') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.warning') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('vitals::vitals.tables.critical') }}</flux:table.column>
                 </flux:table.columns>
                 <flux:table.rows>
                     @foreach ($budgets as $metric => $thresholds)
@@ -58,7 +58,7 @@
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-base font-semibold">Per-URL overrides</h3>
+                    <h3 class="text-base font-semibold">{{ __('vitals::vitals.budgets_page.per_url_overrides') }}</h3>
                 </div>
             </div>
             <pre class="text-xs bg-ink-50 dark:bg-ink-950 p-4 rounded-2xl overflow-x-auto border border-ink-200/60 dark:border-ink-800/60"><code>{{ json_encode($perUrl, JSON_PRETTY_PRINT) }}</code></pre>
@@ -66,6 +66,6 @@
     @endif
 
     <p class="text-xs text-ink-500 text-center">
-        Edit <code class="px-1.5 py-0.5 rounded bg-ink-100 dark:bg-ink-800">config/vitals.php</code> to change budgets.
+        {!! __('vitals::vitals.budgets_page.edit_config', ['file' => '<code class="px-1.5 py-0.5 rounded bg-ink-100 dark:bg-ink-800">config/vitals.php</code>']) !!}
     </p>
 </div>
