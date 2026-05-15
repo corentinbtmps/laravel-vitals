@@ -67,7 +67,7 @@
                 @foreach ($grouped as $urlPath => $group)
                     <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 overflow-hidden">
                         {{-- URL header — slightly tinted to visually separate from the body --}}
-                        <div class="flex items-center justify-between px-5 py-3 border-b border-ink-200 dark:border-ink-800 bg-canvas dark:bg-ink-800/40">
+                        <div class="flex items-center justify-between px-5 py-3 border-b border-ink-200 dark:border-ink-800 bg-ink-50 dark:bg-ink-800">
                             <div class="flex items-center gap-2 min-w-0">
                                 <flux:icon.link class="size-4 text-ink-400 shrink-0" />
                                 <span class="font-medium text-ink-900 dark:text-ink-100 truncate">{{ $group['url_label'] }}</span>
