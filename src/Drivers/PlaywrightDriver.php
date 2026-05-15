@@ -42,7 +42,7 @@ final readonly class PlaywrightDriver implements LighthouseDriver
         $appUrl = rtrim((string) config('app.url', 'http://localhost'), '/');
         $target = $appUrl . '/' . ltrim($url->path, '/');
 
-        $device = preg_replace('/[^a-z]/', '', strtolower($options->device)) ?: 'mobile';
+        $device = $options->device->value;
         $headers = json_encode($options->extraHeaders, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
 
         $command = sprintf(

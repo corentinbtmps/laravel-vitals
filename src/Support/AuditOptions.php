@@ -16,7 +16,7 @@ final readonly class AuditOptions
      * @param array<string, string> $extraHeaders
      */
     public function __construct(
-        public string $device,
+        public Device $device,
         public array $categories,
         public array $extraHeaders,
         public int $timeoutSeconds,
@@ -27,17 +27,16 @@ final readonly class AuditOptions
     public static function default(): self
     {
         return new self(
-            device: 'mobile',
+            device: Device::Mobile,
             categories: ['performance', 'accessibility', 'best_practices', 'seo'],
             extraHeaders: [],
             timeoutSeconds: 120,
         );
     }
 
-    public function withDevice(string|Device $device): self
+    public function withDevice(Device $device): self
     {
-        $deviceStr = $device instanceof Device ? $device->value : $device;
-        return new self($deviceStr, $this->categories, $this->extraHeaders, $this->timeoutSeconds, $this->auditId);
+        return new self($device, $this->categories, $this->extraHeaders, $this->timeoutSeconds, $this->auditId);
     }
 
     public function withExtraHeader(string $name, string $value): self

@@ -99,8 +99,8 @@ final readonly class LocalLighthouseDriver implements LighthouseDriver
             $options->categories,
         ));
 
-        // $options->device is a controlled enum value ('mobile'|'desktop') — safe without quoting.
-        $device = preg_replace('/[^a-z]/', '', strtolower($options->device));
+        // $options->device is a Device enum ('mobile'|'desktop') — safe without quoting.
+        $device = $options->device->value;
 
         return sprintf(
             '%s %s --output=json --output-path=stdout --quiet --chrome-flags=%s --extra-headers=%s --form-factor=%s --throttling-method=simulate %s',

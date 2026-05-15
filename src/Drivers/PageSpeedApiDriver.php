@@ -43,7 +43,7 @@ final class PageSpeedApiDriver implements LighthouseDriver
 
         $query = [
             'url'      => $target,
-            'strategy' => $options->device === 'desktop' ? 'desktop' : 'mobile',
+            'strategy' => $options->device === \LaravelVitals\Enums\Device::Desktop ? 'desktop' : 'mobile',
             'key'      => $apiKey,
         ];
 

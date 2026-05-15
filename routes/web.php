@@ -51,9 +51,6 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/audits/{audit}/seo',                AuditSeo::class)            ->name('vitals.audit.seo');
             Route::get('/budgets',                           Budgets::class)             ->name('vitals.budgets');
             Route::get('/issues',                            Issues::class)              ->name('vitals.issues');
-            // Backward-compat redirects (301) — keep external bookmarks working
-            Route::get('/insights',        fn () => redirect()->route('vitals.issues', ['tab' => 'top'], 301))  ->name('vitals.insights');
-            Route::get('/recommendations', fn () => redirect()->route('vitals.issues', ['tab' => 'all'], 301))  ->name('vitals.recommendations');
             Route::get('/learn',                             Learn::class)               ->name('vitals.learn');
             Route::get('/rum',                               Rum::class)                 ->name('vitals.rum');
             Route::get('/queries',                           Queries::class)             ->name('vitals.queries');

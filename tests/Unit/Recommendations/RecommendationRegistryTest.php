@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use LaravelVitals\Enums\Severity;
 use LaravelVitals\Recommendations\RecommendationRegistry;
 
 it('exposes descriptors for known Lighthouse audit keys', function (): void {
@@ -10,7 +11,7 @@ it('exposes descriptors for known Lighthouse audit keys', function (): void {
     $unused = $reg->get('unused-javascript');
     expect($unused)->not->toBeNull()
         ->and($unused->category)->toBe('performance')
-        ->and($unused->severity)->toBeIn(['info', 'warning', 'critical'])
+        ->and($unused->severity)->toBeInstanceOf(Severity::class)
         ->and($unused->titleKey)->toBe('vitals::vitals.recommendations.unused-javascript.title');
 });
 

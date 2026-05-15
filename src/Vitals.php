@@ -59,7 +59,7 @@ final class Vitals
      * Run a single audit. Synchronous execution by default; pass $sync = false
      * to dispatch via the queue instead.
      */
-    public function audit(Url|string $urlOrLabel, ?string $device = null, bool $sync = true): Audit
+    public function audit(Url|string $urlOrLabel, ?Device $device = null, bool $sync = true): Audit
     {
         $this->seeder->sync();
 
@@ -69,13 +69,13 @@ final class Vitals
 
         if ($device === null) {
             if ($url->device === Device::Both) {
-                $this->audit($url, Device::Mobile->value, $sync);
-                return $this->audit($url, Device::Desktop->value, $sync);
+                $this->audit($url, Device::Mobile, $sync);
+                return $this->audit($url, Device::Desktop, $sync);
             }
-            $device = $url->device->value;
+            $device = $url->device;
         }
 
-        if (! in_array($device, [Device::Mobile->value, Device::Desktop->value], true)) {
+        if (! in_array($device, [Device::Mobile, Device::Desktop], true)) {
             throw new InvalidArgumentException("Device must be 'mobile' or 'desktop'.");
         }
 
@@ -114,14 +114,14 @@ final class Vitals
     /**
      * Audit every enabled URL via Bus::batch.
      */
-    public function auditAll(?string $device = null): Batch
+    public function auditAll(?Device $device = null): Batch
     {
         $this->seeder->sync();
 
         $jobs = [];
 
         foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $devices = $device !== null ? [$device] : ($url->device === Device::Both ? [Device::Mobile->value, Device::Desktop->value] : [$url->device->value]);
+            $devices = $device !== null ? [$device] : ($url->device === Device::Both ? [Device::Mobile, Device::Desktop] : [$url->device]);
 
             foreach ($devices as $effectiveDevice) {
                 $audit = Audit::create([

@@ -231,8 +231,8 @@
                 <ul class="space-y-3">
                     @foreach ($topRecommendations as $reco)
                         <li class="flex items-start gap-3">
-                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($reco->severity)->fluxBadgeColor() }}" size="sm">
-                                {{ \LaravelVitals\Enums\Severity::fromString($reco->severity)->label() }}
+                            <flux:badge color="{{ $reco->severity->fluxBadgeColor() }}" size="sm">
+                                {{ $reco->severity->label() }}
                             </flux:badge>
                             <div class="flex-1 min-w-0">
                                 <div class="text-sm font-medium">{{ __($reco->title_key) }}</div>

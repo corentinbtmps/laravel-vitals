@@ -201,7 +201,7 @@
                 <ul class="space-y-2">
                     @foreach ($frequentRecos as $r)
                         <li class="flex items-center gap-3">
-                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->label() }}</flux:badge>
+                            <flux:badge color="{{ $r->severity->fluxBadgeColor() }}" size="sm">{{ $r->severity->label() }}</flux:badge>
                             <span class="flex-1 text-sm">{{ __($r->title_key) }}</span>
                             <span class="text-xs text-ink-500">{{ $r->occurrences }}×</span>
                         </li>

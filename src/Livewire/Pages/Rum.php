@@ -7,6 +7,7 @@ namespace LaravelVitals\Livewire\Pages;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Enums\Period;
 use LaravelVitals\Models\RumEvent;
 use Livewire\Component;
@@ -21,7 +22,7 @@ final class Rum extends Component
 {
     public Period $period = Period::D7;
 
-    public string $device = 'all';
+    public ?Device $device = null;
 
     public function setPeriod(string $period): void
     {
@@ -30,10 +31,12 @@ final class Rum extends Component
 
     public function setDevice(string $device): void
     {
-        if (! in_array($device, ['all', 'mobile', 'desktop'], true)) {
-            return;
-        }
-        $this->device = $device;
+        $this->device = match ($device) {
+            'mobile'  => Device::Mobile,
+            'desktop' => Device::Desktop,
+            'all'     => null,
+            default   => $this->device,
+        };
     }
 
     private function periodCutoff(): Carbon
@@ -51,8 +54,8 @@ final class Rum extends Component
         $cutoff = $this->periodCutoff();
 
         $baseQuery = RumEvent::query()->where('occurred_at', '>=', $cutoff);
-        if ($this->device !== 'all') {
-            $baseQuery->where('device', $this->device);
+        if ($this->device !== null) {
+            $baseQuery->where('device', $this->device->value);
         }
 
         $totalEvents = (clone $baseQuery)->count();
@@ -121,8 +124,8 @@ final class Rum extends Component
             ->where('occurred_at', '>=', $cutoff)
             ->whereIn('metric', ['LCP', 'INP', 'CLS']);
 
-        if ($this->device !== 'all') {
-            $baseQuery->where('device', $this->device);
+        if ($this->device !== null) {
+            $baseQuery->where('device', $this->device->value);
         }
 
         $rows = $baseQuery

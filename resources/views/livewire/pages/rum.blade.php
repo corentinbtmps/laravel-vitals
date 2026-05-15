@@ -9,12 +9,13 @@
             {{-- Device filter --}}
             <div class="flex gap-1">
                 @foreach (['all', 'mobile', 'desktop'] as $d)
+                    @php $deviceActive = $d === 'all' ? $device === null : $device?->value === $d; @endphp
                     <button
                         wire:click="setDevice('{{ $d }}')"
                         @class([
                             'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                            'bg-accent-500 text-white'                                                                        => $device === $d,
-                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $device !== $d,
+                            'bg-accent-500 text-white'                                                                        => $deviceActive,
+                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => ! $deviceActive,
                         ])
                     >{{ ucfirst($d) }}</button>
                 @endforeach

@@ -23,8 +23,8 @@
             <div class="space-y-2">
                 @foreach ($quickWins as $w)
                     <flux:callout
-                        variant="{{ \LaravelVitals\Enums\Severity::fromString($w->severity)->fluxCalloutVariant() }}"
-                        icon="{{ \LaravelVitals\Enums\Severity::fromString($w->severity)->fluxCalloutIcon() }}"
+                        variant="{{ $w->severity->fluxCalloutVariant() }}"
+                        icon="{{ $w->severity->fluxCalloutIcon() }}"
                     >
                         <flux:callout.heading>{{ __($w->title_key) }}</flux:callout.heading>
                         <flux:callout.text>

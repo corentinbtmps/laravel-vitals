@@ -338,7 +338,7 @@
                             <div class="space-y-3">
                                 @foreach ($groupedRecos[$category] as $reco)
                                     @php
-                                        $sev          = \LaravelVitals\Enums\Severity::fromString($reco->severity);
+                                        $sev          = $reco->severity;
                                         $sevFluxColor = $sev->fluxBadgeColor();
                                         $sevIcon      = $sev->fluxCalloutIcon();
                                     @endphp
@@ -354,7 +354,7 @@
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2 mb-1 flex-wrap">
                                                     <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_params ?? []) }}</h4>
-                                                    <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($reco->severity)->label() }}</flux:badge>
+                                                    <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $reco->severity->label() }}</flux:badge>
                                                 </div>
                                                 <p class="text-sm text-ink-500 dark:text-ink-400">{{ __($reco->description_key, $reco->translation_params ?? []) }}</p>
 

@@ -66,7 +66,7 @@
         <flux:navbar.item
             href="{{ route('vitals.issues') }}"
             icon="exclamation-triangle"
-            :current="request()->routeIs('vitals.issues') || request()->routeIs('vitals.insights') || request()->routeIs('vitals.recommendations')"
+            :current="request()->routeIs('vitals.issues')"
         >{{ __('vitals::vitals.nav.issues') }}</flux:navbar.item>
         @endif
 
@@ -197,7 +197,7 @@
                 </a>
                 @endif
                 @if(Route::has('vitals.issues'))
-                @php $issuesActive = request()->routeIs('vitals.issues') || request()->routeIs('vitals.insights') || request()->routeIs('vitals.recommendations'); @endphp
+                @php $issuesActive = request()->routeIs('vitals.issues'); @endphp
                 <a href="{{ route('vitals.issues') }}"
                    @class([
                        'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',

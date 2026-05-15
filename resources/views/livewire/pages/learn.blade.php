@@ -86,10 +86,10 @@
                         <div class="flex items-center gap-2 flex-wrap">
                             <span @class([
                                 'size-2 rounded-full',
-                                \LaravelVitals\Enums\Severity::fromString($entry['descriptor']->severity)->dotBackground(),
+                                $entry['descriptor']->severity->dotBackground(),
                             ])></span>
                             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
-                            <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($entry['descriptor']->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($entry['descriptor']->severity)->label() }}</flux:badge>
+                            <flux:badge color="{{ $entry['descriptor']->severity->fluxBadgeColor() }}" size="sm">{{ $entry['descriptor']->severity->label() }}</flux:badge>
                             <code class="ml-auto text-[11px] font-mono text-ink-400">{{ $entry['key'] }}</code>
                         </div>
 

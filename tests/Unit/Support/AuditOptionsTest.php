@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Support\AuditOptions;
 
 it('exposes immutable defaults', function (): void {
     $options = AuditOptions::default();
 
-    expect($options->device)->toBe('mobile')
+    expect($options->device)->toBe(Device::Mobile)
         ->and($options->categories)->toBe(['performance', 'accessibility', 'best_practices', 'seo'])
         ->and($options->extraHeaders)->toBe([]);
 });

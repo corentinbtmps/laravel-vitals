@@ -94,7 +94,7 @@ final class RecommendationRegistry
             auditKey:       $key,
             source:         $source,
             category:       $category,
-            severity:       $severity->value,
+            severity:       $severity,
             titleKey:       "vitals::vitals.recommendations.$key.title",
             descriptionKey: "vitals::vitals.recommendations.$key.description",
         );

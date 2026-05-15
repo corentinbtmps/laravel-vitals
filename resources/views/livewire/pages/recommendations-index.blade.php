@@ -34,7 +34,7 @@
                                 <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell>
-                                <flux:badge color="{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->fluxBadgeColor() }}" size="sm">{{ \LaravelVitals\Enums\Severity::fromString($r->severity)->label() }}</flux:badge>
+                                <flux:badge color="{{ $r->severity->fluxBadgeColor() }}" size="sm">{{ $r->severity->label() }}</flux:badge>
                             </flux:table.cell>
                             <flux:table.cell align="end">
                                 <span class="font-semibold tabular-nums">{{ $r->occurrences }}</span>

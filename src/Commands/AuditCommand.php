@@ -6,6 +6,7 @@ namespace LaravelVitals\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
+use LaravelVitals\Enums\Device;
 use LaravelVitals\Enums\Severity;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
@@ -69,8 +70,8 @@ final class AuditCommand extends Command
             return self::FAILURE;
         }
 
-        $device = $this->option('device');
-        $device = is_string($device) && $device !== '' ? $device : 'mobile';
+        $rawDevice = $this->option('device');
+        $device = Device::tryFrom(is_string($rawDevice) ? $rawDevice : '') ?? Device::Mobile;
 
         // Concurrency lock — prevent parallel audits of the same URL.
         $urlId  = $url !== null ? $url->id : md5($label);
@@ -129,7 +130,7 @@ final class AuditCommand extends Command
     private function handleAll(Vitals $vitals): int
     {
         $rawDevice = $this->option('device');
-        $device = is_string($rawDevice) && $rawDevice !== '' ? $rawDevice : 'mobile';
+        $device = Device::tryFrom(is_string($rawDevice) ? $rawDevice : '') ?? Device::Mobile;
 
         if ($this->option('sync')) {
             // Synchronous mode: build one audit per URL ourselves and run them inline.
