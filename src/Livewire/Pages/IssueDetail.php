@@ -35,18 +35,34 @@ final class IssueDetail extends Component
         $registry   = new RecommendationRegistry();
         $descriptor = $registry->get($this->auditKey);
 
-        if ($descriptor === null) {
-            abort(404);
-        }
-
-        $docs = RecommendationDocs::for($this->auditKey);
-
         /** @var Collection<int, Recommendation> $recommendations */
         $recommendations = Recommendation::query()
             ->where('audit_key', $this->auditKey)
             ->with('audit.url')
             ->orderByDesc('created_at')
             ->get();
+
+        // If the registry doesn't know this audit_key, fall back to the first
+        // stored recommendation row so Lighthouse audits we haven't curated
+        // still get a usable deep view. Only 404 when neither source has data.
+        if ($descriptor === null) {
+            $first = $recommendations->first();
+
+            if ($first === null) {
+                abort(404);
+            }
+
+            $descriptor = new \LaravelVitals\Recommendations\RecommendationDescriptor(
+                auditKey:       $this->auditKey,
+                source:         'lighthouse',
+                category:       'performance',
+                severity:       $first->severity,
+                titleKey:       $first->title_key,
+                descriptionKey: $first->description_key,
+            );
+        }
+
+        $docs = RecommendationDocs::for($this->auditKey);
 
         $occurrenceCount = $recommendations->count();
 
