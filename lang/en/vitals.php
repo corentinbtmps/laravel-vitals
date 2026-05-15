@@ -519,6 +519,8 @@ return [
         'critical'       => 'Critical',
         'route'          => 'Route',
         'samples'        => 'Samples',
+        'global'         => 'Global',
+        'perf_grade'     => 'Perf',
     ],
     'actions' => [
         'view'         => 'View',
@@ -569,6 +571,7 @@ return [
         'levels'                 => 'levels',
         'no_cache'               => 'no cache',
         'lcp_element'            => 'LCP element',
+        'repeated_queries'       => 'Repeated queries',
     ],
     'url_detail' => [
         'no_audits'              => 'No completed audits yet for this URL.',
@@ -614,6 +617,15 @@ return [
         'issue'                  => 'issue',
         'showing'                => 'Showing',
         'all_categories_label'   => 'All categories',
+        'active_in_app'          => ':count active in your app',
+    ],
+    'issue_detail' => [
+        'occurrences_label'      => 'occurrences',
+        'where_this_happens'     => 'Where this happens',
+        'view_all_occurrences'   => 'View all occurrences',
+        'unknown_date'           => 'Unknown date',
+        'no_occurrences_title'   => 'No active occurrences',
+        'no_occurrences_body'    => 'This issue has not been detected in any recent audit.',
     ],
     'budgets_page' => [
         'per_url_overrides'      => 'Per-URL overrides',

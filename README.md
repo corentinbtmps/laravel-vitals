@@ -170,7 +170,9 @@ php artisan vitals:audit --all --sync   # all URLs, synchronous (CI-friendly)
 
 When Lighthouse loads a page, the package captures a server-side snapshot: query count, total query time, unique queries, N+1 suspect flag (triggered when queries_count / queries_unique ≥ 10), peak memory, views rendered, jobs dispatched, cache hits/misses, and any slow queries that exceed the configured threshold (default: 50ms).
 
-This answers questions that Lighthouse alone cannot: "Why is our LCP slow — is it the database?" or "Did that PR add a new N+1 query?"
+When N+1 queries are detected, the package also stores up to 200 normalized SQL patterns per request with the exact PHP file and line that triggered each query (skipping vendor and package frames to always point at your own code). The audit detail and issue detail pages surface the top 3 repeated patterns with occurrence counts and caller locations.
+
+This answers questions that Lighthouse alone cannot: "Why is our LCP slow — is it the database?" or "Which exact line in my controller is causing 42 repeated queries?"
 
 By default, telemetry is only captured during audit runs — zero overhead for real visitors. Set `telemetry.always_capture = true` to sample a configurable percentage of all requests (default 5%), similar to how Laravel Pulse works.
 
@@ -260,7 +262,9 @@ Vitals::authorize(fn ($user) => $user?->is_admin ?? false);
 
 `/vitals/issues` has two tabs. **Top issues** shows cross-URL quick wins, URLs that are currently worsening or improving, and third-party script cost breakdowns. **All recommendations** aggregates every recommendation across all audits, sorted by frequency — making it easy to find the one fix that would improve the most pages at once.
 
-Each recommendation includes severity (info / warning / critical), category (Performance, Accessibility, Best Practices, SEO), the source code reference (file + line), a one-sentence fix hint, and links to the relevant web.dev article and Laravel documentation. The package covers Lighthouse findings, Laravel-specific issues (missing `config:cache`, debug mode in production, sync queue, disabled OPcache), and backend signals (N+1 queries, slow queries, large payloads).
+Each recommendation row links to `/vitals/issues/{audit_key}` — a deep view that shows every occurrence grouped by URL, with the exact file and line where the issue originates in your code. For N+1 queries, this page lists the top 3 repeated SQL patterns with occurrence counts and caller location.
+
+Each recommendation includes severity (info / warning / critical), category (Performance, Accessibility, Best Practices, SEO), the source code reference (file + line), a one-sentence fix hint, and links to the relevant web.dev article and Laravel documentation. The package covers Lighthouse findings, Laravel-specific issues (missing `config:cache`, debug mode in production, sync queue, disabled OPcache), and backend signals (N+1 queries with SQL attribution, slow queries, large payloads).
 
 ---
 

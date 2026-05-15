@@ -22,6 +22,8 @@ use LaravelVitals\Support\BackendTelemetrySnapshot;
  */
 final class TelemetryRecorder
 {
+    private const QUERIES_LOG_CAP = 200;
+
     private bool $active = false;
 
     private ?string $auditId = null;
@@ -37,6 +39,9 @@ final class TelemetryRecorder
     private int $cacheMisses = 0;
 
     private int $jobsDispatched = 0;
+
+    /** @var array<int, array{sql: string, bindings_count: int, time_ms: float, caller_file: string|null, caller_line: int|null}> */
+    private array $queriesLog = [];
 
     public function __construct()
     {
@@ -55,14 +60,71 @@ final class TelemetryRecorder
         $this->cacheHits = 0;
         $this->cacheMisses = 0;
         $this->jobsDispatched = 0;
-
+        $this->queriesLog = [];
     }
 
     public function recordQuery(QueryExecuted $event): void
     {
         if ($this->active) {
             $this->queries->record($event);
+
+            if (count($this->queriesLog) < self::QUERIES_LOG_CAP) {
+                $caller = $this->resolveCaller();
+                $this->queriesLog[] = [
+                    'sql'            => $this->normalizeSql($event->sql),
+                    'bindings_count' => count($event->bindings),
+                    'time_ms'        => $event->time,
+                    'caller_file'    => $caller['file'],
+                    'caller_line'    => $caller['line'],
+                ];
+            }
         }
+    }
+
+    /**
+     * Walk the backtrace and return the first frame that belongs to the host
+     * application (i.e. not vendor/ and not the package's own src/).
+     *
+     * @return array{file: string|null, line: int|null}
+     */
+    private function resolveCaller(): array
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 25);
+
+        foreach ($trace as $frame) {
+            $file = $frame['file'] ?? '';
+
+            if ($file === '') {
+                continue;
+            }
+
+            if (
+                str_contains($file, '/vendor/') ||
+                str_contains($file, '/laravel-vitals/src/')
+            ) {
+                continue;
+            }
+
+            $relativeFile = str_replace(base_path() . '/', '', $file);
+
+            return [
+                'file' => $relativeFile,
+                'line' => $frame['line'] ?? null,
+            ];
+        }
+
+        return ['file' => null, 'line' => null];
+    }
+
+    /**
+     * Normalize SQL by replacing numeric literals with ? for pattern grouping.
+     * Caps at 500 chars.
+     */
+    private function normalizeSql(string $sql): string
+    {
+        $normalized = preg_replace('/\b\d+\b/', '?', $sql) ?? $sql;
+
+        return mb_substr($normalized, 0, 500);
     }
 
     public function incrementCacheHits(): void
@@ -122,6 +184,7 @@ final class TelemetryRecorder
             slowQueries:      $this->queries->slowQueries(),
             truncated:        $this->queries->isTruncated(),
             peakMemoryBytes:  $peakMemoryBytes,
+            queriesLog:       $this->queriesLog,
         );
 
         $this->active = false;

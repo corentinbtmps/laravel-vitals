@@ -12,6 +12,7 @@ use LaravelVitals\Livewire\Pages\AuditDetail;
 use LaravelVitals\Livewire\Pages\AuditSeo;
 use LaravelVitals\Livewire\Pages\Budgets;
 use LaravelVitals\Livewire\Pages\Insights;
+use LaravelVitals\Livewire\Pages\IssueDetail;
 use LaravelVitals\Livewire\Pages\Issues;
 use LaravelVitals\Livewire\Pages\Learn;
 use LaravelVitals\Livewire\Pages\Overview;
@@ -51,6 +52,7 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/audits/{audit}/seo',                AuditSeo::class)            ->name('vitals.audit.seo');
             Route::get('/budgets',                           Budgets::class)             ->name('vitals.budgets');
             Route::get('/issues',                            Issues::class)              ->name('vitals.issues');
+            Route::get('/issues/{auditKey}',                 IssueDetail::class)         ->name('vitals.issue.detail');
             Route::get('/learn',                             Learn::class)               ->name('vitals.learn');
             Route::get('/rum',                               Rum::class)                 ->name('vitals.rum');
             Route::get('/queries',                           Queries::class)             ->name('vitals.queries');

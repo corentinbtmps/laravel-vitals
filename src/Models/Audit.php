@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Enums\Device;
+use LaravelVitals\Support\Health;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -108,6 +109,37 @@ final class Audit extends Model implements Searchable
     public function telemetry(): HasOne
     {
         return $this->hasOne(BackendTelemetry::class, 'audit_id');
+    }
+
+    /**
+     * Letter grade computed from the average of all 4 axis scores.
+     * Returns null when no scores are available.
+     */
+    public function getGlobalGradeAttribute(): ?string
+    {
+        $scores = array_filter([
+            $this->score_performance,
+            $this->score_accessibility,
+            $this->score_best_practices,
+            $this->score_seo,
+        ], fn ($v) => $v !== null);
+
+        if ($scores === []) {
+            return null;
+        }
+
+        return Health::grade((int) round(array_sum($scores) / count($scores)));
+    }
+
+    /**
+     * Letter grade for the performance axis alone.
+     * Returns null when score_performance is not set.
+     */
+    public function getPerformanceGradeAttribute(): ?string
+    {
+        return $this->score_performance !== null
+            ? Health::grade($this->score_performance)
+            : null;
     }
 
     public function getSearchResult(): SearchResult

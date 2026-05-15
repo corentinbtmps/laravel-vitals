@@ -90,6 +90,13 @@
                             ])></span>
                             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
                             <flux:badge color="{{ $entry['descriptor']->severity->fluxBadgeColor() }}" size="sm">{{ $entry['descriptor']->severity->label() }}</flux:badge>
+                            @if (($entry['active_count'] ?? 0) > 0)
+                                <a href="{{ route('vitals.issue.detail', ['auditKey' => $entry['key']]) }}"
+                                   class="inline-flex items-center gap-1 text-xs font-semibold text-accent-600 dark:text-accent-400 hover:underline">
+                                    <flux:icon name="map-pin" class="size-3" />
+                                    {{ __('vitals::vitals.learn_page.active_in_app', ['count' => $entry['active_count']]) }}
+                                </a>
+                            @endif
                             <code class="ml-auto text-[11px] font-mono text-ink-400">{{ $entry['key'] }}</code>
                         </div>
 

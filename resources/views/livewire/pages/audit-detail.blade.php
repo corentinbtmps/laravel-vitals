@@ -2,6 +2,8 @@
     $overallScore = (int) round((($audit->score_performance ?? 0) + ($audit->score_accessibility ?? 0) + ($audit->score_best_practices ?? 0) + ($audit->score_seo ?? 0)) / 4);
     $overallGrade = \LaravelVitals\Support\Health::grade($overallScore);
     $overallColor = \LaravelVitals\Support\Health::colorForScore($overallScore);
+    $perfGrade    = $audit->performance_grade;
+    $perfColor    = \LaravelVitals\Support\Health::colorForScore($audit->score_performance);
 
     $delta = function ($current, $prev) {
         if ($current === null || $prev === null) return null;
@@ -43,15 +45,34 @@
                     <flux:badge color="zinc" size="sm">{{ $audit->driver }}</flux:badge>
                 </div>
             </div>
-            <div class="text-right shrink-0">
-                <div @class([
-                    'text-6xl font-semibold tabular-nums leading-none',
-                    'text-emerald-500' => $overallColor === 'emerald',
-                    'text-amber-500'   => $overallColor === 'amber',
-                    'text-accent-500'  => $overallColor === 'accent',
-                    'text-ink-400'     => $overallColor === 'ink',
-                ])>{{ $overallGrade }}</div>
-                <div class="mt-1 text-2xl font-semibold tabular-nums text-ink-500">{{ $overallScore }}<span class="text-base font-normal">/100</span></div>
+            <div class="text-right shrink-0 flex items-start gap-4">
+                {{-- Performance grade --}}
+                @if ($perfGrade !== null)
+                    <div class="text-center">
+                        <div class="text-xs font-semibold uppercase tracking-wide text-ink-400 mb-1">{{ __('vitals::vitals.tables.perf_grade') }}</div>
+                        <div @class([
+                            'text-5xl font-semibold tabular-nums leading-none',
+                            'text-emerald-500' => $perfColor === 'emerald',
+                            'text-amber-500'   => $perfColor === 'amber',
+                            'text-accent-500'  => $perfColor === 'accent',
+                            'text-ink-400'     => $perfColor === 'ink',
+                        ])>{{ $perfGrade }}</div>
+                        <div class="mt-1 text-xl font-semibold tabular-nums text-ink-500">{{ $audit->score_performance }}<span class="text-sm font-normal">/100</span></div>
+                    </div>
+                    <div class="w-px bg-ink-200/60 dark:bg-ink-700/60 self-stretch mx-1"></div>
+                @endif
+                {{-- Overall grade --}}
+                <div class="text-center">
+                    <div class="text-xs font-semibold uppercase tracking-wide text-ink-400 mb-1">{{ __('vitals::vitals.tables.global') }}</div>
+                    <div @class([
+                        'text-6xl font-semibold tabular-nums leading-none',
+                        'text-emerald-500' => $overallColor === 'emerald',
+                        'text-amber-500'   => $overallColor === 'amber',
+                        'text-accent-500'  => $overallColor === 'accent',
+                        'text-ink-400'     => $overallColor === 'ink',
+                    ])>{{ $overallGrade }}</div>
+                    <div class="mt-1 text-2xl font-semibold tabular-nums text-ink-500">{{ $overallScore }}<span class="text-base font-normal">/100</span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -67,6 +88,7 @@
             @php
                 $value = $audit->{$col};
                 $color = \LaravelVitals\Support\Health::colorForScore($value);
+                $axisGrade = $value !== null ? \LaravelVitals\Support\Health::grade($value) : null;
             @endphp
             <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4 relative overflow-hidden">
                 <div @class([
@@ -76,11 +98,22 @@
                     'bg-accent-500'  => $color === 'accent',
                     'bg-ink-400'     => $color === 'ink',
                 ])></div>
-                <div class="flex items-center gap-2 text-xs text-ink-500 mt-1">
-                    <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
-                    <flux:tooltip :content="__('vitals::vitals.tooltip.score_label', ['label' => $meta['label']])">
-                        <span class="cursor-help underline decoration-dotted decoration-ink-300 dark:decoration-ink-700 underline-offset-2">{{ $meta['label'] }}</span>
-                    </flux:tooltip>
+                <div class="flex items-center justify-between gap-2 text-xs text-ink-500 mt-1">
+                    <div class="flex items-center gap-1.5">
+                        <flux:icon name="{{ $meta['icon'] }}" class="size-3.5" />
+                        <flux:tooltip :content="__('vitals::vitals.tooltip.score_label', ['label' => $meta['label']])">
+                            <span class="cursor-help underline decoration-dotted decoration-ink-300 dark:decoration-ink-700 underline-offset-2">{{ $meta['label'] }}</span>
+                        </flux:tooltip>
+                    </div>
+                    @if ($axisGrade !== null)
+                        <span @class([
+                            'font-bold text-sm leading-none',
+                            'text-emerald-600 dark:text-emerald-400' => $color === 'emerald',
+                            'text-amber-600 dark:text-amber-400'     => $color === 'amber',
+                            'text-accent-600 dark:text-accent-400'   => $color === 'accent',
+                            'text-ink-400'                           => $color === 'ink',
+                        ])>{{ $axisGrade }}</span>
+                    @endif
                 </div>
                 @if ($value !== null)
                     @php
@@ -259,6 +292,52 @@
                             @if ($estimatedGain !== null)
                                 {{ __('vitals::vitals.audit_detail.nplus1_gain', ['gain' => $estimatedGain]) }}
                             @endif
+
+                            @php
+                                $topPatterns = [];
+                                if (is_array($audit->telemetry->queries_log)) {
+                                    // Build patterns directly from queries_log stored on telemetry
+                                    $grouped = [];
+                                    foreach ($audit->telemetry->queries_log as $entry) {
+                                        if (! is_array($entry)) continue;
+                                        $sql = (string) ($entry['sql'] ?? '');
+                                        if ($sql === '') continue;
+                                        if (! isset($grouped[$sql])) {
+                                            $caller = null;
+                                            if (($entry['caller_file'] ?? null) !== null) {
+                                                $caller = $entry['caller_file'];
+                                                if (($entry['caller_line'] ?? null) !== null) $caller .= ':' . $entry['caller_line'];
+                                            }
+                                            $grouped[$sql] = ['count' => 0, 'caller' => $caller];
+                                        }
+                                        $grouped[$sql]['count']++;
+                                    }
+                                    arsort($grouped);
+                                    foreach ($grouped as $sql => $data) {
+                                        if ($data['count'] <= 1) continue;
+                                        $topPatterns[] = ['sql' => $sql, 'occurrences' => $data['count'], 'caller' => $data['caller']];
+                                        if (count($topPatterns) >= 3) break;
+                                    }
+                                }
+                            @endphp
+                            @if (! empty($topPatterns))
+                                <div class="mt-4">
+                                    <p class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-500 mb-2">{{ __('vitals::vitals.audit_detail.repeated_queries') }}</p>
+                                    <ul class="space-y-2">
+                                        @foreach ($topPatterns as $pattern)
+                                            <li class="rounded-lg border border-ink-200/60 dark:border-ink-800/60 bg-canvas dark:bg-ink-950 p-3">
+                                                <code class="text-xs font-mono text-accent-700 dark:text-accent-300 break-all">{{ $pattern['sql'] }}</code>
+                                                <div class="mt-1 flex items-center gap-3 text-xs text-ink-500">
+                                                    <span class="tabular-nums font-medium">×{{ $pattern['occurrences'] }}</span>
+                                                    @if ($pattern['caller'])
+                                                        <code class="text-[11px]">{{ $pattern['caller'] }}</code>
+                                                    @endif
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         </flux:callout.text>
                     </flux:callout>
                 @endif
@@ -355,6 +434,7 @@
                                                 <div class="flex items-center gap-2 mb-1 flex-wrap">
                                                     <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_params ?? []) }}</h4>
                                                     <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $reco->severity->label() }}</flux:badge>
+                                                    <flux:button href="{{ route('vitals.issue.detail', ['auditKey' => $reco->audit_key]) }}" variant="ghost" size="xs" icon="map-pin" class="ml-auto">{{ __('vitals::vitals.issue_detail.view_all_occurrences') }}</flux:button>
                                                 </div>
                                                 <p class="text-sm text-ink-500 dark:text-ink-400">{{ __($reco->description_key, $reco->translation_params ?? []) }}</p>
 
@@ -414,6 +494,26 @@
                                                             @endif
                                                         </div>
                                                     @endif
+                                                @endif
+
+                                                {{-- N+1 repeated query patterns --}}
+                                                @if ($reco->audit_key === 'n-plus-one-detected' && ! empty($reco->translation_params['top_patterns'] ?? null))
+                                                    <div class="mt-4">
+                                                        <p class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-500 mb-2">{{ __('vitals::vitals.audit_detail.repeated_queries') }}</p>
+                                                        <ul class="space-y-2">
+                                                            @foreach ($reco->translation_params['top_patterns'] as $pattern)
+                                                                <li class="rounded-lg border border-ink-200/60 dark:border-ink-800/60 bg-canvas dark:bg-ink-950 p-3">
+                                                                    <code class="text-xs font-mono text-accent-700 dark:text-accent-300 break-all">{{ $pattern['sql'] }}</code>
+                                                                    <div class="mt-1 flex items-center gap-3 text-xs text-ink-500">
+                                                                        <span class="tabular-nums font-medium">×{{ $pattern['occurrences'] }}</span>
+                                                                        @if ($pattern['caller'])
+                                                                            <code class="text-[11px]">{{ $pattern['caller'] }}</code>
+                                                                        @endif
+                                                                    </div>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
                                                 @endif
 
                                                 {{-- Code references in user's app --}}

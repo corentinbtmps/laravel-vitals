@@ -61,6 +61,7 @@ final class PersistTelemetryJob implements ShouldQueue
             'cache_hits'         => $this->snapshot->cacheHits,
             'cache_misses'       => $this->snapshot->cacheMisses,
             'slow_queries'       => $this->snapshot->slowQueries,
+            'queries_log'        => $this->snapshot->queriesLog !== [] ? $this->snapshot->queriesLog : null,
             'truncated'          => $this->snapshot->truncated,
         ]);
     }

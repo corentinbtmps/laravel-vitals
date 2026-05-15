@@ -29,6 +29,7 @@ return new class extends Migration
             $table->unsignedInteger('cache_hits');
             $table->unsignedInteger('cache_misses');
             $table->json('slow_queries')->nullable();
+            $table->json('queries_log')->nullable()->comment('Up to 200 normalized query patterns with caller file:line for N+1 attribution');
             $table->unsignedBigInteger('peak_memory_bytes')->nullable();
             $table->boolean('truncated')->default(false);
             $table->json('events_log')->nullable()->comment('Timeline events: DB queries, view renders, cache hits, job dispatches — used for request trace waterfall');

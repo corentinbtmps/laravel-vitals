@@ -513,6 +513,8 @@ return [
         'critical'       => 'Kritisch',
         'route'          => 'Route',
         'samples'        => 'Stichproben',
+        'global'         => 'Global',
+        'perf_grade'     => 'Perf',
     ],
     'actions' => [
         'view'           => 'Ansehen',
@@ -563,6 +565,7 @@ return [
         'levels'                 => 'Ebenen',
         'no_cache'               => 'kein Cache',
         'lcp_element'            => 'LCP-Element',
+        'repeated_queries'       => 'Wiederholte Abfragen',
     ],
     'url_detail' => [
         'no_audits'              => 'Noch keine abgeschlossenen Analysen für diese URL.',
@@ -608,6 +611,15 @@ return [
         'issue'                => 'Problem',
         'showing'              => 'Anzeigen',
         'all_categories_label' => 'Alle Kategorien',
+        'active_in_app'        => ':count aktiv in Ihrer App',
+    ],
+    'issue_detail' => [
+        'occurrences_label'    => 'Vorkommen',
+        'where_this_happens'   => 'Wo dies passiert',
+        'view_all_occurrences' => 'Alle Vorkommen anzeigen',
+        'unknown_date'         => 'Unbekanntes Datum',
+        'no_occurrences_title' => 'Keine aktiven Vorkommen',
+        'no_occurrences_body'  => 'Dieses Problem wurde in keiner kürzlichen Analyse gefunden.',
     ],
     'budgets_page' => [
         'per_url_overrides' => 'URL-spezifische Überschreibungen',

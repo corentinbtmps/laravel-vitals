@@ -37,6 +37,8 @@
                     <flux:table>
                         <flux:table.columns>
                             <flux:table.column class="w-8"></flux:table.column>
+                            <flux:table.column align="center">{{ __('vitals::vitals.tables.global') }}</flux:table.column>
+                            <flux:table.column align="center">{{ __('vitals::vitals.tables.perf_grade') }}</flux:table.column>
                             <flux:table.column>URL</flux:table.column>
                             <flux:table.column align="center">Perf</flux:table.column>
                             <flux:table.column align="center">A11y</flux:table.column>
@@ -60,6 +62,47 @@
                                                 <flux:icon.star variant="solid" class="size-4" />
                                             </button>
                                         </flux:tooltip>
+                                    </flux:table.cell>
+
+                                    {{-- Global grade badge --}}
+                                    @php
+                                        $globalGrade = $last?->global_grade;
+                                        $globalScore = $last !== null
+                                            ? (int) round(collect([$last->score_performance, $last->score_accessibility, $last->score_best_practices, $last->score_seo])->filter(fn ($v) => $v !== null)->avg() ?? 0)
+                                            : null;
+                                        $globalColor = \LaravelVitals\Support\Health::colorForScore($globalScore);
+                                    @endphp
+                                    <flux:table.cell align="center">
+                                        @if ($globalGrade !== null)
+                                            <span @class([
+                                                'inline-flex items-center justify-center size-9 rounded-xl font-bold text-base',
+                                                'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' => $globalColor === 'emerald',
+                                                'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'         => $globalColor === 'amber',
+                                                'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'     => $globalColor === 'accent',
+                                                'bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400'                    => $globalColor === 'ink',
+                                            ])>{{ $globalGrade }}</span>
+                                        @else
+                                            <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
+                                        @endif
+                                    </flux:table.cell>
+
+                                    {{-- Performance grade badge --}}
+                                    @php
+                                        $perfGrade = $last?->performance_grade;
+                                        $perfColor = \LaravelVitals\Support\Health::colorForScore($last?->score_performance);
+                                    @endphp
+                                    <flux:table.cell align="center">
+                                        @if ($perfGrade !== null)
+                                            <span @class([
+                                                'inline-flex items-center justify-center size-8 rounded-lg font-semibold text-sm',
+                                                'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' => $perfColor === 'emerald',
+                                                'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'         => $perfColor === 'amber',
+                                                'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'     => $perfColor === 'accent',
+                                                'bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400'                    => $perfColor === 'ink',
+                                            ])>{{ $perfGrade }}</span>
+                                        @else
+                                            <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
+                                        @endif
                                     </flux:table.cell>
 
                                     {{-- URL column --}}
@@ -154,6 +197,8 @@
                 <flux:table>
                     <flux:table.columns>
                         <flux:table.column class="w-8"></flux:table.column>
+                        <flux:table.column align="center">{{ __('vitals::vitals.tables.global') }}</flux:table.column>
+                        <flux:table.column align="center">{{ __('vitals::vitals.tables.perf_grade') }}</flux:table.column>
                         <flux:table.column>URL</flux:table.column>
                         <flux:table.column align="center">Perf</flux:table.column>
                         <flux:table.column align="center">A11y</flux:table.column>
@@ -185,6 +230,47 @@
                                             @endif
                                         </button>
                                     </flux:tooltip>
+                                </flux:table.cell>
+
+                                {{-- Global grade badge --}}
+                                @php
+                                    $globalGrade = $last?->global_grade;
+                                    $globalScore = $last !== null
+                                        ? (int) round(collect([$last->score_performance, $last->score_accessibility, $last->score_best_practices, $last->score_seo])->filter(fn ($v) => $v !== null)->avg() ?? 0)
+                                        : null;
+                                    $globalColor = \LaravelVitals\Support\Health::colorForScore($globalScore);
+                                @endphp
+                                <flux:table.cell align="center">
+                                    @if ($globalGrade !== null)
+                                        <span @class([
+                                            'inline-flex items-center justify-center size-9 rounded-xl font-bold text-base',
+                                            'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' => $globalColor === 'emerald',
+                                            'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'         => $globalColor === 'amber',
+                                            'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'     => $globalColor === 'accent',
+                                            'bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400'                    => $globalColor === 'ink',
+                                        ])>{{ $globalGrade }}</span>
+                                    @else
+                                        <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
+                                    @endif
+                                </flux:table.cell>
+
+                                {{-- Performance grade badge --}}
+                                @php
+                                    $perfGrade = $last?->performance_grade;
+                                    $perfColor = \LaravelVitals\Support\Health::colorForScore($last?->score_performance);
+                                @endphp
+                                <flux:table.cell align="center">
+                                    @if ($perfGrade !== null)
+                                        <span @class([
+                                            'inline-flex items-center justify-center size-8 rounded-lg font-semibold text-sm',
+                                            'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' => $perfColor === 'emerald',
+                                            'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'         => $perfColor === 'amber',
+                                            'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'     => $perfColor === 'accent',
+                                            'bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400'                    => $perfColor === 'ink',
+                                        ])>{{ $perfGrade }}</span>
+                                    @else
+                                        <span class="text-ink-300 dark:text-ink-700 text-sm">—</span>
+                                    @endif
                                 </flux:table.cell>
 
                                 {{-- URL column --}}

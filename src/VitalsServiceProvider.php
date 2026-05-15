@@ -136,6 +136,7 @@ final class VitalsServiceProvider extends PackageServiceProvider
     {
         \Livewire\Livewire::addNamespace('vitals', classNamespace: 'LaravelVitals\\Livewire');
         \Livewire\Livewire::component('vitals::pages.issues', \LaravelVitals\Livewire\Pages\Issues::class);
+        \Livewire\Livewire::component('vitals::pages.issue-detail', \LaravelVitals\Livewire\Pages\IssueDetail::class);
         \Livewire\Livewire::component('vitals::pages.insights', \LaravelVitals\Livewire\Pages\Insights::class);
         \Livewire\Livewire::component('vitals::pages.learn', \LaravelVitals\Livewire\Pages\Learn::class);
         \Livewire\Livewire::component('vitals::components.onboarding-banner', \LaravelVitals\Livewire\Components\OnboardingBanner::class);

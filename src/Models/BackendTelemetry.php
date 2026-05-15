@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $cache_hits
  * @property int $cache_misses
  * @property array<int, array<string, mixed>>|null $slow_queries
+ * @property array<int, array<string, mixed>>|null $queries_log
  * @property array<int, array<string, mixed>>|null $events_log
  * @property bool $truncated
  * @property int|null $peak_memory_bytes
@@ -55,6 +56,7 @@ final class BackendTelemetry extends Model
             'n_plus_one_suspect' => 'boolean',
             'truncated'          => 'boolean',
             'slow_queries'       => 'array',
+            'queries_log'        => 'array',
             'events_log'         => 'array',
             'is_demo'            => 'boolean',
         ];

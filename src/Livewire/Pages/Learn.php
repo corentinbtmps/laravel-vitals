@@ -70,6 +70,15 @@ final class Learn extends Component
     public function render(): View
     {
         $registry = new RecommendationRegistry();
+
+        // Active counts per audit_key for the "X active in your app" badge
+        /** @var array<string, int> $activeCounts */
+        $activeCounts = Recommendation::query()
+            ->selectRaw('audit_key, count(*) as occurrences')
+            ->groupBy('audit_key')
+            ->pluck('occurrences', 'audit_key')
+            ->all();
+
         $entries = [];
 
         foreach ($registry->allKeys() as $key) {
@@ -83,9 +92,10 @@ final class Learn extends Component
             }
 
             $entries[] = [
-                'key'        => $key,
-                'descriptor' => $descriptor,
-                'docs'       => RecommendationDocs::for($key),
+                'key'           => $key,
+                'descriptor'    => $descriptor,
+                'docs'          => RecommendationDocs::for($key),
+                'active_count'  => (int) ($activeCounts[$key] ?? 0),
             ];
         }
 

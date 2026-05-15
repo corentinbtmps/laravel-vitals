@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.63] - 2026-05-15
+
+### Added
+
+#### Job 1 — Deep "Where in my code" navigation
+
+- **New page `/vitals/issues/{auditKey}`** (`IssueDetail` Livewire component). One click from the Issues → All Recommendations list lands on a page showing every `(url, file, line)` occurrence grouped by URL, with code references and a "View audit" button per occurrence.
+- **New route** `GET /vitals/issues/{auditKey}` → `vitals.issue.detail`.
+- **Issues page** (All Recommendations tab): recommendation title now links to the new page instead of the Learn anchor. Action button changes from `book-open` to `map-pin`.
+- **Audit-detail** recommendation cards gain a "View all occurrences" link in the top-right corner of each reco card.
+- **Learn page** entries: each entry now shows an "X active in your app" badge (when > 0 occurrences) that links to the issue detail page.
+- **Spotlight/Cmd+K** recommendation results now point to `/vitals/issues/{audit_key}` instead of the Learn anchor.
+- Breadcrumb on IssueDetail: `Issues › {Recommendation title}`.
+
+#### Job 2 — N+1 query attribution
+
+- **`queries_log` JSON column** added to `vitals_backend_telemetry` (folded into source migration `2026_05_05_000004`). Stores up to 200 normalized query patterns per request with `sql`, `bindings_count`, `time_ms`, `caller_file`, and `caller_line`.
+- **`TelemetryRecorder`** now captures a `queries_log` buffer alongside the existing `QueryAccumulator`. Caller resolution uses `debug_backtrace()` and skips all `/vendor/` and `/laravel-vitals/src/` frames, pointing to the first frame in the host application.
+- **SQL normalization** replaces numeric literals with `?` for pattern grouping; capped at 500 chars.
+- **`BackendTelemetrySnapshot`** gains a `queriesLog` property; `PersistTelemetryJob` persists it.
+- **`BackendTelemetry` model** gains `queries_log` property and `array` cast.
+- **`RecommendationBuilder`**: N+1 recommendation now includes `top_patterns` in `translation_params` — top 3 most-repeated normalized SQL patterns with occurrence count and caller file:line.
+- **Audit-detail view**: N+1 callout and the N+1 recommendation card both render the "Repeated queries" panel showing the top patterns with SQL, occurrence count, and caller location.
+- **IssueDetail page**: `/vitals/issues/n-plus-one-detected` also renders the patterns per occurrence.
+
+#### Job 3 — Grade consistency
+
+- **`Audit` model** gains two computed accessors: `global_grade` (letter from avg of 4 scores) and `performance_grade` (letter from `score_performance` alone). Both return `null` when scores are unavailable.
+- **URLs list** (`urls-list.blade.php`): two new columns added before URL — `Global` (overall grade letter badge) and `Perf` (performance grade letter badge), both colored by `Health::colorForScore`.
+- **Audit-detail hero** (`audit-detail.blade.php`): performance grade is now shown side by side with the global grade in the top-right area. Each of the 4 per-axis score cards gains its own grade letter in the top-right corner.
+
+### Changed
+
+- `RecommendationSearchAspect` now wraps results as `SearchableItem` objects with URLs pointing to the issue detail page.
+- `Learn` component computes per-key active counts for the badge.
+
+### Tests
+
+- Added `tests/Feature/Models/AuditGradesTest.php` — 8 tests covering `global_grade` and `performance_grade` accessors.
+- Added `tests/Feature/Telemetry/QueriesLogTest.php` — 6 tests covering capture, cap enforcement, normalization, caller resolution, and reset behaviour.
+- **Test count: 436 → 450** (+14).
+
+### Translations
+
+New keys added to EN/FR/DE/ES:
+- `tables.global`, `tables.perf_grade`
+- `audit_detail.repeated_queries`
+- `learn_page.active_in_app`
+- `issue_detail.*` (6 keys)
+
 ## [v1.0.0-alpha.55] - 2026-05-14
 
 ### Changed

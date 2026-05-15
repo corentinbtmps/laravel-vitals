@@ -29,7 +29,11 @@
                 <flux:table.rows>
                     @foreach ($rows as $r)
                             <flux:table.row :key="$r->audit_key">
-                            <flux:table.cell variant="strong">{{ __($r->title_key) }}</flux:table.cell>
+                            <flux:table.cell variant="strong">
+                                <a href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}" class="hover:underline text-accent-600 dark:text-accent-400">
+                                    {{ __($r->title_key) }}
+                                </a>
+                            </flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
                             </flux:table.cell>
@@ -40,7 +44,7 @@
                                 <span class="font-semibold tabular-nums">{{ $r->occurrences }}</span>
                             </flux:table.cell>
                             <flux:table.cell align="end">
-                                <flux:button href="{{ route('vitals.learn') . '#' . $r->audit_key }}" variant="ghost" size="sm" icon="book-open" />
+                                <flux:button href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}" variant="ghost" size="sm" icon="map-pin" />
                             </flux:table.cell>
                         </flux:table.row>
                     @endforeach

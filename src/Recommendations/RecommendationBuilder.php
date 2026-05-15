@@ -52,6 +52,7 @@ final class RecommendationBuilder
                 $this->persist($audit, 'n-plus-one-detected', [
                     'queries_count'  => $telemetry->queries_count,
                     'queries_unique' => $telemetry->queries_unique,
+                    'top_patterns'   => $this->extractTopPatterns($telemetry),
                 ], $ctx);
             }
             if (is_array($telemetry->slow_queries) && $telemetry->slow_queries !== []) {
@@ -237,7 +238,8 @@ final class RecommendationBuilder
                     : 'unknown',
             ],
             'n-plus-one-detected' => [
-                'count' => $auditData['queries_count'] ?? 0,
+                'count'        => $auditData['queries_count'] ?? 0,
+                'top_patterns' => $auditData['top_patterns'] ?? [],
             ],
             'excessive-dom-size' => [
                 'count' => $auditData['dom_size'] ?? 0,
@@ -369,6 +371,68 @@ final class RecommendationBuilder
 
         // Flag only if at least 2 unhashed JS resources are loaded (1 might be intentional inline tag).
         return $jsCount >= 2 && $unhashedJs >= 2;
+    }
+
+    /**
+     * From the queries_log, group by normalized SQL, count occurrences, and
+     * return the top 3 repeated patterns with their occurrence count and
+     * the first observed caller file:line.
+     *
+     * @return array<int, array{sql: string, occurrences: int, caller: string|null}>
+     */
+    private function extractTopPatterns(\LaravelVitals\Models\BackendTelemetry $telemetry): array
+    {
+        $log = $telemetry->queries_log;
+        if (! is_array($log) || $log === []) {
+            return [];
+        }
+
+        /** @var array<string, array{count: int, caller: string|null}> $grouped */
+        $grouped = [];
+
+        foreach ($log as $entry) {
+            if (! is_array($entry)) {
+                continue;
+            }
+
+            $sql = (string) ($entry['sql'] ?? '');
+            if ($sql === '') {
+                continue;
+            }
+
+            if (! isset($grouped[$sql])) {
+                $caller = null;
+                if (($entry['caller_file'] ?? null) !== null) {
+                    $caller = $entry['caller_file'];
+                    if (($entry['caller_line'] ?? null) !== null) {
+                        $caller .= ':' . $entry['caller_line'];
+                    }
+                }
+                $grouped[$sql] = ['count' => 0, 'caller' => $caller];
+            }
+
+            $grouped[$sql]['count']++;
+        }
+
+        // Sort by occurrences descending, take top 3 repeated patterns (count > 1)
+        arsort($grouped);
+
+        $result = [];
+        foreach ($grouped as $sql => $data) {
+            if ($data['count'] <= 1) {
+                continue;
+            }
+            $result[] = [
+                'sql'         => $sql,
+                'occurrences' => $data['count'],
+                'caller'      => $data['caller'],
+            ];
+            if (count($result) >= 3) {
+                break;
+            }
+        }
+
+        return $result;
     }
 
     private function buildContext(Audit $audit, LighthouseReport $report): AppContext

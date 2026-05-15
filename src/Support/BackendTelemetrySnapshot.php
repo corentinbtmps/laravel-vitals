@@ -12,6 +12,7 @@ final readonly class BackendTelemetrySnapshot
 {
     /**
      * @param array<int, array{sql: string, time_ms: float}> $slowQueries
+     * @param array<int, array{sql: string, bindings_count: int, time_ms: float, caller_file: string|null, caller_line: int|null}> $queriesLog
      */
     public function __construct(
         public ?string $auditId,
@@ -33,6 +34,7 @@ final readonly class BackendTelemetrySnapshot
         public array $slowQueries,
         public bool $truncated,
         public ?int $peakMemoryBytes = null,
+        public array $queriesLog = [],
     ) {
     }
 }
