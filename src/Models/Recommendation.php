@@ -54,6 +54,21 @@ final class Recommendation extends Model implements Searchable
     }
 
     /**
+     * Scalar-only subset of translation_params, safe to pass to __() as the
+     * replace argument. Laravel's translator calls mb_substr on each value
+     * and blows up on arrays — so we filter out non-scalars (top_patterns,
+     * nested data) before substitution.
+     *
+     * @return array<string, scalar>
+     */
+    public function getTranslationReplaceParamsAttribute(): array
+    {
+        $params = is_array($this->translation_params) ? $this->translation_params : [];
+
+        return array_filter($params, static fn ($v): bool => is_scalar($v));
+    }
+
+    /**
      * Returns display-ready detail items with url, hint, and wasted_label fields.
      *
      * @return array<int, array{url: string|null, hint: string|null, wasted_label: string|null}>
@@ -115,7 +130,7 @@ final class Recommendation extends Model implements Searchable
     {
         return new SearchResult(
             $this,
-            __($this->title_key, (array) ($this->translation_params ?? [])) . ' (' . $this->audit_key . ')',
+            __($this->title_key, $this->translation_replace_params) . ' (' . $this->audit_key . ')',
             route('vitals.learn') . '#' . $this->audit_key,
         );
     }

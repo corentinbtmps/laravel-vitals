@@ -432,11 +432,11 @@
                                             ]) />
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2 mb-1 flex-wrap">
-                                                    <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_params ?? []) }}</h4>
+                                                    <h4 class="font-semibold">{{ __($reco->title_key, $reco->translation_replace_params) }}</h4>
                                                     <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $reco->severity->label() }}</flux:badge>
                                                     <flux:button href="{{ route('vitals.issue.detail', ['auditKey' => $reco->audit_key]) }}" variant="ghost" size="xs" icon="map-pin" class="ml-auto">{{ __('vitals::vitals.issue_detail.view_all_occurrences') }}</flux:button>
                                                 </div>
-                                                <p class="text-sm text-ink-500 dark:text-ink-400">{{ __($reco->description_key, $reco->translation_params ?? []) }}</p>
+                                                <p class="text-sm text-ink-500 dark:text-ink-400">{{ __($reco->description_key, $reco->translation_replace_params) }}</p>
 
                                                 @php $docs = \LaravelVitals\Recommendations\RecommendationDocs::for($reco->audit_key); @endphp
 

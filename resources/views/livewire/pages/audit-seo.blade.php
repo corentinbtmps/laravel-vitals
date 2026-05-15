@@ -84,7 +84,7 @@
                             <flux:badge color="{{ $r->severity->fluxBadgeColor() }}" size="sm">{{ $r->severity->label() }}</flux:badge>
                             <div>
                                 <div class="font-medium text-sm">{{ __($r->title_key) }}</div>
-                                <div class="text-xs text-ink-500 mt-1">{{ __($r->description_key, $r->translation_params ?? []) }}</div>
+                                <div class="text-xs text-ink-500 mt-1">{{ __($r->description_key, $r->translation_replace_params) }}</div>
                             </div>
                         </div>
                     </li>

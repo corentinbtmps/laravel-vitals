@@ -184,8 +184,8 @@ final class VitalsApiController
             'audit_key'   => $r->audit_key,
             'category'    => $r->category,
             'severity'    => $r->severity->value,
-            'title'       => __($r->title_key, (array) ($r->translation_params ?? [])),
-            'description' => __($r->description_key, (array) ($r->translation_params ?? [])),
+            'title'       => __($r->title_key, $r->translation_replace_params),
+            'description' => __($r->description_key, $r->translation_replace_params),
             '_links'      => [
                 'audit_html' => $r->audit_id ? url(route('vitals.audit', $r->audit_id, false)) : null,
             ],
@@ -237,7 +237,7 @@ final class VitalsApiController
                 'audit_key' => $r->audit_key,
                 'category'  => $r->category,
                 'severity'  => $r->severity->value,
-                'title'     => __($r->title_key, (array) ($r->translation_params ?? [])),
+                'title'     => __($r->title_key, $r->translation_replace_params),
             ])->values()->all();
         }
 
