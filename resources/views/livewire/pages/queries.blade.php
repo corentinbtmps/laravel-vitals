@@ -6,7 +6,7 @@
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.queries.subtitle') }}</p>
         </div>
         <div class="flex gap-1">
-            @foreach ([\LaravelVitals\Enums\Period::H24, \LaravelVitals\Enums\Period::D7, \LaravelVitals\Enums\Period::D30, \LaravelVitals\Enums\Period::D90] as $case)
+            @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
                 <button
                     wire:click="setPeriod('{{ $case->value }}')"
                     @class([

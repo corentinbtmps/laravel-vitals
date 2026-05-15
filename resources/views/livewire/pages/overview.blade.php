@@ -9,7 +9,7 @@
         </div>
         <div class="overflow-x-auto -mx-2 md:mx-0">
             <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 md:mx-0">
-                @foreach (\LaravelVitals\Enums\Period::cases() as $case)
+                @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
                     <button
                         wire:click="setPeriod('{{ $case->value }}')"
                         @class([

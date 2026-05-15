@@ -65,4 +65,47 @@ enum Period: string
     {
         return [self::H24, self::D7, self::D30, self::D90, self::Y1, self::All];
     }
+
+    /**
+     * Max number of days this period spans (null for All, ~1 for H24).
+     */
+    public function days(): ?int
+    {
+        return match ($this) {
+            self::H24 => 1,
+            self::D7  => 7,
+            self::D30 => 30,
+            self::D90 => 90,
+            self::Y1  => 365,
+            self::All => null,
+        };
+    }
+
+    /**
+     * Filters Period::ordered() to those that fit within the host app's retention window.
+     * A period is offered only when its span is <= retention. 'All' is offered when retention
+     * is effectively unbounded (>= 1y) since otherwise it would mislead.
+     *
+     * @return list<self>
+     */
+    public static function availableFor(int $retentionDays): array
+    {
+        return array_values(array_filter(
+            self::ordered(),
+            fn (self $p): bool => $p === self::All
+                ? $retentionDays >= 365
+                : ($p->days() ?? 0) <= $retentionDays,
+        ));
+    }
+
+    /**
+     * Conservative default for the package: the smaller of audits + RUM retentions.
+     */
+    public static function effectiveRetentionDays(): int
+    {
+        return min(
+            (int) config('vitals.retention.days', 90),
+            (int) config('vitals.rum.retention_days', 90),
+        );
+    }
 }
