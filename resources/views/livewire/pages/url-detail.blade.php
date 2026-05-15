@@ -20,15 +20,15 @@
             {{-- Period control --}}
             <div class="overflow-x-auto -mx-2 sm:mx-0">
                 <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0 shrink-0">
-                    @foreach (['24h' => '24h', '7d' => '7d', '30d' => '30d', '90d' => '90d', '1y' => '1y', 'all' => 'All'] as $val => $label)
+                    @foreach (\LaravelVitals\Enums\Period::cases() as $case)
                         <button
-                            wire:click="setPeriod('{{ $val }}')"
+                            wire:click="setPeriod('{{ $case->value }}')"
                             @class([
                                 'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-                                'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900' => $period === $val,
-                                'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $period !== $val,
+                                'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900' => $period === $case,
+                                'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $period !== $case,
                             ])
-                        >{{ $label }}</button>
+                        >{{ $case->buttonLabel() }}</button>
                     @endforeach
                 </div>
             </div>

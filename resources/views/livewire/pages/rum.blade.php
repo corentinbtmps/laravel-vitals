@@ -22,15 +22,15 @@
             </div>
             {{-- Period filter --}}
             <div class="flex gap-1">
-                @foreach (['24h', '7d', '30d', '90d'] as $p)
+                @foreach ([\LaravelVitals\Enums\Period::H24, \LaravelVitals\Enums\Period::D7, \LaravelVitals\Enums\Period::D30, \LaravelVitals\Enums\Period::D90] as $case)
                     <button
-                        wire:click="setPeriod('{{ $p }}')"
+                        wire:click="setPeriod('{{ $case->value }}')"
                         @class([
                             'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                            'bg-accent-500 text-white'                                                                        => $period === $p,
-                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $p,
+                            'bg-accent-500 text-white' => $period === $case,
+                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $case,
                         ])
-                    >{{ $p }}</button>
+                    >{{ $case->buttonLabel() }}</button>
                 @endforeach
             </div>
         </div>
