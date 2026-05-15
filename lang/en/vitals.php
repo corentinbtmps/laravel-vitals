@@ -534,6 +534,7 @@ return [
         'read_docs'    => 'Read docs',
     ],
     'audit_detail' => [
+        'hint'                   => 'Hint',
         'cwv_title'              => 'Core Web Vitals',
         'frontend_backend_title' => 'Front-end ↔ Back-end breakdown',
         'lcp_composition'        => 'LCP composition',

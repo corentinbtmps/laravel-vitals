@@ -66,11 +66,11 @@
             <div class="space-y-4">
                 @foreach ($grouped as $urlPath => $group)
                     <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 overflow-hidden">
-                        {{-- URL header — slightly tinted to visually separate from the body --}}
-                        <div class="flex items-center justify-between px-5 py-3 border-b border-ink-200 dark:border-ink-800 bg-ink-50 dark:bg-ink-800">
+                        {{-- URL header — tinted strip to visually separate from the card body --}}
+                        <div class="flex items-center justify-between px-5 py-3 border-b border-ink-200 dark:border-ink-800 bg-ink-100 dark:bg-ink-800">
                             <div class="flex items-center gap-2 min-w-0">
-                                <flux:icon.link class="size-4 text-ink-400 shrink-0" />
-                                <span class="font-medium text-ink-900 dark:text-ink-100 truncate">{{ $group['url_label'] }}</span>
+                                <flux:icon.link class="size-4 text-accent-500 shrink-0" />
+                                <span class="font-semibold text-ink-900 dark:text-ink-100 truncate">{{ $group['url_label'] }}</span>
                                 <code class="text-[11px] text-ink-500 font-mono truncate hidden sm:inline">{{ $group['url_path'] }}</code>
                             </div>
                             @if ($group['url_id'] !== null)
@@ -78,8 +78,8 @@
                             @endif
                         </div>
 
-                        {{-- Each audit occurrence --}}
-                        <div class="divide-y divide-ink-200 dark:divide-ink-800">
+                        {{-- Each audit occurrence (lighter dividers — borders should feel subtle inside a card) --}}
+                        <div class="divide-y divide-ink-100 dark:divide-ink-800">
                             @foreach ($group['occurrences'] as $occ)
                                 <div class="p-4 space-y-3">
                                     <div class="flex items-center justify-between gap-3 flex-wrap">

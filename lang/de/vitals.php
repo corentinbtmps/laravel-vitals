@@ -528,6 +528,7 @@ return [
         'read_docs'      => 'Dokumentation lesen',
     ],
     'audit_detail' => [
+        'hint'                   => 'Hinweis',
         'cwv_title'              => 'Core Web Vitals',
         'frontend_backend_title' => 'Frontend ↔ Backend Aufschlüsselung',
         'lcp_composition'        => 'LCP-Zusammensetzung',
