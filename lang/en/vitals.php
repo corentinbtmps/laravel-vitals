@@ -326,6 +326,131 @@ return [
             'title'       => 'Secure response headers',
             'description' => 'Check your response headers for CSP, HSTS, and other security directives.',
         ],
+        // alpha.70 additions
+        'uses-text-compression' => [
+            'title'       => 'Enable text compression',
+            'description' => 'Compress text-based responses with gzip or Brotli to reduce transfer size significantly.',
+        ],
+        'uses-optimized-images' => [
+            'title'       => 'Efficiently encode images',
+            'description' => 'Unoptimized images contain redundant data. Compress them to improve LCP.',
+        ],
+        'uses-rel-preconnect' => [
+            'title'       => 'Preconnect to required origins',
+            'description' => 'Add <link rel="preconnect"> for third-party origins so DNS/TCP/TLS handshakes happen early.',
+        ],
+        'prioritize-lcp-image' => [
+            'title'       => 'Prioritize the LCP image',
+            'description' => 'Add fetchpriority="high" to the hero image so the browser fetches it before lower-priority resources.',
+        ],
+        'mainthread-work-breakdown' => [
+            'title'       => 'Minimize main-thread work',
+            'description' => 'Heavy JavaScript execution blocks rendering and interaction. Code-split and defer non-critical scripts.',
+        ],
+        'dom-size' => [
+            'title'       => 'Avoid excessive DOM size',
+            'description' => 'A large DOM slows style calculation and layout. Paginate long lists or use virtual scrolling.',
+        ],
+        'redirects' => [
+            'title'       => 'Avoid multiple page redirects',
+            'description' => 'Each redirect adds round-trip latency. Eliminate chains and enforce HTTPS at the server level.',
+        ],
+        'server-response-time' => [
+            'title'       => 'Reduce server response time (TTFB)',
+            'description' => 'High TTFB drags down LCP. Enable OPcache, config/route cache, and use Redis for sessions.',
+        ],
+        'uses-passive-event-listeners' => [
+            'title'       => 'Use passive event listeners',
+            'description' => 'Touch and wheel listeners without { passive: true } block scrolling. Add the passive flag.',
+        ],
+        'no-document-write' => [
+            'title'       => 'Avoid the deprecated write() API',
+            'description' => 'The deprecated parser-blocking API should be replaced with DOM manipulation methods.',
+        ],
+        'uses-long-cache-ttl' => [
+            'title'       => 'Serve static assets with an efficient cache policy',
+            'description' => 'Short cache TTLs force re-downloads on repeat visits. Use long TTL with hashed filenames.',
+        ],
+        'lcp-lazy-loaded' => [
+            'title'       => 'LCP image should not be lazy-loaded',
+            'description' => 'Remove loading="lazy" from your LCP image — it delays the most important resource on the page.',
+        ],
+        'largest-contentful-paint-element' => [
+            'title'       => 'Largest Contentful Paint element identified',
+            'description' => 'Optimise the LCP element: preload, fetchpriority="high", WebP format, and no lazy-load.',
+        ],
+        'layout-shift-elements' => [
+            'title'       => 'Avoid large layout shifts',
+            'description' => 'Elements causing CLS are identified. Reserve space with explicit dimensions or aspect-ratio CSS.',
+        ],
+        'non-composited-animations' => [
+            'title'       => 'Avoid non-composited animations',
+            'description' => 'Animate only transform and opacity to keep animations on the GPU compositor thread.',
+        ],
+        'image-size-responsive' => [
+            'title'       => 'Serve images at the right size',
+            'description' => 'Use srcset and sizes to serve appropriately-sized images for each viewport.',
+        ],
+        'link-name' => [
+            'title'       => 'Links have discernible text',
+            'description' => 'Links need accessible text so screen readers can describe their destination.',
+        ],
+        'button-name' => [
+            'title'       => 'Buttons have an accessible name',
+            'description' => 'Buttons without a label are announced as "button" with no context. Add text or aria-label.',
+        ],
+        'meta-viewport' => [
+            'title'       => 'Has a viewport meta tag',
+            'description' => 'Add <meta name="viewport" content="width=device-width, initial-scale=1"> for proper mobile rendering.',
+        ],
+        'html-lang-valid' => [
+            'title'       => 'html element has a valid lang attribute',
+            'description' => 'The lang attribute value must be a valid BCP47 language code (e.g. en, fr, pt-BR).',
+        ],
+        'aria-required-attr' => [
+            'title'       => 'ARIA roles have required attributes',
+            'description' => 'Elements with ARIA roles must include all required attributes for assistive technologies.',
+        ],
+        'aria-valid-attr-value' => [
+            'title'       => 'ARIA attributes have valid values',
+            'description' => 'ARIA attribute values must come from the allowed set defined by the ARIA specification.',
+        ],
+        'is-on-https' => [
+            'title'       => 'Use HTTPS',
+            'description' => 'Serve all resources over HTTPS to protect users and enable modern browser features.',
+        ],
+        'geolocation-on-start' => [
+            'title'       => 'Avoid requesting geolocation on page load',
+            'description' => 'Request geolocation only after a clear user interaction, not immediately on page load.',
+        ],
+        'notification-on-start' => [
+            'title'       => 'Avoid requesting notification permission on page load',
+            'description' => 'Notification prompts shown on load are dismissed by nearly all users. Ask after demonstrating value.',
+        ],
+        'password-inputs-can-be-pasted-into' => [
+            'title'       => 'Allow users to paste into password fields',
+            'description' => 'Blocking paste prevents password manager use and encourages weaker passwords.',
+        ],
+        'image-aspect-ratio' => [
+            'title'       => 'Images have correct aspect ratio',
+            'description' => 'Ensure images are displayed at their natural aspect ratio to prevent distortion.',
+        ],
+        'hreflang' => [
+            'title'       => 'Document has a valid hreflang',
+            'description' => 'Use correct BCP47 hreflang values so search engines show the right language version.',
+        ],
+        'canonical' => [
+            'title'       => 'Document has a canonical link',
+            'description' => 'Add <link rel="canonical"> to declare the authoritative URL and prevent duplicate content indexing.',
+        ],
+        'robots-txt' => [
+            'title'       => 'robots.txt is valid',
+            'description' => 'An invalid or missing robots.txt can block search engines from crawling your site.',
+        ],
+        'tap-targets' => [
+            'title'       => 'Tap targets are sized appropriately',
+            'description' => 'Touch targets should be at least 48×48 CSS pixels to be easily tappable on mobile.',
+        ],
     ],
     'compare' => [
         'title'                 => 'Compare audits',
@@ -627,6 +752,7 @@ return [
         'unknown_date'           => 'Unknown date',
         'no_occurrences_title'   => 'No active occurrences',
         'no_occurrences_body'    => 'This issue has not been detected in any recent audit.',
+        'what_to_fix'            => 'What to fix',
     ],
     'budgets_page' => [
         'per_url_overrides'      => 'Per-URL overrides',

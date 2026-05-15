@@ -149,6 +149,167 @@ final class RecommendationDocs
                 ],
             ],
 
+            'uses-text-compression' => [
+                'why' => 'Text-based resources (HTML, CSS, JS, JSON) compress 60-80% with gzip and even better with Brotli. Without compression every byte travels over the wire as-is, slowing FCP and LCP directly.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Enable text compression', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/uses-text-compression'],
+                    ['label' => 'web.dev: Minify and compress network payloads', 'url' => 'https://web.dev/articles/reduce-network-payloads-using-text-compression'],
+                ],
+                'good' => "# nginx — enable gzip + Brotli\ngzip on;\ngzip_types text/plain text/css application/javascript application/json;\ngzip_min_length 1024;\n\n# Brotli (ngx_brotli module)\nbrotli on;\nbrotli_types text/plain text/css application/javascript;",
+                'bad' => "# No gzip / Brotli block in nginx.conf\n# Responses delivered uncompressed — 3-5x larger than necessary",
+                'impact' => 'Typical savings: 60-80% transfer size on JS/CSS, 150-400ms LCP improvement',
+            ],
+
+            'uses-optimized-images' => [
+                'why' => 'Unoptimized JPEG/PNG images contain metadata and redundant pixel data. Lossless or lossy compression can cut size 30-60% with no perceptible quality difference — directly improving LCP.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Efficiently encode images', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/uses-optimized-images'],
+                    ['label' => 'Intervention Image for Laravel', 'url' => 'https://image.intervention.io/v3'],
+                ],
+                'good' => "// Intervention Image v3 — optimize on upload\nuse Intervention\\Image\\ImageManager;\nuse Intervention\\Image\\Drivers\\Gd\\Driver;\n\n\$manager = new ImageManager(new Driver());\n\$manager->read(\$path)\n    ->toWebp(quality: 80)\n    ->save(storage_path('app/public/images/hero.webp'));",
+                'bad' => "// Storing raw upload with no compression\n\$request->file('image')->store('images'); // may be a 4 MB JPEG",
+                'impact' => 'Typical savings: 30-70% image size, significant LCP improvement on image-heavy pages',
+            ],
+
+            'uses-rel-preconnect' => [
+                'why' => 'Each connection to a third-party origin (fonts.googleapis.com, cdn.jsdelivr.net) requires a DNS lookup + TCP handshake + TLS negotiation — often 100-300ms. `<link rel="preconnect">` initiates these during HTML parsing, before the resource is actually requested.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Preconnect to required origins', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect'],
+                    ['label' => 'web.dev: Establish network connections early', 'url' => 'https://web.dev/articles/preconnect-and-dns-prefetch'],
+                ],
+                'good' => "{{-- In Blade <head> --}}\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n<link rel=\"dns-prefetch\" href=\"https://cdn.jsdelivr.net\">",
+                'bad' => "{{-- No preconnect: browser discovers the origin only when parsing the font link --}}\n<link href=\"https://fonts.googleapis.com/css2?family=Inter\" rel=\"stylesheet\">",
+                'impact' => 'Typical savings: 100-300ms per third-party origin on initial load',
+            ],
+
+            'prioritize-lcp-image' => [
+                'why' => 'The LCP element is the most critical resource for user-perceived load speed. Adding `fetchpriority="high"` tells the browser to fetch it immediately, above other resources with the same priority, shaving 100-500ms off LCP.',
+                'docs' => [
+                    ['label' => 'web.dev: Optimize LCP', 'url' => 'https://web.dev/articles/optimize-lcp'],
+                    ['label' => 'web.dev: LCP — Largest Contentful Paint', 'url' => 'https://web.dev/articles/lcp'],
+                ],
+                'good' => "{{-- Hero image — the likely LCP element --}}\n<img\n  src=\"/images/hero.webp\"\n  fetchpriority=\"high\"\n  loading=\"eager\"\n  decoding=\"async\"\n  width=\"1200\" height=\"600\"\n  alt=\"Hero\">",
+                'bad' => "{{-- No priority hint — browser treats it equally with other resources --}}\n<img src=\"/images/hero.webp\" alt=\"Hero\">",
+                'impact' => 'Typical savings: 100-500ms LCP',
+            ],
+
+            'mainthread-work-breakdown' => [
+                'why' => 'Heavy JavaScript parsing, compiling, and executing on the main thread blocks all rendering and user interaction. Tasks over 50ms are "long tasks" that cause jank. Code-splitting and deferring non-critical JS are the primary fixes.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Minimize main-thread work', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/mainthread-work-breakdown'],
+                    ['label' => 'web.dev: Long tasks', 'url' => 'https://web.dev/articles/optimize-long-tasks'],
+                ],
+                'good' => "// Break up heavy work with scheduler.yield() (Chrome 115+)\nasync function processData(items) {\n    for (const item of items) {\n        process(item);\n        await scheduler.yield(); // yield between items\n    }\n}\n\n// Vite manual chunks to split vendor code\nrollupOptions: { output: { manualChunks: { vendor: ['lodash', 'moment'] } } }",
+                'bad' => "// Heavy synchronous loop on page load blocks the main thread\nconst result = massiveDataSet.map(computeExpensive);",
+                'impact' => 'Typical improvement: reduces TBT by 200-800ms, INP drops to < 200ms',
+            ],
+
+            'dom-size' => [
+                'why' => 'Pages with > 1500 DOM nodes suffer slower style recalculation, layout, and paint. Every queried selector must traverse the whole tree. Paginate large lists or use virtual scrolling.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Avoid an excessive DOM size', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/dom-size'],
+                ],
+                'good' => "// Paginate results in Laravel\n\$items = Item::query()->paginate(50);\n\n// Livewire lazy loading for heavy components\n#[Lazy]\nclass HeavyList extends Component {}",
+                'bad' => "@foreach (\$allItems as \$item)\n    {{-- Rendering 5000+ items at once bloats the DOM --}}\n    <div class=\"item\">{{ \$item->name }}</div>\n@endforeach",
+                'impact' => 'Typical improvement: style recalculation 2-5x faster, smoother scrolling',
+            ],
+
+            'redirects' => [
+                'why' => 'Each HTTP redirect adds a full round-trip — typically 100-300ms on mobile. Redirect chains multiply this cost. The most common Laravel culprit is HTTP→HTTPS redirect that could be eliminated with HSTS or server-level HTTPS enforcement.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Avoid multiple page redirects', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/redirects'],
+                ],
+                'good' => "# Enforce HTTPS at the server level (not in PHP)\n# nginx:\nserver {\n    listen 80;\n    return 301 https://\$host\$request_uri;\n}\n\n# With HSTS, browsers skip the redirect entirely on repeat visits:\nadd_header Strict-Transport-Security \"max-age=31536000; includeSubDomains\";",
+                'bad' => "// Multiple redirect hops:\n// http://example.com -> https://example.com -> https://www.example.com -> /home\n// Each hop adds a full RTT",
+                'impact' => 'Typical savings: 100-300ms per eliminated redirect',
+            ],
+
+            'server-response-time' => [
+                'why' => 'A TTFB > 600ms directly drags down LCP — the browser cannot start rendering until the first byte arrives. Laravel-specific causes include disabled OPcache, no config/route cache, slow database queries, and no Redis for sessions/cache.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Reduce server response time (TTFB)', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/server-response-time'],
+                    ['label' => 'web.dev: Time to First Byte', 'url' => 'https://web.dev/articles/ttfb'],
+                    ['label' => 'Laravel: Deployment optimization', 'url' => LaravelDocs::url('deployment#optimization')],
+                ],
+                'good' => "# Full deploy-time optimization\nphp artisan optimize   # config + route + view cache\n\n; php.ini (critical for any PHP app)\nopcache.enable=1\nopcache.validate_timestamps=0\nopcache.memory_consumption=256\n\n# Redis for sessions + cache\nSESSION_DRIVER=redis\nCACHE_STORE=redis",
+                'bad' => "# No caches, default file session/cache, APP_DEBUG=true\n# Every request re-reads config files and re-registers routes",
+                'impact' => 'Typical savings: 100-500ms TTFB with OPcache + config cache',
+            ],
+
+            'uses-passive-event-listeners' => [
+                'why' => 'Touch and wheel event listeners without `{ passive: true }` block the browser from scrolling until the handler completes. This forces the browser to wait up to 50ms per scroll event, causing visible jank.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Use passive event listeners', 'url' => 'https://developer.chrome.com/docs/lighthouse/best-practices/uses-passive-event-listeners'],
+                    ['label' => 'MDN: passive event listeners', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#passive'],
+                ],
+                'good' => "// Passive listener — browser can scroll immediately\ndocument.addEventListener('touchstart', handler, { passive: true });\ndocument.addEventListener('wheel', handler, { passive: true });",
+                'bad' => "// Non-passive — browser waits for handler before scrolling\ndocument.addEventListener('touchstart', handler); // defaults to passive: false",
+                'impact' => 'Typical improvement: scroll jank eliminated, INP improves by 30-100ms',
+            ],
+
+            'no-document-write' => [
+                'why' => 'The deprecated `document.write()` API blocks HTML parsing because the browser cannot continue until the injected content is processed. On slow connections this can pause rendering by seconds. Use DOM manipulation instead.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Avoid document.write()', 'url' => 'https://developer.chrome.com/docs/lighthouse/best-practices/no-document-write'],
+                    ['label' => 'MDN: Document.write()', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/API/Document/write'],
+                ],
+                'good' => "// Use DOM manipulation instead\nconst el = document.createElement('script');\nel.src = 'analytics.js';\nel.async = true;\ndocument.head.appendChild(el);",
+                'bad' => "// Deprecated API that blocks HTML parsing\n// document.write('<script src=\"analytics.js\"></script>');",
+                'impact' => 'Removes potentially seconds of blocking time on 2G/3G connections',
+            ],
+
+            'uses-long-cache-ttl' => [
+                'why' => 'Short cache TTLs on static assets force re-downloads on repeat visits, wasting bandwidth and slowing pages for returning users. Vite\'s content-hashed filenames make it safe to cache assets for a year.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Serve static assets with an efficient cache policy', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/uses-long-cache-ttl'],
+                ],
+                'good' => "# nginx — 1-year cache for Vite-hashed assets\nlocation ~* /build/assets/ {\n    expires 1y;\n    add_header Cache-Control \"public, immutable\";\n}",
+                'bad' => "# No explicit cache headers — browsers re-validate every request\nlocation /build/ {\n    # missing expires / Cache-Control\n}",
+                'impact' => 'Repeat visits load 90-100% from cache — near-instant for returning users',
+            ],
+
+            'lcp-lazy-loaded' => [
+                'why' => 'The LCP image has `loading="lazy"` which intentionally delays its fetch. The browser won\'t load it until it becomes visible — but it\'s the most important resource on the page. Remove `loading="lazy"` from above-the-fold images.',
+                'docs' => [
+                    ['label' => 'web.dev: Optimize LCP', 'url' => 'https://web.dev/articles/optimize-lcp'],
+                    ['label' => 'web.dev: Browser-level lazy-loading for the web', 'url' => 'https://web.dev/articles/browser-level-image-lazy-loading'],
+                ],
+                'good' => "{{-- Hero / LCP image: eager + high priority --}}\n<img src=\"hero.webp\" fetchpriority=\"high\" loading=\"eager\" alt=\"Hero\">",
+                'bad' => "{{-- Do NOT lazy-load your LCP image --}}\n<img src=\"hero.webp\" loading=\"lazy\" alt=\"Hero\"><!-- delays LCP! -->",
+                'impact' => 'Typical savings: 200-800ms LCP',
+            ],
+
+            'largest-contentful-paint-element' => [
+                'why' => 'Knowing which element is the LCP lets you focus optimization efforts. Common fixes: preload the image, remove lazy-load, upgrade to WebP, preconnect to its origin, or inline its critical CSS.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Largest Contentful Paint element', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/largest-contentful-paint-element'],
+                    ['label' => 'web.dev: Optimize LCP', 'url' => 'https://web.dev/articles/optimize-lcp'],
+                ],
+                'good' => "{{-- Once you know the LCP element, apply these optimizations --}}\n<img\n  src=\"/images/hero.webp\"\n  fetchpriority=\"high\"\n  loading=\"eager\"\n  width=\"1200\" height=\"600\"\n  alt=\"Hero\">",
+            ],
+
+            'layout-shift-elements' => [
+                'why' => 'CLS is caused by elements shifting after initial render — typically images without dimensions, dynamically injected banners, or web fonts causing text reflow. Identifying the shifting element is the first step to fixing CLS.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Avoid large layout shifts', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/layout-shift-elements'],
+                    ['label' => 'web.dev: Optimize CLS', 'url' => 'https://web.dev/articles/optimize-cls'],
+                ],
+                'good' => "{{-- Reserve space before the image loads --}}\n<img src=\"product.jpg\" width=\"400\" height=\"300\" alt=\"Product\">\n\n{{-- Or with CSS aspect-ratio --}}\n<div style=\"aspect-ratio: 4/3; overflow: hidden\">\n  <img src=\"product.jpg\" alt=\"Product\">\n</div>",
+                'bad' => "{{-- No dimensions — causes layout shift when image loads --}}\n<img src=\"product.jpg\" alt=\"Product\">",
+                'impact' => 'Fixing the top shift element typically drops CLS from 0.2-0.4 to under 0.1',
+            ],
+
+            'non-composited-animations' => [
+                'why' => 'Animations that trigger layout or paint (animating `top`, `left`, `width`, `height`) run on the main thread and cause jank. Animating only `transform` and `opacity` allows the browser to offload work to the GPU compositor thread.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Avoid non-composited animations', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/non-composited-animations'],
+                    ['label' => 'web.dev: High-performance animations', 'url' => 'https://web.dev/articles/animations-guide'],
+                ],
+                'good' => "/* GPU-composited — runs off main thread */\n@keyframes slideIn {\n    from { transform: translateX(-100%); }\n    to   { transform: translateX(0); }\n}",
+                'bad' => "/* Triggers layout — runs on main thread, causes jank */\n@keyframes slideIn {\n    from { left: -100%; }\n    to   { left: 0; }\n}",
+                'impact' => 'Typical improvement: animation FPS from 30-40 to 60fps',
+            ],
+
             // ============================================================
             // ACCESSIBILITY
             // ============================================================
@@ -188,6 +349,66 @@ final class RecommendationDocs
                 'bad' => "<html><!-- no lang -->",
             ],
 
+            'link-name' => [
+                'why' => 'Links without discernible text (e.g. icon-only links, empty `<a>` tags) are announced as "link" by screen readers with no destination context. Add visible text, `aria-label`, or `aria-labelledby`.',
+                'docs' => [
+                    ['label' => 'Deque: link-name', 'url' => 'https://dequeuniversity.com/rules/axe/4.7/link-name'],
+                    ['label' => 'MDN: The Anchor element', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a'],
+                ],
+                'good' => "<!-- Visible text -->\n<a href=\"/dashboard\">Go to dashboard</a>\n\n<!-- Or aria-label for icon links -->\n<a href=\"/settings\" aria-label=\"Open settings\">\n    <svg aria-hidden=\"true\">...</svg>\n</a>",
+                'bad' => "<!-- Empty link — screen reader says 'link' with no destination -->\n<a href=\"/settings\"><svg>...</svg></a>",
+            ],
+
+            'button-name' => [
+                'why' => 'Buttons without accessible names are announced as "button" by screen readers. Users with visual impairments cannot tell what action will occur. Always provide text content or `aria-label`.',
+                'docs' => [
+                    ['label' => 'Deque: button-name', 'url' => 'https://dequeuniversity.com/rules/axe/4.7/button-name'],
+                    ['label' => 'MDN: The Button element', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button'],
+                ],
+                'good' => "<!-- With visible label -->\n<button type=\"button\">Save changes</button>\n\n<!-- Icon-only button with aria-label -->\n<button type=\"button\" aria-label=\"Delete item\">\n    <svg aria-hidden=\"true\">...</svg>\n</button>",
+                'bad' => "<!-- Screen reader says 'button' with no context -->\n<button type=\"button\"><svg>...</svg></button>",
+            ],
+
+            'meta-viewport' => [
+                'why' => 'Without a correct viewport meta tag, mobile browsers render the page at desktop width and scale it down. Users see tiny text and must pinch-to-zoom. `user-scalable=no` also fails accessibility requirements.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Has a meta viewport tag', 'url' => 'https://developer.chrome.com/docs/lighthouse/accessibility/meta-viewport'],
+                    ['label' => 'MDN: Viewport meta tag', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag'],
+                ],
+                'good' => "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+                'bad' => "<!-- Missing viewport tag, or disabling zoom -->\n<meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"><!-- fails a11y -->",
+            ],
+
+            'html-lang-valid' => [
+                'why' => 'An invalid BCP47 language code (e.g. `lang="en-123"` or `lang="fr-INVALID"`) means assistive technologies fall back to default pronunciation. Use the standard code for your language.',
+                'docs' => [
+                    ['label' => 'Deque: html-lang-valid', 'url' => 'https://dequeuniversity.com/rules/axe/4.7/html-lang-valid'],
+                    ['label' => 'IANA: Language subtag registry', 'url' => 'https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry'],
+                ],
+                'good' => "<!-- Valid BCP47 codes: en, fr, de, es, zh-Hans, pt-BR -->\n<html lang=\"en\">\n<html lang=\"fr\">\n<html lang=\"pt-BR\">",
+                'bad' => "<!-- Incorrect / made-up subtags -->\n<html lang=\"EN-US-INVALID\">",
+            ],
+
+            'aria-required-attr' => [
+                'why' => 'ARIA roles require certain attributes to function correctly. For example, `role="checkbox"` requires `aria-checked`. Missing required attributes break assistive technology semantics entirely.',
+                'docs' => [
+                    ['label' => 'Deque: aria-required-attr', 'url' => 'https://dequeuniversity.com/rules/axe/4.7/aria-required-attr'],
+                    ['label' => 'MDN: ARIA', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA'],
+                ],
+                'good' => "<!-- role=checkbox requires aria-checked -->\n<div role=\"checkbox\" aria-checked=\"false\" tabindex=\"0\">Option A</div>\n\n<!-- role=combobox requires aria-expanded -->\n<input role=\"combobox\" aria-expanded=\"false\" aria-autocomplete=\"list\">",
+                'bad' => "<!-- Missing required attribute -->\n<div role=\"checkbox\">Option A</div><!-- no aria-checked -->",
+            ],
+
+            'aria-valid-attr-value' => [
+                'why' => 'ARIA attribute values must be from the allowed set. An invalid value (e.g. `aria-live="sometimes"`) is ignored by screen readers, silently breaking the intended accessible behaviour.',
+                'docs' => [
+                    ['label' => 'Deque: aria-valid-attr-value', 'url' => 'https://dequeuniversity.com/rules/axe/4.7/aria-valid-attr-value'],
+                    ['label' => 'W3C: ARIA in HTML', 'url' => 'https://www.w3.org/TR/html-aria/'],
+                ],
+                'good' => "<!-- Valid values only -->\n<div aria-live=\"polite\">Loading…</div>\n<button aria-expanded=\"true\">Menu</button>",
+                'bad' => "<!-- Invalid values — ignored by assistive tech -->\n<div aria-live=\"sometimes\">Loading…</div>\n<button aria-expanded=\"yes\">Menu</button>",
+            ],
+
             // ============================================================
             // BEST PRACTICES
             // ============================================================
@@ -207,6 +428,65 @@ final class RecommendationDocs
                 ],
             ],
 
+            'is-on-https' => [
+                'why' => 'HTTP pages cannot use many modern browser features (Service Workers, HTTP/2 push, geolocation). Browsers mark them as "Not Secure" — destroying user trust. All production Laravel apps should be served over HTTPS.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Use HTTPS', 'url' => 'https://developer.chrome.com/docs/lighthouse/best-practices/is-on-https'],
+                    ['label' => "Let's Encrypt: Free SSL certificates", 'url' => 'https://letsencrypt.org/'],
+                ],
+                'good' => "# nginx with Let's Encrypt\nserver {\n    listen 443 ssl;\n    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;\n}\n\n# Force HTTPS in Laravel\n// AppServiceProvider::boot()\n\\URL::forceScheme('https');",
+                'bad' => "# Serving over plain HTTP — browser shows 'Not Secure'\nserver {\n    listen 80;\n    # no SSL block\n}",
+            ],
+
+            'geolocation-on-start' => [
+                'why' => 'Requesting geolocation permission immediately on page load (before any user interaction) is considered intrusive. Browsers show a permission prompt that most users dismiss — then the feature is blocked forever. Request only after a clear user action.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Avoids requesting geolocation on page load', 'url' => 'https://developer.chrome.com/docs/lighthouse/best-practices/geolocation-on-start'],
+                    ['label' => 'MDN: Geolocation API', 'url' => 'https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API'],
+                ],
+                'good' => "// Request on explicit user action\ndocument.getElementById('find-me').addEventListener('click', () => {\n    navigator.geolocation.getCurrentPosition(success, error);\n});",
+                'bad' => "// Requesting immediately on DOMContentLoaded — intrusive\ndocument.addEventListener('DOMContentLoaded', () => {\n    navigator.geolocation.getCurrentPosition(success, error);\n});",
+            ],
+
+            'notification-on-start' => [
+                'why' => 'Requesting push notification permission immediately on page load results in 90%+ rejection rates and trains users to deny all notifications. Request after demonstrating value — e.g. after a successful action.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Avoids requesting notification permission on page load', 'url' => 'https://developer.chrome.com/docs/lighthouse/best-practices/notification-on-start'],
+                    ['label' => 'web.dev: Permission UX', 'url' => 'https://web.dev/articles/permission-ux'],
+                ],
+                'good' => "// Request after user opts in\ndocument.getElementById('enable-notifications').addEventListener('click', () => {\n    Notification.requestPermission();\n});",
+                'bad' => "// Requesting on page load — dismissed by almost all users\nwindow.addEventListener('load', () => Notification.requestPermission());",
+            ],
+
+            'password-inputs-can-be-pasted-into' => [
+                'why' => 'Blocking paste on password fields prevents password manager use, forces manual typing of complex passwords, and drives users toward weaker passwords. Never prevent paste — it reduces security, not increases it.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Allows users to paste into password fields', 'url' => 'https://developer.chrome.com/docs/lighthouse/best-practices/password-inputs-can-be-pasted-into'],
+                ],
+                'good' => "<!-- Standard password input — paste is allowed by default -->\n<input type=\"password\" name=\"password\" autocomplete=\"current-password\">",
+                'bad' => "<!-- Never do this -->\n<input type=\"password\" onpaste=\"return false;\">",
+            ],
+
+            'image-aspect-ratio' => [
+                'why' => 'When the CSS display size has a different aspect ratio than the intrinsic image size, the image appears distorted. Setting `width` and `height` attributes and using `aspect-ratio` CSS prevents this.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Image display dimensions match natural size', 'url' => 'https://developer.chrome.com/docs/lighthouse/best-practices/image-aspect-ratio'],
+                ],
+                'good' => "<!-- Intrinsic 16:9 image displayed at 16:9 -->\n<img src=\"video-thumb.jpg\" width=\"800\" height=\"450\" alt=\"Video\">\n\n/* CSS */\nimg { aspect-ratio: 16/9; width: 100%; height: auto; }",
+                'bad' => "<!-- 16:9 image displayed in a square container — distorted -->\n<img src=\"video-thumb.jpg\" style=\"width:200px; height:200px;\">",
+            ],
+
+            'image-size-responsive' => [
+                'why' => 'Serving a 2000px image to a 400px mobile device wastes 4-5× bandwidth. Use `srcset` and `sizes` to let the browser choose the best-fit image for the current viewport.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Image size responsive', 'url' => 'https://developer.chrome.com/docs/lighthouse/performance/uses-responsive-images'],
+                    ['label' => 'MDN: Responsive images guide', 'url' => 'https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Responsive_images'],
+                ],
+                'good' => "<img\n  src=\"/images/hero-800w.jpg\"\n  srcset=\"/images/hero-400w.jpg 400w, /images/hero-800w.jpg 800w, /images/hero-1600w.jpg 1600w\"\n  sizes=\"(max-width: 600px) 400px, (max-width: 1200px) 800px, 1600px\"\n  alt=\"Hero image\">",
+                'bad' => "<!-- Always serving the full-resolution image -->\n<img src=\"/images/hero-4000w.jpg\" alt=\"Hero\">",
+                'impact' => 'Typical savings: 60-80% bytes on mobile viewports',
+            ],
+
             // ============================================================
             // SEO
             // ============================================================
@@ -218,6 +498,47 @@ final class RecommendationDocs
                     ['label' => 'Lighthouse: Document has a meta description', 'url' => 'https://developer.chrome.com/docs/lighthouse/seo/meta-description'],
                 ],
                 'good' => "<meta name=\"description\" content=\"Buy authentic Nike Air Max sneakers — fast shipping, free returns.\">",
+            ],
+
+            'hreflang' => [
+                'why' => 'For multilingual sites, `hreflang` tells search engines which page to show for which language and region. Incorrect or missing `hreflang` leads to the wrong language version appearing in search results.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Document has a valid hreflang', 'url' => 'https://developer.chrome.com/docs/lighthouse/seo/hreflang'],
+                    ['label' => 'Google Search: Localized versions', 'url' => 'https://developers.google.com/search/docs/specialty/international/localized-versions'],
+                ],
+                'good' => "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/en/page\">\n<link rel=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/page\">\n<link rel=\"alternate\" hreflang=\"x-default\" href=\"https://example.com/page\">",
+                'bad' => "<!-- Missing hreflang — search engines guess the target language -->\n<!-- Or invalid language code -->\n<link rel=\"alternate\" hreflang=\"english\" href=\"...\"><!-- invalid BCP47 -->",
+            ],
+
+            'canonical' => [
+                'why' => 'Duplicate content across URLs (with/without trailing slash, www vs non-www, UTM parameters) confuses search engines and dilutes PageRank. A canonical tag tells Google which is the authoritative URL.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Document has a canonical link', 'url' => 'https://developer.chrome.com/docs/lighthouse/seo/canonical'],
+                    ['label' => 'Google Search: Canonical URL', 'url' => 'https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls'],
+                ],
+                'good' => "<!-- In Blade layout -->\n<link rel=\"canonical\" href=\"{{ url()->current() }}\">\n\n<!-- Or with Laravel SEO packages -->\n// In AppServiceProvider: URL::forceRootUrl(config('app.url'));",
+                'bad' => "<!-- No canonical — search engines may index many duplicate versions -->\n<!-- /page, /page/, /page?utm_source=twitter all treated as separate URLs -->",
+            ],
+
+            'robots-txt' => [
+                'why' => 'An invalid or missing robots.txt can prevent search engines from crawling your site, or allow crawling of sensitive paths. Lighthouse flags when robots.txt is unreachable or syntactically invalid.',
+                'docs' => [
+                    ['label' => 'Lighthouse: robots.txt is valid', 'url' => 'https://developer.chrome.com/docs/lighthouse/seo/invalid-robots-txt'],
+                    ['label' => 'Google Search: robots.txt specification', 'url' => 'https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt'],
+                ],
+                'good' => "# public/robots.txt — sensible defaults\nUser-agent: *\nDisallow: /admin/\nDisallow: /api/\nSitemap: https://example.com/sitemap.xml",
+                'bad' => "# Accidentally blocking all crawlers\nUser-agent: *\nDisallow: /\n\n# Or missing robots.txt — crawlers get no guidance",
+            ],
+
+            'tap-targets' => [
+                'why' => 'Touch targets smaller than 48×48 CSS pixels are hard to tap accurately on mobile. Users mis-tap neighbouring elements, triggering unintended actions. Google\'s mobile-friendliness criteria require adequate tap target sizes.',
+                'docs' => [
+                    ['label' => 'Lighthouse: Tap targets are sized appropriately', 'url' => 'https://developer.chrome.com/docs/lighthouse/seo/tap-targets'],
+                    ['label' => 'web.dev: Accessible tap targets', 'url' => 'https://web.dev/articles/accessible-tap-targets'],
+                ],
+                'good' => "/* Minimum 48×48px tap target with padding trick */\n.nav-link {\n    display: inline-flex;\n    align-items: center;\n    min-height: 48px;\n    padding: 0 12px;\n}\n\n/* Or use Tailwind */\n<a class=\"py-3 px-4 min-h-12\">...</a>",
+                'bad' => "/* Too small — hard to tap on mobile */\n.icon-btn { width: 20px; height: 20px; }",
+                'impact' => 'Improves Google mobile-friendliness score and reduces accidental tap errors',
             ],
 
             // ============================================================

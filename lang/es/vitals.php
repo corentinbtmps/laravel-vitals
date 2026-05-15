@@ -320,6 +320,131 @@ return [
             'title'       => 'Cabeceras de respuesta seguras',
             'description' => 'Comprueba tus cabeceras de respuesta para CSP, HSTS y otras directivas de seguridad.',
         ],
+        // alpha.70
+        'uses-text-compression' => [
+            'title'       => 'Activar compresión de texto',
+            'description' => 'Comprime las respuestas de texto con gzip o Brotli para reducir significativamente el tamaño de transferencia.',
+        ],
+        'uses-optimized-images' => [
+            'title'       => 'Codificar imágenes de forma eficiente',
+            'description' => 'Las imágenes sin optimizar contienen datos redundantes. Comprímelas para mejorar el LCP.',
+        ],
+        'uses-rel-preconnect' => [
+            'title'       => 'Preconectar a los orígenes requeridos',
+            'description' => 'Añade <link rel="preconnect"> para orígenes de terceros y anticipa las conexiones DNS/TCP/TLS.',
+        ],
+        'prioritize-lcp-image' => [
+            'title'       => 'Priorizar la imagen LCP',
+            'description' => 'Añade fetchpriority="high" a la imagen hero para que el navegador la cargue primero.',
+        ],
+        'mainthread-work-breakdown' => [
+            'title'       => 'Minimizar el trabajo del hilo principal',
+            'description' => 'La ejecución pesada de JavaScript bloquea el renderizado. Divide y difiere los scripts no críticos.',
+        ],
+        'dom-size' => [
+            'title'       => 'Evitar un DOM excesivamente grande',
+            'description' => 'Un DOM grande ralentiza los cálculos de estilo. Pagina las listas largas o usa desplazamiento virtual.',
+        ],
+        'redirects' => [
+            'title'       => 'Evitar múltiples redirecciones de página',
+            'description' => 'Cada redirección añade latencia de red. Elimina cadenas y fuerza HTTPS a nivel de servidor.',
+        ],
+        'server-response-time' => [
+            'title'       => 'Reducir el tiempo de respuesta del servidor (TTFB)',
+            'description' => 'Un TTFB alto perjudica el LCP. Activa OPcache, caché de config/rutas y usa Redis.',
+        ],
+        'uses-passive-event-listeners' => [
+            'title'       => 'Usar listeners de eventos pasivos',
+            'description' => 'Los listeners touch/wheel sin { passive: true } bloquean el desplazamiento. Añade el flag pasivo.',
+        ],
+        'no-document-write' => [
+            'title'       => 'Evitar la API de escritura obsoleta',
+            'description' => 'Esta API obsoleta bloquea el análisis HTML. Sustitúyela por métodos de manipulación del DOM.',
+        ],
+        'uses-long-cache-ttl' => [
+            'title'       => 'Política de caché eficiente para activos estáticos',
+            'description' => 'Los TTL cortos obligan a descargas repetidas. Usa TTL largo con nombres de archivo con hash.',
+        ],
+        'lcp-lazy-loaded' => [
+            'title'       => 'La imagen LCP no debe cargarse de forma diferida',
+            'description' => 'Elimina loading="lazy" de tu imagen LCP — retrasa el recurso más importante de la página.',
+        ],
+        'largest-contentful-paint-element' => [
+            'title'       => 'Elemento LCP identificado',
+            'description' => 'Optimiza el elemento LCP: precarga, fetchpriority="high", formato WebP, sin lazy-load.',
+        ],
+        'layout-shift-elements' => [
+            'title'       => 'Evitar grandes desplazamientos de diseño',
+            'description' => 'Se han identificado elementos que causan CLS. Reserva espacio con dimensiones explícitas.',
+        ],
+        'non-composited-animations' => [
+            'title'       => 'Evitar animaciones no compuestas',
+            'description' => 'Anima solo transform y opacity para que las animaciones se ejecuten en el hilo compositor de GPU.',
+        ],
+        'image-size-responsive' => [
+            'title'       => 'Servir imágenes del tamaño correcto',
+            'description' => 'Usa srcset y sizes para servir imágenes apropiadas para cada tamaño de viewport.',
+        ],
+        'link-name' => [
+            'title'       => 'Los enlaces tienen texto identificable',
+            'description' => 'Los enlaces necesitan texto accesible para que los lectores de pantalla describan su destino.',
+        ],
+        'button-name' => [
+            'title'       => 'Los botones tienen un nombre accesible',
+            'description' => 'Los botones sin etiqueta se anuncian como "botón" sin contexto. Añade texto o aria-label.',
+        ],
+        'meta-viewport' => [
+            'title'       => 'Etiqueta meta viewport presente',
+            'description' => 'Añade <meta name="viewport" content="width=device-width, initial-scale=1"> para renderizado móvil.',
+        ],
+        'html-lang-valid' => [
+            'title'       => 'El elemento html tiene un atributo lang válido',
+            'description' => 'El valor del atributo lang debe ser un código de idioma BCP47 válido.',
+        ],
+        'aria-required-attr' => [
+            'title'       => 'Los roles ARIA tienen los atributos requeridos',
+            'description' => 'Los elementos con roles ARIA deben incluir todos los atributos requeridos para tecnologías asistivas.',
+        ],
+        'aria-valid-attr-value' => [
+            'title'       => 'Los atributos ARIA tienen valores válidos',
+            'description' => 'Los valores de atributos ARIA deben provenir del conjunto permitido por la especificación.',
+        ],
+        'is-on-https' => [
+            'title'       => 'Usar HTTPS',
+            'description' => 'Sirve todos los recursos a través de HTTPS para proteger a los usuarios y habilitar funciones modernas.',
+        ],
+        'geolocation-on-start' => [
+            'title'       => 'Evitar solicitar geolocalización al cargar la página',
+            'description' => 'Solicita geolocalización solo tras una interacción explícita del usuario, no al cargar la página.',
+        ],
+        'notification-on-start' => [
+            'title'       => 'Evitar solicitar permiso de notificación al cargar',
+            'description' => 'Las solicitudes de notificación mostradas al cargar son rechazadas por casi todos los usuarios.',
+        ],
+        'password-inputs-can-be-pasted-into' => [
+            'title'       => 'Permitir pegar en campos de contraseña',
+            'description' => 'Bloquear el pegado impide el uso de gestores de contraseñas y fomenta contraseñas débiles.',
+        ],
+        'image-aspect-ratio' => [
+            'title'       => 'Las imágenes tienen la relación de aspecto correcta',
+            'description' => 'Asegúrate de que las imágenes se muestran con su relación de aspecto natural para evitar distorsión.',
+        ],
+        'hreflang' => [
+            'title'       => 'El documento tiene un hreflang válido',
+            'description' => 'Usa códigos hreflang BCP47 correctos para que los buscadores muestren la versión de idioma adecuada.',
+        ],
+        'canonical' => [
+            'title'       => 'El documento tiene un enlace canónico',
+            'description' => 'Añade <link rel="canonical"> para declarar la URL autoritativa y evitar contenido duplicado.',
+        ],
+        'robots-txt' => [
+            'title'       => 'El archivo robots.txt es válido',
+            'description' => 'Un robots.txt inválido o faltante puede impedir que los buscadores rastreen tu sitio.',
+        ],
+        'tap-targets' => [
+            'title'       => 'Los objetivos táctiles tienen el tamaño adecuado',
+            'description' => 'Los objetivos táctiles deben tener al menos 48×48 píxeles CSS para ser fácilmente pulsables en móvil.',
+        ],
     ],
     'compare' => [
         'title'                 => 'Comparar auditorías',
@@ -621,6 +746,7 @@ return [
         'unknown_date'         => 'Fecha desconocida',
         'no_occurrences_title' => 'Sin ocurrencias activas',
         'no_occurrences_body'  => 'Este problema no se ha detectado en ninguna auditoría reciente.',
+        'what_to_fix'          => 'Qué corregir',
     ],
     'budgets_page' => [
         'per_url_overrides' => 'Anulaciones por URL',

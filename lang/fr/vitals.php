@@ -320,6 +320,131 @@ return [
             'title'       => 'En-têtes de réponse sécurisés',
             'description' => 'Vérifiez vos en-têtes de réponse pour CSP, HSTS et autres directives de sécurité.',
         ],
+        // alpha.70
+        'uses-text-compression' => [
+            'title'       => 'Activer la compression de texte',
+            'description' => 'Compressez les réponses textuelles avec gzip ou Brotli pour réduire significativement la taille de transfert.',
+        ],
+        'uses-optimized-images' => [
+            'title'       => 'Optimiser les images',
+            'description' => 'Les images non optimisées contiennent des données redondantes. Compressez-les pour améliorer le LCP.',
+        ],
+        'uses-rel-preconnect' => [
+            'title'       => 'Préconnecter aux origines requises',
+            'description' => 'Ajoutez <link rel="preconnect"> pour les origines tierces afin d\'anticiper les connexions DNS/TCP/TLS.',
+        ],
+        'prioritize-lcp-image' => [
+            'title'       => 'Prioriser l\'image LCP',
+            'description' => 'Ajoutez fetchpriority="high" à l\'image hero pour que le navigateur la charge en priorité.',
+        ],
+        'mainthread-work-breakdown' => [
+            'title'       => 'Réduire le travail du thread principal',
+            'description' => 'L\'exécution intensive de JavaScript bloque le rendu. Découpez et différez les scripts non critiques.',
+        ],
+        'dom-size' => [
+            'title'       => 'Éviter un DOM trop volumineux',
+            'description' => 'Un DOM important ralentit les calculs de style et la mise en page. Paginez les longues listes.',
+        ],
+        'redirects' => [
+            'title'       => 'Éviter les redirections multiples',
+            'description' => 'Chaque redirection ajoute un aller-retour réseau. Éliminez les chaînes et forcez HTTPS côté serveur.',
+        ],
+        'server-response-time' => [
+            'title'       => 'Réduire le temps de réponse serveur (TTFB)',
+            'description' => 'Un TTFB élevé pénalise le LCP. Activez OPcache, le cache de config/routes et utilisez Redis.',
+        ],
+        'uses-passive-event-listeners' => [
+            'title'       => 'Utiliser des écouteurs d\'événements passifs',
+            'description' => 'Les écouteurs touch/wheel sans { passive: true } bloquent le défilement. Ajoutez le flag passif.',
+        ],
+        'no-document-write' => [
+            'title'       => 'Éviter l\'API d\'écriture dépréciée',
+            'description' => 'Cette API dépréciée bloque l\'analyse HTML. Remplacez par des méthodes de manipulation du DOM.',
+        ],
+        'uses-long-cache-ttl' => [
+            'title'       => 'Politique de cache efficace pour les ressources statiques',
+            'description' => 'Des TTL courts forcent des téléchargements répétés. Utilisez un TTL long avec des noms de fichiers hachés.',
+        ],
+        'lcp-lazy-loaded' => [
+            'title'       => 'L\'image LCP ne doit pas être chargée en lazy',
+            'description' => 'Supprimez loading="lazy" de votre image LCP — elle retarde la ressource la plus importante.',
+        ],
+        'largest-contentful-paint-element' => [
+            'title'       => 'Élément LCP identifié',
+            'description' => 'Optimisez l\'élément LCP : preload, fetchpriority="high", format WebP, pas de lazy-load.',
+        ],
+        'layout-shift-elements' => [
+            'title'       => 'Éviter les décalages de mise en page importants',
+            'description' => 'Les éléments causant du CLS sont identifiés. Réservez l\'espace avec des dimensions explicites.',
+        ],
+        'non-composited-animations' => [
+            'title'       => 'Éviter les animations non composites',
+            'description' => 'Animez uniquement transform et opacity pour déléguer les animations au thread compositeur GPU.',
+        ],
+        'image-size-responsive' => [
+            'title'       => 'Servir les images à la bonne taille',
+            'description' => 'Utilisez srcset et sizes pour servir des images adaptées à chaque taille de viewport.',
+        ],
+        'link-name' => [
+            'title'       => 'Les liens ont un texte identifiable',
+            'description' => 'Les liens doivent avoir un texte accessible pour que les lecteurs d\'écran puissent décrire leur destination.',
+        ],
+        'button-name' => [
+            'title'       => 'Les boutons ont un nom accessible',
+            'description' => 'Les boutons sans libellé sont annoncés comme "bouton" sans contexte. Ajoutez du texte ou aria-label.',
+        ],
+        'meta-viewport' => [
+            'title'       => 'Balise meta viewport présente',
+            'description' => 'Ajoutez <meta name="viewport" content="width=device-width, initial-scale=1"> pour le rendu mobile.',
+        ],
+        'html-lang-valid' => [
+            'title'       => 'L\'élément html a un attribut lang valide',
+            'description' => 'La valeur de l\'attribut lang doit être un code de langue BCP47 valide.',
+        ],
+        'aria-required-attr' => [
+            'title'       => 'Les rôles ARIA ont les attributs requis',
+            'description' => 'Les éléments avec des rôles ARIA doivent inclure tous les attributs requis.',
+        ],
+        'aria-valid-attr-value' => [
+            'title'       => 'Les attributs ARIA ont des valeurs valides',
+            'description' => 'Les valeurs des attributs ARIA doivent provenir de l\'ensemble autorisé par la spécification.',
+        ],
+        'is-on-https' => [
+            'title'       => 'Utiliser HTTPS',
+            'description' => 'Servez toutes les ressources via HTTPS pour protéger les utilisateurs et activer les fonctionnalités modernes.',
+        ],
+        'geolocation-on-start' => [
+            'title'       => 'Éviter de demander la géolocalisation au chargement',
+            'description' => 'Demandez la géolocalisation uniquement après une interaction explicite de l\'utilisateur.',
+        ],
+        'notification-on-start' => [
+            'title'       => 'Éviter de demander la permission de notification au chargement',
+            'description' => 'Les demandes de notification affichées au chargement sont presque toujours refusées.',
+        ],
+        'password-inputs-can-be-pasted-into' => [
+            'title'       => 'Permettre le collage dans les champs de mot de passe',
+            'description' => 'Bloquer le collage empêche l\'utilisation des gestionnaires de mots de passe.',
+        ],
+        'image-aspect-ratio' => [
+            'title'       => 'Les images ont le bon ratio d\'aspect',
+            'description' => 'Assurez-vous que les images sont affichées avec leur ratio naturel pour éviter la déformation.',
+        ],
+        'hreflang' => [
+            'title'       => 'Le document a un hreflang valide',
+            'description' => 'Utilisez des codes hreflang BCP47 corrects pour que les moteurs de recherche affichent la bonne version.',
+        ],
+        'canonical' => [
+            'title'       => 'Le document a un lien canonique',
+            'description' => 'Ajoutez <link rel="canonical"> pour déclarer l\'URL de référence et éviter le contenu dupliqué.',
+        ],
+        'robots-txt' => [
+            'title'       => 'Le fichier robots.txt est valide',
+            'description' => 'Un robots.txt invalide ou manquant peut bloquer l\'exploration de votre site par les moteurs de recherche.',
+        ],
+        'tap-targets' => [
+            'title'       => 'Les cibles tactiles ont une taille appropriée',
+            'description' => 'Les cibles tactiles doivent faire au moins 48×48 pixels CSS pour être facilement cliquables sur mobile.',
+        ],
     ],
     'compare' => [
         'title'                 => 'Comparer les audits',
@@ -621,6 +746,7 @@ return [
         'unknown_date'         => 'Date inconnue',
         'no_occurrences_title' => 'Aucune occurrence active',
         'no_occurrences_body'  => 'Ce problème n\'a été détecté dans aucun audit récent.',
+        'what_to_fix'          => 'Ce qu\'il faut corriger',
     ],
     'budgets_page' => [
         'per_url_overrides' => 'Remplacements par URL',

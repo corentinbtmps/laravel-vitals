@@ -184,6 +184,7 @@ final class RecommendationBuilder
             'translation_params' => $this->paramsFor($auditKey, $auditData),
             'metrics'            => $this->metricsFor($auditKey, $auditData),
             'code_references'    => [],
+            'detail_items'       => null,
         ]);
     }
 
@@ -220,6 +221,7 @@ final class RecommendationBuilder
             'translation_params' => $this->paramsFor($auditKey, $auditData),
             'metrics'            => $this->metricsFor($auditKey, $auditData),
             'code_references'    => $refs->toArray(),
+            'detail_items'       => $this->extractDetailItems($auditKey, $auditData),
         ]);
     }
 
@@ -290,6 +292,69 @@ final class RecommendationBuilder
             'bootup-time-high'      => ['bootup_ms'       => $auditData['ms'] ?? null],
             default => [],
         };
+    }
+
+    /**
+     * Extract the most actionable detail items from a Lighthouse audit entry.
+     *
+     * Copies up to 10 items from audits[key].details.items, keeping only the
+     * columns that are useful for the "What to fix" display: url, wastedBytes,
+     * wastedMs, totalBytes. Returns null when no items are available.
+     *
+     * @param array<string, mixed> $auditData
+     * @return array<int, array<string, mixed>>|null
+     */
+    private function extractDetailItems(string $auditKey, array $auditData): ?array
+    {
+        $rawItems = $auditData['details']['items'] ?? null;
+
+        if (! is_array($rawItems) || $rawItems === []) {
+            return null;
+        }
+
+        $extracted = [];
+
+        foreach (array_slice($rawItems, 0, 10) as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $entry = [];
+
+            // URL — present in most audit items
+            if (isset($item['url']) && is_string($item['url']) && $item['url'] !== '') {
+                $entry['url'] = $item['url'];
+            } elseif (isset($item['node']['snippet']) && is_string($item['node']['snippet'])) {
+                // For DOM-based audits, use the element snippet as identifier
+                $entry['url'] = $item['node']['snippet'];
+            }
+
+            // Wasted bytes
+            if (isset($item['wastedBytes']) && (int) $item['wastedBytes'] > 0) {
+                $entry['wasted_bytes'] = (int) $item['wastedBytes'];
+            }
+
+            // Wasted milliseconds (e.g. render-blocking-resources)
+            if (isset($item['wastedMs']) && (float) $item['wastedMs'] > 0) {
+                $entry['wasted_ms'] = (float) $item['wastedMs'];
+            }
+
+            // Total bytes
+            if (isset($item['totalBytes']) && (int) $item['totalBytes'] > 0) {
+                $entry['total_bytes'] = (int) $item['totalBytes'];
+            }
+
+            // For unused-css-rules, also capture selector / source map info
+            if ($auditKey === 'unused-css-rules' && isset($item['label']) && is_string($item['label'])) {
+                $entry['label'] = $item['label'];
+            }
+
+            if ($entry !== []) {
+                $extracted[] = $entry;
+            }
+        }
+
+        return $extracted !== [] ? $extracted : null;
     }
 
     /**

@@ -74,7 +74,7 @@ final class IssueDetail extends Component
         });
 
         // Build a flat list of occurrences for the view
-        /** @var array<string, array{url_label: string, url_path: string, url_id: int|null, occurrences: list<array{audit_id: string, audit_date: string|null, code_references: array<int, mixed>, top_patterns: array<int, mixed>}>}> $grouped */
+        /** @var array<string, array{url_label: string, url_path: string, url_id: int|null, occurrences: list<array{audit_id: string, audit_date: string|null, code_references: array<int, mixed>, top_patterns: array<int, mixed>, detail_items: array<int, mixed>}>}> $grouped */
         $grouped = [];
 
         foreach ($byUrl as $path => $recos) {
@@ -97,6 +97,7 @@ final class IssueDetail extends Component
                     'audit_date'      => $reco->audit?->completed_at?->toDayDateTimeString(),
                     'code_references' => is_array($reco->code_references) ? $reco->code_references : [],
                     'top_patterns'    => $patterns,
+                    'detail_items'    => $reco->formatted_detail_items ?? [],
                 ];
             }
 

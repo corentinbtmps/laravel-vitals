@@ -24,6 +24,7 @@ use Spatie\Searchable\SearchResult;
  * @property array<string, mixed>|null $translation_params
  * @property array<string, mixed>|null $metrics
  * @property array<int, array<string, mixed>>|null $code_references
+ * @property array<int, array<string, mixed>>|null $detail_items
  */
 final class Recommendation extends Model implements Searchable
 {
@@ -47,8 +48,62 @@ final class Recommendation extends Model implements Searchable
             'translation_params' => 'array',
             'metrics'            => 'array',
             'code_references'    => 'array',
+            'detail_items'       => 'array',
             'is_demo'            => 'boolean',
         ];
+    }
+
+    /**
+     * Returns display-ready detail items with url, hint, and wasted_label fields.
+     *
+     * @return array<int, array{url: string|null, hint: string|null, wasted_label: string|null}>
+     */
+    public function getFormattedDetailItemsAttribute(): array
+    {
+        $items = is_array($this->detail_items) ? $this->detail_items : [];
+
+        $formatted = array_map(function (array $item): array {
+            $entry = ['url' => $item['url'] ?? null];
+
+            if (isset($item['wasted_bytes']) && (int) $item['wasted_bytes'] > 0) {
+                $entry['wasted_label'] = $this->formatBytes((int) $item['wasted_bytes']) . ' wasted';
+            } elseif (isset($item['wasted_ms']) && (float) $item['wasted_ms'] > 0) {
+                $entry['wasted_label'] = round((float) $item['wasted_ms']) . 'ms blocking';
+            } else {
+                $entry['wasted_label'] = null;
+            }
+
+            $entry['hint'] = match ($this->audit_key) {
+                'uses-optimized-images'   => 'Convert to WebP or AVIF',
+                'modern-image-formats'    => 'Serve in next-gen format (WebP/AVIF)',
+                'uses-text-compression'   => 'Enable gzip or Brotli compression',
+                'render-blocking-resources' => 'Defer or async load this resource',
+                'unused-javascript'       => 'Code-split or tree-shake this bundle',
+                'unused-css-rules'        => 'Purge unused selectors (e.g. Tailwind content config)',
+                'uses-responsive-images'  => 'Add srcset for multiple viewport sizes',
+                'efficient-animated-content' => 'Convert to MP4/WebM video element',
+                'offscreen-images'        => 'Add loading="lazy" attribute',
+                'prioritize-lcp-image'    => 'Add fetchpriority="high" to this image',
+                'lcp-lazy-loaded'         => 'Remove loading="lazy" from LCP image',
+                default                   => null,
+            };
+
+            return $entry;
+        }, $items);
+
+        return array_slice($formatted, 0, 10);
+    }
+
+    /**
+     * Format a byte count into a human-readable string (KB or MB).
+     */
+    private function formatBytes(int $bytes): string
+    {
+        if ($bytes >= 1_048_576) {
+            return round($bytes / 1_048_576, 1) . ' MB';
+        }
+
+        return round($bytes / 1_024) . ' KB';
     }
 
     public function getConnectionName(): ?string

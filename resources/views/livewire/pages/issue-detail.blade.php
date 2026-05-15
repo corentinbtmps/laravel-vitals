@@ -107,6 +107,30 @@
                                         </div>
                                     @endif
 
+                                    {{-- Per-occurrence detail items (What to fix) --}}
+                                    @if (! empty($occ['detail_items']))
+                                        <div>
+                                            <p class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-500 mb-2">
+                                                {{ __('vitals::vitals.issue_detail.what_to_fix') }}
+                                            </p>
+                                            <ul class="space-y-2">
+                                                @foreach ($occ['detail_items'] as $item)
+                                                    <li class="flex items-start justify-between gap-3 rounded-lg border border-ink-200 dark:border-ink-800 bg-canvas dark:bg-ink-950 p-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <code class="text-xs font-mono text-ink-700 dark:text-ink-300 break-all">{{ $item['url'] ?? '' }}</code>
+                                                            @if (! empty($item['hint']))
+                                                                <p class="mt-1 text-xs text-ink-500">{{ $item['hint'] }}</p>
+                                                            @endif
+                                                        </div>
+                                                        @if (! empty($item['wasted_label']))
+                                                            <flux:badge color="amber" size="sm">{{ $item['wasted_label'] }}</flux:badge>
+                                                        @endif
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+
                                     {{-- N+1 query patterns --}}
                                     @if (! empty($occ['top_patterns']))
                                         <div>

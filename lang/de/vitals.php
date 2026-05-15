@@ -320,6 +320,131 @@ return [
             'title'       => 'Sichere Antwort-Header',
             'description' => 'Überprüfe deine Antwort-Header auf CSP, HSTS und andere Sicherheits-Direktiven.',
         ],
+        // alpha.70
+        'uses-text-compression' => [
+            'title'       => 'Textkomprimierung aktivieren',
+            'description' => 'Komprimiere textbasierte Antworten mit gzip oder Brotli, um die Übertragungsgröße erheblich zu reduzieren.',
+        ],
+        'uses-optimized-images' => [
+            'title'       => 'Bilder effizient kodieren',
+            'description' => 'Unkomprimierte Bilder enthalten redundante Daten. Komprimiere sie, um den LCP zu verbessern.',
+        ],
+        'uses-rel-preconnect' => [
+            'title'       => 'Zu erforderlichen Ursprüngen vorverbinden',
+            'description' => 'Füge <link rel="preconnect"> für Drittanbieter-Ursprünge hinzu, damit DNS/TCP/TLS frühzeitig aufgebaut wird.',
+        ],
+        'prioritize-lcp-image' => [
+            'title'       => 'LCP-Bild priorisieren',
+            'description' => 'Füge fetchpriority="high" zum Hero-Bild hinzu, damit der Browser es bevorzugt lädt.',
+        ],
+        'mainthread-work-breakdown' => [
+            'title'       => 'Hauptthread-Arbeit minimieren',
+            'description' => 'Schwere JavaScript-Ausführung blockiert das Rendering. Teile Code auf und verschiebe nicht-kritische Skripte.',
+        ],
+        'dom-size' => [
+            'title'       => 'Übermäßige DOM-Größe vermeiden',
+            'description' => 'Ein großes DOM verlangsamt Style-Berechnungen. Paginiere lange Listen oder nutze virtuelles Scrollen.',
+        ],
+        'redirects' => [
+            'title'       => 'Mehrfache Seitenumleitungen vermeiden',
+            'description' => 'Jede Umleitung erhöht die Latenz. Eliminiere Ketten und erzwinge HTTPS auf Server-Ebene.',
+        ],
+        'server-response-time' => [
+            'title'       => 'Server-Antwortzeit reduzieren (TTFB)',
+            'description' => 'Hoher TTFB schadet dem LCP. Aktiviere OPcache, Config/Route-Cache und nutze Redis.',
+        ],
+        'uses-passive-event-listeners' => [
+            'title'       => 'Passive Event Listener verwenden',
+            'description' => 'Touch/Wheel-Listener ohne { passive: true } blockieren das Scrollen. Füge das passive-Flag hinzu.',
+        ],
+        'no-document-write' => [
+            'title'       => 'Veraltete Schreib-API vermeiden',
+            'description' => 'Diese veraltete API blockiert das HTML-Parsing. Ersetze sie durch DOM-Manipulationsmethoden.',
+        ],
+        'uses-long-cache-ttl' => [
+            'title'       => 'Effiziente Cache-Richtlinie für statische Assets',
+            'description' => 'Kurze Cache-TTL erzwingen wiederholte Downloads. Nutze lange TTL mit gehashten Dateinamen.',
+        ],
+        'lcp-lazy-loaded' => [
+            'title'       => 'LCP-Bild sollte nicht lazy geladen werden',
+            'description' => 'Entferne loading="lazy" vom LCP-Bild — es verzögert die wichtigste Ressource der Seite.',
+        ],
+        'largest-contentful-paint-element' => [
+            'title'       => 'LCP-Element identifiziert',
+            'description' => 'Optimiere das LCP-Element: Preload, fetchpriority="high", WebP-Format, kein Lazy-Load.',
+        ],
+        'layout-shift-elements' => [
+            'title'       => 'Große Layout-Verschiebungen vermeiden',
+            'description' => 'CLS-verursachende Elemente wurden identifiziert. Reserviere Platz mit expliziten Abmessungen.',
+        ],
+        'non-composited-animations' => [
+            'title'       => 'Nicht-komposite Animationen vermeiden',
+            'description' => 'Animiere nur transform und opacity, um Animationen auf dem GPU-Compositor-Thread auszuführen.',
+        ],
+        'image-size-responsive' => [
+            'title'       => 'Bilder in der richtigen Größe bereitstellen',
+            'description' => 'Nutze srcset und sizes, um passende Bilder für jeden Viewport zu liefern.',
+        ],
+        'link-name' => [
+            'title'       => 'Links haben erkennbaren Text',
+            'description' => 'Links brauchen zugänglichen Text, damit Screenreader das Ziel beschreiben können.',
+        ],
+        'button-name' => [
+            'title'       => 'Schaltflächen haben einen zugänglichen Namen',
+            'description' => 'Schaltflächen ohne Beschriftung werden als "Schaltfläche" ohne Kontext angekündigt.',
+        ],
+        'meta-viewport' => [
+            'title'       => 'Viewport-Meta-Tag vorhanden',
+            'description' => 'Füge <meta name="viewport" content="width=device-width, initial-scale=1"> für mobiles Rendering hinzu.',
+        ],
+        'html-lang-valid' => [
+            'title'       => 'HTML-Element hat gültiges lang-Attribut',
+            'description' => 'Der Wert des lang-Attributs muss ein gültiger BCP47-Sprachcode sein.',
+        ],
+        'aria-required-attr' => [
+            'title'       => 'ARIA-Rollen haben erforderliche Attribute',
+            'description' => 'Elemente mit ARIA-Rollen müssen alle erforderlichen Attribute für Assistive Technologien enthalten.',
+        ],
+        'aria-valid-attr-value' => [
+            'title'       => 'ARIA-Attribute haben gültige Werte',
+            'description' => 'ARIA-Attributwerte müssen aus dem erlaubten Satz der ARIA-Spezifikation stammen.',
+        ],
+        'is-on-https' => [
+            'title'       => 'HTTPS verwenden',
+            'description' => 'Stelle alle Ressourcen über HTTPS bereit, um Nutzer zu schützen und moderne Browserfunktionen zu aktivieren.',
+        ],
+        'geolocation-on-start' => [
+            'title'       => 'Geolocation nicht beim Seitenaufruf anfordern',
+            'description' => 'Fordere Geolocation nur nach einer expliziten Nutzerinteraktion an, nicht beim Laden der Seite.',
+        ],
+        'notification-on-start' => [
+            'title'       => 'Benachrichtigungsberechtigung nicht beim Seitenaufruf anfordern',
+            'description' => 'Beim Laden angezeigte Benachrichtigungsanfragen werden fast immer abgelehnt.',
+        ],
+        'password-inputs-can-be-pasted-into' => [
+            'title'       => 'Einfügen in Passwortfelder erlauben',
+            'description' => 'Das Blockieren von Einfügen verhindert die Nutzung von Passwort-Managern.',
+        ],
+        'image-aspect-ratio' => [
+            'title'       => 'Bilder haben das korrekte Seitenverhältnis',
+            'description' => 'Stelle sicher, dass Bilder in ihrem natürlichen Seitenverhältnis angezeigt werden.',
+        ],
+        'hreflang' => [
+            'title'       => 'Dokument hat ein gültiges hreflang',
+            'description' => 'Verwende korrekte BCP47-hreflang-Werte, damit Suchmaschinen die richtige Sprachversion anzeigen.',
+        ],
+        'canonical' => [
+            'title'       => 'Dokument hat einen kanonischen Link',
+            'description' => 'Füge <link rel="canonical"> hinzu, um die maßgebliche URL zu deklarieren.',
+        ],
+        'robots-txt' => [
+            'title'       => 'robots.txt ist gültig',
+            'description' => 'Eine ungültige oder fehlende robots.txt kann Suchmaschinen am Crawlen hindern.',
+        ],
+        'tap-targets' => [
+            'title'       => 'Touch-Ziele sind angemessen groß',
+            'description' => 'Touch-Ziele sollten mindestens 48×48 CSS-Pixel groß sein, um auf Mobilgeräten leicht angetippt zu werden.',
+        ],
     ],
     'compare' => [
         'title'                 => 'Audits vergleichen',
@@ -621,6 +746,7 @@ return [
         'unknown_date'         => 'Unbekanntes Datum',
         'no_occurrences_title' => 'Keine aktiven Vorkommen',
         'no_occurrences_body'  => 'Dieses Problem wurde in keiner kürzlichen Analyse gefunden.',
+        'what_to_fix'          => 'Was zu beheben ist',
     ],
     'budgets_page' => [
         'per_url_overrides' => 'URL-spezifische Überschreibungen',
