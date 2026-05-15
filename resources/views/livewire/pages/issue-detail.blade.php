@@ -141,8 +141,16 @@
                                                         <code class="text-xs font-mono text-accent-700 dark:text-accent-300 break-all">{{ $pattern['sql'] }}</code>
                                                         <div class="mt-1 flex items-center gap-3 text-xs text-ink-500">
                                                             <span class="tabular-nums font-medium">×{{ $pattern['occurrences'] }}</span>
-                                                            @if ($pattern['caller'])
-                                                                <code class="text-[11px]">{{ $pattern['caller'] }}</code>
+                                                            @if (! empty($pattern['caller']))
+                                                                @php
+                                                                    [$callerFile, $callerLine] = array_pad(explode(':', $pattern['caller'], 2), 2, null);
+                                                                    $callerEditor = \LaravelVitals\Support\EditorUrl::for($callerFile, $callerLine ? (int) $callerLine : null);
+                                                                @endphp
+                                                                @if ($callerEditor)
+                                                                    <a href="{{ $callerEditor }}" class="text-[11px] text-accent-500 hover:underline">{{ $pattern['caller'] }}</a>
+                                                                @else
+                                                                    <code class="text-[11px] text-ink-500">{{ $pattern['caller'] }}</code>
+                                                                @endif
                                                             @endif
                                                         </div>
                                                     </li>

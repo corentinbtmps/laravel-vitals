@@ -3,12 +3,12 @@
         <span class="text-ink-700 dark:text-ink-300">
             {{ $ref['file'] }}<span class="text-ink-500">:{{ $ref['line_start'] }}</span>
         </span>
-        @php $template = config('vitals.ui.editor_url_template'); @endphp
-        @if (is_string($template) && $template !== '')
-            @php
-                $editor = str_replace(['{path}', '{line}'], [base_path($ref['file']), (string) $ref['line_start']], $template);
-            @endphp
-            <a href="{{ $editor }}" class="text-accent-500 hover:underline text-xs">{{ __('vitals::vitals.actions.open') }}</a>
+        @php $editor = \LaravelVitals\Support\EditorUrl::for($ref['file'], $ref['line_start']); @endphp
+        @if ($editor)
+            <a href="{{ $editor }}" class="inline-flex items-center gap-1 text-xs text-accent-500 hover:text-accent-700 dark:hover:text-accent-300 transition-colors">
+                <flux:icon name="arrow-top-right-on-square" class="size-3" />
+                {{ __('vitals::vitals.actions.open_in_editor') }}
+            </a>
         @endif
     </div>
     <pre class="whitespace-pre-wrap text-xs leading-snug text-ink-800 dark:text-ink-200">{{ $ref['snippet'] }}</pre>

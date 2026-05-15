@@ -115,10 +115,21 @@ return [
     | UI toggles
     |--------------------------------------------------------------------------
     | charts: 'auto' | 'apex' | 'flux'
+    |
+    | editor: one of 'vscode', 'cursor', 'phpstorm', 'idea', 'sublime',
+    |         'atom', 'textmate', 'macvim', 'emacs', 'nova', 'zed', or null.
+    |         Set via VITALS_EDITOR env var to enable "Open in editor" links
+    |         throughout the dashboard (same UX as Spatie Ignition).
+    |
+    | editor_url_template: custom URL scheme overrides the preset above.
+    |         Use {path} and {line} as placeholders, e.g.:
+    |         'myeditor://{path}:{line}'
+    |         Set via VITALS_EDITOR_URL_TEMPLATE env var.
     */
     'ui' => [
         'charts'              => 'auto',
-        'editor_url_template' => null,
+        'editor'              => env('VITALS_EDITOR', null),
+        'editor_url_template' => env('VITALS_EDITOR_URL_TEMPLATE', null),
     ],
 
     /*

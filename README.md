@@ -384,11 +384,20 @@ Full annotated source: `config/vitals.php`. The most useful keys:
 | `budgets.*` | see config | Warning/critical thresholds per metric. `per_url` allows per-URL overrides. |
 | `rum.sample_rate` | `1.0` | Fraction of page loads that send a RUM beacon (0.05–0.1 for high-traffic). |
 | `notifications.channels` | `['mail']` | Add `'slack'` or `'database'` as needed. |
-| `ui.editor_url_template` | `null` | Set to `vscode://file/{file}:{line}` to make source references clickable. |
+| `ui.editor` | `null` | Editor preset — see "Open in editor" section below. |
+| `ui.editor_url_template` | `null` | Custom URL scheme override — see "Open in editor" section below. |
 | `status.enabled` | `false` | Opt-in public status page at `/vitals/status`. |
 | `retention.days` | `90` | Audit and RUM retention. RUM has its own `rum.retention_days` (also 90 days). |
 
 The UI is available in English, French, German, and Spanish — follows `app()->getLocale()`.
+
+### Open in editor
+
+Add `VITALS_EDITOR=vscode` (or `phpstorm`, `cursor`, `sublime`, `atom`, `textmate`, `idea`, `zed`, `nova`, `macvim`, `emacs`) to your `.env` and every file:line reference in the dashboard becomes a clickable link that jumps to the right file and line in your IDE — the same UX as Spatie Ignition's error pages.
+
+For a custom URL scheme not in the preset list, set `VITALS_EDITOR_URL_TEMPLATE` directly: `myeditor://{path}:{line}`. The custom template overrides the preset.
+
+> Future versions may auto-detect the editor from the request context.
 
 ---
 

@@ -644,6 +644,7 @@ return [
     'actions' => [
         'view'           => 'Ver',
         'open'           => 'Abrir',
+        'open_in_editor' => 'Abrir en el editor',
         'configure'      => 'Configurar',
         'run_audit'      => 'Ejecutar auditoría',
         'view_all'       => 'Ver todo',

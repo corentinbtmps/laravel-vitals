@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.73] - 2026-05-15
+
+### Added
+
+#### Open in editor — jump from any file:line reference into the IDE
+
+- **`EditorUrl` helper** (`src/Support/EditorUrl.php`) with built-in URL templates for 11 editors: VSCode, Cursor, PHPStorm, IntelliJ IDEA, Sublime Text, Atom, TextMate, MacVim, Emacs, Nova, Zed. Same preset list as Spatie Ignition / Symfony VarDumper.
+- **New config keys** in `vitals.ui`:
+  - `editor` — select a preset via `VITALS_EDITOR=vscode` (or any of the 11 supported names).
+  - `editor_url_template` — custom URL scheme via `VITALS_EDITOR_URL_TEMPLATE`; overrides the preset for full flexibility.
+  - Existing users with a hand-written `VITALS_EDITOR_URL_TEMPLATE` continue to work without any change.
+- **"Open in editor" links** added to every file:line surface in the dashboard:
+  - `code-reference` component — recommendation source pointers (previously used raw config; now delegates to `EditorUrl::for()`).
+  - N+1 caller attribution in the front-end ↔ back-end correlation panel on `audit-detail`.
+  - N+1 repeated queries in the recommendations section on `audit-detail`.
+  - N+1 repeated queries on `issue-detail` per-occurrence panel.
+  - When no editor is configured the file:line text remains visible as plain `<code>` — no regression.
+- **i18n**: `actions.open_in_editor` key added in EN ("Open in editor"), FR ("Ouvrir dans l'éditeur"), DE ("Im Editor öffnen"), ES ("Abrir en el editor").
+- **10 new unit tests** covering all 11 presets, custom template override, null/empty config, absolute vs relative path handling, and default line number.
+- **README** updated with a new "Open in editor" section under Configuration documenting both env vars and all supported preset names.
+
 ## [v1.0.0-alpha.63] - 2026-05-15
 
 ### Added
