@@ -171,6 +171,11 @@ final class DemoSeeder
                         'hint' => 'Use @vite([...]) instead.',
                     ],
                 ],
+                'detail_items'     => [
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/app-abc.js',    'wasted_bytes' => 96_000, 'total_bytes' => 180_000],
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/vendor.js',     'wasted_bytes' => 62_000, 'total_bytes' => 145_000],
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/charts.js',     'wasted_bytes' => 22_000, 'total_bytes' => 38_000],
+                ],
                 'is_demo'          => true,
             ]);
         }
@@ -184,7 +189,13 @@ final class DemoSeeder
                 'severity'         => Severity::Warning,
                 'title_key'        => 'vitals::vitals.recommendations.n-plus-one-detected.title',
                 'description_key'  => 'vitals::vitals.recommendations.n-plus-one-detected.description',
-                'translation_params' => ['count' => 87],
+                'translation_params' => [
+                    'count' => 87,
+                    'top_patterns' => [
+                        ['sql' => 'SELECT * FROM posts WHERE user_id = ?', 'occurrences' => 24, 'caller' => 'app/Http/Controllers/' . ucfirst($url->label) . 'Controller.php:42'],
+                        ['sql' => 'SELECT * FROM comments WHERE post_id = ?', 'occurrences' => 18, 'caller' => 'app/View/Components/PostCard.php:18'],
+                    ],
+                ],
                 'metrics'          => ['queries_count' => 87, 'queries_unique' => 4],
                 'code_references'  => [],
                 'is_demo'          => true,
@@ -194,6 +205,28 @@ final class DemoSeeder
         // Distribute additional common recommendations
         if (mt_rand(0, 3) === 0) {
             $extraKey = self::COMMON_RECOMMENDATIONS[mt_rand(2, 4)];
+
+            $extraDetailItems = match ($extraKey) {
+                'modern-image-formats', 'uses-optimized-images' => [
+                    ['url' => config('app.url', 'https://example.test') . '/images/hero.jpg',    'wasted_bytes' => 190_000, 'total_bytes' => 380_000],
+                    ['url' => config('app.url', 'https://example.test') . '/images/banner.png', 'wasted_bytes' => 87_000,  'total_bytes' => 220_000],
+                    ['url' => config('app.url', 'https://example.test') . '/images/avatar.jpg', 'wasted_bytes' => 9_000,   'total_bytes' => 45_000],
+                ],
+                'uses-text-compression' => [
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/app.css', 'wasted_bytes' => 47_000, 'total_bytes' => 62_000],
+                    ['url' => config('app.url', 'https://example.test') . '/api/articles.json',    'wasted_bytes' => 28_000, 'total_bytes' => 38_000],
+                ],
+                'render-blocking-resources' => [
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/fonts.css',     'wasted_ms' => 320, 'total_bytes' => 12_000],
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/analytics.js', 'wasted_ms' => 180, 'total_bytes' => 45_000],
+                ],
+                'unused-css-rules' => [
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/app.css',    'wasted_bytes' => 38_000, 'total_bytes' => 62_000],
+                    ['url' => config('app.url', 'https://example.test') . '/build/assets/bootstrap.css', 'wasted_bytes' => 145_000, 'total_bytes' => 195_000],
+                ],
+                default => null,
+            };
+
             Recommendation::create([
                 'audit_id'         => $audit->id,
                 'source'           => 'lighthouse',
@@ -205,6 +238,7 @@ final class DemoSeeder
                 'translation_params' => [],
                 'metrics'          => [],
                 'code_references'  => [],
+                'detail_items'     => $extraDetailItems,
                 'is_demo'          => true,
             ]);
         }
