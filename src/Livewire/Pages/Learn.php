@@ -17,10 +17,10 @@ final class Learn extends Component
     /** @var array<int, string> */
     public array $availableFilters = ['all', 'performance', 'accessibility', 'best_practices', 'seo'];
 
-    public function setFilter(string $filter): void
+    public function updatedFilter(string $value): void
     {
-        if (in_array($filter, $this->availableFilters, true)) {
-            $this->filter = $filter;
+        if (! in_array($value, $this->availableFilters, true)) {
+            $this->filter = 'all';
         }
     }
 

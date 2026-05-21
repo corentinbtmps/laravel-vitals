@@ -17,7 +17,7 @@ it('lists all known recommendations grouped by category', function (): void {
 
 it('filters by category', function (): void {
     Livewire::test(Learn::class)
-        ->call('setFilter', 'accessibility')
+        ->set('filter', 'accessibility')
         ->assertSet('filter', 'accessibility')
         ->assertSeeText('color-contrast')
         ->assertDontSeeText('config-cache-disabled');
@@ -25,6 +25,6 @@ it('filters by category', function (): void {
 
 it('rejects unknown filter values', function (): void {
     Livewire::test(Learn::class)
-        ->call('setFilter', 'imaginary')
+        ->set('filter', 'imaginary')
         ->assertSet('filter', 'all');
 });

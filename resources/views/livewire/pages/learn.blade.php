@@ -12,7 +12,7 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             @foreach ($this->categoryTiles() as $key => $tile)
                 <button type="button"
-                        wire:click="setFilter('{{ $key }}')"
+                        wire:click="$set('filter', '{{ $key }}')"
                         @class([
                             'group rounded-2xl border p-5 text-left transition-colors duration-150',
                             ...\LaravelVitals\Support\LearnTileClasses::tileBorder($tile['color']),
@@ -49,22 +49,20 @@
     @else
         {{-- Back to browse link --}}
         <div class="flex items-center gap-3">
-            <flux:button wire:click="setFilter('all')" variant="ghost" size="sm" icon="arrow-left">{{ __('vitals::vitals.learn_page.all_categories_label') }}</flux:button>
+            <flux:button wire:click="$set('filter', 'all')" variant="ghost" size="sm" icon="arrow-left">{{ __('vitals::vitals.learn_page.all_categories_label') }}</flux:button>
             <span class="text-sm text-ink-500">{{ __('vitals::vitals.learn_page.showing') }} {{ ucfirst(str_replace('_', ' ', $filter)) }}</span>
         </div>
     @endif
 
     {{-- Filter tabs --}}
-    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-4">
-        <div class="flex flex-wrap gap-2">
-            @foreach (['all' => 'All', 'performance' => 'Performance', 'accessibility' => 'Accessibility', 'best_practices' => 'Best Practices', 'seo' => 'SEO'] as $value => $label)
-                <flux:button
-                    wire:click="setFilter('{{ $value }}')"
-                    variant="{{ $filter === $value ? 'filled' : 'ghost' }}"
-                    size="sm"
-                >{{ $label }}</flux:button>
-            @endforeach
-        </div>
+    <div class="flex">
+        <flux:radio.group wire:model.live="filter" variant="segmented" size="sm" class="shrink-0">
+            <flux:radio value="all" label="All" />
+            <flux:radio value="performance" label="Performance" />
+            <flux:radio value="accessibility" label="Accessibility" />
+            <flux:radio value="best_practices" label="Best Practices" />
+            <flux:radio value="seo" label="SEO" />
+        </flux:radio.group>
     </div>
 
     @forelse ($grouped as $category => $items)
@@ -74,8 +72,8 @@
                 <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-400">
                     {{ str_replace('_', ' ', $category) }}
                 </h2>
-                <span class="text-xs text-ink-500">{{ count($items) }} {{ __('vitals::vitals.learn_page.item') }}</span>
-                <div class="flex-1 h-px bg-ink-200/60 dark:bg-ink-800/60"></div>
+                <span class="text-xs text-ink-500">{{ count($items) }} {{ Str::plural(__('vitals::vitals.learn_page.item'), count($items)) }}</span>
+                <div class="flex-1 h-px bg-ink-200 dark:bg-ink-800"></div>
             </div>
 
             {{-- Cards grid --}}
@@ -92,11 +90,10 @@
                             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
                             <flux:badge color="{{ $entry['descriptor']->severity->fluxBadgeColor() }}" size="sm">{{ $entry['descriptor']->severity->label() }}</flux:badge>
                             @if (($entry['active_count'] ?? 0) > 0)
-                                <a href="{{ route('vitals.issue.detail', ['auditKey' => $entry['key']]) }}"
-                                   class="inline-flex items-center gap-1 text-xs font-semibold text-accent-600 dark:text-accent-400 hover:underline">
+                                <flux:link href="{{ route('vitals.issue.detail', ['auditKey' => $entry['key']]) }}" class="text-xs font-semibold inline-flex items-center gap-1">
                                     <flux:icon name="map-pin" class="size-3" />
                                     {{ __('vitals::vitals.learn_page.active_in_app', ['count' => $entry['active_count']]) }}
-                                </a>
+                                </flux:link>
                             @endif
                             <code class="ml-auto text-[11px] font-mono text-ink-400">{{ $entry['key'] }}</code>
                         </div>

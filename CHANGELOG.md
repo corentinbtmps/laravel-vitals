@@ -7,7 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.83] - 2026-05-22
+## [v1.0.0-alpha.84] - 2026-05-22
+
+### Changed
+
+#### Learn page filter row → segmented control
+
+The "All / Performance / Accessibility / Best Practices / SEO" filter row was a wrapper panel (`rounded-2xl bg-paper p-4`) containing raw `flux:button` items with `variant="filled"` (active) / `variant="ghost"` (inactive). Visually inconsistent with every other selector in the package (which now uses `flux:radio.group` segmented from alpha.82).
+
+- Migrated to `flux:radio.group variant="segmented"` with `wire:model.live="filter"`, matching Issues tabs / SEO category tabs / period selectors.
+- Removed the wrapper panel — the segmented control stands on its own.
+- `Learn::setFilter()` action removed; tile clicks (`wire:click`) and "back to browse" use `$set('filter', '...')` directly. Validation now lives in the `updatedFilter` Livewire hook (rejects values not in `$availableFilters`, falls back to 'all').
+
+### Fixed
+
+- **Singular "item"** under each category heading on the Learn page (e.g. "PERFORMANCE 38 item") now pluralizes correctly via `Str::plural()`.
+- `bg-ink-200/60` divider on Learn category section headers → solid `bg-ink-200`, matching the package-wide solid-border discipline.
+- `flux:link` replaces the last accent-styled raw `<a>` on the Learn page ("X active in your app" link to issue detail).
+
+
 
 ### Fixed
 
