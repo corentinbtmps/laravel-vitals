@@ -226,9 +226,11 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ->completeIf(fn (): bool => \LaravelVitals\Models\Audit::query()->where('status', AuditStatus::Completed)->exists());
 
         \Spatie\Onboard\Facades\Onboard::addStep(__('vitals::vitals.onboarding.steps.notifications.title'))
-            ->link('/' . config('vitals.path', 'vitals'))
             ->cta(__('vitals::vitals.onboarding.steps.notifications.cta'))
-            ->attributes(['hint' => "config/vitals.php → notifications.slack.webhook or notifications.mail.to"])
+            ->attributes([
+                'hint'          => "config/vitals.php → notifications.slack.webhook or notifications.mail.to",
+                'config_only'   => true,
+            ])
             ->completeIf(fn (): bool =>
                 ! empty(config('vitals.notifications.slack.webhook')) ||
                 ! empty(config('vitals.notifications.mail.to'))

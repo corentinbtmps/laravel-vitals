@@ -117,11 +117,12 @@
                                     @endif
 
                                     @if (!$isPassing && $check['doc_url'])
-                                        <a href="{{ $check['doc_url'] }}" target="_blank" rel="noopener noreferrer"
-                                           class="mt-1.5 inline-flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors">
-                                            {{ __('vitals::vitals.actions.read_docs') }}
-                                            <flux:icon name="arrow-top-right-on-square" class="size-3" />
-                                        </a>
+                                        <div class="mt-1.5">
+                                            <flux:link href="{{ $check['doc_url'] }}" external class="text-xs inline-flex items-center gap-1">
+                                                {{ __('vitals::vitals.actions.read_docs') }}
+                                                <flux:icon name="arrow-top-right-on-square" class="size-3" />
+                                            </flux:link>
+                                        </div>
                                     @endif
 
                                     @if (!$isPassing && !empty($check['detail_items']))

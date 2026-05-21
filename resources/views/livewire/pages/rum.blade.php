@@ -7,32 +7,26 @@
         </div>
         <div class="flex flex-wrap items-center gap-2">
             {{-- Device filter --}}
-            <div class="flex gap-1">
+            <flux:button.group>
                 @foreach (['all', 'mobile', 'desktop'] as $d)
                     @php $deviceActive = $d === 'all' ? $device === null : $device?->value === $d; @endphp
-                    <button
+                    <flux:button
                         wire:click="setDevice('{{ $d }}')"
-                        @class([
-                            'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                            'bg-accent-500 text-white'                                                                        => $deviceActive,
-                            'bg-paper dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => ! $deviceActive,
-                        ])
-                    >{{ ucfirst($d) }}</button>
+                        size="sm"
+                        variant="{{ $deviceActive ? 'primary' : 'ghost' }}"
+                    >{{ ucfirst($d) }}</flux:button>
                 @endforeach
-            </div>
+            </flux:button.group>
             {{-- Period filter --}}
-            <div class="flex gap-1">
+            <flux:button.group>
                 @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.rum.retention_days', 90)) as $case)
-                    <button
+                    <flux:button
                         wire:click="setPeriod('{{ $case->value }}')"
-                        @class([
-                            'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                            'bg-accent-500 text-white' => $period === $case,
-                            'bg-paper dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $case,
-                        ])
-                    >{{ $case->buttonLabel() }}</button>
+                        size="sm"
+                        variant="{{ $period === $case ? 'primary' : 'ghost' }}"
+                    >{{ $case->buttonLabel() }}</flux:button>
                 @endforeach
-            </div>
+            </flux:button.group>
         </div>
     </div>
 

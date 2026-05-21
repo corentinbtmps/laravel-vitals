@@ -50,6 +50,7 @@ return [
         'banner_subtitle' => ':count von :total Schritten abgeschlossen',
         'dismiss'         => 'Einrichtung überspringen',
         'dismiss_confirm' => 'Dieses Banner dauerhaft ausblenden. Alle Funktionen sind weiterhin über die Navigation erreichbar.',
+        'config_only_badge' => 'Konfigurationsdatei bearbeiten',
         'steps' => [
             'urls' => [
                 'title' => 'Erste URL konfigurieren',

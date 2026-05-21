@@ -50,6 +50,7 @@ return [
         'banner_subtitle' => ':count de :total pasos completados',
         'dismiss'         => 'Omitir incorporación',
         'dismiss_confirm' => 'Ocultar este banner permanentemente. Todas las funciones siguen accesibles desde la navegación.',
+        'config_only_badge' => 'Editar archivo de configuración',
         'steps' => [
             'urls' => [
                 'title' => 'Configura tu primera URL',

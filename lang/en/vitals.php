@@ -54,8 +54,9 @@ return [
     'onboarding' => [
         'banner_title'   => 'Get started with Laravel Vitals',
         'banner_subtitle' => ':count of :total steps complete',
-        'dismiss'        => 'Skip onboarding',
+        'dismiss'        => 'Skip',
         'dismiss_confirm' => 'Hide this banner permanently. You can still access all features from the navigation.',
+        'config_only_badge' => 'Edit config file',
         'steps' => [
             'urls' => [
                 'title' => 'Configure your first URL',

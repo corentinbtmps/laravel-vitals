@@ -8,18 +8,15 @@
         </div>
 
         {{-- Period selector --}}
-        <div class="flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 flex-shrink-0">
+        <flux:button.group>
             @foreach ($availablePeriods as $p)
-                <button
+                <flux:button
                     wire:click="setPeriod('{{ $p->value }}')"
-                    @class([
-                        'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                        'bg-accent-500 text-white shadow-sm'  => $period === $p,
-                        'text-ink-500 hover:text-ink-800 dark:hover:text-ink-200 hover:bg-ink-100 dark:hover:bg-ink-800' => $period !== $p,
-                    ])
-                >{{ $p->buttonLabel() }}</button>
+                    size="sm"
+                    variant="{{ $period === $p ? 'primary' : 'ghost' }}"
+                >{{ $p->buttonLabel() }}</flux:button>
             @endforeach
-        </div>
+        </flux:button.group>
     </div>
 
     {{-- Top stats card --}}
@@ -112,10 +109,9 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-3 text-right">
-                                    <a href="{{ route('vitals.audit.seo', $row['audit']->id) }}"
-                                       class="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 font-medium transition-colors">
+                                    <flux:link href="{{ route('vitals.audit.seo', $row['audit']->id) }}" class="text-xs">
                                         {{ __('vitals::vitals.actions.view') }} →
-                                    </a>
+                                    </flux:link>
                                 </td>
                             </tr>
                         @endforeach
@@ -131,24 +127,21 @@
             <h2 class="text-sm font-semibold">{{ __('vitals::vitals.seo.top_failing') }}</h2>
 
             {{-- Category tabs --}}
-            <div class="flex items-center gap-1">
+            <flux:button.group>
                 @foreach (['all', 'configuration', 'content', 'meta', 'performance'] as $cat)
-                    <button
+                    <flux:button
                         wire:click="setCategory('{{ $cat }}')"
-                        @class([
-                            'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                            'bg-accent-500 text-white' => $category === $cat,
-                            'text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800' => $category !== $cat,
-                        ])
+                        size="sm"
+                        variant="{{ $category === $cat ? 'primary' : 'ghost' }}"
                     >
                         @if ($cat === 'all')
                             {{ __('vitals::vitals.actions.all_categories') }}
                         @else
                             {{ __('vitals::vitals.seo.categories.' . $cat) }}
                         @endif
-                    </button>
+                    </flux:button>
                 @endforeach
-            </div>
+            </flux:button.group>
         </div>
 
         @if ($topFailing->isNotEmpty())
@@ -164,10 +157,9 @@
                             size="sm"
                         >× {{ $item->occurrences }} {{ __('vitals::vitals.seo.urls_label') }}</flux:badge>
                         @if ($item->sample_audit_id)
-                            <a href="{{ route('vitals.audit.seo', $item->sample_audit_id) }}"
-                               class="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 shrink-0 transition-colors">
+                            <flux:link href="{{ route('vitals.audit.seo', $item->sample_audit_id) }}" class="text-xs shrink-0">
                                 {{ __('vitals::vitals.actions.view') }} →
-                            </a>
+                            </flux:link>
                         @endif
                     </div>
                 @endforeach

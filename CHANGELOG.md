@@ -7,7 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.79] - 2026-05-21
+## [v1.0.0-alpha.80] - 2026-05-21
+
+### Fixed
+
+#### Onboarding "Configure" button no longer dead-ends
+
+- The notifications onboarding step previously linked to `/vitals` (the same page the banner lives on), so clicking "Configure" reloaded the dashboard with no useful effect. Notifications are config-file driven (no UI yet), so the step now:
+  - drops the `->link()` call (so `$step->link` is null)
+  - sets a new `config_only` attribute
+  - the banner view renders a `flux:badge` ("Edit config file") instead of a dead button, while still showing the inline `config/vitals.php → …` hint code snippet
+
+### Changed
+
+#### Flux UI uniformization across the dashboard
+
+Per established preference: prefer Flux components over raw HTML wherever a Flux equivalent exists. Done in this pass:
+
+- **Period selectors** on `overview`, `url-detail`, `seo`, `rum`, `queries` migrated from custom-styled raw `<button>` to `flux:button.group` + `flux:button` (variant primary for active, ghost for inactive). All five pages now render identically.
+- **RUM device filter** (all / mobile / desktop) same migration.
+- **URL detail metric toggle** (Score / LCP / INP / CLS / TTFB) same migration; the per-button `flux:tooltip` wrapper collapses into the button's `:tooltip` prop.
+- **SEO category tabs** (all / configuration / content / meta / performance) same migration.
+- **Onboarding banner**: dismiss `<button>` → `<flux:button variant="ghost" size="xs">`; CTA `<flux:button variant="filled">` → `variant="primary"` for consistency with other primary buttons.
+- **Accent-colored anchors** (raw `<a class="text-accent-600 hover:…">`) replaced with `<flux:link>` on the SEO per-URL row, SEO top-failing row, queries route-detail "Affected URLs" + "Recent audits" + repeated SQL pattern caller links, and the audit-SEO check `Read docs` external link.
+
+
 
 ### Added
 

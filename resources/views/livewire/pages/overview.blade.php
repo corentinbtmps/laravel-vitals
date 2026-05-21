@@ -7,20 +7,15 @@
             <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.pages.overview.title') }}</h1>
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.overview.subtitle') }}</p>
         </div>
-        <div class="overflow-x-auto -mx-2 md:mx-0">
-            <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 md:mx-0">
-                @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
-                    <button
-                        wire:click="setPeriod('{{ $case->value }}')"
-                        @class([
-                            'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-                            'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900' => $period === $case,
-                            'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $period !== $case,
-                        ])
-                    >{{ $case->buttonLabel() }}</button>
-                @endforeach
-            </div>
-        </div>
+        <flux:button.group>
+            @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
+                <flux:button
+                    wire:click="setPeriod('{{ $case->value }}')"
+                    size="sm"
+                    variant="{{ $period === $case ? 'primary' : 'ghost' }}"
+                >{{ $case->buttonLabel() }}</flux:button>
+            @endforeach
+        </flux:button.group>
     </div>
 
     {{-- Empty state: no URLs configured --}}

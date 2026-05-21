@@ -50,6 +50,7 @@ return [
         'banner_subtitle' => ':count étape(s) sur :total effectuée(s)',
         'dismiss'         => 'Ignorer l\'assistant',
         'dismiss_confirm' => 'Masquer définitivement cette bannière. Toutes les fonctionnalités restent accessibles via la navigation.',
+        'config_only_badge' => 'Modifier le fichier de config',
         'steps' => [
             'urls' => [
                 'title' => 'Configurer votre première URL',

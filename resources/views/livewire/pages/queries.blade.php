@@ -5,18 +5,15 @@
             <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.queries.title') }}</h1>
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.queries.subtitle') }}</p>
         </div>
-        <div class="flex gap-1">
+        <flux:button.group>
             @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
-                <button
+                <flux:button
                     wire:click="setPeriod('{{ $case->value }}')"
-                    @class([
-                        'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                        'bg-accent-500 text-white' => $period === $case,
-                        'bg-paper dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $case,
-                    ])
-                >{{ $case->buttonLabel() }}</button>
+                    size="sm"
+                    variant="{{ $period === $case ? 'primary' : 'ghost' }}"
+                >{{ $case->buttonLabel() }}</flux:button>
             @endforeach
-        </div>
+        </flux:button.group>
     </div>
 
     @if (empty($routes))
@@ -129,10 +126,9 @@
                         <ul class="space-y-1.5">
                             @foreach ($routeDetail['urls'] as $u)
                                 <li class="flex items-center justify-between gap-3 text-sm">
-                                    <a href="{{ route('vitals.url', $u['id']) }}"
-                                       class="font-medium text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors truncate">
+                                    <flux:link href="{{ route('vitals.url', $u['id']) }}" class="font-medium truncate">
                                         {{ $u['label'] }}
-                                    </a>
+                                    </flux:link>
                                     <span class="text-xs text-ink-400 tabular-nums">{{ $u['audit_count'] }} {{ __('vitals::vitals.queries.audits_short') }}</span>
                                 </li>
                             @endforeach
@@ -149,10 +145,9 @@
                         <ul class="space-y-1.5">
                             @foreach ($routeDetail['recent'] as $r)
                                 <li class="flex items-center justify-between gap-3 text-sm">
-                                    <a href="{{ route('vitals.audit', $r['audit_id']) }}"
-                                       class="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors truncate">
+                                    <flux:link href="{{ route('vitals.audit', $r['audit_id']) }}" class="text-xs truncate">
                                         {{ $r['url_label'] ?? '—' }} · {{ $r['completed_at']?->format('M j, H:i') ?? '—' }}
-                                    </a>
+                                    </flux:link>
                                     <span class="text-xs text-ink-500 tabular-nums whitespace-nowrap">
                                         {{ $r['queries_count'] !== null ? $r['queries_count'] . ' q' : '—' }} ·
                                         {{ $r['queries_time_ms'] !== null ? number_format($r['queries_time_ms'], 0) . 'ms' : '—' }}
@@ -186,7 +181,7 @@
                                         $editor = \LaravelVitals\Support\EditorUrl::for($callerFile, $callerLine !== null ? (int) $callerLine : null);
                                     @endphp
                                     @if ($editor)
-                                        <a href="{{ $editor }}" class="text-accent-600 dark:text-accent-400 hover:underline">{{ $p['caller'] }}</a>
+                                        <flux:link href="{{ $editor }}">{{ $p['caller'] }}</flux:link>
                                     @else
                                         <span class="text-ink-500">{{ $p['caller'] }}</span>
                                     @endif

@@ -18,20 +18,15 @@
                 </div>
             </div>
             {{-- Period control --}}
-            <div class="overflow-x-auto -mx-2 sm:mx-0">
-                <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0 shrink-0">
-                    @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
-                        <button
-                            wire:click="setPeriod('{{ $case->value }}')"
-                            @class([
-                                'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-                                'bg-ink-900 text-white dark:bg-ink-100 dark:text-ink-900' => $period === $case,
-                                'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $period !== $case,
-                            ])
-                        >{{ $case->buttonLabel() }}</button>
-                    @endforeach
-                </div>
-            </div>
+            <flux:button.group>
+                @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
+                    <flux:button
+                        wire:click="setPeriod('{{ $case->value }}')"
+                        size="sm"
+                        variant="{{ $period === $case ? 'primary' : 'ghost' }}"
+                    >{{ $case->buttonLabel() }}</flux:button>
+                @endforeach
+            </flux:button.group>
         </div>
     </div>
 
@@ -62,28 +57,22 @@
                     <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }}</p>
                 </div>
                 {{-- Metric toggle --}}
-                <div class="overflow-x-auto -mx-2 sm:mx-0">
-                    <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0">
-                        @foreach ([
-                            'performance' => ['label' => 'Score', 'desc_key' => 'vitals::vitals.tooltip.metric_score'],
-                            'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals::vitals.tooltip.metric_lcp'],
-                            'inp'         => ['label' => 'INP',   'desc_key' => 'vitals::vitals.tooltip.metric_inp'],
-                            'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals::vitals.tooltip.metric_cls'],
-                            'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals::vitals.tooltip.metric_ttfb'],
-                        ] as $val => $meta)
-                            <flux:tooltip :content="__($meta['desc_key'])">
-                                <button
-                                    wire:click="setMetric('{{ $val }}')"
-                                    @class([
-                                        'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-                                        'bg-accent-500 text-white'                                 => $metric === $val,
-                                        'text-ink-500 hover:text-ink-900 dark:hover:text-ink-100' => $metric !== $val,
-                                    ])
-                                >{{ $meta['label'] }}</button>
-                            </flux:tooltip>
-                        @endforeach
-                    </div>
-                </div>
+                <flux:button.group>
+                    @foreach ([
+                        'performance' => ['label' => 'Score', 'desc_key' => 'vitals::vitals.tooltip.metric_score'],
+                        'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals::vitals.tooltip.metric_lcp'],
+                        'inp'         => ['label' => 'INP',   'desc_key' => 'vitals::vitals.tooltip.metric_inp'],
+                        'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals::vitals.tooltip.metric_cls'],
+                        'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals::vitals.tooltip.metric_ttfb'],
+                    ] as $val => $meta)
+                        <flux:button
+                            wire:click="setMetric('{{ $val }}')"
+                            size="sm"
+                            variant="{{ $metric === $val ? 'primary' : 'ghost' }}"
+                            :tooltip="__($meta['desc_key'])"
+                        >{{ $meta['label'] }}</flux:button>
+                    @endforeach
+                </flux:button.group>
             </div>
             <div
                 x-data="{
