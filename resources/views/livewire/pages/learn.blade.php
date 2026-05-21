@@ -14,8 +14,9 @@
                 <button type="button"
                         wire:click="setFilter('{{ $key }}')"
                         @class([
-                            'group rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-5 text-left transition-colors duration-150',
-                            \LaravelVitals\Support\LearnTileClasses::hoverBorder($tile['color']),
+                            'group rounded-2xl border p-5 text-left transition-colors duration-150',
+                            ...\LaravelVitals\Support\LearnTileClasses::tileBorder($tile['color']),
+                            ...\LaravelVitals\Support\LearnTileClasses::tileBg($tile['color']),
                             ...\LaravelVitals\Support\LearnTileClasses::hoverBg($tile['color']),
                         ])>
                     <div class="flex items-center justify-between mb-3">

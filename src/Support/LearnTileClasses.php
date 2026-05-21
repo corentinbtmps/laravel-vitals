@@ -14,30 +14,47 @@ namespace LaravelVitals\Support;
 final class LearnTileClasses
 {
     /**
-     * Returns all Tailwind classes for a tile's hover border.
+     * Persistent tile background tint (matches audit-detail CWV card style).
+     *
+     * @return list<string>
      */
-    public static function hoverBorder(string $color): string
+    public static function tileBg(string $color): array
     {
         return match ($color) {
-            'emerald' => 'hover:border-emerald-500/40',
-            'sky'     => 'hover:border-sky-500/40',
-            'violet'  => 'hover:border-violet-500/40',
-            default   => 'hover:border-accent-500/40',
+            'emerald' => ['bg-emerald-50/40', 'dark:bg-emerald-900/10'],
+            'sky'     => ['bg-sky-50/40',     'dark:bg-sky-900/10'],
+            'violet'  => ['bg-violet-50/40',  'dark:bg-violet-900/10'],
+            default   => ['bg-accent-50/40',  'dark:bg-accent-900/10'],
         };
     }
 
     /**
-     * Returns all Tailwind classes for a tile's hover background.
+     * Persistent tile border (matches audit-detail CWV card style).
+     *
+     * @return list<string>
+     */
+    public static function tileBorder(string $color): array
+    {
+        return match ($color) {
+            'emerald' => ['border-emerald-200', 'dark:border-emerald-900/40'],
+            'sky'     => ['border-sky-200',     'dark:border-sky-900/40'],
+            'violet'  => ['border-violet-200',  'dark:border-violet-900/40'],
+            default   => ['border-accent-200',  'dark:border-accent-900/40'],
+        };
+    }
+
+    /**
+     * Tint that intensifies on hover.
      *
      * @return list<string>
      */
     public static function hoverBg(string $color): array
     {
         return match ($color) {
-            'emerald' => ['hover:bg-emerald-50/30', 'dark:hover:bg-emerald-900/10'],
-            'sky'     => ['hover:bg-sky-50/30',     'dark:hover:bg-sky-900/10'],
-            'violet'  => ['hover:bg-violet-50/30',  'dark:hover:bg-violet-900/10'],
-            default   => ['hover:bg-accent-50/30',  'dark:hover:bg-accent-900/10'],
+            'emerald' => ['hover:bg-emerald-100/50', 'dark:hover:bg-emerald-900/20'],
+            'sky'     => ['hover:bg-sky-100/50',     'dark:hover:bg-sky-900/20'],
+            'violet'  => ['hover:bg-violet-100/50',  'dark:hover:bg-violet-900/20'],
+            default   => ['hover:bg-accent-100/50',  'dark:hover:bg-accent-900/20'],
         };
     }
 

@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.82] - 2026-05-22
+## [v1.0.0-alpha.83] - 2026-05-22
+
+### Fixed
+
+- **Issues page tabs margin**: `flux:radio.group variant="segmented"` renders as `display: block flex` so the container stretches to its parent's full width when not inside a flex parent. The Issues page had the radio.group as a direct block child of `<div class="space-y-6">`, making it sprawl across the row. Wrapped in a `flex justify-between` row alongside the title + added `shrink-0` so the segmented control hugs its content.
+
+### Changed
+
+- **Learn page category tiles** — were tinted only on hover (neutral `bg-paper` / `border-ink-200` at rest). Now persistently tinted to match the audit-detail CWV card style (e.g. emerald: `bg-emerald-50/40 border-emerald-200`, sky/violet/accent equivalents). `LearnTileClasses::tileBg()` / `tileBorder()` added; `hoverBorder()` removed (no longer needed since border is persistent); `hoverBg()` intensifies from `50/30` to `100/50` on hover for the active feedback.
+
+
 
 ### Fixed
 
