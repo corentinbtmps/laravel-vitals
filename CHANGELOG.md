@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.85] - 2026-05-22
+## [v1.0.0-alpha.86] - 2026-05-22
+
+### Changed
+
+#### "All recommendations" rows → severity-tinted cards (match audit-detail)
+
+The Issues page → "All recommendations" tab was a plain `flux:table` (white rows, severity carried only by a small badge). Visually disconnected from the audit-detail recommendation list, which has been showing severity-tinted cards (rose for critical, amber for warning, sky for info) since well before this sweep.
+
+Rewrote `recommendations-index.blade.php` to render each row as a `Severity::containerClasses()`-tinted card with:
+
+- Leading severity icon (`fluxCalloutIcon`, colored via `iconTextColor`)
+- Title (linked to issue detail) + severity badge + category badge inline
+- Trailing "N occurrences" ghost button with map-pin icon (still links to issue detail)
+
+Same visual grammar as the audit-detail Recommendations panel — no more table styling drift between the two surfaces.
+
+
 
 Republish of alpha.84 — no code changes. Lets consumer projects re-resolve and pick up the latest dist assets without composer cache fight.
 

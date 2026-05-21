@@ -17,39 +17,41 @@
             </div>
         </div>
     @else
-        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
-            <flux:table>
-                <flux:table.columns>
-                    <flux:table.column>{{ __('vitals::vitals.tables.recommendation') }}</flux:table.column>
-                    <flux:table.column>{{ __('vitals::vitals.tables.category') }}</flux:table.column>
-                    <flux:table.column>{{ __('vitals::vitals.tables.metric') }}</flux:table.column>
-                    <flux:table.column align="end">{{ __('vitals::vitals.tables.occurrences') }}</flux:table.column>
-                    <flux:table.column align="end" class="w-14"></flux:table.column>
-                </flux:table.columns>
-                <flux:table.rows>
-                    @foreach ($rows as $r)
-                            <flux:table.row :key="$r->audit_key">
-                            <flux:table.cell variant="strong">
-                                <flux:link href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}">
+        <div class="space-y-3">
+            @foreach ($rows as $r)
+                @php
+                    $sev          = $r->severity;
+                    $sevFluxColor = $sev->fluxBadgeColor();
+                    $sevIcon      = $sev->fluxCalloutIcon();
+                @endphp
+                <div @class([
+                    'rounded-lg border p-4',
+                    ...$sev->containerClasses(),
+                ])>
+                    <div class="flex items-start gap-3">
+                        <flux:icon name="{{ $sevIcon }}" @class([
+                            'size-5 shrink-0 mt-0.5',
+                            $sev->iconTextColor(),
+                        ]) />
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                <flux:link href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}" class="font-semibold">
                                     {{ __($r->title_key) }}
                                 </flux:link>
-                            </flux:table.cell>
-                            <flux:table.cell>
+                                <flux:badge color="{{ $sevFluxColor }}" size="sm">{{ $sev->label() }}</flux:badge>
                                 <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>
-                            </flux:table.cell>
-                            <flux:table.cell>
-                                <flux:badge color="{{ $r->severity->fluxBadgeColor() }}" size="sm">{{ $r->severity->label() }}</flux:badge>
-                            </flux:table.cell>
-                            <flux:table.cell align="end">
-                                <span class="font-semibold tabular-nums">{{ $r->occurrences }}</span>
-                            </flux:table.cell>
-                            <flux:table.cell align="end">
-                                <flux:button href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}" variant="ghost" size="sm" icon="map-pin" />
-                            </flux:table.cell>
-                        </flux:table.row>
-                    @endforeach
-                </flux:table.rows>
-            </flux:table>
+                                <flux:button
+                                    href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}"
+                                    variant="ghost"
+                                    size="xs"
+                                    icon="map-pin"
+                                    class="ml-auto"
+                                >{{ $r->occurrences }} {{ Str::plural(__('vitals::vitals.issue_detail.occurrences_label'), (int) $r->occurrences) }}</flux:button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     @endif
 </div>
