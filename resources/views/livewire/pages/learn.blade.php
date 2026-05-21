@@ -79,16 +79,20 @@
             {{-- Cards grid --}}
             <div class="space-y-4">
                 @foreach ($items as $entry)
+                    @php $sev = $entry['descriptor']->severity; @endphp
                     <article id="{{ $entry['key'] }}"
-                             class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6 scroll-mt-24">
+                             @class([
+                                'rounded-2xl border p-6 scroll-mt-24',
+                                ...$sev->containerClasses(),
+                             ])>
                         {{-- Header --}}
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span @class([
-                                'size-2 rounded-full',
-                                $entry['descriptor']->severity->dotBackground(),
-                            ])></span>
+                            <flux:icon name="{{ $sev->fluxCalloutIcon() }}" @class([
+                                'size-5 shrink-0',
+                                $sev->iconTextColor(),
+                            ]) />
                             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __($entry['descriptor']->titleKey) }}</h3>
-                            <flux:badge color="{{ $entry['descriptor']->severity->fluxBadgeColor() }}" size="sm">{{ $entry['descriptor']->severity->label() }}</flux:badge>
+                            <flux:badge color="{{ $sev->fluxBadgeColor() }}" size="sm">{{ $sev->label() }}</flux:badge>
                             @if (($entry['active_count'] ?? 0) > 0)
                                 <flux:link href="{{ route('vitals.issue.detail', ['auditKey' => $entry['key']]) }}" class="text-xs font-semibold inline-flex items-center gap-1">
                                     <flux:icon name="map-pin" class="size-3" />

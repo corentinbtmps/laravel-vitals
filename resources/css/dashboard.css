@@ -39,6 +39,12 @@
     --color-accent-900: oklch(30% 0.150 12);
     --color-accent-950: oklch(20% 0.100 12);
 
+    /* Flux semantic accent tokens — without these Flux defaults to zinc,
+       so flux:link / flux:button variant=primary etc. render in gray. */
+    --color-accent:            var(--color-accent-500);
+    --color-accent-content:    var(--color-accent-600);
+    --color-accent-foreground: oklch(99% 0 0);
+
     /* Typography */
     --font-sans: 'Geist Variable', system-ui, -apple-system, sans-serif;
     --font-mono: 'Geist Mono Variable', 'Geist Variable', ui-monospace, monospace;
@@ -153,6 +159,12 @@ html:not(.dark) .apexcharts-tooltip {
 html:not(.dark) .apexcharts-tooltip-title {
     background: oklch(97.8% 0.005 17) !important; /* canvas */
     border-bottom-color: oklch(90% 0.007 17) !important; /* ink-200 */
+}
+
+/* ─── Flux accent tokens — dark mode override ─────────────────────────────── */
+/* In dark mode use a lighter accent-content for better contrast on dark cards. */
+.dark {
+    --color-accent-content: var(--color-accent-400);
 }
 
 /* ─── Dark mode card elevation — Linear / Pulse aesthetic ─────────────────── */

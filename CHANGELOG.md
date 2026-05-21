@@ -7,7 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.86] - 2026-05-22
+## [v1.0.0-alpha.87] - 2026-05-22
+
+### Fixed
+
+#### Flux accent tokens — `flux:link` and friends were rendering in zinc, not rose
+
+Flux's core CSS defaults `--color-accent-content` to `var(--color-zinc-800)`. Since the package only defined the rose accent scale (`--color-accent-50…950`) but never the **semantic** accent tokens (`--color-accent`, `--color-accent-content`, `--color-accent-foreground`), every `flux:link` migration in alpha.80–86 rendered in gray instead of the brand rose.
+
+Added the semantic mappings to `dashboard.css`:
+
+```css
+@theme {
+    --color-accent:            var(--color-accent-500);
+    --color-accent-content:    var(--color-accent-600);
+    --color-accent-foreground: oklch(99% 0 0);
+}
+
+.dark {
+    --color-accent-content: var(--color-accent-400);
+}
+```
+
+This restores accent rose on `flux:link`, `flux:button variant="primary"`, and every other Flux component that delegates color via these tokens.
+
+#### Learn page recommendation cards — severity-tinted
+
+The "Reduce unused JavaScript" / "Meta description present" / etc. cards on `/vitals/learn` were neutral `bg-paper border-ink-200` with severity carried only by a small dot + badge. Now use `Severity::containerClasses()` + `fluxCalloutIcon()` + `iconTextColor()` — same visual grammar as the audit-detail Recommendations panel and the Issues "All recommendations" tab (alpha.86). Warning items get the amber tint, Critical → rose, Info → sky.
+
+
 
 ### Changed
 
