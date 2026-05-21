@@ -26,11 +26,6 @@ final class NofollowCheck implements SeoCheck
         return 7;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $metaRobots = $context->crawler->filter('meta[name="robots"]');

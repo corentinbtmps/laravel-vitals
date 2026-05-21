@@ -26,11 +26,6 @@ final class StatusCodeCheck implements SeoCheck
         return 10;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $status = $context->response->status();

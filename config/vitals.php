@@ -194,10 +194,9 @@ return [
     |--------------------------------------------------------------------------
     | SEO checks subsystem
     |--------------------------------------------------------------------------
-    | 25 checks aligned with Google 2026 best practices.
-    | Opinion checks (content length, keyword density) are disabled by default.
+    | 22 checks aligned with Google 2026 best practices.
     |
-    | css_max_bytes default (15 KB) is opinionated — raises this for large apps.
+    | css_max_bytes default (15 KB) is opinionated — raise this for large apps.
     */
     'seo' => [
         'enabled' => env('VITALS_SEO_ENABLED', true),
@@ -214,19 +213,10 @@ return [
             'image_max_bytes'            => 1_000_000,
             'js_max_bytes'               => 1_000_000,
             'css_max_bytes'              => 15_000,
-            'content_min_chars'          => null,   // null = check disabled (Yoast opinion, not Google standard)
         ],
 
         // Disable specific checks by key (e.g., ['broken-links', 'structured-data'])
         'disabled_checks' => [],
-
-        // Opt-in opinion checks that aren't Google standards but useful for some users.
-        // Enables: ContentLengthCheck, KeywordInTitleCheck, KeywordInFirstParagraphCheck.
-        'enable_opinion_checks' => env('VITALS_SEO_OPINION_CHECKS', false),
-
-        // Per-URL primary keyword for KeywordInTitle and KeywordInFirstParagraph checks
-        // Format: ['url_label' => 'primary keyword string']
-        'keywords' => [],
     ],
 
     /*

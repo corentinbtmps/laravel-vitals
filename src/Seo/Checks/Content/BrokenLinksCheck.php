@@ -29,11 +29,6 @@ final class BrokenLinksCheck implements SeoCheck
         return 8;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $links = [];

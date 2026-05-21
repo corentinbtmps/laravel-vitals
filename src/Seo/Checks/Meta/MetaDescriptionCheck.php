@@ -26,11 +26,6 @@ final class MetaDescriptionCheck implements SeoCheck
         return 9;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $maxChars = (int) config('vitals.seo.thresholds.meta_description_max_chars', 160);

@@ -29,11 +29,6 @@ final class ImageSizeCheck implements SeoCheck
         return 7;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $maxBytes = (int) config('vitals.seo.thresholds.image_max_bytes', 1_000_000);

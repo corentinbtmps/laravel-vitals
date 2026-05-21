@@ -26,11 +26,6 @@ final class StructuredDataCheck implements SeoCheck
         return 6;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $scripts = $context->crawler->filter('script[type="application/ld+json"]');

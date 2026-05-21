@@ -28,5 +28,5 @@ it('warns for HTTP 301 redirect', function (): void {
 
 it('has weight 10 and is not optional', function (): void {
     $check = new StatusCodeCheck();
-    expect($check->weight())->toBe(10)->and($check->isOptional())->toBeFalse();
+    expect($check->weight())->toBe(10);
 });

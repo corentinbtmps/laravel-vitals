@@ -579,16 +579,6 @@ return [
                 'description' => 'Bilder, die nicht laden, beeinträchtigen das Nutzererlebnis.',
                 'hint'        => 'Korrigieren oder entfernen Sie die defekten Bildquellen.',
             ],
-            'content-length' => [
-                'title'       => 'Ausreichende Inhaltslänge',
-                'description' => 'Seiten mit sehr wenig Text bieten möglicherweise nicht genug Mehrwert. (Meinungsprüfung.)',
-                'hint'        => 'Fügen Sie hochwertigen Inhalt hinzu, der Ihrer Zielgruppe nützt.',
-            ],
-            'keyword-in-first-paragraph' => [
-                'title'       => 'Schlüsselwort im ersten Absatz',
-                'description' => 'Das Hauptschlüsselwort früh im Inhalt zu erwähnen signalisiert Relevanz. (Meinungsprüfung.)',
-                'hint'        => 'Erwähnen Sie Ihr Hauptschlüsselwort im ersten Absatz.',
-            ],
             'meta-description' => [
                 'title'       => 'Meta-Beschreibung vorhanden',
                 'description' => 'Eine Meta-Beschreibung verbessert die Klickrate in Suchergebnissen.',
@@ -626,11 +616,6 @@ return [
                 'title'       => 'Keine ungültigen Elemente im <head>',
                 'description' => 'Block-Elemente im <head> verursachen ein vorzeitiges Schließen des Head-Bereichs.',
                 'hint'        => 'Verschieben Sie Block-Elemente (div, p, etc.) aus dem <head>.',
-            ],
-            'keyword-in-title' => [
-                'title'       => 'Hauptschlüsselwort im Titel',
-                'description' => 'Das Hauptschlüsselwort im Seitentitel hilft Google. (Meinungsprüfung.)',
-                'hint'        => 'Fügen Sie Ihr Hauptschlüsselwort in das <title>-Tag ein.',
             ],
             'ttfb' => [
                 'title'       => 'TTFB innerhalb der Schwelle',

@@ -30,5 +30,5 @@ it('passes when TTFB data is unavailable', function (): void {
 
 it('has weight 8 and is not optional', function (): void {
     $check = new TtfbCheck();
-    expect($check->weight())->toBe(8)->and($check->isOptional())->toBeFalse();
+    expect($check->weight())->toBe(8);
 });

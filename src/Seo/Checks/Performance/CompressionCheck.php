@@ -26,11 +26,6 @@ final class CompressionCheck implements SeoCheck
         return 7;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $encoding = strtolower((string) ($context->response->header('Content-Encoding') ?? ''));

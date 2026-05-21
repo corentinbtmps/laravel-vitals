@@ -579,16 +579,6 @@ return [
                 'description' => 'Les images qui ne se chargent pas nuisent à l\'expérience utilisateur.',
                 'hint'        => 'Corrigez ou supprimez les sources d\'images cassées ci-dessus.',
             ],
-            'content-length' => [
-                'title'       => 'Longueur du contenu suffisante',
-                'description' => 'Les pages avec très peu de texte peuvent ne pas offrir assez de valeur. (Vérification d\'opinion.)',
-                'hint'        => 'Ajoutez du contenu de qualité qui serve votre audience.',
-            ],
-            'keyword-in-first-paragraph' => [
-                'title'       => 'Mot-clé dans le premier paragraphe',
-                'description' => 'Inclure le mot-clé principal tôt dans le contenu signale la pertinence. (Vérification d\'opinion.)',
-                'hint'        => 'Mentionnez votre mot-clé principal dans le premier paragraphe.',
-            ],
             'meta-description' => [
                 'title'       => 'Méta-description présente',
                 'description' => 'Une méta-description améliore le taux de clic dans les résultats de recherche.',
@@ -626,11 +616,6 @@ return [
                 'title'       => 'Aucun élément invalide dans <head>',
                 'description' => 'Les éléments block dans <head> causent une fermeture prématurée du head.',
                 'hint'        => 'Déplacez les éléments block (div, p, etc.) en dehors du <head>.',
-            ],
-            'keyword-in-title' => [
-                'title'       => 'Mot-clé principal dans le titre',
-                'description' => 'Inclure le mot-clé principal dans le titre aide Google. (Vérification d\'opinion.)',
-                'hint'        => 'Ajoutez votre mot-clé principal dans la balise <title>.',
             ],
             'ttfb' => [
                 'title'       => 'TTFB dans les limites',

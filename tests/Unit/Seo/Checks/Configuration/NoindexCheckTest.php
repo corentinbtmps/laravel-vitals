@@ -31,6 +31,5 @@ it('fails when X-Robots-Tag header contains noindex', function (): void {
 it('has the correct key, category and weight', function (): void {
     $check = new NoindexCheck();
     expect($check->key())->toBe('noindex')
-        ->and($check->weight())->toBe(10)
-        ->and($check->isOptional())->toBeFalse();
+        ->and($check->weight())->toBe(10);
 });

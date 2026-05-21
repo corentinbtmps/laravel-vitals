@@ -26,11 +26,6 @@ final class TitleLengthCheck implements SeoCheck
         return 9;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $maxChars = (int) config('vitals.seo.thresholds.title_max_chars', 60);

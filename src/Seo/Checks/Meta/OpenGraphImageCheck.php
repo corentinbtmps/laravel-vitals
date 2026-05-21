@@ -26,11 +26,6 @@ final class OpenGraphImageCheck implements SeoCheck
         return 6;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $ogImage = $context->crawler->filter('meta[property="og:image"]');

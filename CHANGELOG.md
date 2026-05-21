@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.77] - 2026-05-21
+
+### Removed
+
+#### Yoast-style opinion checks dropped — V1 keeps Google-validated tests only
+
+- **Deleted 3 opt-in checks**: `ContentLengthCheck`, `KeywordInTitleCheck`, `KeywordInFirstParagraphCheck`. They were Yoast-inspired heuristics, not official Google ranking signals, and added configuration surface for marginal value.
+- **Config simplified**: removed `vitals.seo.enable_opinion_checks` (and the `VITALS_SEO_OPINION_CHECKS` env var), `vitals.seo.keywords`, and the `thresholds.content_min_chars` key.
+- **Interface cleanup**: `SeoCheck::isOptional()` removed from the contract and from all 22 remaining checks; `SeoCheckRegistry::enabled()` now only consults `disabled_checks`.
+- **i18n**: dropped the 3 translation blocks (`content-length`, `keyword-in-title`, `keyword-in-first-paragraph`) across EN/FR/DE/ES.
+- **Tests**: deleted the 3 check unit-test files; registry test updated for 22 checks. Total drops from 557 to 552.
+
+### Changed
+
+- **DemoSeeder**: distributes synthetic SEO check failures (`seo-meta-description`, `seo-image-alt`, `seo-h1`) so the new `/vitals/seo` page has demo data out of the box. Bad-profile audits get three SEO findings; healthy audits get one or none.
+
+### Fixed
+
+- **DemoSeeder**: removed two unreachable `match` arms (`modern-image-formats`, `unused-css-rules`) — they referenced audit keys never picked by the `mt_rand(2, 4)` selector. Clears two `match.alwaysFalse` PHPStan errors.
+
 ## [v1.0.0-alpha.76] - 2026-05-21
 
 ### Added

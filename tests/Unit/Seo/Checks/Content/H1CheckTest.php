@@ -26,8 +26,7 @@ it('warns when multiple H1 elements are present', function (): void {
     expect($result->actual)->toContain('2');
 });
 
-it('has correct weight and is not optional', function (): void {
+it('has correct weight', function (): void {
     $check = new H1Check();
-    expect($check->weight())->toBe(8)
-        ->and($check->isOptional())->toBeFalse();
+    expect($check->weight())->toBe(8);
 });

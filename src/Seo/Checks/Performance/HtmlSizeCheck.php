@@ -26,11 +26,6 @@ final class HtmlSizeCheck implements SeoCheck
         return 6;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $maxBytes = (int) config('vitals.seo.thresholds.html_max_bytes', 100_000);

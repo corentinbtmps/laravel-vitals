@@ -26,11 +26,6 @@ final class ImageAltCheck implements SeoCheck
         return 7;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         /** @var array<int, array<string, string>> $missing */

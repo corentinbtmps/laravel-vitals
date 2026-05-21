@@ -579,16 +579,6 @@ return [
                 'description' => 'Las imágenes que no cargan perjudican la experiencia del usuario.',
                 'hint'        => 'Corrija o elimine las fuentes de imagen rotas listadas arriba.',
             ],
-            'content-length' => [
-                'title'       => 'Longitud de contenido suficiente',
-                'description' => 'Las páginas con muy poco texto puede que no ofrezcan suficiente valor. (Verificación de opinión.)',
-                'hint'        => 'Agregue contenido sustancial que sirva a su audiencia.',
-            ],
-            'keyword-in-first-paragraph' => [
-                'title'       => 'Palabra clave en el primer párrafo',
-                'description' => 'Incluir la palabra clave principal al inicio señala relevancia temática. (Verificación de opinión.)',
-                'hint'        => 'Mencione su palabra clave principal en el primer párrafo.',
-            ],
             'meta-description' => [
                 'title'       => 'Meta descripción presente',
                 'description' => 'Una meta descripción mejora la tasa de clics en los resultados de búsqueda.',
@@ -626,11 +616,6 @@ return [
                 'title'       => 'Sin elementos inválidos en <head>',
                 'description' => 'Los elementos de bloque en <head> provocan el cierre prematuro del head.',
                 'hint'        => 'Mueva los elementos de bloque (div, p, etc.) fuera del <head>.',
-            ],
-            'keyword-in-title' => [
-                'title'       => 'Palabra clave principal en el título',
-                'description' => 'Incluir la palabra clave principal en el título ayuda a Google. (Verificación de opinión.)',
-                'hint'        => 'Agregue su palabra clave principal en la etiqueta <title>.',
             ],
             'ttfb' => [
                 'title'       => 'TTFB dentro del umbral',

@@ -30,5 +30,5 @@ it('fails when canonical link has empty href', function (): void {
 
 it('has weight 9 and is not optional', function (): void {
     $check = new CanonicalCheck();
-    expect($check->weight())->toBe(9)->and($check->isOptional())->toBeFalse();
+    expect($check->weight())->toBe(9);
 });

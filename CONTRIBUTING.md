@@ -167,7 +167,6 @@ final class MyNewCheck implements SeoCheck
     public function key(): string { return 'my-new-check'; }
     public function category(): SeoCheckCategory { return SeoCheckCategory::Meta; }
     public function weight(): int { return 7; }   // 1–10 importance
-    public function isOptional(): bool { return false; }
 
     public function run(SeoCheckContext $context): SeoCheckResult
     {

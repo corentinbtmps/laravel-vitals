@@ -4,25 +4,19 @@ declare(strict_types=1);
 
 use LaravelVitals\Seo\SeoCheckRegistry;
 
-it('returns all 25 registered checks', function (): void {
+it('returns all 22 registered checks', function (): void {
     $registry = new SeoCheckRegistry();
-    expect($registry->all())->toHaveCount(25);
+    expect($registry->all())->toHaveCount(22);
 });
 
-it('returns 22 enabled checks by default (3 opinion checks disabled)', function (): void {
-    config(['vitals.seo.enable_opinion_checks' => false, 'vitals.seo.disabled_checks' => []]);
+it('returns 22 enabled checks by default', function (): void {
+    config(['vitals.seo.disabled_checks' => []]);
     $registry = new SeoCheckRegistry();
     expect($registry->enabled())->toHaveCount(22);
 });
 
-it('returns 25 enabled checks when opinion checks are enabled', function (): void {
-    config(['vitals.seo.enable_opinion_checks' => true, 'vitals.seo.disabled_checks' => []]);
-    $registry = new SeoCheckRegistry();
-    expect($registry->enabled())->toHaveCount(25);
-});
-
 it('respects disabled_checks config', function (): void {
-    config(['vitals.seo.enable_opinion_checks' => false, 'vitals.seo.disabled_checks' => ['noindex', 'canonical']]);
+    config(['vitals.seo.disabled_checks' => ['noindex', 'canonical']]);
     $registry = new SeoCheckRegistry();
     $keys = array_map(fn ($c) => $c->key(), $registry->enabled());
     expect($keys)->not->toContain('noindex')

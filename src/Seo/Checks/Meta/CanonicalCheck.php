@@ -26,11 +26,6 @@ final class CanonicalCheck implements SeoCheck
         return 9;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $canonical = $context->crawler->filter('link[rel="canonical"]');

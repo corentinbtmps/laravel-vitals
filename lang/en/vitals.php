@@ -585,16 +585,6 @@ return [
                 'description' => 'Images that fail to load hurt user experience and waste crawl budget.',
                 'hint'        => 'Fix or remove the broken image sources listed above.',
             ],
-            'content-length' => [
-                'title'       => 'Content length sufficient',
-                'description' => 'Pages with very little text may not provide enough value to rank well. (Opinion check — not an official Google signal.)',
-                'hint'        => 'Add more substantive content that serves your audience.',
-            ],
-            'keyword-in-first-paragraph' => [
-                'title'       => 'Keyword in first paragraph',
-                'description' => 'Including the primary keyword early in the content signals topic relevance. (Opinion check.)',
-                'hint'        => 'Mention your primary keyword within the first paragraph.',
-            ],
             'meta-description' => [
                 'title'       => 'Meta description present',
                 'description' => 'A meta description improves click-through rate in search results.',
@@ -632,11 +622,6 @@ return [
                 'title'       => 'No invalid elements in <head>',
                 'description' => 'Block-level elements inside <head> cause the browser to prematurely close the head, breaking meta tag parsing.',
                 'hint'        => 'Move block-level elements (div, p, etc.) out of the <head>.',
-            ],
-            'keyword-in-title' => [
-                'title'       => 'Primary keyword in title',
-                'description' => 'Including the primary keyword in the page title helps Google understand the topic. (Opinion check.)',
-                'hint'        => 'Add your primary keyword to the <title> tag.',
             ],
             'ttfb' => [
                 'title'       => 'TTFB within threshold',

@@ -28,6 +28,3 @@ it('fails when JSON-LD contains invalid JSON', function (): void {
     expect($result->status)->toBe(SeoCheckStatus::Fail);
 });
 
-it('is not optional', function (): void {
-    expect((new StructuredDataCheck())->isOptional())->toBeFalse();
-});

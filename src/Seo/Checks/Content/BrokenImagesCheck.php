@@ -29,11 +29,6 @@ final class BrokenImagesCheck implements SeoCheck
         return 7;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $images = [];

@@ -26,11 +26,6 @@ final class NoindexCheck implements SeoCheck
         return 10;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         // Check meta robots tag

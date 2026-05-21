@@ -207,7 +207,7 @@ final class DemoSeeder
             $extraKey = self::COMMON_RECOMMENDATIONS[mt_rand(2, 4)];
 
             $extraDetailItems = match ($extraKey) {
-                'modern-image-formats', 'uses-optimized-images' => [
+                'uses-optimized-images' => [
                     ['url' => config('app.url', 'https://example.test') . '/images/hero.jpg',    'wasted_bytes' => 190_000, 'total_bytes' => 380_000],
                     ['url' => config('app.url', 'https://example.test') . '/images/banner.png', 'wasted_bytes' => 87_000,  'total_bytes' => 220_000],
                     ['url' => config('app.url', 'https://example.test') . '/images/avatar.jpg', 'wasted_bytes' => 9_000,   'total_bytes' => 45_000],
@@ -219,10 +219,6 @@ final class DemoSeeder
                 'render-blocking-resources' => [
                     ['url' => config('app.url', 'https://example.test') . '/build/assets/fonts.css',     'wasted_ms' => 320, 'total_bytes' => 12_000],
                     ['url' => config('app.url', 'https://example.test') . '/build/assets/analytics.js', 'wasted_ms' => 180, 'total_bytes' => 45_000],
-                ],
-                'unused-css-rules' => [
-                    ['url' => config('app.url', 'https://example.test') . '/build/assets/app.css',    'wasted_bytes' => 38_000, 'total_bytes' => 62_000],
-                    ['url' => config('app.url', 'https://example.test') . '/build/assets/bootstrap.css', 'wasted_bytes' => 145_000, 'total_bytes' => 195_000],
                 ],
                 default => null,
             };
@@ -240,6 +236,34 @@ final class DemoSeeder
                 'code_references'  => [],
                 'detail_items'     => $extraDetailItems,
                 'is_demo'          => true,
+            ]);
+        }
+
+        // Distribute SEO check failures so /vitals/seo has demo data.
+        $seoFindings = $profile === 'bad'
+            ? [
+                ['key' => 'meta-description', 'severity' => Severity::Warning, 'actual' => 'missing',       'expected' => 'present (≤ 160 chars)', 'weight' => 9],
+                ['key' => 'image-alt',        'severity' => Severity::Warning, 'actual' => '3 missing alt', 'expected' => 'all images have alt',  'weight' => 7],
+                ['key' => 'h1',               'severity' => Severity::Critical,'actual' => '2 H1 tags',     'expected' => 'exactly 1 H1',         'weight' => 8],
+            ]
+            : (mt_rand(0, 1) === 0
+                ? [['key' => 'meta-description', 'severity' => Severity::Warning, 'actual' => '187 chars', 'expected' => '≤ 160 chars', 'weight' => 9]]
+                : []);
+
+        foreach ($seoFindings as $finding) {
+            Recommendation::create([
+                'audit_id'           => $audit->id,
+                'source'             => 'seo',
+                'audit_key'          => 'seo-' . $finding['key'],
+                'category'           => 'seo',
+                'severity'           => $finding['severity'],
+                'title_key'          => 'vitals::vitals.seo.checks.' . $finding['key'] . '.title',
+                'description_key'    => 'vitals::vitals.seo.checks.' . $finding['key'] . '.description',
+                'translation_params' => ['actual' => $finding['actual'], 'expected' => $finding['expected']],
+                'metrics'            => ['weight' => $finding['weight']],
+                'code_references'    => [],
+                'detail_items'       => [],
+                'is_demo'            => true,
             ]);
         }
     }

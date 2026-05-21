@@ -26,11 +26,6 @@ final class H1Check implements SeoCheck
         return 8;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $h1Elements = $context->crawler->filter('h1');

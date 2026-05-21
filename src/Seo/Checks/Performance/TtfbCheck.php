@@ -26,11 +26,6 @@ final class TtfbCheck implements SeoCheck
         return 8;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $maxMs = (int) config('vitals.seo.thresholds.ttfb_ms', 600);

@@ -38,5 +38,5 @@ it('warns when meta description exceeds 160 chars', function (): void {
 
 it('has weight 9 and is not optional', function (): void {
     $check = new MetaDescriptionCheck();
-    expect($check->weight())->toBe(9)->and($check->isOptional())->toBeFalse();
+    expect($check->weight())->toBe(9);
 });

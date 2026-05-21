@@ -146,31 +146,27 @@ That's it. You now have a Lighthouse score, backend telemetry, and a list of rec
 
 ## Features
 
-### SEO checks (25+ Google-aligned)
+### SEO checks (22 Google-aligned)
 
-Laravel Vitals ships its own SEO check engine that runs alongside every Lighthouse audit. Unlike Lighthouse's built-in SEO score (which covers ~8 signals), the custom checks cover 25 areas aligned with Google's 2026 best practices:
+Laravel Vitals ships its own SEO check engine that runs alongside every Lighthouse audit. Unlike Lighthouse's built-in SEO score (which covers ~8 signals), the custom checks cover 22 areas — every one a Google-documented ranking signal, no Yoast-style heuristics:
 
 | Category | Checks |
 |---|---|
-| Configuration | noindex directive, nofollow, robots.txt indexability |
-| Content | H1 uniqueness, HTTPS resources, image alt text, broken links (samples ≤ 30), broken images |
-| Meta | Meta description, title length, Open Graph image, HTML lang, canonical URL, JSON-LD structured data, invalid head elements |
-| Performance | TTFB ≤ 600ms, HTTP status code, HTML size, image size, JS bundle size, CSS size, gzip/Brotli compression |
+| Configuration (3) | noindex directive, nofollow, robots.txt indexability |
+| Content (5) | H1 uniqueness, HTTPS resources, image alt text, broken links (samples ≤ 30), broken images |
+| Meta (7) | Meta description, title length, Open Graph image, HTML lang, canonical URL, JSON-LD structured data, invalid head elements |
+| Performance (7) | TTFB ≤ 600ms, HTTP status code, HTML size, image size, JS bundle size, CSS size, gzip/Brotli compression |
 
 Results appear on **`/vitals/audits/{id}/seo`** (per-audit deep view with actual vs expected values, hint text, and links to Google documentation) and on the new **`/vitals/seo`** cross-URL page (aggregated score table, top failing checks by category, period filter).
 
 The combined `vitals_seo_score` blends Lighthouse's SEO score (50%) with the weighted pass rate of all custom checks (50%), producing a stricter 0–100 score.
 
-**Opinion checks** (content length, keyword in title/first paragraph) are disabled by default — they are Yoast-inspired and not official Google ranking signals. Enable them with `VITALS_SEO_OPINION_CHECKS=true`.
-
 ```php
 // config/vitals.php
 'seo' => [
-    'enabled'              => env('VITALS_SEO_ENABLED', true),
-    'enable_opinion_checks' => env('VITALS_SEO_OPINION_CHECKS', false),
-    'keywords'             => ['home' => 'laravel performance'],  // for keyword checks
-    'thresholds'           => ['title_max_chars' => 60, 'ttfb_ms' => 600],
-    'disabled_checks'      => [],  // e.g. ['broken-links', 'css-size']
+    'enabled'         => env('VITALS_SEO_ENABLED', true),
+    'thresholds'      => ['title_max_chars' => 60, 'ttfb_ms' => 600],
+    'disabled_checks' => [],  // e.g. ['broken-links', 'css-size']
 ],
 ```
 

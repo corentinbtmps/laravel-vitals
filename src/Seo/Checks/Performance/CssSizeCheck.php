@@ -34,11 +34,6 @@ final class CssSizeCheck implements SeoCheck
         return 5;
     }
 
-    public function isOptional(): bool
-    {
-        return false;
-    }
-
     public function run(SeoCheckContext $context): SeoCheckResult
     {
         $maxBytes = (int) config('vitals.seo.thresholds.css_max_bytes', 15_000);

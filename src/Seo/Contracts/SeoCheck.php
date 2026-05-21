@@ -22,11 +22,5 @@ interface SeoCheck
      */
     public function weight(): int;
 
-    /**
-     * Optional checks are skipped unless config('vitals.seo.enable_opinion_checks') is true
-     * or a specific opt-in flag is set. Override in check classes that are opinion-based.
-     */
-    public function isOptional(): bool;
-
     public function run(SeoCheckContext $context): SeoCheckResult;
 }
