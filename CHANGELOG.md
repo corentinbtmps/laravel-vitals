@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.85] - 2026-05-22
+
+Republish of alpha.84 — no code changes. Lets consumer projects re-resolve and pick up the latest dist assets without composer cache fight.
+
 ## [v1.0.0-alpha.84] - 2026-05-22
 
 ### Changed
