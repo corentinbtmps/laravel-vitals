@@ -17,13 +17,13 @@ it('renders the issues page with default tab (top)', function (): void {
 it('can switch to the all-recommendations tab', function (): void {
     Livewire::test(Issues::class)
         ->assertSet('tab', 'top')
-        ->call('setTab', 'all')
+        ->set('tab', 'all')
         ->assertSet('tab', 'all');
 });
 
 it('ignores unknown tab values', function (): void {
     Livewire::test(Issues::class)
-        ->call('setTab', 'nonexistent')
+        ->set('tab', 'nonexistent')
         ->assertSet('tab', 'top');
 });
 

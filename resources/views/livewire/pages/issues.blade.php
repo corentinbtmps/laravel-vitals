@@ -5,18 +5,10 @@
     </div>
 
     {{-- Tabs --}}
-    <flux:button.group>
-        <flux:button
-            wire:click="setTab('top')"
-            size="sm"
-            variant="{{ $tab === 'top' ? 'primary' : 'ghost' }}"
-        >{{ __('vitals::vitals.pages.issues.tab_top') }}</flux:button>
-        <flux:button
-            wire:click="setTab('all')"
-            size="sm"
-            variant="{{ $tab === 'all' ? 'primary' : 'ghost' }}"
-        >{{ __('vitals::vitals.pages.issues.tab_all') }}</flux:button>
-    </flux:button.group>
+    <flux:radio.group wire:model.live="tab" variant="segmented" size="sm">
+        <flux:radio value="top" :label="__('vitals::vitals.pages.issues.tab_top')" />
+        <flux:radio value="all" :label="__('vitals::vitals.pages.issues.tab_all')" />
+    </flux:radio.group>
 
     {{-- Tab content --}}
     @if ($tab === 'top')

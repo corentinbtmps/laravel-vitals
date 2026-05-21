@@ -24,18 +24,14 @@ final class Rum extends Component
 
     public ?Device $device = null;
 
-    public function setPeriod(string $period): void
-    {
-        $this->period = Period::tryFrom($period) ?? $this->period;
-    }
+    public string $deviceFilter = 'all';
 
-    public function setDevice(string $device): void
+    public function updatedDeviceFilter(string $value): void
     {
-        $this->device = match ($device) {
+        $this->device = match ($value) {
             'mobile'  => Device::Mobile,
             'desktop' => Device::Desktop,
-            'all'     => null,
-            default   => $this->device,
+            default   => null,
         };
     }
 

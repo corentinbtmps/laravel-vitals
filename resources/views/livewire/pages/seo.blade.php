@@ -8,15 +8,11 @@
         </div>
 
         {{-- Period selector --}}
-        <flux:button.group>
+        <flux:radio.group wire:model.live="period" variant="segmented" size="sm">
             @foreach ($availablePeriods as $p)
-                <flux:button
-                    wire:click="setPeriod('{{ $p->value }}')"
-                    size="sm"
-                    variant="{{ $period === $p ? 'primary' : 'ghost' }}"
-                >{{ $p->buttonLabel() }}</flux:button>
+                <flux:radio value="{{ $p->value }}" :label="$p->buttonLabel()" />
             @endforeach
-        </flux:button.group>
+        </flux:radio.group>
     </div>
 
     {{-- Top stats card --}}
@@ -127,21 +123,14 @@
             <h2 class="text-sm font-semibold">{{ __('vitals::vitals.seo.top_failing') }}</h2>
 
             {{-- Category tabs --}}
-            <flux:button.group>
+            <flux:radio.group wire:model.live="category" variant="segmented" size="sm">
                 @foreach (['all', 'configuration', 'content', 'meta', 'performance'] as $cat)
-                    <flux:button
-                        wire:click="setCategory('{{ $cat }}')"
-                        size="sm"
-                        variant="{{ $category === $cat ? 'primary' : 'ghost' }}"
-                    >
-                        @if ($cat === 'all')
-                            {{ __('vitals::vitals.actions.all_categories') }}
-                        @else
-                            {{ __('vitals::vitals.seo.categories.' . $cat) }}
-                        @endif
-                    </flux:button>
+                    <flux:radio
+                        value="{{ $cat }}"
+                        :label="$cat === 'all' ? __('vitals::vitals.actions.all_categories') : __('vitals::vitals.seo.categories.' . $cat)"
+                    />
                 @endforeach
-            </flux:button.group>
+            </flux:radio.group>
         </div>
 
         @if ($topFailing->isNotEmpty())

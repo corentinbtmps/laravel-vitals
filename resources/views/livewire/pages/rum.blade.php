@@ -7,26 +7,17 @@
         </div>
         <div class="flex flex-wrap items-center gap-2">
             {{-- Device filter --}}
-            <flux:button.group>
-                @foreach (['all', 'mobile', 'desktop'] as $d)
-                    @php $deviceActive = $d === 'all' ? $device === null : $device?->value === $d; @endphp
-                    <flux:button
-                        wire:click="setDevice('{{ $d }}')"
-                        size="sm"
-                        variant="{{ $deviceActive ? 'primary' : 'ghost' }}"
-                    >{{ ucfirst($d) }}</flux:button>
-                @endforeach
-            </flux:button.group>
+            <flux:radio.group wire:model.live="deviceFilter" variant="segmented" size="sm">
+                <flux:radio value="all" label="All" />
+                <flux:radio value="mobile" label="Mobile" />
+                <flux:radio value="desktop" label="Desktop" />
+            </flux:radio.group>
             {{-- Period filter --}}
-            <flux:button.group>
+            <flux:radio.group wire:model.live="period" variant="segmented" size="sm">
                 @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.rum.retention_days', 90)) as $case)
-                    <flux:button
-                        wire:click="setPeriod('{{ $case->value }}')"
-                        size="sm"
-                        variant="{{ $period === $case ? 'primary' : 'ghost' }}"
-                    >{{ $case->buttonLabel() }}</flux:button>
+                    <flux:radio value="{{ $case->value }}" :label="$case->buttonLabel()" />
                 @endforeach
-            </flux:button.group>
+            </flux:radio.group>
         </div>
     </div>
 

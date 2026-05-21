@@ -32,7 +32,7 @@ it('period filter changes the dataset', function (): void {
     RumEvent::create(['url' => '/new', 'metric' => 'LCP', 'value' => 2000.0, 'rating' => 'good', 'device' => 'mobile', 'occurred_at' => now()->subHours(1)]);
 
     Livewire::test(Rum::class)
-        ->call('setPeriod', '24h')
+        ->set('period', '24h')
         ->assertViewHas('totalEvents', 1);
 });
 
@@ -41,15 +41,8 @@ it('device filter works', function (): void {
     RumEvent::create(['url' => '/', 'metric' => 'FCP', 'value' => 600.0, 'rating' => 'good', 'device' => 'desktop', 'occurred_at' => now()]);
 
     Livewire::test(Rum::class)
-        ->call('setDevice', 'mobile')
+        ->set('deviceFilter', 'mobile')
         ->assertViewHas('totalEvents', 1);
-});
-
-it('ignores invalid period values', function (): void {
-    $component = Livewire::test(Rum::class)
-        ->call('setPeriod', 'invalid');
-
-    expect($component->get('period'))->toBe(\LaravelVitals\Enums\Period::D7);
 });
 
 it('calculates p75 correctly', function (): void {

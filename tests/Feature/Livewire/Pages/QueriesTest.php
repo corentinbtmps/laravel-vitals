@@ -66,7 +66,7 @@ it('period filter works', function (): void {
     ]);
 
     Livewire::test(Queries::class)
-        ->call('setPeriod', '24h')
+        ->set('period', '24h')
         ->assertViewHas('routes', fn ($routes) => count($routes) === 0);
 });
 
@@ -91,7 +91,7 @@ it('flags regression when current p75 > 2x previous period p75', function (): vo
     ]);
 
     Livewire::test(Queries::class)
-        ->call('setPeriod', '7d')
+        ->set('period', '7d')
         ->assertViewHas('routes', fn ($routes): bool => isset($routes[0]) && $routes[0]['regression'] === true);
 });
 
@@ -110,9 +110,3 @@ it('shows memory hogs panel when peak_memory_bytes is present', function (): voi
         ->assertViewHas('memoryHogs', fn ($hogs) => count($hogs) === 1 && $hogs[0]['memory_p75_mb'] > 0);
 });
 
-it('ignores invalid period values', function (): void {
-    $component = Livewire::test(Queries::class)
-        ->call('setPeriod', 'invalid');
-
-    expect($component->get('period'))->toBe(\LaravelVitals\Enums\Period::D7);
-});

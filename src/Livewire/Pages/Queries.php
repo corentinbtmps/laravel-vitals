@@ -26,9 +26,8 @@ final class Queries extends Component
     #[Url(as: 'route')]
     public ?string $selectedRoute = null;
 
-    public function setPeriod(string $period): void
+    public function updatedPeriod(): void
     {
-        $this->period = Period::tryFrom($period) ?? $this->period;
         $this->selectedRoute = null;
     }
 

@@ -17,9 +17,8 @@ final class Overview extends Component
 {
     public Period $period = Period::D7;
 
-    public function setPeriod(string $period): void
+    public function updatedPeriod(): void
     {
-        $this->period = Period::tryFrom($period) ?? $this->period;
         $this->dispatch('sparklineUpdated', trends: $this->metricTrends());
     }
 

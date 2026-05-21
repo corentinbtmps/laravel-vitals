@@ -5,15 +5,11 @@
             <h1 class="text-2xl font-semibold">{{ __('vitals::vitals.queries.title') }}</h1>
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.queries.subtitle') }}</p>
         </div>
-        <flux:button.group>
+        <flux:radio.group wire:model.live="period" variant="segmented" size="sm">
             @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
-                <flux:button
-                    wire:click="setPeriod('{{ $case->value }}')"
-                    size="sm"
-                    variant="{{ $period === $case ? 'primary' : 'ghost' }}"
-                >{{ $case->buttonLabel() }}</flux:button>
+                <flux:radio value="{{ $case->value }}" :label="$case->buttonLabel()" />
             @endforeach
-        </flux:button.group>
+        </flux:radio.group>
     </div>
 
     @if (empty($routes))

@@ -23,18 +23,13 @@ final class UrlDetail extends Component
         $this->url = $url;
     }
 
-    public function setPeriod(string $period): void
+    public function updatedPeriod(): void
     {
-        $this->period = Period::tryFrom($period) ?? $this->period;
         $this->dispatchChartUpdate();
     }
 
-    public function setMetric(string $metric): void
+    public function updatedMetric(): void
     {
-        if (! in_array($metric, ['performance', 'lcp', 'inp', 'cls', 'ttfb'], true)) {
-            return;
-        }
-        $this->metric = $metric;
         $this->dispatchChartUpdate();
     }
 

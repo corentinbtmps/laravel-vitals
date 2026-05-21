@@ -25,16 +25,6 @@ final class Seo extends Component
 
     public string $category = 'all';
 
-    public function setPeriod(string $period): void
-    {
-        $this->period = Period::tryFrom($period) ?? $this->period;
-    }
-
-    public function setCategory(string $category): void
-    {
-        $this->category = $category;
-    }
-
     public function render(): View
     {
         $cutoff = $this->period->cutoff();

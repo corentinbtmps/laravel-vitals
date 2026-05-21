@@ -18,15 +18,11 @@
                 </div>
             </div>
             {{-- Period control --}}
-            <flux:button.group>
+            <flux:radio.group wire:model.live="period" variant="segmented" size="sm">
                 @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
-                    <flux:button
-                        wire:click="setPeriod('{{ $case->value }}')"
-                        size="sm"
-                        variant="{{ $period === $case ? 'primary' : 'ghost' }}"
-                    >{{ $case->buttonLabel() }}</flux:button>
+                    <flux:radio value="{{ $case->value }}" :label="$case->buttonLabel()" />
                 @endforeach
-            </flux:button.group>
+            </flux:radio.group>
         </div>
     </div>
 
@@ -57,22 +53,17 @@
                     <p class="text-sm text-ink-500 mt-1">{{ $periodLabel }}</p>
                 </div>
                 {{-- Metric toggle --}}
-                <flux:button.group>
+                <flux:radio.group wire:model.live="metric" variant="segmented" size="sm">
                     @foreach ([
-                        'performance' => ['label' => 'Score', 'desc_key' => 'vitals::vitals.tooltip.metric_score'],
-                        'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals::vitals.tooltip.metric_lcp'],
-                        'inp'         => ['label' => 'INP',   'desc_key' => 'vitals::vitals.tooltip.metric_inp'],
-                        'cls'         => ['label' => 'CLS',   'desc_key' => 'vitals::vitals.tooltip.metric_cls'],
-                        'ttfb'        => ['label' => 'TTFB',  'desc_key' => 'vitals::vitals.tooltip.metric_ttfb'],
-                    ] as $val => $meta)
-                        <flux:button
-                            wire:click="setMetric('{{ $val }}')"
-                            size="sm"
-                            variant="{{ $metric === $val ? 'primary' : 'ghost' }}"
-                            :tooltip="__($meta['desc_key'])"
-                        >{{ $meta['label'] }}</flux:button>
+                        'performance' => 'Score',
+                        'lcp'         => 'LCP',
+                        'inp'         => 'INP',
+                        'cls'         => 'CLS',
+                        'ttfb'        => 'TTFB',
+                    ] as $val => $label)
+                        <flux:radio value="{{ $val }}" label="{{ $label }}" />
                     @endforeach
-                </flux:button.group>
+                </flux:radio.group>
             </div>
             <div
                 x-data="{

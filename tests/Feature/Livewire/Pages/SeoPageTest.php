@@ -21,12 +21,12 @@ it('renders the SEO overview page', function (): void {
 it('shows correct period selector options', function (): void {
     Livewire::test(Seo::class)
         ->assertOk()
-        ->assertSeeText('7d');
+        ->assertSee('value="7d"', escape: false);
 });
 
 it('can switch period', function (): void {
     Livewire::test(Seo::class)
-        ->call('setPeriod', '30d')
+        ->set('period', '30d')
         ->assertOk();
 });
 
@@ -77,6 +77,6 @@ it('shows top failing checks for seo source recommendations', function (): void 
 
 it('can filter top failing checks by category', function (): void {
     Livewire::test(Seo::class)
-        ->call('setCategory', 'meta')
+        ->set('category', 'meta')
         ->assertOk();
 });

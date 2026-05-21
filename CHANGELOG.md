@@ -7,7 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.81] - 2026-05-22
+## [v1.0.0-alpha.82] - 2026-05-22
+
+### Fixed
+
+#### Segmented selectors actually segment now
+
+`flux:button.group` doesn't produce the segmented look when its children mix `variant="primary"` (active) and `variant="ghost"` (inactive) — the `ghost`/`subtle` variants have no group-aware border treatments, so the buttons rendered as separate floating buttons with no shared container.
+
+The correct Flux Free pattern for a single-select segmented control is `flux:radio.group variant="segmented"` — its data-checked CSS handles the active state and the container styling without any per-child variant juggling.
+
+Migrated all 7 segmented controls from `flux:button.group` to `flux:radio.group`:
+
+- Period selectors on `overview`, `url-detail`, `seo`, `rum`, `queries`
+- RUM device filter (all / mobile / desktop)
+- URL detail metric toggle (Score / LCP / INP / CLS / TTFB)
+- SEO category tabs (all / configuration / content / meta / performance)
+- Issues page tabs (Top / All)
+
+Each now uses `wire:model.live="<property>"` instead of per-button `wire:click="setX(value)"`. The action methods on the Livewire components (`setPeriod`, `setCategory`, `setMetric`, `setDevice`, `setTab`) were removed; any side effects (e.g. `dispatchChartUpdate` in `UrlDetail`, resetting `$selectedRoute` in `Queries`, dispatching `sparklineUpdated` in `Overview`) moved to Livewire's `updated<Property>` lifecycle hooks.
+
+Special case: RUM's `$device` is a nullable `Device` enum but the radio needs a string. Added `$deviceFilter` string property bound to the radio with `updatedDeviceFilter` translating to the enum.
+
+### Removed
+
+- `setPeriod`, `setCategory`, `setMetric`, `setDevice`, `setTab` Livewire actions (replaced by `wire:model.live` + `updated*` hooks).
+- "Ignores invalid period values" tests on `QueriesTest` and `RumTest` — they covered defensive guards in the removed setter methods. The Flux radio UI only emits valid enum values; programmer error from PHP-side `->set('period', 'garbage')` now surfaces as a `ValueError` (preferred — silent fallback was masking bugs).
+
+
 
 ### Changed
 

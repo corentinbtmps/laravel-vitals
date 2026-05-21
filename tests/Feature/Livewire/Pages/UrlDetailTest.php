@@ -23,9 +23,9 @@ it('switches metric without errors', function (): void {
     $url = Url::create(['label' => 'home', 'path' => '/']);
 
     Livewire::test(UrlDetail::class, ['url' => $url->id])
-        ->call('setMetric', 'lcp')
+        ->set('metric', 'lcp')
         ->assertSet('metric', 'lcp')
-        ->call('setMetric', 'cls')
+        ->set('metric', 'cls')
         ->assertSet('metric', 'cls')
         ->assertOk();
 });

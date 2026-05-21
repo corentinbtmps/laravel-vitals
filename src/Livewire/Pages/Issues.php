@@ -13,10 +13,10 @@ final class Issues extends Component
     #[Url(as: 'tab', keep: false)]
     public string $tab = 'top';  // 'top' | 'all'
 
-    public function setTab(string $tab): void
+    public function updatedTab(string $value): void
     {
-        if (in_array($tab, ['top', 'all'], true)) {
-            $this->tab = $tab;
+        if (! in_array($value, ['top', 'all'], true)) {
+            $this->tab = 'top';
         }
     }
 
