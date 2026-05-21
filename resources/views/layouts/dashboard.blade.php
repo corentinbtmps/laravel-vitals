@@ -32,7 +32,7 @@
 </head>
 <body class="h-full bg-ink-50 text-ink-900 dark:bg-ink-950 dark:text-ink-100" data-flux-appearance>
 
-<flux:header class="border-b border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900">
+<flux:header class="border-b border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900">
     {{-- Custom brand markup — flux:brand wraps content in h-6 rounded-sm overflow-hidden
          which clips a 32px logo asymmetrically. We render the link ourselves to keep
          the logo at its intended 32×32 size with full rounded-lg radius visible. --}}
@@ -127,7 +127,7 @@
         type="button"
         x-data
         x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
-        class="vitals-desktop-only items-center gap-2 rounded-lg border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors"
+        class="vitals-desktop-only items-center gap-2 rounded-lg border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800/50 px-3 py-1.5 text-sm text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors"
         aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
     >
         <flux:icon.magnifying-glass class="size-4 shrink-0" />
@@ -180,7 +180,7 @@
         <nav
             x-show="open"
             x-cloak
-            class="fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-paper dark:bg-ink-900 border-l border-ink-200/60 dark:border-ink-800/60 shadow-2xl px-4 py-6 overflow-y-auto lg:hidden"
+            class="fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] bg-paper dark:bg-ink-900 border-l border-ink-200 dark:border-ink-800 shadow-2xl px-4 py-6 overflow-y-auto lg:hidden"
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="translate-x-full"
             x-transition:enter-end="translate-x-0"

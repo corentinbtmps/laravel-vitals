@@ -17,7 +17,7 @@
     </div>
 
     {{-- Uptime card --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 text-center">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6 text-center">
         <div @class([
             'text-5xl font-bold tabular-nums',
             'text-emerald-500' => $uptime >= 99,
@@ -47,7 +47,7 @@
 
     {{-- CWV split --}}
     @if ($cwvSplit['total'] > 0)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <h2 class="text-base font-semibold mb-4">{{ __('vitals::vitals.status.cwv_last_7d') }}</h2>
             @php
                 $total = $cwvSplit['total'];
@@ -90,7 +90,7 @@
             </ul>
         </div>
     @else
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="text-center py-4">
                 <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">{{ __('vitals::vitals.status.no_incidents') }}</p>
             </div>

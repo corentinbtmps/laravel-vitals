@@ -23,7 +23,7 @@
     </flux:breadcrumbs>
 
     {{-- Hero --}}
-    <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-8">
+    <div class="rounded-3xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-8">
         <div class="flex items-start justify-between gap-6">
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2 text-sm text-ink-500">
@@ -90,7 +90,7 @@
                 $color = \LaravelVitals\Support\Health::colorForScore($value);
                 $axisGrade = $value !== null ? \LaravelVitals\Support\Health::grade($value) : null;
             @endphp
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4 relative overflow-hidden">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-4 relative overflow-hidden">
                 <div @class([
                     'absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl',
                     'bg-emerald-500' => $color === 'emerald',
@@ -182,7 +182,7 @@
     </div>
 
     {{-- Core Web Vitals --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-center gap-2 mb-4">
             <flux:icon.heart class="size-5 text-accent-500" />
             <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.cwv_title') }}</h2>
@@ -250,7 +250,7 @@
 
     {{-- Front-end ↔ Back-end correlation panel --}}
     @if ($audit->telemetry && $breakdown['lcp_ms'] !== null && $breakdown['ttfb_ms'] !== null)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.signal class="size-5 text-sky-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.frontend_backend_title') }}</h2>
@@ -325,7 +325,7 @@
                                     <p class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-500 mb-2">{{ __('vitals::vitals.audit_detail.repeated_queries') }}</p>
                                     <ul class="space-y-2">
                                         @foreach ($topPatterns as $pattern)
-                                            <li class="rounded-lg border border-ink-200/60 dark:border-ink-800/60 bg-canvas dark:bg-ink-950 p-3">
+                                            <li class="rounded-lg border border-ink-200 dark:border-ink-800 bg-canvas dark:bg-ink-950 p-3">
                                                 <code class="text-xs font-mono text-accent-700 dark:text-accent-300 break-all">{{ $pattern['sql'] }}</code>
                                                 <div class="mt-1 flex items-center gap-3 text-xs text-ink-500">
                                                     <span class="tabular-nums font-medium">×{{ $pattern['occurrences'] }}</span>
@@ -355,7 +355,7 @@
 
     {{-- Backend telemetry stats --}}
     @if ($audit->telemetry)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="server-stack" class="size-5 text-violet-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.telemetry_title') }}</h2>
@@ -393,7 +393,7 @@
                     <div class="text-sm font-semibold text-ink-700 dark:text-ink-300 mb-2">{{ __('vitals::vitals.audit_detail.slowest_queries') }}</div>
                     <div class="space-y-2">
                         @foreach (array_slice($audit->telemetry->slow_queries, 0, 5) as $q)
-                            <div class="rounded border border-ink-200/60 dark:border-ink-800/60 bg-ink-50 dark:bg-ink-900 p-3">
+                            <div class="rounded border border-ink-200 dark:border-ink-800 bg-ink-50 dark:bg-ink-900 p-3">
                                 <div class="flex items-baseline justify-between gap-3 mb-1">
                                     <code class="text-xs text-ink-700 dark:text-ink-300 truncate flex-1">{{ $q['sql'] ?? '' }}</code>
                                     <flux:badge color="rose" size="sm">{{ (int) round((float) ($q['time_ms'] ?? 0)) }}ms</flux:badge>
@@ -408,7 +408,7 @@
 
     {{-- Recommendations grouped by category --}}
     @if ($groupedRecos->isNotEmpty())
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <flux:icon.light-bulb class="size-5 text-amber-500" />
@@ -510,7 +510,7 @@
                                                         <p class="text-xs font-semibold uppercase tracking-[0.08em] text-ink-500 mb-2">{{ __('vitals::vitals.audit_detail.repeated_queries') }}</p>
                                                         <ul class="space-y-2">
                                                             @foreach ($reco->translation_params['top_patterns'] as $pattern)
-                                                                <li class="rounded-lg border border-ink-200/60 dark:border-ink-800/60 bg-canvas dark:bg-ink-950 p-3">
+                                                                <li class="rounded-lg border border-ink-200 dark:border-ink-800 bg-canvas dark:bg-ink-950 p-3">
                                                                     <code class="text-xs font-mono text-accent-700 dark:text-accent-300 break-all">{{ $pattern['sql'] }}</code>
                                                                     <div class="mt-1 flex items-center gap-3 text-xs text-ink-500">
                                                                         <span class="tabular-nums font-medium">×{{ $pattern['occurrences'] }}</span>
@@ -560,7 +560,7 @@
 
     {{-- Panel A: Page details --}}
     @if ($audit->details)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="document-magnifying-glass" class="size-5 text-violet-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.page_details_title') }}</h2>
@@ -607,13 +607,13 @@
             </div>
 
             @if (! empty($audit->details['lcp_element']['selector']))
-                <div class="mt-6 pt-4 border-t border-ink-200/60 dark:border-ink-800/60">
+                <div class="mt-6 pt-4 border-t border-ink-200 dark:border-ink-800">
                     <div class="text-xs text-ink-500 mb-2 flex items-center gap-1.5">
                         <flux:icon.heart class="size-3.5 text-accent-500" /> {{ __('vitals::vitals.audit_detail.lcp_element') }}
                     </div>
-                    <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200/60 dark:border-ink-800/60 overflow-x-auto">{{ $audit->details['lcp_element']['selector'] }}</code>
+                    <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200 dark:border-ink-800 overflow-x-auto">{{ $audit->details['lcp_element']['selector'] }}</code>
                     @if (! empty($audit->details['lcp_element']['snippet']))
-                        <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200/60 dark:border-ink-800/60 mt-1.5 overflow-x-auto">{{ $audit->details['lcp_element']['snippet'] }}</code>
+                        <code class="block text-xs bg-ink-50 dark:bg-ink-900 p-2 rounded border border-ink-200 dark:border-ink-800 mt-1.5 overflow-x-auto">{{ $audit->details['lcp_element']['snippet'] }}</code>
                     @endif
                 </div>
             @endif
@@ -622,7 +622,7 @@
 
     {{-- Panel B: Resource breakdown --}}
     @if (! empty($audit->details['resource_summary']))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.archive-box class="size-5 text-sky-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.resource_breakdown') }}</h2>
@@ -681,7 +681,7 @@
 
     {{-- Panel C: Third-party impact --}}
     @if (! empty($audit->details['third_parties']))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.globe-alt class="size-5 text-pink-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.third_party_title') }}</h2>
@@ -717,7 +717,7 @@
 
     {{-- Panel D: Main thread breakdown --}}
     @if (! empty($audit->details['main_thread']))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.cpu-chip class="size-5 text-violet-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.main_thread_title') }}</h2>
@@ -746,7 +746,7 @@
 
     {{-- Panel E: Slow requests (top 10) --}}
     @if (! empty($audit->details['slow_requests']))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon.clock class="size-5 text-amber-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.slowest_requests_title') }}</h2>
@@ -787,7 +787,7 @@
 
     {{-- Panel F: Cache policy --}}
     @if (! empty($audit->details['cache_policy']))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="archive-box" class="size-5 text-amber-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.cache_policy_title') }}</h2>
@@ -818,7 +818,7 @@
 
     {{-- Panel G: Diagnostics summary --}}
     @if ($audit->details && (! empty($audit->details['critical_chain_depth']) || ! empty($audit->details['bootup_time'])))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="beaker" class="size-5 text-sky-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.audit_detail.diagnostics_title') }}</h2>
@@ -859,7 +859,7 @@
             $events = $audit->telemetry->events_log;
             $totalDuration = $audit->telemetry->duration_ms > 0 ? (float) $audit->telemetry->duration_ms : 1000.0;
         @endphp
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center gap-2 mb-4">
                 <flux:icon name="bars-3-bottom-left" class="size-5 text-violet-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.trace.title') }}</h2>

@@ -7,7 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.78] - 2026-05-21
+## [v1.0.0-alpha.79] - 2026-05-21
+
+### Added
+
+#### Queries page — clickable routes + per-route drill-down + N+1 surfacing
+
+- **Click any route** to expand a per-route detail panel below the table: affected URLs (linking to URL detail), recent audits (linking to audit detail), and repeated SQL patterns aggregated from N+1 recommendation data with file:line caller links via `EditorUrl`.
+- **N+1 badge** rendered on table rows whose route has any audit with `n_plus_one_suspect=true` in the period.
+- **`?route=` query param** persists the selected route via the Livewire `#[Url]` attribute so detail panel deep-links work.
+
+#### Internal maillage — cross-page navigation
+
+- **URL detail** gains a quick-links bar after the hero: Latest audit, SEO checks (per-audit), Database queries, Live performance (RUM).
+- **SEO cross-URL table**: the URL label is now a link to URL detail (in addition to the right-side "View →" landing on audit-seo).
+- **Issue detail**: when `audit_key='n-plus-one-detected'`, a banner appears at the top explaining N+1 and linking to the Database queries page.
+
+### Changed
+
+#### Plain-language labels everywhere — Typical / Worst case instead of p75 / p95
+
+- Queries page table columns: `p75 queries` → **Typical queries**, `p95 queries` → **Worst case**, `p75 time` → **Typical time**, `p95 time` → **Worst time**. New `legend` row beneath the table explains the terms.
+- RUM hero cards label `p75` → **Typical (75% of users)**.
+- RUM per-URL and INP-attribution tables drop the `p75` suffix from column headers (`LCP p75` → `LCP`, etc.) — the Core Web Vitals metric names already imply p75 by convention.
+- Queries page subtitle + baseline subtitle rewritten in plain language (no statistical terms in user copy).
+- New translation key `rum.typical_value` and Queries `col_typical_queries` / `col_worst_queries` / `col_typical_time` / `col_worst_time` / `legend` keys across EN/FR/DE/ES.
+
+#### Visual consistency — solid borders package-wide
+
+- All `border-ink-200/60 dark:border-ink-800/60` occurrences across blade views (audit-detail, audit-compare, budgets, insights, issues, learn, overview, recommendations-index, self-check, status, url-detail, urls-list, spotlight components, dashboard layout) switched to solid `border-ink-200 dark:border-ink-800`. Eliminates the inconsistent contrast in light mode that the user reported in alpha.78 review.
+
+### Fixed
+
+- **Queries view** is no longer a dead-end. The previous version listed routes as static strings with no drill-down, no N+1 connection, and no way to investigate. The new per-route panel surfaces the underlying SQL patterns and the URLs that actually hit the route.
+
+
 
 ### Fixed
 

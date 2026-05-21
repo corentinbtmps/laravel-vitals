@@ -15,7 +15,7 @@
                         @class([
                             'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
                             'bg-accent-500 text-white'                                                                        => $deviceActive,
-                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => ! $deviceActive,
+                            'bg-paper dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => ! $deviceActive,
                         ])
                     >{{ ucfirst($d) }}</button>
                 @endforeach
@@ -28,7 +28,7 @@
                         @class([
                             'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
                             'bg-accent-500 text-white' => $period === $case,
-                            'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $case,
+                            'bg-paper dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $case,
                         ])
                     >{{ $case->buttonLabel() }}</button>
                 @endforeach
@@ -37,7 +37,7 @@
     </div>
 
     @if ($totalEvents === 0)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.signal class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
@@ -75,7 +75,7 @@
                 $niPct   = $total > 0 ? round($card['ni']   / $total * 100) : 0;
                 $poorPct = $total > 0 ? 100 - $goodPct - $niPct : 0;
             @endphp
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-4">
                 <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-mono font-semibold text-ink-500 uppercase tracking-wider">{{ $name }}</span>
                     @if ($card['count'] > 0)
@@ -90,7 +90,7 @@
                             {{ number_format($p75, 0) }}ms
                         @endif
                     </div>
-                    <div class="text-xs text-ink-400 mb-2">p75</div>
+                    <div class="text-xs text-ink-400 mb-2">{{ __('vitals::vitals.rum.typical_value') }}</div>
                     {{-- Distribution bar --}}
                     <div class="flex h-1.5 rounded-full overflow-hidden gap-px">
                         <div class="bg-emerald-400 dark:bg-emerald-500 rounded-l-full" style="width:{{ $goodPct }}%"></div>
@@ -111,15 +111,15 @@
 
     {{-- Per-URL breakdown --}}
     @if (count($urlStats) > 0)
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <h3 class="text-base font-semibold mb-4">{{ __('vitals::vitals.rum.url_breakdown') }}</h3>
         <flux:table>
             <flux:table.columns>
                 <flux:table.column>{{ __('vitals::vitals.rum.col_url') }}</flux:table.column>
                 <flux:table.column align="end">{{ __('vitals::vitals.rum.col_samples') }}</flux:table.column>
-                <flux:table.column align="end">LCP p75</flux:table.column>
-                <flux:table.column align="end">INP p75</flux:table.column>
-                <flux:table.column align="end">CLS p75</flux:table.column>
+                <flux:table.column align="end">LCP</flux:table.column>
+                <flux:table.column align="end">INP</flux:table.column>
+                <flux:table.column align="end">CLS</flux:table.column>
             </flux:table.columns>
             <flux:table.rows>
                 @foreach ($urlStats as $row)
@@ -163,7 +163,7 @@
 
     {{-- INP Attribution --}}
     @if (count($inpAttributions) > 0)
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <h3 class="text-base font-semibold mb-1">{{ __('vitals::vitals.rum.inp_attribution_title') }}</h3>
         <p class="text-sm text-ink-500 mb-4">{{ __('vitals::vitals.rum.inp_attribution_subtitle') }}</p>
         <flux:table>
@@ -171,7 +171,7 @@
                 <flux:table.column>{{ __('vitals::vitals.rum.col_element') }}</flux:table.column>
                 <flux:table.column>{{ __('vitals::vitals.rum.col_event_type') }}</flux:table.column>
                 <flux:table.column align="end">{{ __('vitals::vitals.rum.col_samples') }}</flux:table.column>
-                <flux:table.column align="end">INP p75</flux:table.column>
+                <flux:table.column align="end">INP</flux:table.column>
             </flux:table.columns>
             <flux:table.rows>
                 @foreach ($inpAttributions as $attr)

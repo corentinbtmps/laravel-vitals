@@ -77,8 +77,11 @@
                             @endphp
                             <tr class="hover:bg-ink-50/50 dark:hover:bg-ink-800/30 transition-colors">
                                 <td class="px-6 py-3">
-                                    <div class="font-medium">{{ $row['url']->label }}</div>
-                                    <div class="text-xs text-ink-400 font-mono">{{ $row['url']->path }}</div>
+                                    <a href="{{ route('vitals.url', $row['url']->id) }}"
+                                       class="block hover:text-accent-600 dark:hover:text-accent-400 transition-colors">
+                                        <div class="font-medium">{{ $row['url']->label }}</div>
+                                        <div class="text-xs text-ink-400 font-mono">{{ $row['url']->path }}</div>
+                                    </a>
                                 </td>
                                 <td class="px-6 py-3 text-center">
                                     @if ($score !== null)

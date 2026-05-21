@@ -1,6 +1,6 @@
 <div class="space-y-6">
     @if ($quickWins->isEmpty() && empty($worsening) && empty($improving))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.sparkles class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
@@ -10,7 +10,7 @@
     @else
 
     {{-- Quick wins --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-start justify-between mb-4">
             <div>
                 <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.quick_wins') }}</h3>
@@ -38,7 +38,7 @@
 
     {{-- Worsening / Improving --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.worsening_urls') }}</h3>
@@ -63,7 +63,7 @@
             @endif
         </div>
 
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.improving_urls') }}</h3>
@@ -91,7 +91,7 @@
 
     {{-- Top third parties --}}
     @if (! empty($topThirdParties))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.insights.top_third_parties') }}</h3>

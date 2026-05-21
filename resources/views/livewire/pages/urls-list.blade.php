@@ -8,13 +8,13 @@
     </div>
 
     @if ($urls->isEmpty())
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.link class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __('vitals::vitals.empty.urls_no_urls.title') }}</h3>
             <p class="mt-2 text-sm text-ink-500 max-w-md mx-auto">{{ __('vitals::vitals.empty.urls_no_urls.body') }}</p>
-            <div class="mt-6 rounded-xl bg-ink-50 dark:bg-ink-950 border border-ink-200/60 dark:border-ink-800/60 p-4 text-left max-w-sm mx-auto">
+            <div class="mt-6 rounded-xl bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 p-4 text-left max-w-sm mx-auto">
                 <pre class="text-xs text-ink-600 dark:text-ink-400 font-mono overflow-x-auto">'urls' => [
     ['label' => 'Home', 'path' => '/'],
     ['label' => 'About', 'path' => '/about'],
@@ -33,7 +33,7 @@
                     <h2 class="text-xs font-semibold uppercase tracking-[0.08em] text-amber-600 dark:text-amber-500">{{ __('vitals::vitals.urls_page.favorites') }}</h2>
                     <span class="text-xs text-ink-500">{{ $pinnedUrls->count() }}</span>
                 </div>
-                <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+                <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
                     <flux:table>
                         <flux:table.columns>
                             <flux:table.column class="w-8"></flux:table.column>
@@ -193,7 +193,7 @@
                     <span class="text-xs text-ink-500">{{ $allUrls->count() }}</span>
                 </div>
             @endif
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
                 <flux:table>
                     <flux:table.columns>
                         <flux:table.column class="w-8"></flux:table.column>

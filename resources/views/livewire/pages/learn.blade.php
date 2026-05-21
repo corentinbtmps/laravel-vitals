@@ -14,7 +14,7 @@
                 <button type="button"
                         wire:click="setFilter('{{ $key }}')"
                         @class([
-                            'group rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5 text-left transition-colors duration-150',
+                            'group rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-5 text-left transition-colors duration-150',
                             \LaravelVitals\Support\LearnTileClasses::hoverBorder($tile['color']),
                             ...\LaravelVitals\Support\LearnTileClasses::hoverBg($tile['color']),
                         ])>
@@ -54,7 +54,7 @@
     @endif
 
     {{-- Filter tabs --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-4">
         <div class="flex flex-wrap gap-2">
             @foreach (['all' => 'All', 'performance' => 'Performance', 'accessibility' => 'Accessibility', 'best_practices' => 'Best Practices', 'seo' => 'SEO'] as $value => $label)
                 <flux:button
@@ -81,7 +81,7 @@
             <div class="space-y-4">
                 @foreach ($items as $entry)
                     <article id="{{ $entry['key'] }}"
-                             class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 scroll-mt-24">
+                             class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6 scroll-mt-24">
                         {{-- Header --}}
                         <div class="flex items-center gap-2 flex-wrap">
                             <span @class([
@@ -105,13 +105,13 @@
 
                         @if ($entry['docs'])
                             {{-- Why --}}
-                            <div class="mt-4 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-canvas dark:bg-ink-950 p-4">
+                            <div class="mt-4 rounded-xl border border-ink-200 dark:border-ink-800 bg-canvas dark:bg-ink-950 p-4">
                                 <div class="flex items-start gap-2">
                                     <flux:icon.information-circle class="size-4 text-sky-500 shrink-0 mt-0.5" />
                                     <p class="text-sm text-ink-700 dark:text-ink-300">{{ $entry['docs']['why'] }}</p>
                                 </div>
                                 @if (! empty($entry['docs']['impact']))
-                                    <div class="mt-3 flex items-center gap-2 text-xs pt-3 border-t border-ink-200/60 dark:border-ink-800/60">
+                                    <div class="mt-3 flex items-center gap-2 text-xs pt-3 border-t border-ink-200 dark:border-ink-800">
                                         <flux:icon.bolt class="size-3.5 text-amber-500" />
                                         <span class="text-amber-700 dark:text-amber-400 font-medium">{{ $entry['docs']['impact'] }}</span>
                                     </div>
@@ -163,7 +163,7 @@
             </div>
         </div>
     @empty
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <p class="text-sm text-ink-500">No items match this filter.</p>
         </div>
     @endforelse

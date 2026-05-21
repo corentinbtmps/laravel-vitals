@@ -8,7 +8,7 @@
             <p class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.pages.overview.subtitle') }}</p>
         </div>
         <div class="overflow-x-auto -mx-2 md:mx-0">
-            <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 md:mx-0">
+            <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 md:mx-0">
                 @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
                     <button
                         wire:click="setPeriod('{{ $case->value }}')"
@@ -25,7 +25,7 @@
 
     {{-- Empty state: no URLs configured --}}
     @if ($urlsCount === 0)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.link class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
@@ -38,7 +38,7 @@
         </div>
     @elseif ($recent->isEmpty())
         {{-- Empty state: URLs configured but no audits yet --}}
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.signal class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
@@ -64,7 +64,7 @@
                 $delta  = $metricDeltas[$metric['key']] ?? null;
                 $series = $metricTrends[$metric['key']] ?? [];
             @endphp
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-4 lg:p-5">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-4 lg:p-5">
                 {{-- Top row: label + delta --}}
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">{{ $metric['label'] }}</span>
@@ -142,7 +142,7 @@
 
     {{-- Daily summary card --}}
     @if ($dailySummary['audits'] > 0)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 px-5 py-4">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 px-5 py-4">
             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
                 <span class="font-semibold text-ink-700 dark:text-ink-300">{{ __('vitals::vitals.overview.yesterday') }}</span>
                 <span class="text-ink-500">{{ __('vitals::vitals.overview.daily_audits', ['count' => $dailySummary['audits']]) }}</span>
@@ -161,7 +161,7 @@
 
     {{-- API usage panel (PageSpeed users only) --}}
     @if ($apiUsage['calls'] > 0)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-5">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <flux:icon name="cloud" class="size-4 text-sky-500" />
@@ -182,7 +182,7 @@
 
     {{-- Active alerts --}}
     @if (count($activeAlerts) > 0)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <flux:icon.bell class="size-5 text-accent-500" />
@@ -218,7 +218,7 @@
 
     {{-- Two-column: top recos + activity feed --}}
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.overview_page.top_issues') }}</h3>
@@ -249,7 +249,7 @@
             @endif
         </div>
 
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.overview_page.recent_audits') }}</h3>

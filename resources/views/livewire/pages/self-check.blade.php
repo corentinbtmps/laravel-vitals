@@ -8,7 +8,7 @@
     </div>
 
     {{-- Table sizes --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-center gap-2 mb-4">
             <flux:icon name="circle-stack" class="size-5 text-violet-500" />
             <h2 class="text-base font-semibold">{{ __('vitals::vitals.self_check.table_sizes') }}</h2>
@@ -32,7 +32,7 @@
     </div>
 
     {{-- Slowest telemetry requests --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-center gap-2 mb-4">
             <flux:icon name="clock" class="size-5 text-amber-500" />
             <h2 class="text-base font-semibold">{{ __('vitals::vitals.self_check.slowest_requests') }}</h2>
@@ -75,7 +75,7 @@
     </div>
 
     {{-- Recent audits --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <div class="flex items-center gap-2 mb-4">
             <flux:icon name="bolt" class="size-5 text-accent-500" />
             <h2 class="text-base font-semibold">{{ __('vitals::vitals.self_check.recent_audits') }}</h2>

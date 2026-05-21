@@ -5,7 +5,7 @@
     </div>
 
     {{-- Tabs --}}
-    <div class="flex items-center gap-1 border-b border-ink-200/60 dark:border-ink-800/60">
+    <div class="flex items-center gap-1 border-b border-ink-200 dark:border-ink-800">
         <button
             wire:click="setTab('top')"
             @class([

@@ -5,7 +5,7 @@
     </flux:breadcrumbs>
 
     {{-- URL hero card --}}
-    <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 md:p-8">
+    <div class="rounded-3xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6 md:p-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
             <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2 text-sm text-ink-500 mb-2">
@@ -19,7 +19,7 @@
             </div>
             {{-- Period control --}}
             <div class="overflow-x-auto -mx-2 sm:mx-0">
-                <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0 shrink-0">
+                <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0 shrink-0">
                     @foreach (\LaravelVitals\Enums\Period::availableFor((int) config('vitals.retention.days', 90)) as $case)
                         <button
                             wire:click="setPeriod('{{ $case->value }}')"
@@ -36,15 +36,26 @@
     </div>
 
     @if ($history->isEmpty())
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="text-center py-8">
                 <flux:icon name="clock" class="size-12 text-ink-300 dark:text-ink-700 mx-auto mb-3" />
                 <p class="text-sm text-ink-500">{{ __('vitals::vitals.url_detail.no_audits') }}</p>
             </div>
         </div>
     @else
+        {{-- Quick links to related views --}}
+        @php $latest = $history->first(); @endphp
+        <div class="flex flex-wrap gap-2">
+            <flux:button href="{{ route('vitals.audit', $latest->id) }}" variant="ghost" size="sm" icon="document-text">{{ __('vitals::vitals.url_detail.link_latest_audit') }}</flux:button>
+            <flux:button href="{{ route('vitals.audit.seo', $latest->id) }}" variant="ghost" size="sm" icon="globe-alt">{{ __('vitals::vitals.url_detail.link_seo') }}</flux:button>
+            <flux:button href="{{ route('vitals.queries') }}" variant="ghost" size="sm" icon="circle-stack">{{ __('vitals::vitals.url_detail.link_queries') }}</flux:button>
+            @if (Route::has('vitals.rum'))
+                <flux:button href="{{ route('vitals.rum') }}" variant="ghost" size="sm" icon="signal">{{ __('vitals::vitals.url_detail.link_rum') }}</flux:button>
+            @endif
+        </div>
+
         {{-- Hero area chart --}}
-        <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 md:p-8">
+        <div class="rounded-3xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6 md:p-8">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.perf_over_time') }}</h3>
@@ -52,7 +63,7 @@
                 </div>
                 {{-- Metric toggle --}}
                 <div class="overflow-x-auto -mx-2 sm:mx-0">
-                    <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0">
+                    <div class="inline-flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 whitespace-nowrap mx-2 sm:mx-0">
                         @foreach ([
                             'performance' => ['label' => 'Score', 'desc_key' => 'vitals::vitals.tooltip.metric_score'],
                             'lcp'         => ['label' => 'LCP',   'desc_key' => 'vitals::vitals.tooltip.metric_lcp'],
@@ -156,7 +167,7 @@
         </div>
 
         @if ($periodCount > 0)
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.average_scores') }}</h3>
@@ -173,7 +184,7 @@
                         @php
                             $val = $avgScores[$key];
                         @endphp
-                        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 p-4">
+                        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 p-4">
                             <div class="flex items-center gap-2 mb-3">
                                 <span @class([
                                     'h-2 w-2 rounded-full',
@@ -191,7 +202,7 @@
         @endif
 
         @if ($frequentRecos->isNotEmpty())
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.most_frequent_issues') }}</h3>
@@ -211,7 +222,7 @@
         @endif
 
         @if ($failedAudits->isNotEmpty())
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
                 <div class="flex items-center gap-2 mb-4">
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.recent_failed_audits') }}</h3>
                     <flux:badge color="rose" size="sm">{{ $failedAudits->count() }}</flux:badge>
@@ -232,7 +243,7 @@
             </div>
         @endif
 
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.url_detail.audit_history') }}</h3>

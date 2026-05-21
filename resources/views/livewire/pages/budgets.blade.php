@@ -8,13 +8,13 @@
     </div>
 
     @if (empty($budgets))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.chart-bar class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
             <h3 class="text-base font-semibold text-ink-900 dark:text-ink-100">{{ __('vitals::vitals.empty.budgets_no_budgets.title') }}</h3>
             <p class="mt-2 text-sm text-ink-500 max-w-md mx-auto">{{ __('vitals::vitals.empty.budgets_no_budgets.body') }}</p>
-            <div class="mt-6 rounded-xl bg-ink-50 dark:bg-ink-950 border border-ink-200/60 dark:border-ink-800/60 p-4 text-left max-w-sm mx-auto">
+            <div class="mt-6 rounded-xl bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 p-4 text-left max-w-sm mx-auto">
                 <pre class="text-xs text-ink-600 dark:text-ink-400 font-mono overflow-x-auto">'budgets' => [
     'lcp_ms' => [
         'warning'  => 2500,
@@ -28,7 +28,7 @@
             </div>
         </div>
     @else
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <flux:table>
                 <flux:table.columns>
                     <flux:table.column>{{ __('vitals::vitals.tables.metric') }}</flux:table.column>
@@ -55,13 +55,13 @@
     @endif
 
     @if (! empty($perUrl))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="text-base font-semibold">{{ __('vitals::vitals.budgets_page.per_url_overrides') }}</h3>
                 </div>
             </div>
-            <pre class="text-xs bg-ink-50 dark:bg-ink-950 p-4 rounded-2xl overflow-x-auto border border-ink-200/60 dark:border-ink-800/60"><code>{{ json_encode($perUrl, JSON_PRETTY_PRINT) }}</code></pre>
+            <pre class="text-xs bg-ink-50 dark:bg-ink-950 p-4 rounded-2xl overflow-x-auto border border-ink-200 dark:border-ink-800"><code>{{ json_encode($perUrl, JSON_PRETTY_PRINT) }}</code></pre>
         </div>
     @endif
 

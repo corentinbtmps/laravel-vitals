@@ -11,7 +11,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         @foreach ([['audit' => $auditA, 'label' => __('vitals::vitals.compare.audit_a')], ['audit' => $auditB, 'label' => __('vitals::vitals.compare.audit_b')]] as $side)
             @php $a = $side['audit']; @endphp
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-5 flex items-start gap-4">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-5 flex items-start gap-4">
                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-100 dark:bg-accent-900/40">
                     <flux:icon name="{{ $a->device === 'mobile' ? 'device-phone-mobile' : 'computer-desktop' }}" class="size-5 text-accent-600 dark:text-accent-400" />
                 </div>
@@ -30,12 +30,12 @@
     </div>
 
     {{-- Score grid --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <h2 class="text-base font-semibold mb-4">{{ __('vitals::vitals.compare.scores') }}</h2>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="border-b border-ink-200/60 dark:border-ink-800/60">
+                    <tr class="border-b border-ink-200 dark:border-ink-800">
                         <th class="text-left py-2 pr-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.metric') }}</th>
                         <th class="text-right py-2 px-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.audit_a') }}</th>
                         <th class="text-right py-2 px-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.audit_b') }}</th>
@@ -77,12 +77,12 @@
     </div>
 
     {{-- CWV grid --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <h2 class="text-base font-semibold mb-4">{{ __('vitals::vitals.compare.cwv') }}</h2>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="border-b border-ink-200/60 dark:border-ink-800/60">
+                    <tr class="border-b border-ink-200 dark:border-ink-800">
                         <th class="text-left py-2 pr-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.metric') }}</th>
                         <th class="text-right py-2 px-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.audit_a') }}</th>
                         <th class="text-right py-2 px-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.audit_b') }}</th>
@@ -173,12 +173,12 @@
 
     {{-- Telemetry diff --}}
     @if ($auditA->telemetry || $auditB->telemetry)
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <h2 class="text-base font-semibold mb-4">{{ __('vitals::vitals.compare.telemetry') }}</h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-ink-200/60 dark:border-ink-800/60">
+                        <tr class="border-b border-ink-200 dark:border-ink-800">
                             <th class="text-left py-2 pr-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.metric') }}</th>
                             <th class="text-right py-2 px-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.audit_a') }}</th>
                             <th class="text-right py-2 px-4 text-ink-500 font-medium">{{ __('vitals::vitals.compare.audit_b') }}</th>

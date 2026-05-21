@@ -4,6 +4,18 @@
         <flux:breadcrumbs.item>{{ __($descriptor->titleKey) }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
+    @if ($auditKey === 'n-plus-one-detected')
+        <div class="rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-900/10 p-4 flex items-center justify-between gap-4 flex-wrap">
+            <div class="flex items-start gap-2 min-w-0">
+                <flux:icon.circle-stack class="size-5 text-rose-500 shrink-0 mt-0.5" />
+                <p class="text-sm text-ink-700 dark:text-ink-300">{{ __('vitals::vitals.issue_detail.n_plus_one_banner') }}</p>
+            </div>
+            <flux:button href="{{ route('vitals.queries') }}" variant="primary" size="sm" icon="arrow-top-right-on-square">
+                {{ __('vitals::vitals.issue_detail.n_plus_one_cta') }}
+            </flux:button>
+        </div>
+    @endif
+
     {{-- Header --}}
     <div class="flex items-start justify-between gap-4 flex-wrap">
         <div class="min-w-0">

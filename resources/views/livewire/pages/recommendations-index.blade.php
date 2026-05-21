@@ -6,7 +6,7 @@
     @endif
 
     @if ($rows->isEmpty())
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.light-bulb class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
@@ -17,7 +17,7 @@
             </div>
         </div>
     @else
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <flux:table>
                 <flux:table.columns>
                     <flux:table.column>{{ __('vitals::vitals.tables.recommendation') }}</flux:table.column>
