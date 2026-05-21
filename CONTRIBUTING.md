@@ -155,6 +155,53 @@ Add `vitals.recommendations.your-audit-key.title` and `vitals.recommendations.yo
 
 ---
 
+## How to add a new SEO check
+
+All SEO checks live in `src/Seo/Checks/{Category}/`. Follow these 5 steps:
+
+**1. Create the check class** in the appropriate category folder:
+```php
+// src/Seo/Checks/Meta/MyNewCheck.php
+final class MyNewCheck implements SeoCheck
+{
+    public function key(): string { return 'my-new-check'; }
+    public function category(): SeoCheckCategory { return SeoCheckCategory::Meta; }
+    public function weight(): int { return 7; }   // 1–10 importance
+    public function isOptional(): bool { return false; }
+
+    public function run(SeoCheckContext $context): SeoCheckResult
+    {
+        // Use $context->crawler for DOM queries (Symfony DomCrawler)
+        // Use $context->response for HTTP headers
+        // Use $context->report for Lighthouse metrics
+        // Return SeoCheckResult::pass/fail/warning(...)
+    }
+}
+```
+
+**2. Register the check** in `src/Seo/SeoCheckRegistry::all()` — add it to the appropriate category group.
+
+**3. Add a `docUrl`** pointing to a real Google developer docs URL (developers.google.com/search/docs/...).
+
+**4. Add translation keys** in all 4 locale files (`lang/{en,fr,de,es}/vitals.php`):
+```php
+'seo' => [
+    'checks' => [
+        'my-new-check' => [
+            'title'       => 'Human-readable check name',
+            'description' => 'What this check verifies.',
+            'hint'        => 'How to fix it.',
+        ],
+    ],
+],
+```
+
+**5. Write tests** in `tests/Unit/Seo/Checks/{Category}/MyNewCheckTest.php` covering: pass, fail, warning, edge cases (empty page, missing elements). Use `SeoTestHelper::makeContext()` to build a context without HTTP.
+
+Verify: `vendor/bin/pest tests/Unit/Seo/` passes, `vendor/bin/phpstan analyse src/Seo/` returns no errors.
+
+---
+
 ## Reporting issues
 
 [Open an issue](https://github.com/corentinbtmps/laravel-vitals/issues/new/choose) using the relevant template (bug report, feature request, or question). Include your Laravel version, PHP version, Vitals version, and driver type.

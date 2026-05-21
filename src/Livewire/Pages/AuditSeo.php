@@ -6,17 +6,16 @@ namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
 use LaravelVitals\Models\Audit;
+use LaravelVitals\Seo\SeoCheckRegistry;
 use Livewire\Component;
 
 /**
- * SEO deep-dive page — linked from the audit-detail SEO score card.
+ * SEO deep-dive page for a single audit — /vitals/audits/{audit}/seo.
  *
- * Route: GET /vitals/audits/{audit}/seo
- *
- * Surfaces all SEO-related Lighthouse audit results alongside two extra
- * checks that run against the URL's HTTP response:
- *  - SitemapAnalyzer: can we find /sitemap.xml?
- *  - RobotsTxtAnalyzer: can we find /robots.txt?
+ * Shows:
+ * - Score breakdown card (Lighthouse SEO vs Custom SEO combined score)
+ * - Category-grouped check list with status icons + actual/expected + hint + Google docs link
+ * - Inline detail items for checks that produce per-resource data (broken links etc.)
  */
 final class AuditSeo extends Component
 {
@@ -31,114 +30,110 @@ final class AuditSeo extends Component
     {
         $auditModel = Audit::query()->with(['url', 'recommendations'])->findOrFail($this->auditId);
 
-        $details = $auditModel->details ?? [];
+        $seoRecos = $auditModel->recommendations
+            ->filter(fn ($r) => $r->source === 'seo')
+            ->values();
 
-        // Lighthouse SEO audits embedded in details
-        $seoAudits = $details['seo_audits'] ?? [];
-
-        // Extra checks computed from details or defaults
-        $checks = $this->buildChecks($auditModel, $seoAudits);
-
-        $seoRecos = $auditModel->recommendations->filter(
-            fn ($r) => $r->category === 'seo'
-        )->values();
+        // Build category-grouped check results for display
+        $registry = app(SeoCheckRegistry::class);
+        $checksGrouped = $this->buildGroupedChecks($auditModel, $seoRecos, $registry);
 
         return view('vitals::livewire.pages.audit-seo', [
-            'audit'     => $auditModel,
-            'checks'    => $checks,
-            'seoRecos'  => $seoRecos,
+            'audit'          => $auditModel,
+            'seoRecos'       => $seoRecos,
+            'checksGrouped'  => $checksGrouped,
+            'lighthouseScore' => $auditModel->score_seo,
+            'vitalsSeoScore' => $auditModel->vitals_seo_score,
+            'vitalsSeoGrade' => $auditModel->vitals_seo_grade,
         ])->layout('vitals::layouts.dashboard');
     }
 
     /**
-     * Build a list of SEO check results from what we know about the audit.
+     * Build category-grouped check display data.
+     * Each check either shows as "passing" or "failing/warning" with details.
      *
-     * @param  array<string, mixed>  $seoAudits
-     * @return array<int, array{key: string, label: string, status: string, value: string|null}>
+     * @param  \Illuminate\Database\Eloquent\Collection<int, \LaravelVitals\Models\Recommendation>  $seoRecos
+     * @return array<string, array<int, array<string, mixed>>>
      */
-    private function buildChecks(Audit $audit, array $seoAudits): array
+    private function buildGroupedChecks(
+        Audit $audit,
+        \Illuminate\Database\Eloquent\Collection $seoRecos,
+        SeoCheckRegistry $registry,
+    ): array {
+        $failedByKey = [];
+        foreach ($seoRecos as $reco) {
+            $key = str_replace('seo-', '', $reco->audit_key);
+            $failedByKey[$key] = $reco;
+        }
+
+        $grouped = [];
+
+        foreach ($registry->enabled() as $check) {
+            $category = $check->category()->value;
+
+            if (! isset($grouped[$category])) {
+                $grouped[$category] = [];
+            }
+
+            $reco = $failedByKey[$check->key()] ?? null;
+
+            $entry = [
+                'key'         => $check->key(),
+                'category'    => $category,
+                'weight'      => $check->weight(),
+                'status'      => $reco !== null ? $reco->severity->value : 'pass',
+                'title_key'   => 'vitals::vitals.seo.checks.' . $check->key() . '.title',
+                'actual'      => null,
+                'expected'    => null,
+                'hint_key'    => null,
+                'doc_url'     => null,
+                'detail_items' => null,
+            ];
+
+            if ($reco !== null) {
+                $params = is_array($reco->translation_params) ? $reco->translation_params : [];
+                $entry['actual']       = $params['actual'] ?? null;
+                $entry['expected']     = $params['expected'] ?? null;
+                $entry['hint_key']     = 'vitals::vitals.seo.checks.' . $check->key() . '.hint';
+                $entry['doc_url']      = $this->docUrlFor($check->key());
+                $entry['detail_items'] = $reco->detail_items;
+            }
+
+            $grouped[$category][] = $entry;
+        }
+
+        return $grouped;
+    }
+
+    private function docUrlFor(string $key): ?string
     {
-        $details = $audit->details ?? [];
-
-        $pass = 'pass';
-        $fail = 'fail';
-        $warn = 'warn';
-        $skip = 'skip';
-
-        $checks = [];
-
-        // Meta description
-        $metaDesc = $seoAudits['meta-description'] ?? null;
-        $checks[] = [
-            'key'    => 'meta_description',
-            'label'  => __('vitals::vitals.seo.meta_description'),
-            'status' => isset($metaDesc['score']) ? ($metaDesc['score'] >= 1 ? $pass : $fail) : $skip,
-            'value'  => null,
-        ];
-
-        // Canonical URL
-        $canonical = $seoAudits['canonical'] ?? null;
-        $checks[] = [
-            'key'    => 'canonical',
-            'label'  => __('vitals::vitals.seo.canonical'),
-            'status' => isset($canonical['score']) ? ($canonical['score'] >= 1 ? $pass : $fail) : $skip,
-            'value'  => null,
-        ];
-
-        // Structured data
-        $structuredData = $seoAudits['structured-data'] ?? null;
-        $checks[] = [
-            'key'    => 'structured_data',
-            'label'  => __('vitals::vitals.seo.structured_data'),
-            'status' => isset($structuredData['score']) ? ($structuredData['score'] >= 1 ? $pass : $warn) : $skip,
-            'value'  => null,
-        ];
-
-        // Lang attribute (hreflang audit or html-has-lang)
-        $htmlLang = $seoAudits['html-has-lang'] ?? null;
-        $checks[] = [
-            'key'    => 'lang_attribute',
-            'label'  => __('vitals::vitals.seo.lang_attribute'),
-            'status' => isset($htmlLang['score']) ? ($htmlLang['score'] >= 1 ? $pass : $fail) : $skip,
-            'value'  => null,
-        ];
-
-        // Title length
-        $titleTag = $details['title_length'] ?? null;
-        $checks[] = [
-            'key'    => 'title_length',
-            'label'  => __('vitals::vitals.seo.title_length'),
-            'status' => $titleTag === null ? $skip : (($titleTag >= 50 && $titleTag <= 60) ? $pass : $warn),
-            'value'  => $titleTag !== null ? $titleTag . ' chars' : null,
-        ];
-
-        // H1 present (document-title audit)
-        $docTitle = $seoAudits['document-title'] ?? null;
-        $checks[] = [
-            'key'    => 'h1_present',
-            'label'  => __('vitals::vitals.seo.h1_present'),
-            'status' => isset($docTitle['score']) ? ($docTitle['score'] >= 1 ? $pass : $fail) : $skip,
-            'value'  => null,
-        ];
-
-        // Sitemap — inferred from details or assume skip
-        $sitemapOk = $details['sitemap_accessible'] ?? null;
-        $checks[] = [
-            'key'    => 'sitemap',
-            'label'  => __('vitals::vitals.seo.sitemap'),
-            'status' => $sitemapOk === null ? $skip : ($sitemapOk ? $pass : $warn),
-            'value'  => null,
-        ];
-
-        // Robots.txt — inferred from details or assume skip
-        $robotsOk = $details['robots_txt_accessible'] ?? null;
-        $checks[] = [
-            'key'    => 'robots_txt',
-            'label'  => __('vitals::vitals.seo.robots_txt'),
-            'status' => $robotsOk === null ? $skip : ($robotsOk ? $pass : $warn),
-            'value'  => null,
-        ];
-
-        return $checks;
+        return match ($key) {
+            'noindex'              => 'https://developers.google.com/search/docs/crawling-indexing/block-indexing',
+            'nofollow'             => 'https://developers.google.com/search/docs/crawling-indexing/qualify-outbound-links',
+            'robots-txt-indexable' => 'https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt',
+            'h1'                   => 'https://developers.google.com/search/docs/appearance/title-link',
+            'https-links'          => 'https://developers.google.com/search/docs/crawling-indexing/security/https',
+            'image-alt'            => 'https://developers.google.com/search/docs/appearance/google-images#use-descriptive-alt-text',
+            'broken-links'         => 'https://developers.google.com/search/docs/crawling-indexing/fix-search-crawling-issues',
+            'broken-images'        => 'https://developers.google.com/search/docs/appearance/google-images',
+            'content-length'       => 'https://developers.google.com/search/docs/fundamentals/creating-helpful-content',
+            'keyword-in-first-paragraph' => 'https://developers.google.com/search/docs/fundamentals/creating-helpful-content',
+            'meta-description'     => 'https://developers.google.com/search/docs/appearance/snippet#meta-descriptions',
+            'title-length'         => 'https://developers.google.com/search/docs/appearance/title-link',
+            'og-image'             => 'https://developers.google.com/search/docs/appearance/structured-data/article',
+            'html-lang'            => 'https://developers.google.com/search/docs/specialty/international/localized-versions#html',
+            'canonical'            => 'https://developers.google.com/search/docs/crawling-indexing/canonicalization',
+            'structured-data'      => 'https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data',
+            'invalid-head-elements' => 'https://developers.google.com/search/docs/crawling-indexing/special-tags',
+            'keyword-in-title'     => 'https://developers.google.com/search/docs/appearance/title-link',
+            'ttfb'                 => 'https://developers.google.com/search/docs/appearance/page-experience#ttfb',
+            'status-code'          => 'https://developers.google.com/search/docs/crawling-indexing/http-network-errors',
+            'html-size'            => 'https://developers.google.com/search/docs/crawling-indexing/large-site-managing-crawl-budget',
+            'image-size'           => 'https://developers.google.com/search/docs/appearance/google-images#provide-good-context',
+            'js-size'              => 'https://developers.google.com/search/docs/appearance/page-experience',
+            'css-size'             => 'https://developers.google.com/search/docs/appearance/page-experience',
+            'compression'          => 'https://developers.google.com/search/docs/appearance/page-experience',
+            default                => null,
+        };
     }
 }

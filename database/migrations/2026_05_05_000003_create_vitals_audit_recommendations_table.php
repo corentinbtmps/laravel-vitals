@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::connection(config('vitals.database'))->create('vitals_audit_recommendations', function (Blueprint $table): void {
             $table->id();
             $table->foreignUuid('audit_id')->constrained('vitals_audits')->cascadeOnDelete();
-            $table->enum('source', ['lighthouse', 'backend', 'static', 'config']);
+            $table->enum('source', ['lighthouse', 'backend', 'static', 'config', 'seo']);
             $table->string('audit_key');
             $table->enum('category', ['performance', 'accessibility', 'seo', 'best_practices']);
             $table->enum('severity', ['info', 'warning', 'critical']);

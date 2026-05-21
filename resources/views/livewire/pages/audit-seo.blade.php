@@ -8,90 +8,154 @@
         <flux:breadcrumbs.item>{{ __('vitals::vitals.seo.title') }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 
-    {{-- Hero --}}
+    {{-- Hero with score breakdown --}}
     <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 md:p-8">
-        <div class="flex items-start justify-between gap-6">
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div>
                 <h1 class="text-2xl font-semibold tracking-tight">{{ __('vitals::vitals.seo.heading') }}</h1>
                 <p class="mt-1 text-sm text-ink-500">{{ $audit->url?->label }} · {{ $audit->completed_at?->format('M j, Y H:i') }}</p>
             </div>
-            @if ($audit->score_seo !== null)
-                @php
-                    $seoColor = \LaravelVitals\Support\Health::colorForScore($audit->score_seo);
-                    $seoGrade = \LaravelVitals\Support\Health::grade($audit->score_seo);
-                @endphp
-                <div class="text-right shrink-0">
-                    <div @class([
-                        'text-4xl font-semibold tabular-nums leading-none',
-                        'text-emerald-500' => $seoColor === 'emerald',
-                        'text-amber-500'   => $seoColor === 'amber',
-                        'text-accent-500'  => $seoColor === 'accent',
-                        'text-ink-400'     => $seoColor === 'ink',
-                    ])>{{ $audit->score_seo }}</div>
-                    <div class="text-sm text-ink-500 mt-1">SEO score · {{ $seoGrade }}</div>
-                </div>
-            @endif
+
+            {{-- Score breakdown side by side --}}
+            <div class="flex items-center gap-6 shrink-0">
+                @if ($lighthouseScore !== null)
+                    @php $lhColor = \LaravelVitals\Support\Health::colorForScore($lighthouseScore); @endphp
+                    <div class="text-center">
+                        <div @class([
+                            'text-3xl font-semibold tabular-nums leading-none',
+                            'text-emerald-500' => $lhColor === 'emerald',
+                            'text-amber-500'   => $lhColor === 'amber',
+                            'text-accent-500'  => $lhColor === 'accent',
+                            'text-ink-400'     => $lhColor === 'ink',
+                        ])>{{ $lighthouseScore }}</div>
+                        <div class="text-xs text-ink-500 mt-1">{{ __('vitals::vitals.seo.lighthouse_score') }}</div>
+                    </div>
+                @endif
+
+                @if ($vitalsSeoScore !== null)
+                    @php $vsColor = \LaravelVitals\Support\Health::colorForScore($vitalsSeoScore); @endphp
+                    <div class="text-center">
+                        <div @class([
+                            'text-4xl font-bold tabular-nums leading-none',
+                            'text-emerald-500' => $vsColor === 'emerald',
+                            'text-amber-500'   => $vsColor === 'amber',
+                            'text-accent-500'  => $vsColor === 'accent',
+                            'text-ink-400'     => $vsColor === 'ink',
+                        ])>{{ $vitalsSeoScore }}</div>
+                        <div class="text-sm text-ink-500 mt-1">{{ __('vitals::vitals.seo.custom_score') }} · {{ $vitalsSeoGrade }}</div>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 
-    {{-- Checks grid --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-        <h2 class="text-base font-semibold mb-4">{{ __('vitals::vitals.seo.checks') }}</h2>
-        <div class="divide-y divide-ink-100 dark:divide-ink-800">
-            @foreach ($checks as $check)
-                @php
-                    $checkIcon = match ($check['status']) {
-                        'pass'  => 'check-circle',
-                        'fail'  => 'x-circle',
-                        'warn'  => 'exclamation-triangle',
-                        default => 'minus-circle',
-                    };
-                    $checkBadgeColor = match ($check['status']) {
-                        'pass'  => 'emerald',
-                        'fail'  => 'rose',
-                        'warn'  => 'amber',
-                        default => 'zinc',
-                    };
-                @endphp
-                <div class="flex items-center gap-3 py-3">
-                    <flux:icon name="{{ $checkIcon }}" @class([
-                        'size-5 shrink-0',
-                        'text-emerald-500' => $check['status'] === 'pass',
-                        'text-accent-500'  => $check['status'] === 'fail',
-                        'text-amber-500'   => $check['status'] === 'warn',
-                        'text-ink-400'     => ! in_array($check['status'], ['pass', 'fail', 'warn'], true),
-                    ]) />
-                    <span class="flex-1 text-sm font-medium">{{ $check['label'] }}</span>
-                    @if ($check['value'])
-                        <span class="text-xs text-ink-500">{{ $check['value'] }}</span>
+    {{-- Category-grouped checks --}}
+    @php
+        $categoryOrder = ['configuration', 'content', 'meta', 'performance'];
+        $statusIcon = [
+            'critical' => 'x-circle',
+            'warning'  => 'exclamation-triangle',
+            'info'     => 'information-circle',
+            'pass'     => 'check-circle',
+        ];
+    @endphp
+
+    @foreach ($categoryOrder as $cat)
+        @if (!empty($checksGrouped[$cat]))
+            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 overflow-hidden">
+                <div class="px-6 py-4 border-b border-ink-100 dark:border-ink-800 flex items-center gap-3">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">{{ __('vitals::vitals.seo.categories.' . $cat) }}</h2>
+                    @php
+                        $failCount = count(array_filter($checksGrouped[$cat], fn($c) => $c['status'] !== 'pass'));
+                    @endphp
+                    @if ($failCount > 0)
+                        <flux:badge color="rose" size="sm">{{ $failCount }} {{ __('vitals::vitals.seo.failing_checks', ['count' => $failCount]) }}</flux:badge>
                     @endif
-                    <flux:badge color="{{ $checkBadgeColor }}" size="sm">
-                        {{ __('vitals::vitals.seo.status_' . $check['status']) }}
-                    </flux:badge>
                 </div>
-            @endforeach
-        </div>
-    </div>
+                <div class="divide-y divide-ink-100 dark:divide-ink-800">
+                    @foreach ($checksGrouped[$cat] as $check)
+                        @php
+                            $isPassing = $check['status'] === 'pass';
+                            $icon = $statusIcon[$check['status']] ?? 'information-circle';
+                        @endphp
+                        <div class="px-6 py-4">
+                            <div class="flex items-start gap-3">
+                                <flux:icon name="{{ $icon }}" @class([
+                                    'size-5 shrink-0 mt-0.5',
+                                    'text-emerald-500' => $isPassing,
+                                    'text-accent-500'  => $check['status'] === 'critical',
+                                    'text-amber-500'   => $check['status'] === 'warning',
+                                    'text-sky-400'     => $check['status'] === 'info',
+                                ]) />
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-sm font-medium">{{ __($check['title_key']) }}</span>
+                                        @if (!$isPassing)
+                                            <flux:badge
+                                                color="{{ match($check['status']) { 'critical' => 'rose', 'warning' => 'amber', default => 'sky' } }}"
+                                                size="sm"
+                                            >{{ ucfirst($check['status']) }}</flux:badge>
+                                        @endif
+                                    </div>
 
-    {{-- SEO recommendations --}}
-    @if ($seoRecos->isNotEmpty())
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
-            <h2 class="text-base font-semibold mb-4">{{ __('vitals::vitals.seo.recommendations') }}</h2>
-            <ul class="space-y-3">
-                @foreach ($seoRecos as $r)
-                    <li class="rounded-lg border border-ink-100 dark:border-ink-800 p-4">
-                        <div class="flex items-start gap-3">
-                            <flux:badge color="{{ $r->severity->fluxBadgeColor() }}" size="sm">{{ $r->severity->label() }}</flux:badge>
-                            <div>
-                                <div class="font-medium text-sm">{{ __($r->title_key) }}</div>
-                                <div class="text-xs text-ink-500 mt-1">{{ __($r->description_key, $r->translation_replace_params) }}</div>
+                                    @if (!$isPassing && ($check['actual'] || $check['expected']))
+                                        <div class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-500">
+                                            @if ($check['actual'])
+                                                <span><span class="font-medium text-ink-700 dark:text-ink-300">Found:</span> {{ $check['actual'] }}</span>
+                                            @endif
+                                            @if ($check['expected'])
+                                                <span><span class="font-medium text-ink-700 dark:text-ink-300">Expected:</span> {{ $check['expected'] }}</span>
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    @if (!$isPassing && $check['hint_key'])
+                                        @php $hint = __($check['hint_key']); @endphp
+                                        @if ($hint !== $check['hint_key'])
+                                            <p class="mt-1.5 text-xs text-ink-500 italic">{{ $hint }}</p>
+                                        @endif
+                                    @endif
+
+                                    @if (!$isPassing && $check['doc_url'])
+                                        <a href="{{ $check['doc_url'] }}" target="_blank" rel="noopener noreferrer"
+                                           class="mt-1.5 inline-flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors">
+                                            {{ __('vitals::vitals.actions.read_docs') }}
+                                            <flux:icon name="arrow-top-right-on-square" class="size-3" />
+                                        </a>
+                                    @endif
+
+                                    @if (!$isPassing && !empty($check['detail_items']))
+                                        <div class="mt-3 rounded-lg border border-ink-100 dark:border-ink-800 overflow-hidden">
+                                            <div class="max-h-48 overflow-y-auto">
+                                                @foreach (array_slice($check['detail_items'], 0, 10) as $item)
+                                                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs border-b border-ink-50 dark:border-ink-800/50 last:border-0">
+                                                        <span class="font-mono text-ink-600 dark:text-ink-400 truncate flex-1">{{ $item['url'] ?? $item['status'] ?? '' }}</span>
+                                                        @if (!empty($item['status']))
+                                                            <flux:badge color="rose" size="sm">{{ $item['status'] }}</flux:badge>
+                                                        @endif
+                                                        @if (!empty($item['size']))
+                                                            <flux:badge color="amber" size="sm">{{ $item['size'] }}</flux:badge>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                @if ($isPassing && $check['actual'])
+                                    <span class="text-xs text-ink-400 shrink-0">{{ $check['actual'] }}</span>
+                                @endif
                             </div>
                         </div>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    @else
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @endforeach
+
+    {{-- Empty state --}}
+    @if ($seoRecos->isEmpty())
         <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
             <div class="text-center py-6">
                 <flux:icon name="check-badge" class="size-10 text-emerald-400 mx-auto mb-2" />

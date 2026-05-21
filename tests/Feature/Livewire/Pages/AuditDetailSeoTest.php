@@ -47,10 +47,11 @@ it('lists seo checks including meta description and canonical', function (): voi
     Livewire::test(AuditSeo::class, ['audit' => $audit->id])
         ->assertOk()
         ->assertSeeText('Meta description present')
-        ->assertSeeText('Canonical URL declared');
+        ->assertSeeText('Canonical URL declared')
+        ->assertSeeText('Configuration');
 });
 
-it('shows seo recommendations linked to the audit', function (): void {
+it('shows seo check failures when source=seo recommendations exist', function (): void {
     $url = Url::create(['label' => 'seo-recos', 'path' => '/recos']);
 
     $audit = Audit::create([
@@ -64,17 +65,18 @@ it('shows seo recommendations linked to the audit', function (): void {
     ]);
 
     Recommendation::create([
-        'audit_id'        => $audit->id,
-        'source'          => 'lighthouse',
-        'audit_key'       => 'meta-description',
-        'category'        => 'seo',
-        'severity'        => 'warning',
-        'title_key'       => 'vitals::vitals.recommendations.meta-description.title',
-        'description_key' => 'vitals::vitals.recommendations.meta-description.description',
-        'code_references' => [],
+        'audit_id'           => $audit->id,
+        'source'             => 'seo',
+        'audit_key'          => 'seo-meta-description',
+        'category'           => 'seo',
+        'severity'           => 'critical',
+        'title_key'          => 'vitals::vitals.seo.checks.meta-description.title',
+        'description_key'    => 'vitals::vitals.seo.checks.meta-description.description',
+        'translation_params' => ['actual' => 'Missing', 'expected' => 'Present, ≤ 160 chars'],
+        'code_references'    => [],
     ]);
 
     Livewire::test(AuditSeo::class, ['audit' => $audit->id])
         ->assertOk()
-        ->assertSeeText('Add a meta description');
+        ->assertSeeText('Meta description present');
 });

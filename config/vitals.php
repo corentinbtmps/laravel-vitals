@@ -192,6 +192,45 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | SEO checks subsystem
+    |--------------------------------------------------------------------------
+    | 25 checks aligned with Google 2026 best practices.
+    | Opinion checks (content length, keyword density) are disabled by default.
+    |
+    | css_max_bytes default (15 KB) is opinionated — raises this for large apps.
+    */
+    'seo' => [
+        'enabled' => env('VITALS_SEO_ENABLED', true),
+
+        // Locale for content-based checks (transition words, language detection)
+        'locale' => env('VITALS_SEO_LOCALE', null),  // null = use app.locale
+
+        // Per-check thresholds — override the defaults
+        'thresholds' => [
+            'title_max_chars'            => 60,
+            'meta_description_max_chars' => 160,
+            'ttfb_ms'                    => 600,
+            'html_max_bytes'             => 100_000,
+            'image_max_bytes'            => 1_000_000,
+            'js_max_bytes'               => 1_000_000,
+            'css_max_bytes'              => 15_000,
+            'content_min_chars'          => null,   // null = check disabled (Yoast opinion, not Google standard)
+        ],
+
+        // Disable specific checks by key (e.g., ['broken-links', 'structured-data'])
+        'disabled_checks' => [],
+
+        // Opt-in opinion checks that aren't Google standards but useful for some users.
+        // Enables: ContentLengthCheck, KeywordInTitleCheck, KeywordInFirstParagraphCheck.
+        'enable_opinion_checks' => env('VITALS_SEO_OPINION_CHECKS', false),
+
+        // Per-URL primary keyword for KeywordInTitle and KeywordInFirstParagraph checks
+        // Format: ['url_label' => 'primary keyword string']
+        'keywords' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Notifications
     |--------------------------------------------------------------------------
     */

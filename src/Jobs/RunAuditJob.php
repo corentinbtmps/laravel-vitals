@@ -44,6 +44,7 @@ final class RunAuditJob implements ShouldQueue
         ReportRepository $reports,
         \LaravelVitals\Recommendations\RecommendationBuilder $builder,
         \LaravelVitals\Notifications\Channels\VitalsNotifier $notifier,
+        \LaravelVitals\Seo\SeoAuditor $seoAuditor,
     ): void
     {
         $audit = Audit::with('url')->findOrFail($this->auditId);
@@ -99,6 +100,9 @@ final class RunAuditJob implements ShouldQueue
 
             $telemetry = \LaravelVitals\Models\BackendTelemetry::where('audit_id', $audit->id)->first();
             $builder->buildFor($audit, $report, $telemetry);
+
+            // Run custom SEO checks and persist as Recommendation rows (source='seo')
+            $seoAuditor->run($audit->refresh(), $report);
 
             $notifier->send('audit_completed', new \LaravelVitals\Notifications\AuditCompleted($audit->refresh()));
         } catch (AuditException $e) {

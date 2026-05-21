@@ -86,6 +86,8 @@ final class VitalsServiceProvider extends PackageServiceProvider
         $this->app->bind(\LaravelVitals\Telemetry\TelemetryRecorder::class);
 
         $this->app->singleton(\LaravelVitals\Recommendations\RecommendationRegistry::class);
+        $this->app->singleton(\LaravelVitals\Seo\SeoCheckRegistry::class);
+        $this->app->singleton(\LaravelVitals\Seo\SeoAuditor::class);
 
         $this->app->singleton(\LaravelVitals\Recommendations\RecommendationBuilder::class, function ($app): \LaravelVitals\Recommendations\RecommendationBuilder {
             $analyzers = [

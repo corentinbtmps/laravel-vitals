@@ -70,6 +70,14 @@
         >{{ __('vitals::vitals.nav.issues') }}</flux:navbar.item>
         @endif
 
+        @if(Route::has('vitals.seo'))
+        <flux:navbar.item
+            href="{{ route('vitals.seo') }}"
+            icon="globe-alt"
+            :current="request()->routeIs('vitals.seo')"
+        >{{ __('vitals::vitals.nav.seo') }}</flux:navbar.item>
+        @endif
+
         @if(Route::has('vitals.rum'))
         <flux:navbar.item
             href="{{ route('vitals.rum') }}"
@@ -205,6 +213,16 @@
                        'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! $issuesActive,
                    ])>
                     <flux:icon.exclamation-triangle class="size-4" />{{ __('vitals::vitals.nav.issues') }}
+                </a>
+                @endif
+                @if(Route::has('vitals.seo'))
+                <a href="{{ route('vitals.seo') }}"
+                   @class([
+                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.seo'),
+                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.seo'),
+                   ])>
+                    <flux:icon.globe-alt class="size-4" />{{ __('vitals::vitals.nav.seo') }}
                 </a>
                 @endif
                 @if(Route::has('vitals.rum'))

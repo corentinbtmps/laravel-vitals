@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.76] - 2026-05-21
+
+### Added
+
+#### SEO checks subsystem — 25 Google-aligned checks + cross-URL /vitals/seo page
+
+- **`symfony/dom-crawler` dependency** added for HTML parsing in content checks.
+- **`src/Seo/` subsystem** — full SEO check architecture:
+  - `SeoCheck` interface, `SeoCheckResult` + `SeoCheckContext` value objects
+  - `SeoCheckStatus` and `SeoCheckCategory` PHP 8 enums
+  - `SeoCheckRegistry` respecting `disabled_checks` + `enable_opinion_checks` config
+  - `SeoAuditor` orchestrator — fetches HTML, parses DOM, runs checks, persists results as `Recommendation` rows with `source='seo'`
+- **22 mandatory checks** (always run unless disabled):
+  - Configuration (3): `noindex`, `nofollow`, `robots-txt-indexable`
+  - Content (5): `h1`, `https-links`, `image-alt`, `broken-links` (samples ≤ 30 links), `broken-images`
+  - Meta (7): `meta-description`, `title-length`, `og-image`, `html-lang`, `canonical`, `structured-data` (JSON-LD), `invalid-head-elements`
+  - Performance (7): `ttfb` (≤ 600ms), `status-code`, `html-size`, `image-size`, `js-size`, `css-size` (opinionated threshold), `compression`
+- **3 opt-in opinion checks** (gated behind `config('vitals.seo.enable_opinion_checks')`):
+  - `content-length` (configurable minimum characters)
+  - `keyword-in-title` (per-URL keyword via `config('vitals.seo.keywords')`)
+  - `keyword-in-first-paragraph` (same keyword config)
+- **Storage**: SEO results reuse `vitals_audit_recommendations` with `source='seo'`, `audit_key='seo-{check}'`. Migration updated to add `'seo'` to the source enum. Automatically surfaces in Issues page, issue-detail deep view, JSON API.
+- **`Audit::vitals_seo_score` computed accessor** — blends Lighthouse SEO (50%) with custom check pass rate weighted by check importance (50%). Range 0–100, stricter than Lighthouse alone.
+- **`/vitals/audits/{id}/seo` page rebuilt** with category-grouped checks (Configuration / Content / Meta / Performance), per-check actual vs expected values, hint text, and direct links to Google developer documentation.
+- **New `/vitals/seo` cross-URL page** — period filter, average SEO score card, per-URL score table (grade + numeric + failing count), top failing checks aggregation with category filter tabs.
+- **Navigation item**: "SEO" added between Issues and RUM in desktop navbar and mobile drawer.
+- **Config** `vitals.seo` section with all thresholds, `enabled`, `disabled_checks`, `enable_opinion_checks`, `keywords` per URL.
+- **76 new tests**: unit tests for all checks + registry, feature tests for SeoAuditor and both Livewire pages. Total: 481 → 557.
+- **i18n**: ~120 new translation strings across EN/FR/DE/ES covering all 25 check titles, descriptions, hints, and page labels.
+
+### Changed
+
+- `RunAuditJob::handle()` gains a `SeoAuditor` parameter (injected by the container; dispatched jobs are unaffected).
+- `vitals_audit_recommendations.source` enum extended to include `'seo'`.
+
 ## [v1.0.0-alpha.73] - 2026-05-15
 
 ### Added

@@ -103,6 +103,7 @@ final class Vitals
                 app(\LaravelVitals\Storage\ReportRepository::class),
                 app(\LaravelVitals\Recommendations\RecommendationBuilder::class),
                 app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class),
+                app(\LaravelVitals\Seo\SeoAuditor::class),
             );
         } else {
             dispatch($job);

@@ -142,6 +142,71 @@ final class Audit extends Model implements Searchable
             : null;
     }
 
+    /**
+     * Combined SEO score blending Lighthouse SEO (50%) with custom check pass rate (50%).
+     *
+     * Formula:
+     *   vitals_seo_score = round( (lighthouse_seo_score * 0.5) + (custom_seo_pass_rate * 50) )
+     *
+     * Where custom_seo_pass_rate is the weighted ratio of passing checks (0–1).
+     * Returns null when no Lighthouse SEO score is available.
+     */
+    public function getVitalsSeoScoreAttribute(): ?int
+    {
+        $lighthouseScore = $this->score_seo;
+
+        if ($lighthouseScore === null) {
+            return null;
+        }
+
+        // Count SEO recommendations (non-passing) for this audit, weighted
+        $seoRecos = $this->recommendations()
+            ->where('source', 'seo')
+            ->get();
+
+        if ($seoRecos->isEmpty()) {
+            // No custom checks ran — use 100% pass rate
+            return (int) round($lighthouseScore * 0.5 + 50);
+        }
+
+        // Build weighted pass rate from the registry
+        $registry = app(\LaravelVitals\Seo\SeoCheckRegistry::class);
+        $enabledChecks = $registry->enabled();
+
+        $totalWeight = 0;
+        $failedWeight = 0;
+
+        foreach ($enabledChecks as $check) {
+            $totalWeight += $check->weight();
+        }
+
+        // Sum weights of failed checks
+        $failedKeys = $seoRecos->pluck('audit_key')
+            ->map(fn ($k) => str_replace('seo-', '', $k))
+            ->all();
+
+        foreach ($enabledChecks as $check) {
+            if (in_array($check->key(), $failedKeys, true)) {
+                $failedWeight += $check->weight();
+            }
+        }
+
+        $passRate = $totalWeight > 0
+            ? ($totalWeight - $failedWeight) / $totalWeight
+            : 1.0;
+
+        return (int) round($lighthouseScore * 0.5 + $passRate * 50);
+    }
+
+    /**
+     * Grade letter computed from vitals_seo_score.
+     */
+    public function getVitalsSeoGradeAttribute(): ?string
+    {
+        $score = $this->vitals_seo_score;
+        return $score !== null ? Health::grade($score) : null;
+    }
+
     public function getSearchResult(): SearchResult
     {
         return new SearchResult(

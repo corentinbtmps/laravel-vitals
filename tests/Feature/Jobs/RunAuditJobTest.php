@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelVitals\Contracts\LighthouseDriver;
@@ -13,11 +14,13 @@ use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Url;
 use LaravelVitals\Notifications\Channels\VitalsNotifier;
 use LaravelVitals\Recommendations\RecommendationBuilder;
+use LaravelVitals\Seo\SeoAuditor;
 use LaravelVitals\Storage\ReportRepository;
 
 beforeEach(function (): void {
     Storage::fake('vitals');
     config()->set('vitals.storage', ['disk' => 'vitals', 'path' => 'reports']);
+    config()->set('vitals.seo.enabled', false); // Disable SEO auditor in job tests
     $this->app->bind(LighthouseDriver::class, fn (): \LaravelVitals\Drivers\Stubs\StubLighthouseDriver => new StubLighthouseDriver());
 });
 
@@ -36,6 +39,7 @@ it('runs the audit, persists raw JSON, and updates the audit row', function (): 
         app(ReportRepository::class),
         app(RecommendationBuilder::class),
         app(VitalsNotifier::class),
+        app(SeoAuditor::class),
     );
 
     $audit->refresh();
@@ -68,7 +72,7 @@ it('marks the audit failed when the driver throws', function (): void {
         public function isAvailable(): bool { return true; }
     };
 
-    expect(fn () => (new RunAuditJob($audit->id))->handle($boomDriver, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class)))
+    expect(fn () => (new RunAuditJob($audit->id))->handle($boomDriver, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class), app(SeoAuditor::class)))
         ->toThrow(\LaravelVitals\Support\AuditException::class);
 
     $audit->refresh();
@@ -104,7 +108,7 @@ it('injects the X-Vitals-Audit-Id header into AuditOptions passed to the driver'
         public function isAvailable(): bool { return true; }
     };
 
-    (new RunAuditJob($audit->id))->handle($spy, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class));
+    (new RunAuditJob($audit->id))->handle($spy, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class), app(SeoAuditor::class));
 
     expect($spy->captured)->not->toBeNull()
         ->and($spy->captured->extraHeaders)->toHaveKey('X-Vitals-Audit-Id')

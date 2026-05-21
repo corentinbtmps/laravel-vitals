@@ -20,6 +20,7 @@ use LaravelVitals\Livewire\Pages\Queries;
 use LaravelVitals\Livewire\Pages\RecommendationsIndex;
 use LaravelVitals\Livewire\Pages\Rum;
 use LaravelVitals\Livewire\Pages\SelfCheck;
+use LaravelVitals\Livewire\Pages\Seo;
 use LaravelVitals\Livewire\Pages\Status;
 use LaravelVitals\Livewire\Pages\UrlDetail;
 use LaravelVitals\Livewire\Pages\UrlsList;
@@ -50,6 +51,7 @@ if ((bool) config('vitals.dashboard.enabled', true)) {
             Route::get('/audits/{audit}',                    AuditDetail::class)         ->name('vitals.audit');
             Route::get('/audits/{a}/compare/{b}',            AuditCompare::class)        ->name('vitals.audit.compare');
             Route::get('/audits/{audit}/seo',                AuditSeo::class)            ->name('vitals.audit.seo');
+            Route::get('/seo',                               Seo::class)                 ->name('vitals.seo');
             Route::get('/budgets',                           Budgets::class)             ->name('vitals.budgets');
             Route::get('/issues',                            Issues::class)              ->name('vitals.issues');
             Route::get('/issues/{auditKey}',                 IssueDetail::class)         ->name('vitals.issue.detail');
