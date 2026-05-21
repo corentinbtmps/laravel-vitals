@@ -258,9 +258,9 @@
                         @endphp
                         <flux:table.row :key="$a->id">
                             <flux:table.cell variant="strong">
-                                <a href="{{ route('vitals.audit', $a) }}" class="hover:text-accent-600 hover:underline">
+                                <flux:link href="{{ route('vitals.audit', $a) }}" variant="subtle">
                                     {{ $a->completed_at?->format('M j, H:i') }}
-                                </a>
+                                </flux:link>
                             </flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge color="zinc" size="sm">{{ $a->device }}</flux:badge>

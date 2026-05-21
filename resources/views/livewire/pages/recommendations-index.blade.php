@@ -30,9 +30,9 @@
                     @foreach ($rows as $r)
                             <flux:table.row :key="$r->audit_key">
                             <flux:table.cell variant="strong">
-                                <a href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}" class="hover:underline text-accent-600 dark:text-accent-400">
+                                <flux:link href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}">
                                     {{ __($r->title_key) }}
-                                </a>
+                                </flux:link>
                             </flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge color="zinc" size="sm">{{ str_replace('_', ' ', $r->category) }}</flux:badge>

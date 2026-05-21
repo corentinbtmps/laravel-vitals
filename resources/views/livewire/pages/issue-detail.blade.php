@@ -159,7 +159,7 @@
                                                                     $callerEditor = \LaravelVitals\Support\EditorUrl::for($callerFile, $callerLine ? (int) $callerLine : null);
                                                                 @endphp
                                                                 @if ($callerEditor)
-                                                                    <a href="{{ $callerEditor }}" class="inline-flex items-center gap-1 text-[11px] font-medium text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 underline decoration-accent-500/40 hover:decoration-accent-500 decoration-1 underline-offset-2 transition-colors" title="{{ __('vitals::vitals.actions.open_in_editor') }}"><code>{{ $pattern['caller'] }}</code><flux:icon name="arrow-top-right-on-square" class="size-3" /></a>
+                                                                    <flux:link href="{{ $callerEditor }}" class="text-[11px] inline-flex items-center gap-1" :tooltip="__('vitals::vitals.actions.open_in_editor')"><code>{{ $pattern['caller'] }}</code><flux:icon name="arrow-top-right-on-square" class="size-3" /></flux:link>
                                                                 @else
                                                                     <code class="text-[11px] text-ink-500">{{ $pattern['caller'] }}</code>
                                                                 @endif

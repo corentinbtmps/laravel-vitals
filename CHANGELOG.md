@@ -7,7 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.80] - 2026-05-21
+## [v1.0.0-alpha.81] - 2026-05-22
+
+### Changed
+
+#### Flux UI sweep — second pass
+
+Continuing from alpha.80, replacing more raw HTML with Flux components:
+
+- **Issues page tabs** (Top / All) raw `<button>` → `flux:button.group` + `flux:button` for visual consistency with all other selectors in the package.
+- **URLs list star/pin buttons** (raw `<button>` with conditional star icon and color) → `flux:button` with `icon:variant` toggling solid/outline based on pinned state, tooltip via `:tooltip` prop.
+- **Mobile drawer nav** — completely restructured from custom `<a>` items to `flux:sidebar.nav` + `flux:sidebar.group` (with `:heading` prop) + `flux:sidebar.item` (with `:current` and `icon` props). Group headings, active state, and item styling now come from Flux instead of hand-rolled CSS.
+- **Mobile header buttons** (search icon, burger toggle, drawer close) → `flux:button variant="ghost"`.
+- **Caller editor links** in `audit-detail` (×2) and `issue-detail` (×1) → `flux:link` with `:tooltip="__('vitals::vitals.actions.open_in_editor')"`; the `<flux:icon arrow-top-right-on-square>` external indicator is preserved inside the link content.
+- **`code-reference` blade component** — the editor `<a>` wrapping `file.php:line` text → `flux:link`.
+- **Subtle navigation anchors** across `urls-list`, `overview`, `url-detail`, `audit-compare`, `recommendations-index`, `insights`, `self-check`, `status` — every `<a class="hover:text-accent-… hover:underline">` pattern replaced with `<flux:link variant="subtle">` (or `variant="ghost"` for block-level multi-line link cards in `urls-list`).
+
+### Remaining raw HTML (intentional, no Flux equivalent)
+
+- `learn.blade.php` clickable tile cards — Flux has no "clickable content card" component.
+- `dashboard.blade.php` desktop Spotlight trigger — bundles label + cross-platform `kbd` (⌘/Ctrl swap via `x-init`) which Flux's `kbd` prop can't dynamically swap.
+
+
 
 ### Fixed
 

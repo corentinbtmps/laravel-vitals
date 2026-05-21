@@ -148,24 +148,21 @@
     {{-- Mobile: search icon + burger menu (shown on max-lg screens) --}}
     <div class="vitals-mobile-only items-center gap-1" x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = false">
         {{-- Mobile search icon button — opens the same Spotlight modal --}}
-        <button
-            type="button"
+        <flux:button
+            variant="ghost"
+            icon="magnifying-glass"
             x-on:click="$dispatch('modal-show', { name: 'vitals-spotlight' })"
-            class="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
             aria-label="{{ __('vitals::vitals.spotlight.button_label') }}"
-        >
-            <flux:icon.magnifying-glass class="size-5" />
-        </button>
+        />
 
-        <button
-            type="button"
+        <flux:button
+            variant="ghost"
             x-on:click="open = !open"
-            class="flex h-9 w-9 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
             aria-label="{{ __('vitals::vitals.layout.open_navigation') }}"
         >
             <flux:icon.bars-3 x-show="!open" class="size-5" />
             <flux:icon.x-mark x-show="open" class="size-5" x-cloak />
-        </button>
+        </flux:button>
 
         {{-- Backdrop --}}
         <div
@@ -190,95 +187,73 @@
         >
             <div class="flex items-center justify-between mb-6 px-2">
                 <span class="text-base font-semibold text-ink-900 dark:text-ink-100">Menu</span>
-                <button x-on:click="open = false" class="text-ink-400 hover:text-ink-600 dark:hover:text-ink-300 transition-colors">
-                    <flux:icon.x-mark class="size-5" />
-                </button>
+                <flux:button x-on:click="open = false" variant="ghost" size="sm" icon="x-mark" />
             </div>
-            <div class="flex flex-col gap-1">
-                <a href="{{ route('vitals.dashboard') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.dashboard'),
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.dashboard'),
-                   ])>
-                    <flux:icon.squares-2x2 class="size-4" />Overview
-                </a>
+            <flux:sidebar.nav>
+                <flux:sidebar.item
+                    href="{{ route('vitals.dashboard') }}"
+                    icon="squares-2x2"
+                    :current="request()->routeIs('vitals.dashboard')"
+                >Overview</flux:sidebar.item>
 
-                <p class="px-3 mt-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-400">{{ __('vitals::vitals.nav.group_audit') }}</p>
-                @if(Route::has('vitals.urls'))
-                <a href="{{ route('vitals.urls') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.url*'),
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.url*'),
-                   ])>
-                    <flux:icon.link class="size-4" />URLs
-                </a>
-                @endif
-                @if(Route::has('vitals.issues'))
-                @php $issuesActive = request()->routeIs('vitals.issues'); @endphp
-                <a href="{{ route('vitals.issues') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => $issuesActive,
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! $issuesActive,
-                   ])>
-                    <flux:icon.exclamation-triangle class="size-4" />{{ __('vitals::vitals.nav.issues') }}
-                </a>
-                @endif
-                @if(Route::has('vitals.seo'))
-                <a href="{{ route('vitals.seo') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.seo'),
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.seo'),
-                   ])>
-                    <flux:icon.globe-alt class="size-4" />{{ __('vitals::vitals.nav.seo') }}
-                </a>
-                @endif
-                <p class="px-3 mt-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-400">{{ __('vitals::vitals.nav.group_telemetry') }}</p>
-                @if(Route::has('vitals.rum'))
-                <a href="{{ route('vitals.rum') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.rum'),
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.rum'),
-                   ])>
-                    <flux:icon.signal class="size-4" />RUM
-                </a>
-                @endif
-                @if(Route::has('vitals.queries'))
-                <a href="{{ route('vitals.queries') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.queries'),
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.queries'),
-                   ])>
-                    <flux:icon.circle-stack class="size-4" />Queries
-                </a>
-                @endif
-                <p class="px-3 mt-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-400">{{ __('vitals::vitals.nav.group_reference') }}</p>
-                @if(Route::has('vitals.learn'))
-                <a href="{{ route('vitals.learn') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.learn'),
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.learn'),
-                   ])>
-                    <flux:icon.book-open class="size-4" />Learn
-                </a>
-                @endif
-                @if(Route::has('vitals.budgets'))
-                <a href="{{ route('vitals.budgets') }}"
-                   @class([
-                       'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                       'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300' => request()->routeIs('vitals.budgets'),
-                       'text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800'   => ! request()->routeIs('vitals.budgets'),
-                   ])>
-                    <flux:icon.chart-bar class="size-4" />Budgets
-                </a>
-                @endif
-            </div>
+                <flux:sidebar.group :heading="__('vitals::vitals.nav.group_audit')" class="mt-4">
+                    @if(Route::has('vitals.urls'))
+                        <flux:sidebar.item
+                            href="{{ route('vitals.urls') }}"
+                            icon="link"
+                            :current="request()->routeIs('vitals.url*')"
+                        >URLs</flux:sidebar.item>
+                    @endif
+                    @if(Route::has('vitals.issues'))
+                        <flux:sidebar.item
+                            href="{{ route('vitals.issues') }}"
+                            icon="exclamation-triangle"
+                            :current="request()->routeIs('vitals.issues')"
+                        >{{ __('vitals::vitals.nav.issues') }}</flux:sidebar.item>
+                    @endif
+                    @if(Route::has('vitals.seo'))
+                        <flux:sidebar.item
+                            href="{{ route('vitals.seo') }}"
+                            icon="globe-alt"
+                            :current="request()->routeIs('vitals.seo')"
+                        >{{ __('vitals::vitals.nav.seo') }}</flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('vitals::vitals.nav.group_telemetry')" class="mt-4">
+                    @if(Route::has('vitals.rum'))
+                        <flux:sidebar.item
+                            href="{{ route('vitals.rum') }}"
+                            icon="signal"
+                            :current="request()->routeIs('vitals.rum')"
+                        >RUM</flux:sidebar.item>
+                    @endif
+                    @if(Route::has('vitals.queries'))
+                        <flux:sidebar.item
+                            href="{{ route('vitals.queries') }}"
+                            icon="circle-stack"
+                            :current="request()->routeIs('vitals.queries')"
+                        >Queries</flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('vitals::vitals.nav.group_reference')" class="mt-4">
+                    @if(Route::has('vitals.learn'))
+                        <flux:sidebar.item
+                            href="{{ route('vitals.learn') }}"
+                            icon="book-open"
+                            :current="request()->routeIs('vitals.learn')"
+                        >Learn</flux:sidebar.item>
+                    @endif
+                    @if(Route::has('vitals.budgets'))
+                        <flux:sidebar.item
+                            href="{{ route('vitals.budgets') }}"
+                            icon="chart-bar"
+                            :current="request()->routeIs('vitals.budgets')"
+                        >Budgets</flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
+            </flux:sidebar.nav>
         </nav>
     </div>
 </flux:header>

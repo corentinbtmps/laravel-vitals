@@ -90,9 +90,9 @@
                             'inline-block size-2 rounded-full shrink-0',
                             \LaravelVitals\Support\ScoreColorClasses::dot($run->score_performance),
                         ])></span>
-                        <a href="{{ route('vitals.audit', $run->id) }}" class="hover:underline text-ink-700 dark:text-ink-300 flex-1">
+                        <flux:link href="{{ route('vitals.audit', $run->id) }}" variant="subtle" class="flex-1">
                             {{ $run->url?->label ?? $run->id }}
-                        </a>
+                        </flux:link>
                         <span class="text-ink-500 text-xs">{{ $run->device }} · {{ $run->driver }}</span>
                         <span class="text-ink-400 text-xs">{{ $run->completed_at?->diffForHumans() }}</span>
                     </li>

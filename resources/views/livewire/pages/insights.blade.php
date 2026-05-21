@@ -51,10 +51,10 @@
                 <ul class="divide-y divide-ink-100 dark:divide-ink-800">
                     @foreach ($worsening as $w)
                         <li class="py-2 flex items-center gap-3">
-                            <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 hover:text-accent-500">
+                            <flux:link href="{{ route('vitals.url', $w['url']->id) }}" variant="subtle" class="flex-1 min-w-0 block">
                                 <div class="font-medium text-sm">{{ $w['url']->label }}</div>
                                 <div class="text-xs text-ink-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
-                            </a>
+                            </flux:link>
                             <flux:badge color="rose" size="sm">{{ $w['delta'] }}</flux:badge>
                             <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" :tooltip="__('vitals::vitals.actions.view_url')" />
                         </li>
@@ -76,10 +76,10 @@
                 <ul class="divide-y divide-ink-100 dark:divide-ink-800">
                     @foreach ($improving as $w)
                         <li class="py-2 flex items-center gap-3">
-                            <a href="{{ route('vitals.url', $w['url']->id) }}" class="flex-1 min-w-0 hover:text-accent-500">
+                            <flux:link href="{{ route('vitals.url', $w['url']->id) }}" variant="subtle" class="flex-1 min-w-0 block">
                                 <div class="font-medium text-sm">{{ $w['url']->label }}</div>
                                 <div class="text-xs text-ink-500 tabular-nums">{{ $w['prior'] }} → {{ $w['latest'] }}</div>
-                            </a>
+                            </flux:link>
                             <flux:badge color="emerald" size="sm">+{{ $w['delta'] }}</flux:badge>
                             <flux:button href="{{ route('vitals.url', $w['url']->id) }}" variant="ghost" size="sm" icon="arrow-right" :tooltip="__('vitals::vitals.actions.view_url')" />
                         </li>

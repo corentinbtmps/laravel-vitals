@@ -55,13 +55,15 @@
                                 <flux:table.row :key="$u->id">
                                     {{-- Star / pin button --}}
                                     <flux:table.cell>
-                                        <flux:tooltip :content="$u->pinned_at ? __('vitals::vitals.tooltip.unpin') : __('vitals::vitals.tooltip.pin')">
-                                            <button wire:click="togglePin({{ $u->id }})"
-                                                    type="button"
-                                                    class="text-amber-500 hover:text-amber-600 transition-colors duration-150">
-                                                <flux:icon.star variant="solid" class="size-4" />
-                                            </button>
-                                        </flux:tooltip>
+                                        <flux:button
+                                            wire:click="togglePin({{ $u->id }})"
+                                            variant="ghost"
+                                            size="xs"
+                                            icon="star"
+                                            icon:variant="solid"
+                                            class="text-amber-500 hover:text-amber-600"
+                                            :tooltip="$u->pinned_at ? __('vitals::vitals.tooltip.unpin') : __('vitals::vitals.tooltip.pin')"
+                                        />
                                     </flux:table.cell>
 
                                     {{-- Global grade badge --}}
@@ -107,10 +109,10 @@
 
                                     {{-- URL column --}}
                                     <flux:table.cell variant="strong">
-                                        <a href="{{ route('vitals.url', $u->id) }}" class="block hover:underline">
-                                            <div class="font-medium text-accent-600 dark:text-accent-400">{{ $u->label }}</div>
+                                        <flux:link href="{{ route('vitals.url', $u->id) }}" variant="ghost" class="block">
+                                            <div class="font-medium">{{ $u->label }}</div>
                                             <code class="text-[11px] text-ink-500">{{ $u->path }}</code>
-                                        </a>
+                                        </flux:link>
                                     </flux:table.cell>
 
                                     {{-- Score cells --}}
@@ -159,9 +161,9 @@
                                     <flux:table.cell align="end">
                                         @if ($last !== null && $last->completed_at !== null)
                                             <flux:tooltip :content="__('vitals::vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
-                                                <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline text-xs">
+                                                <flux:link href="{{ route('vitals.audit', $last->id) }}" variant="subtle" class="text-xs">
                                                     {{ $last->completed_at->diffForHumans(short: true) }}
-                                                </a>
+                                                </flux:link>
                                             </flux:tooltip>
                                         @else
                                             —
@@ -215,21 +217,18 @@
                             <flux:table.row :key="$u->id">
                                 {{-- Star / pin button --}}
                                 <flux:table.cell>
-                                    <flux:tooltip :content="$u->pinned_at ? __('vitals::vitals.tooltip.unpin') : __('vitals::vitals.tooltip.pin')">
-                                        <button wire:click="togglePin({{ $u->id }})"
-                                                type="button"
-                                                @class([
-                                                    'transition-colors duration-150',
-                                                    'text-amber-500 hover:text-amber-600' => (bool) $u->pinned_at,
-                                                    'text-ink-300 hover:text-amber-500'   => ! $u->pinned_at,
-                                                ])>
-                                            @if ($u->pinned_at)
-                                                <flux:icon.star variant="solid" class="size-4" />
-                                            @else
-                                                <flux:icon.star class="size-4" />
-                                            @endif
-                                        </button>
-                                    </flux:tooltip>
+                                    <flux:button
+                                        wire:click="togglePin({{ $u->id }})"
+                                        variant="ghost"
+                                        size="xs"
+                                        icon="star"
+                                        :icon:variant="$u->pinned_at ? 'solid' : 'outline'"
+                                        @class([
+                                            'text-amber-500 hover:text-amber-600' => (bool) $u->pinned_at,
+                                            'text-ink-300 hover:text-amber-500'   => ! $u->pinned_at,
+                                        ])
+                                        :tooltip="$u->pinned_at ? __('vitals::vitals.tooltip.unpin') : __('vitals::vitals.tooltip.pin')"
+                                    />
                                 </flux:table.cell>
 
                                 {{-- Global grade badge --}}
@@ -275,10 +274,10 @@
 
                                 {{-- URL column --}}
                                 <flux:table.cell variant="strong">
-                                    <a href="{{ route('vitals.url', $u->id) }}" class="block hover:underline">
-                                        <div class="font-medium text-accent-600 dark:text-accent-400">{{ $u->label }}</div>
+                                    <flux:link href="{{ route('vitals.url', $u->id) }}" variant="ghost" class="block">
+                                        <div class="font-medium">{{ $u->label }}</div>
                                         <code class="text-[11px] text-ink-500">{{ $u->path }}</code>
-                                    </a>
+                                    </flux:link>
                                 </flux:table.cell>
 
                                 {{-- Score cells --}}
@@ -327,9 +326,9 @@
                                 <flux:table.cell align="end">
                                     @if ($last !== null && $last->completed_at !== null)
                                         <flux:tooltip :content="__('vitals::vitals.tooltip.last_audit_at', ['timestamp' => $last->completed_at->toDayDateTimeString()])">
-                                            <a href="{{ route('vitals.audit', $last->id) }}" class="hover:text-accent-500 hover:underline text-xs">
+                                            <flux:link href="{{ route('vitals.audit', $last->id) }}" variant="subtle" class="text-xs">
                                                 {{ $last->completed_at->diffForHumans(short: true) }}
-                                            </a>
+                                            </flux:link>
                                         </flux:tooltip>
                                     @else
                                         —

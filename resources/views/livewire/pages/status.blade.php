@@ -101,6 +101,6 @@
     <div class="text-center text-xs text-ink-400">
         {{ __('vitals::vitals.status.updated_at', ['time' => $updatedAt->toRfc1123String()]) }}
         · {{ __('vitals::vitals.status.powered_by') }}
-        <a href="https://github.com/corentinbtmps/laravel-vitals" class="hover:underline text-ink-500" target="_blank" rel="noopener noreferrer">Laravel Vitals</a>
+        <flux:link href="https://github.com/corentinbtmps/laravel-vitals" external variant="subtle">Laravel Vitals</flux:link>
     </div>
 </div>

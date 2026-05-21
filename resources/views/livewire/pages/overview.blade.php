@@ -203,9 +203,9 @@
             </div>
             @if (count($activeAlerts) >= 3)
                 <div class="mt-3 text-right">
-                    <a href="{{ route('vitals.issues', ['tab' => 'top']) }}" class="text-xs text-ink-500 hover:text-accent-600 transition-colors">
+                    <flux:link href="{{ route('vitals.issues', ['tab' => 'top']) }}" variant="subtle" class="text-xs">
                         {{ __('vitals::vitals.overview.view_all_alerts') }} →
-                    </a>
+                    </flux:link>
                 </div>
             @endif
         </div>
@@ -237,9 +237,9 @@
                     @endforeach
                 </ul>
                 <div class="mt-3 text-right">
-                    <a href="{{ route('vitals.issues', ['tab' => 'all']) }}" class="text-xs text-ink-500 hover:text-accent-600 transition-colors">
+                    <flux:link href="{{ route('vitals.issues', ['tab' => 'all']) }}" variant="subtle" class="text-xs">
                         {{ __('vitals::vitals.overview.view_all_recommendations') }} →
-                    </a>
+                    </flux:link>
                 </div>
             @endif
         </div>
@@ -263,7 +263,7 @@
                             ...\LaravelVitals\Support\ScoreColorClasses::avatar($audit->score_performance),
                         ])>{{ $grade }}</span>
                         <div class="flex-1 min-w-0">
-                            <a href="{{ route('vitals.audit', $audit) }}" class="text-sm font-medium hover:underline truncate block">{{ $audit->url?->label }}</a>
+                            <flux:link href="{{ route('vitals.audit', $audit) }}" variant="subtle" class="text-sm truncate block">{{ $audit->url?->label }}</flux:link>
                             <div class="text-xs text-ink-500">{{ $audit->device }} · {{ $audit->completed_at?->diffForHumans() }}</div>
                         </div>
                         <flux:button href="{{ route('vitals.audit', $audit) }}" variant="ghost" size="sm" icon="arrow-right" />

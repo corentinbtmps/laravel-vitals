@@ -24,7 +24,7 @@
                         <flux:badge color="zinc" size="sm">{{ $a->driver }}</flux:badge>
                     </div>
                 </div>
-                <a href="{{ route('vitals.audit', $a) }}" class="text-xs text-accent-600 dark:text-accent-400 hover:underline shrink-0">{{ __('vitals::vitals.compare.view') }}</a>
+                <flux:link href="{{ route('vitals.audit', $a) }}" class="text-xs shrink-0">{{ __('vitals::vitals.compare.view') }}</flux:link>
             </div>
         @endforeach
     </div>
