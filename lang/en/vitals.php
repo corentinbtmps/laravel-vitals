@@ -671,8 +671,11 @@ return [
         'no_data'         => 'No data recorded yet.',
     ],
     'nav' => [
-        'issues' => 'Issues',
-        'seo'    => 'SEO',
+        'issues'           => 'Issues',
+        'seo'              => 'SEO',
+        'group_audit'      => 'Audit findings',
+        'group_telemetry'  => 'Live telemetry',
+        'group_reference'  => 'Reference',
     ],
     'pages' => [
         'overview' => [

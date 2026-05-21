@@ -665,8 +665,11 @@ return [
         'no_data'          => 'Noch keine Daten aufgezeichnet.',
     ],
     'nav' => [
-        'issues' => 'Probleme',
-        'seo'    => 'SEO',
+        'issues'           => 'Probleme',
+        'seo'              => 'SEO',
+        'group_audit'      => 'Audit-Ergebnisse',
+        'group_telemetry'  => 'Live-Telemetrie',
+        'group_reference'  => 'Referenz',
     ],
     'pages' => [
         'overview' => [

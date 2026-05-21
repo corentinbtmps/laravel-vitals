@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-alpha.78] - 2026-05-21
+
+### Fixed
+
+#### SEO / Queries views — visual polish + correct counts + useful links
+
+- **Borders**: `/vitals/seo`, `/vitals/audits/{id}/seo`, and `/vitals/queries` now use solid `border-ink-200 dark:border-ink-800` (matching the issue-detail page from alpha.67) instead of `/60` opacity variants that were inconsistently contrasted in light mode.
+- **Top failing counts (161 vs 40 bug)**: the `/vitals/seo` "Top failing checks" badge was running `COUNT(*)` over every audit row in the period, so a URL with N historical audits contributed N occurrences. Now restricts the aggregation to the **latest audit per URL** — counts align with the per-URL table above and the badge reads `× N URLs` for clarity.
+- **Top failing "View" link**: was routing to `/vitals/issues/{audit_key}` ("Where in my code") which is built for Lighthouse/code findings and offered no value for SEO checks. Now lands on `/vitals/audits/{audit}/seo` of a sample affected audit — a useful destination.
+
+### Changed
+
+#### Navigation grouping
+
+- Desktop navbar gains thin vertical dividers separating three clusters: **Overview** | **URLs · Issues · SEO** (audit findings) | **RUM · Queries** (live telemetry) | **Learn · Budgets** (reference).
+- Mobile drawer adds uppercase group labels above each cluster (`group_audit`, `group_telemetry`, `group_reference` translation keys, EN/FR/DE/ES).
+
+
 ## [v1.0.0-alpha.77] - 2026-05-21
 
 ### Removed

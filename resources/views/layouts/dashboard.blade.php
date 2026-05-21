@@ -47,12 +47,17 @@
         <span class="text-base font-semibold text-ink-900 dark:text-ink-100">Laravel Vitals</span>
     </a>
 
+    @php
+        $navDivider = '<span class="self-center mx-2 h-5 w-px bg-ink-200 dark:bg-ink-800" aria-hidden="true"></span>';
+    @endphp
     <flux:navbar class="-mb-px max-lg:hidden gap-1">
         <flux:navbar.item
             href="{{ route('vitals.dashboard') }}"
             icon="squares-2x2"
             :current="request()->routeIs('vitals.dashboard')"
         >Overview</flux:navbar.item>
+
+        {!! $navDivider !!}
 
         @if(Route::has('vitals.urls'))
         <flux:navbar.item
@@ -78,6 +83,8 @@
         >{{ __('vitals::vitals.nav.seo') }}</flux:navbar.item>
         @endif
 
+        {!! $navDivider !!}
+
         @if(Route::has('vitals.rum'))
         <flux:navbar.item
             href="{{ route('vitals.rum') }}"
@@ -93,6 +100,8 @@
             :current="request()->routeIs('vitals.queries')"
         >Queries</flux:navbar.item>
         @endif
+
+        {!! $navDivider !!}
 
         @if(Route::has('vitals.learn'))
         <flux:navbar.item
@@ -194,6 +203,8 @@
                    ])>
                     <flux:icon.squares-2x2 class="size-4" />Overview
                 </a>
+
+                <p class="px-3 mt-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-400">{{ __('vitals::vitals.nav.group_audit') }}</p>
                 @if(Route::has('vitals.urls'))
                 <a href="{{ route('vitals.urls') }}"
                    @class([
@@ -225,6 +236,7 @@
                     <flux:icon.globe-alt class="size-4" />{{ __('vitals::vitals.nav.seo') }}
                 </a>
                 @endif
+                <p class="px-3 mt-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-400">{{ __('vitals::vitals.nav.group_telemetry') }}</p>
                 @if(Route::has('vitals.rum'))
                 <a href="{{ route('vitals.rum') }}"
                    @class([
@@ -245,6 +257,7 @@
                     <flux:icon.circle-stack class="size-4" />Queries
                 </a>
                 @endif
+                <p class="px-3 mt-4 mb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-400">{{ __('vitals::vitals.nav.group_reference') }}</p>
                 @if(Route::has('vitals.learn'))
                 <a href="{{ route('vitals.learn') }}"
                    @class([

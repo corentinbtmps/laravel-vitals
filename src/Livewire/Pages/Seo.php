@@ -60,13 +60,15 @@ final class Seo extends Component
 
         $urlsWithFailures = count(array_filter($perUrl, fn ($u) => $u['failing_checks'] > 0));
 
-        // Top failing checks (aggregated count across all audits in period)
+        // Top failing checks — counts unique URLs (one row per latest-audit-per-URL),
+        // so badges align with the per-URL table above (40 URLs → max 40 occurrences).
+        $latestAuditIds = array_map(static fn (array $row): string => $row['audit']->id, $perUrl);
+
         $topFailingQuery = Recommendation::query()
-            ->whereIn('audit_id', $audits->pluck('id'))
+            ->whereIn('audit_id', $latestAuditIds)
             ->where('source', 'seo');
 
         if ($this->category !== 'all') {
-            // Filter by SEO check category — we derive category from the check key using the registry
             $registry = app(\LaravelVitals\Seo\SeoCheckRegistry::class);
             $keysInCategory = array_map(
                 fn ($c) => 'seo-' . $c->key(),
@@ -80,7 +82,7 @@ final class Seo extends Component
         }
 
         $topFailing = $topFailingQuery
-            ->selectRaw('audit_key, title_key, severity, COUNT(*) as occurrences')
+            ->selectRaw('audit_key, title_key, severity, COUNT(*) as occurrences, MAX(audit_id) as sample_audit_id')
             ->groupBy('audit_key', 'title_key', 'severity')
             ->orderByDesc('occurrences')
             ->limit(15)

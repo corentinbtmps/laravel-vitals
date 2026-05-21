@@ -8,7 +8,7 @@
         </div>
 
         {{-- Period selector --}}
-        <div class="flex items-center gap-1 rounded-xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-1 flex-shrink-0">
+        <div class="flex items-center gap-1 rounded-xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-1 flex-shrink-0">
             @foreach ($availablePeriods as $p)
                 <button
                     wire:click="setPeriod('{{ $p->value }}')"
@@ -24,7 +24,7 @@
 
     {{-- Top stats card --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <p class="text-xs uppercase tracking-wider text-ink-500 mb-2">{{ __('vitals::vitals.seo.avg_score') }}</p>
             @if ($avgScore !== null)
                 @php $scoreColor = \LaravelVitals\Support\Health::colorForScore($avgScore); @endphp
@@ -41,7 +41,7 @@
             @endif
         </div>
 
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <p class="text-xs uppercase tracking-wider text-ink-500 mb-2">{{ __('vitals::vitals.seo.urls_with_failures') }}</p>
             <div @class([
                 'text-4xl font-bold tabular-nums',
@@ -54,7 +54,7 @@
 
     {{-- Per-URL SEO table --}}
     @if (!empty($perUrl))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 overflow-hidden">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 overflow-hidden">
             <div class="px-6 py-4 border-b border-ink-100 dark:border-ink-800">
                 <h2 class="text-sm font-semibold">{{ __('vitals::vitals.seo.per_url_title') }}</h2>
             </div>
@@ -123,7 +123,7 @@
     @endif
 
     {{-- Top failing checks with category filter --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 overflow-hidden">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 overflow-hidden">
         <div class="px-6 py-4 border-b border-ink-100 dark:border-ink-800 flex items-center justify-between gap-4 flex-wrap">
             <h2 class="text-sm font-semibold">{{ __('vitals::vitals.seo.top_failing') }}</h2>
 
@@ -159,11 +159,11 @@
                         <flux:badge
                             color="{{ match($item->severity?->value ?? '') { 'critical' => 'rose', 'warning' => 'amber', default => 'sky' } }}"
                             size="sm"
-                        >× {{ $item->occurrences }}</flux:badge>
-                        @if (Route::has('vitals.issue.detail'))
-                            <a href="{{ route('vitals.issue.detail', $item->audit_key) }}"
+                        >× {{ $item->occurrences }} {{ __('vitals::vitals.seo.urls_label') }}</flux:badge>
+                        @if ($item->sample_audit_id)
+                            <a href="{{ route('vitals.audit.seo', $item->sample_audit_id) }}"
                                class="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 shrink-0 transition-colors">
-                                {{ __('vitals::vitals.actions.view') }}
+                                {{ __('vitals::vitals.actions.view') }} →
                             </a>
                         @endif
                     </div>

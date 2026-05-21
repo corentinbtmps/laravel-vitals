@@ -12,7 +12,7 @@
                     @class([
                         'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
                         'bg-accent-500 text-white' => $period === $case,
-                        'bg-paper dark:bg-ink-900 border border-ink-200/60 dark:border-ink-800/60 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $case,
+                        'bg-paper dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-500 hover:text-ink-700 dark:hover:text-ink-300' => $period !== $case,
                     ])
                 >{{ $case->buttonLabel() }}</button>
             @endforeach
@@ -20,7 +20,7 @@
     </div>
 
     @if (empty($routes))
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-12 text-center">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-12 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-accent-100 dark:bg-accent-900/30 mb-4">
                 <flux:icon.circle-stack class="size-6 text-accent-600 dark:text-accent-400" />
             </div>
@@ -30,7 +30,7 @@
     @else
 
     {{-- Query baseline table --}}
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <h3 class="text-base font-semibold mb-1">{{ __('vitals::vitals.queries.baseline_title') }}</h3>
         <p class="text-sm text-ink-500 mb-4">{{ __('vitals::vitals.queries.baseline_subtitle') }}</p>
         <flux:table>
@@ -104,7 +104,7 @@
 
     {{-- Memory hogs panel --}}
     @if (count($memoryHogs) > 0)
-    <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+    <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
         <h3 class="text-base font-semibold mb-1">{{ __('vitals::vitals.queries.memory_hogs_title') }}</h3>
         <p class="text-sm text-ink-500 mb-4">{{ __('vitals::vitals.queries.memory_hogs_subtitle') }}</p>
         <div class="space-y-3">

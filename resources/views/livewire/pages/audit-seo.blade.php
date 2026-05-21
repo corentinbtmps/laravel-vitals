@@ -9,7 +9,7 @@
     </flux:breadcrumbs>
 
     {{-- Hero with score breakdown --}}
-    <div class="rounded-3xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6 md:p-8">
+    <div class="rounded-3xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6 md:p-8">
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div>
                 <h1 class="text-2xl font-semibold tracking-tight">{{ __('vitals::vitals.seo.heading') }}</h1>
@@ -62,7 +62,7 @@
 
     @foreach ($categoryOrder as $cat)
         @if (!empty($checksGrouped[$cat]))
-            <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 overflow-hidden">
+            <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 overflow-hidden">
                 <div class="px-6 py-4 border-b border-ink-100 dark:border-ink-800 flex items-center gap-3">
                     <h2 class="text-sm font-semibold uppercase tracking-wider text-ink-500">{{ __('vitals::vitals.seo.categories.' . $cat) }}</h2>
                     @php
@@ -156,7 +156,7 @@
 
     {{-- Empty state --}}
     @if ($seoRecos->isEmpty())
-        <div class="rounded-2xl border border-ink-200/60 dark:border-ink-800/60 bg-paper dark:bg-ink-900 p-6">
+        <div class="rounded-2xl border border-ink-200 dark:border-ink-800 bg-paper dark:bg-ink-900 p-6">
             <div class="text-center py-6">
                 <flux:icon name="check-badge" class="size-10 text-emerald-400 mx-auto mb-2" />
                 <p class="text-sm font-medium text-emerald-700 dark:text-emerald-300">{{ __('vitals::vitals.seo.no_seo_issues') }}</p>
