@@ -42,12 +42,12 @@ final class AuditCompare extends Component
 
         // Resolved in B: was in A, not in B.
         $resolved = $auditA->recommendations->filter(
-            fn ($r) => ! in_array($r->audit_key, $recoKeysB, true)
+            fn ($r): bool => ! in_array($r->audit_key, $recoKeysB, true)
         )->values();
 
         // New in B: was not in A, is in B.
         $newInB = $auditB->recommendations->filter(
-            fn ($r) => ! in_array($r->audit_key, $recoKeysA, true)
+            fn ($r): bool => ! in_array($r->audit_key, $recoKeysA, true)
         )->values();
 
         return view('vitals::livewire.pages.audit-compare', [

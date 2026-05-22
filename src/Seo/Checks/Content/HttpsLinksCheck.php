@@ -32,14 +32,14 @@ final class HttpsLinksCheck implements SeoCheck
         $httpLinks = [];
 
         $context->crawler->filter('a[href]')->each(function ($node) use (&$httpLinks): void {
-            $href = (string) ($node->attr('href') ?? '');
+            $href = $node->attr('href') ?? '';
             if (str_starts_with($href, 'http://')) {
                 $httpLinks[] = ['url' => $href];
             }
         });
 
         $context->crawler->filter('img[src]')->each(function ($node) use (&$httpLinks): void {
-            $src = (string) ($node->attr('src') ?? '');
+            $src = $node->attr('src') ?? '';
             if (str_starts_with($src, 'http://')) {
                 $httpLinks[] = ['url' => $src];
             }

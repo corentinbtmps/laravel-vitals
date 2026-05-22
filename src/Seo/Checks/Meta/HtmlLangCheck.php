@@ -43,7 +43,7 @@ final class HtmlLangCheck implements SeoCheck
             );
         }
 
-        $lang = (string) ($html->first()->attr('lang') ?? '');
+        $lang = $html->first()->attr('lang') ?? '';
 
         if (trim($lang) === '') {
             return SeoCheckResult::fail(

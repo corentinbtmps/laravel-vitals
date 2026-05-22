@@ -11,11 +11,11 @@ use Spatie\Searchable\SearchResult;
  * A lightweight value object that makes arbitrary data searchable
  * without requiring a full Eloquent model.
  */
-final class SearchableItem implements Searchable
+final readonly class SearchableItem implements Searchable
 {
     public function __construct(
-        private readonly string $title,
-        private readonly string $url,
+        private string $title,
+        private string $url,
     ) {}
 
     public function getSearchResult(): SearchResult

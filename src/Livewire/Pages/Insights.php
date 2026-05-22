@@ -59,7 +59,7 @@ final class Insights extends Component
                 ];
             }
         }
-        usort($worsening, fn ($a, $b) => $a['delta'] <=> $b['delta']);
+        usort($worsening, fn (array $a, array $b): int => $a['delta'] <=> $b['delta']);
         $worsening = array_slice($worsening, 0, 5);
 
         // Improving URLs (mirror of worsening)
@@ -87,7 +87,7 @@ final class Insights extends Component
                 ];
             }
         }
-        usort($improving, fn ($a, $b) => $b['delta'] <=> $a['delta']);
+        usort($improving, fn (array $a, array $b): int => $b['delta'] <=> $a['delta']);
         $improving = array_slice($improving, 0, 5);
 
         // Top third parties across audits (aggregated from details)
@@ -107,7 +107,7 @@ final class Insights extends Component
                 $tpAggregate[$name]['total_blocking_ms'] += (float) ($tp['blocking_ms'] ?? 0);
             }
         }
-        usort($tpAggregate, fn ($a, $b) => $b['total_blocking_ms'] <=> $a['total_blocking_ms']);
+        usort($tpAggregate, fn (array $a, array $b): int => $b['total_blocking_ms'] <=> $a['total_blocking_ms']);
         $topThirdParties = array_slice($tpAggregate, 0, 5);
 
         return view('vitals::livewire.pages.insights', [

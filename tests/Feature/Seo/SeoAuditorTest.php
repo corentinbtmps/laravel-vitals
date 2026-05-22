@@ -79,7 +79,7 @@ it('skips checks when the page fetch fails', function (): void {
     $url = Url::create(['label' => 'fail-test', 'path' => '/fail']);
 
     Http::fake([
-        '*' => function () { throw new \Illuminate\Http\Client\ConnectionException('Connection refused'); },
+        '*' => function (): void { throw new \Illuminate\Http\Client\ConnectionException('Connection refused'); },
     ]);
 
     $audit = Audit::create([

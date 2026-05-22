@@ -45,7 +45,7 @@ final class MetaDescriptionCheck implements SeoCheck
             );
         }
 
-        $content = (string) ($metaDesc->first()->attr('content') ?? '');
+        $content = $metaDesc->first()->attr('content') ?? '';
         $length = mb_strlen(trim($content));
 
         if ($length === 0) {

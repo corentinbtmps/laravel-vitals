@@ -43,7 +43,7 @@ final class CanonicalCheck implements SeoCheck
             );
         }
 
-        $href = (string) ($canonical->first()->attr('href') ?? '');
+        $href = $canonical->first()->attr('href') ?? '';
         if (trim($href) === '') {
             return SeoCheckResult::fail(
                 key: $this->key(),

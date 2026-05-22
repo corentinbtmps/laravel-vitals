@@ -41,7 +41,7 @@ final class ImageAltCheck implements SeoCheck
             $isDecorative = ($ariaHidden === 'true') || ($role === 'presentation');
 
             if ($alt === null && ! $isDecorative) {
-                $src = (string) ($node->attr('src') ?? '');
+                $src = $node->attr('src') ?? '';
                 if ($src !== '' && ! str_starts_with($src, 'data:')) {
                     $missing[] = ['url' => $src];
                 }

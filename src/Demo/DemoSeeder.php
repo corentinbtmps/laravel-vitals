@@ -73,7 +73,7 @@ final class DemoSeeder
                 $isWeekend = in_array($when->dayOfWeek, [0, 6], true);
 
                 foreach (['mobile', 'desktop'] as $device) {
-                    $this->seedOne($url, $device, $when, $fix['profile'], $isWeekend, $d);
+                    $this->seedOne($url, $device, $when, $fix['profile'], $isWeekend);
                 }
 
                 // Seed RUM events — ~50 per URL per day (scaled down for performance)
@@ -83,7 +83,7 @@ final class DemoSeeder
         }
     }
 
-    private function seedOne(Url $url, string $device, Carbon $when, string $profile, bool $isWeekend = false, int $daysAgoInt = 0): void
+    private function seedOne(Url $url, string $device, Carbon $when, string $profile, bool $isWeekend = false): void
     {
         [$perf, $lcp, $cls, $inp, $ttfb] = $this->metricsForProfile($profile, $when);
 
@@ -96,7 +96,7 @@ final class DemoSeeder
         // Occasional spike (random 1-in-10 days)
         if (mt_rand(1, 10) === 1) {
             $perf = max(40, $perf - mt_rand(10, 20));
-            $lcp  = $lcp + mt_rand(500, 1500);
+            $lcp += mt_rand(500, 1500);
         }
 
         if ($device === 'desktop') {
@@ -124,7 +124,7 @@ final class DemoSeeder
             'started_at'        => $when,
             'completed_at'      => $when->copy()->addSeconds(mt_rand(30, 90)),
             'is_demo'           => true,
-            'details'           => $this->fakeDetails($profile, $perf),
+            'details'           => $this->fakeDetails($profile),
         ]);
 
         // Memory peaks vary 20-80 MB
@@ -315,7 +315,7 @@ final class DemoSeeder
     /**
      * @return array<string, mixed>
      */
-    private function fakeDetails(string $profile, int $perf): array
+    private function fakeDetails(string $profile): array
     {
         $sizeMul = $profile === 'bad' ? 2.5 : ($profile === 'improving' ? 1.5 : 1.0);
 

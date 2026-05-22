@@ -64,10 +64,10 @@ it('accepts csp frame-ancestors as replacement for x-frame-options', function ()
 
     // X-Frame-Options missing but CSP frame-ancestors present — should not flag it.
     $keys = array_map(
-        fn ($ref) => $ref->snippet,
+        fn (\LaravelVitals\Support\CodeReference $ref): string => $ref->snippet,
         iterator_to_array($result),
     );
-    $flaggedXFrame = array_filter($keys, fn ($k) => str_contains($k, 'X-Frame-Options'));
+    $flaggedXFrame = array_filter($keys, fn (string $k): bool => str_contains($k, 'X-Frame-Options'));
     expect($flaggedXFrame)->toBeEmpty();
 });
 

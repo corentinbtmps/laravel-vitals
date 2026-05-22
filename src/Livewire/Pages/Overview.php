@@ -40,7 +40,7 @@ final class Overview extends Component
             ->with('url')
             ->where('status', AuditStatus::Completed);
 
-        if ($cutoff !== null) {
+        if ($cutoff instanceof \Carbon\Carbon) {
             $recentQuery->where('completed_at', '>=', $cutoff);
         }
 
@@ -50,14 +50,14 @@ final class Overview extends Component
             ->get();
 
         $averages = [
-            'performance'    => self::avgScore($recent, 'score_performance'),
-            'accessibility'  => self::avgScore($recent, 'score_accessibility'),
-            'best_practices' => self::avgScore($recent, 'score_best_practices'),
-            'seo'            => self::avgScore($recent, 'score_seo'),
+            'performance'    => $this->avgScore($recent, 'score_performance'),
+            'accessibility'  => $this->avgScore($recent, 'score_accessibility'),
+            'best_practices' => $this->avgScore($recent, 'score_best_practices'),
+            'seo'            => $this->avgScore($recent, 'score_seo'),
         ];
 
         $overall = $averages['performance'] !== null
-            ? (int) round(array_sum(array_filter($averages, fn ($v) => $v !== null)) / max(1, count(array_filter($averages, fn ($v) => $v !== null))))
+            ? (int) round(array_sum(array_filter($averages, fn (?int $v): bool => $v !== null)) / max(1, count(array_filter($averages, fn (?int $v): bool => $v !== null))))
             : null;
 
         // Active alerts: recent budget violations (last 24h) + regressions (perf score dropped >10% vs 7-day baseline)
@@ -113,7 +113,7 @@ final class Overview extends Component
         $query = Audit::query()
             ->where('status', AuditStatus::Completed);
 
-        if ($cutoff !== null) {
+        if ($cutoff instanceof \Carbon\Carbon) {
             $query->where('completed_at', '>=', $cutoff);
         }
 
@@ -126,13 +126,13 @@ final class Overview extends Component
             ->get();
 
         /** @var array<int, int> $perf */
-        $perf = $rows->pluck('p')->map(fn ($v) => (int) round((float) $v))->values()->all();
+        $perf = $rows->pluck('p')->map(fn ($v): int => (int) round((float) $v))->values()->all();
         /** @var array<int, int> $access */
-        $access = $rows->pluck('a')->map(fn ($v) => (int) round((float) $v))->values()->all();
+        $access = $rows->pluck('a')->map(fn ($v): int => (int) round((float) $v))->values()->all();
         /** @var array<int, int> $bp */
-        $bp = $rows->pluck('b')->map(fn ($v) => (int) round((float) $v))->values()->all();
+        $bp = $rows->pluck('b')->map(fn ($v): int => (int) round((float) $v))->values()->all();
         /** @var array<int, int> $seo */
-        $seo = $rows->pluck('s')->map(fn ($v) => (int) round((float) $v))->values()->all();
+        $seo = $rows->pluck('s')->map(fn ($v): int => (int) round((float) $v))->values()->all();
 
         return [
             'performance'    => $perf,
@@ -173,7 +173,7 @@ final class Overview extends Component
     {
         $cutoff = $this->periodCutoff();
 
-        if ($cutoff === null) {
+        if (!$cutoff instanceof \Carbon\Carbon) {
             return ['performance' => null, 'accessibility' => null, 'best_practices' => null, 'seo' => null];
         }
 
@@ -212,7 +212,7 @@ final class Overview extends Component
     {
         $cutoff = $this->periodCutoff();
 
-        if ($cutoff === null) {
+        if (!$cutoff instanceof \Carbon\Carbon) {
             return ['performance' => [], 'accessibility' => [], 'best_practices' => [], 'seo' => []];
         }
 
@@ -230,10 +230,10 @@ final class Overview extends Component
             ->get();
 
         return [
-            'performance'    => $rows->pluck('p')->map(fn ($v) => (int) round((float) $v))->values()->all(),
-            'accessibility'  => $rows->pluck('a')->map(fn ($v) => (int) round((float) $v))->values()->all(),
-            'best_practices' => $rows->pluck('b')->map(fn ($v) => (int) round((float) $v))->values()->all(),
-            'seo'            => $rows->pluck('s')->map(fn ($v) => (int) round((float) $v))->values()->all(),
+            'performance'    => $rows->pluck('p')->map(fn ($v): int => (int) round((float) $v))->values()->all(),
+            'accessibility'  => $rows->pluck('a')->map(fn ($v): int => (int) round((float) $v))->values()->all(),
+            'best_practices' => $rows->pluck('b')->map(fn ($v): int => (int) round((float) $v))->values()->all(),
+            'seo'            => $rows->pluck('s')->map(fn ($v): int => (int) round((float) $v))->values()->all(),
         ];
     }
 
@@ -256,7 +256,7 @@ final class Overview extends Component
     private function dailySummary(): array
     {
         $yesterday = now()->subDay();
-        $dayBefore  = now()->subDays(2);
+        now()->subDays(2);
 
         $todayAudits = Audit::query()
             ->where('status', AuditStatus::Completed)
@@ -334,7 +334,7 @@ final class Overview extends Component
     /**
      * @param \Illuminate\Database\Eloquent\Collection<int, Audit> $audits
      */
-    private static function avgScore($audits, string $col): ?int
+    private function avgScore($audits, string $col): ?int
     {
         $avg = $audits->avg($col);
         return $avg !== null ? (int) round((float) $avg) : null;

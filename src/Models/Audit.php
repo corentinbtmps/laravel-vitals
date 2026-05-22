@@ -122,7 +122,7 @@ final class Audit extends Model implements Searchable
             $this->score_accessibility,
             $this->score_best_practices,
             $this->score_seo,
-        ], fn ($v) => $v !== null);
+        ], fn (?int $v): bool => $v !== null);
 
         if ($scores === []) {
             return null;
@@ -182,7 +182,7 @@ final class Audit extends Model implements Searchable
 
         // Sum weights of failed checks
         $failedKeys = $seoRecos->pluck('audit_key')
-            ->map(fn ($k) => str_replace('seo-', '', $k))
+            ->map(fn ($k): string|array => str_replace('seo-', '', $k))
             ->all();
 
         foreach ($enabledChecks as $check) {

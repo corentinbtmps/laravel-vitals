@@ -18,13 +18,13 @@ it('returns 22 enabled checks by default', function (): void {
 it('respects disabled_checks config', function (): void {
     config(['vitals.seo.disabled_checks' => ['noindex', 'canonical']]);
     $registry = new SeoCheckRegistry();
-    $keys = array_map(fn ($c) => $c->key(), $registry->enabled());
+    $keys = array_map(fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): string => $c->key(), $registry->enabled());
     expect($keys)->not->toContain('noindex')
         ->and($keys)->not->toContain('canonical');
 });
 
 it('all check keys are unique', function (): void {
     $registry = new SeoCheckRegistry();
-    $keys = array_map(fn ($c) => $c->key(), $registry->all());
+    $keys = array_map(fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): string => $c->key(), $registry->all());
     expect(array_unique($keys))->toHaveCount(count($keys));
 });

@@ -28,7 +28,7 @@ final class AssetController extends Controller
         'favicon.ico'    => 'image/x-icon',
     ];
 
-    public function __invoke(string $file): Response
+    public function __invoke(string $file): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         // Allow Geist woff2 font files served alongside dashboard.css
         $mimeType = self::ALLOWED[$file] ?? null;

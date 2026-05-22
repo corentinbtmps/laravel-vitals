@@ -32,7 +32,7 @@ final class NofollowCheck implements SeoCheck
         $metaContent = '';
 
         if ($metaRobots->count() > 0) {
-            $metaContent = strtolower((string) ($metaRobots->first()->attr('content') ?? ''));
+            $metaContent = strtolower($metaRobots->first()->attr('content') ?? '');
         }
 
         $xRobotsTag = strtolower($context->response->header('X-Robots-Tag'));

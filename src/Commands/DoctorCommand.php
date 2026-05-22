@@ -48,7 +48,7 @@ final class DoctorCommand extends Command
         // ── Vitals config published ───────────────────────────────────────────
         $this->section('Package');
 
-        $configPublished = file_exists((string) config_path('vitals.php'));
+        $configPublished = file_exists(config_path('vitals.php'));
         $this->check(
             $configPublished ? 'pass' : 'warn',
             'config/vitals.php exists in host app',

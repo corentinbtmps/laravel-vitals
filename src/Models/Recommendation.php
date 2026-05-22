@@ -65,7 +65,7 @@ final class Recommendation extends Model implements Searchable
     {
         $params = is_array($this->translation_params) ? $this->translation_params : [];
 
-        return array_filter($params, static fn ($v): bool => is_scalar($v));
+        return array_filter($params, is_scalar(...));
     }
 
     /**

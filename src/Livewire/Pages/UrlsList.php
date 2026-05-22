@@ -67,7 +67,7 @@ final class UrlsList extends Component
 
         $sparklines = [];
         foreach ($urlIds as $urlId) {
-            $points = $trendRows->where('url_id', $urlId)->pluck('avg_score')->map(fn ($v) => (int) round((float) $v))->all();
+            $points = $trendRows->where('url_id', $urlId)->pluck('avg_score')->map(fn ($v): int => (int) round((float) $v))->all();
             $sparklines[$urlId] = $points;
         }
 

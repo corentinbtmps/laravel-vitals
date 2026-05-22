@@ -59,7 +59,7 @@ final class UrlDetail extends Component
         $query = $urlModel->audits()
             ->where('status', AuditStatus::Completed);
 
-        if ($cutoff !== null) {
+        if ($cutoff instanceof \Carbon\Carbon) {
             $query->where('completed_at', '>=', $cutoff);
         }
 
@@ -87,7 +87,7 @@ final class UrlDetail extends Component
         $historyQuery = $urlModel->audits()
             ->where('status', AuditStatus::Completed);
 
-        if ($cutoff !== null) {
+        if ($cutoff instanceof \Carbon\Carbon) {
             $historyQuery->where('completed_at', '>=', $cutoff);
         }
 
@@ -99,17 +99,17 @@ final class UrlDetail extends Component
         $periodAudits = $urlModel->audits()
             ->where('status', AuditStatus::Completed);
 
-        if ($cutoff !== null) {
+        if ($cutoff instanceof \Carbon\Carbon) {
             $periodAudits->where('completed_at', '>=', $cutoff);
         }
 
         $periodAuditsCollection = $periodAudits->get(['score_performance', 'score_accessibility', 'score_best_practices', 'score_seo', 'lcp_ms']);
 
         $avgScores = [
-            'performance'    => self::avg($periodAuditsCollection, 'score_performance'),
-            'accessibility'  => self::avg($periodAuditsCollection, 'score_accessibility'),
-            'best_practices' => self::avg($periodAuditsCollection, 'score_best_practices'),
-            'seo'            => self::avg($periodAuditsCollection, 'score_seo'),
+            'performance'    => $this->avg($periodAuditsCollection, 'score_performance'),
+            'accessibility'  => $this->avg($periodAuditsCollection, 'score_accessibility'),
+            'best_practices' => $this->avg($periodAuditsCollection, 'score_best_practices'),
+            'seo'            => $this->avg($periodAuditsCollection, 'score_seo'),
         ];
 
         // Most frequent recommendations on this URL (top 5)
@@ -125,7 +125,7 @@ final class UrlDetail extends Component
         $failedQuery = $urlModel->audits()
             ->where('status', AuditStatus::Failed);
 
-        if ($cutoff !== null) {
+        if ($cutoff instanceof \Carbon\Carbon) {
             $failedQuery->where('created_at', '>=', $cutoff);
         }
 
@@ -149,7 +149,7 @@ final class UrlDetail extends Component
     }
 
     /** @param \Illuminate\Database\Eloquent\Collection<int, \LaravelVitals\Models\Audit> $audits */
-    private static function avg($audits, string $col): ?int
+    private function avg($audits, string $col): ?int
     {
         $avg = $audits->avg($col);
 

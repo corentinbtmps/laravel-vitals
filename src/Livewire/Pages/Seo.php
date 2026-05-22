@@ -34,7 +34,7 @@ final class Seo extends Component
             ->with(['url', 'recommendations'])
             ->where('status', AuditStatus::Completed);
 
-        if ($cutoff !== null) {
+        if ($cutoff instanceof \Carbon\Carbon) {
             $auditQuery->where('completed_at', '>=', $cutoff);
         }
 
@@ -48,7 +48,7 @@ final class Seo extends Component
             array_sum(array_column($perUrl, 'vitals_seo_score')) / count($perUrl)
         ) : null;
 
-        $urlsWithFailures = count(array_filter($perUrl, fn ($u) => $u['failing_checks'] > 0));
+        $urlsWithFailures = count(array_filter($perUrl, fn (array $u): bool => $u['failing_checks'] > 0));
 
         // Top failing checks — counts unique URLs (one row per latest-audit-per-URL),
         // so badges align with the per-URL table above (40 URLs → max 40 occurrences).
@@ -61,10 +61,10 @@ final class Seo extends Component
         if ($this->category !== 'all') {
             $registry = app(\LaravelVitals\Seo\SeoCheckRegistry::class);
             $keysInCategory = array_map(
-                fn ($c) => 'seo-' . $c->key(),
+                fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): string => 'seo-' . $c->key(),
                 array_filter(
                     $registry->all(),
-                    fn ($c) => $c->category()->value === $this->category,
+                    fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): bool => $c->category()->value === $this->category,
                 ),
             );
 
@@ -113,7 +113,7 @@ final class Seo extends Component
             }
             $seenUrls[$urlId] = true;
 
-            $seoRecos = $audit->recommendations->filter(fn ($r) => $r->source === 'seo');
+            $seoRecos = $audit->recommendations->filter(fn ($r): bool => $r->source === 'seo');
 
             $result[] = [
                 'url'             => $audit->url,
@@ -126,7 +126,7 @@ final class Seo extends Component
         }
 
         // Sort by vitals_seo_score ascending (worst first)
-        usort($result, fn ($a, $b) => ($a['vitals_seo_score'] ?? 0) <=> ($b['vitals_seo_score'] ?? 0));
+        usort($result, fn (array $a, array $b): int => ($a['vitals_seo_score'] ?? 0) <=> ($b['vitals_seo_score'] ?? 0));
 
         return $result;
     }

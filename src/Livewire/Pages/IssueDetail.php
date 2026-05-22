@@ -45,7 +45,7 @@ final class IssueDetail extends Component
         // If the registry doesn't know this audit_key, fall back to the first
         // stored recommendation row so Lighthouse audits we haven't curated
         // still get a usable deep view. Only 404 when neither source has data.
-        if ($descriptor === null) {
+        if (!$descriptor instanceof \LaravelVitals\Recommendations\RecommendationDescriptor) {
             $first = $recommendations->first();
 
             if ($first === null) {
@@ -77,7 +77,7 @@ final class IssueDetail extends Component
         /** @var array<string, array{url_label: string, url_path: string, url_id: int|null, occurrences: list<array{audit_id: string, audit_date: string|null, code_references: array<int, mixed>, top_patterns: array<int, mixed>, detail_items: array<int, mixed>}>}> $grouped */
         $grouped = [];
 
-        foreach ($byUrl as $path => $recos) {
+        foreach ($byUrl as $recos) {
             $firstReco  = $recos->first();
             $firstUrl   = $firstReco?->audit?->url;
             $urlPath    = (string) ($firstUrl !== null ? $firstUrl->path : '/');

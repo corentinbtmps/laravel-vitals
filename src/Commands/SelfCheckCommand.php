@@ -52,7 +52,7 @@ final class SelfCheckCommand extends Command
                     $warn = true;
                 }
                 $rows[] = [$table, number_format($count), $status];
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 $rows[] = [$table, '?', 'ERROR'];
                 $warn = true;
             }
@@ -71,7 +71,7 @@ final class SelfCheckCommand extends Command
             $this->info('Slowest 10 captured requests:');
             $this->table(
                 ['Route', 'Duration (ms)', 'Queries'],
-                $slow->map(fn ($t) => [
+                $slow->map(fn ($t): array => [
                     $t->route_name ?? '(none)',
                     number_format((float) $t->duration_ms, 0),
                     $t->queries_count,

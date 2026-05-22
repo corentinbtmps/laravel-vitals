@@ -85,7 +85,7 @@ final class Queries extends Component
             ]);
         }
 
-        usort($routes, fn ($a, $b) => (($b['queries_p95'] ?? 0) <=> ($a['queries_p95'] ?? 0)));
+        usort($routes, fn (array $a, array $b): int => (($b['queries_p95'] ?? 0) <=> ($a['queries_p95'] ?? 0)));
         $routes = array_slice($routes, 0, 30);
 
         $memoryHogs = $this->memoryHogs($cutoff);
@@ -173,7 +173,7 @@ final class Queries extends Component
             ];
         }
 
-        usort($result, fn ($a, $b) => $b['memory_p75_mb'] <=> $a['memory_p75_mb']);
+        usort($result, fn (array $a, array $b): int => $b['memory_p75_mb'] <=> $a['memory_p75_mb']);
 
         return array_slice($result, 0, 5);
     }
@@ -270,7 +270,7 @@ final class Queries extends Component
         }
 
         $list = array_values($byPattern);
-        usort($list, fn ($a, $b) => $b['occurrences'] <=> $a['occurrences']);
+        usort($list, fn (array $a, array $b): int => $b['occurrences'] <=> $a['occurrences']);
 
         return array_slice($list, 0, 5);
     }

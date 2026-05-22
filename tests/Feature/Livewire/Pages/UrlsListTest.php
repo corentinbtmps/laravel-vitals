@@ -52,5 +52,5 @@ it('lists pinned urls in a separate group', function (): void {
     $other  = Url::create(['label' => 'about', 'path' => '/about']);
 
     Livewire::test(UrlsList::class)
-        ->assertViewHas('pinnedUrls', fn ($urls) => $urls->contains('id', $pinned->id) && ! $urls->contains('id', $other->id));
+        ->assertViewHas('pinnedUrls', fn ($urls): bool => $urls->contains('id', $pinned->id) && ! $urls->contains('id', $other->id));
 });

@@ -6,7 +6,7 @@ use LaravelVitals\Facades\Vitals;
 use LaravelVitals\Livewire\Pages\Learn;
 use Livewire\Livewire;
 
-beforeEach(fn () => Vitals::authorize(fn () => true));
+beforeEach(fn () => Vitals::authorize(fn (): true => true));
 
 it('lists all known recommendations grouped by category', function (): void {
     Livewire::test(Learn::class)

@@ -102,22 +102,22 @@ final class RecommendationBuilder
             // 2. Cache policy issues (any resource with TTL < 30 days)
             $shortCache = array_filter(
                 $details['cache_policy'] ?? [],
-                fn ($r) => is_array($r) && (int) ($r['ttl_seconds'] ?? 0) < 30 * 86400,
+                fn ($r): bool => is_array($r) && (int) ($r['ttl_seconds'] ?? 0) < 30 * 86400,
             );
             if (count($shortCache) > 0) {
                 $this->persistDetail($audit, 'cache-policy-short', [
                     'count'    => count($shortCache),
-                    'examples' => array_slice(array_map(fn ($r) => $r['url'], array_values($shortCache)), 0, 3),
+                    'examples' => array_slice(array_map(fn (array $r) => $r['url'], array_values($shortCache)), 0, 3),
                 ]);
             }
 
             // 3. Third-party with significant blocking time (> 250ms)
             $heavyTp = array_filter(
                 $details['third_parties'] ?? [],
-                fn ($t) => is_array($t) && (float) ($t['blocking_ms'] ?? 0) > 250,
+                fn ($t): bool => is_array($t) && (float) ($t['blocking_ms'] ?? 0) > 250,
             );
             if (count($heavyTp) > 0) {
-                $entities = array_slice(array_map(fn ($t) => $t['entity'], array_values($heavyTp)), 0, 3);
+                $entities = array_slice(array_map(fn (array $t) => $t['entity'], array_values($heavyTp)), 0, 3);
                 $this->persistDetail($audit, 'third-party-blocking', [
                     'count'    => count($heavyTp),
                     'entities' => $entities,
@@ -135,7 +135,7 @@ final class RecommendationBuilder
             // 5. High JS bootup time (any single script > 500ms)
             $heavyScripts = array_filter(
                 $details['bootup_time'] ?? [],
-                fn ($s) => is_array($s) && (float) ($s['total_ms'] ?? 0) > 500,
+                fn ($s): bool => is_array($s) && (float) ($s['total_ms'] ?? 0) > 500,
             );
             if (count($heavyScripts) > 0) {
                 $worst = array_reduce(
@@ -379,11 +379,7 @@ final class RecommendationBuilder
 
         // Fall back to $_SERVER which is always available regardless of config caching
         $serverEnv = $_SERVER['OCTANE_SERVER'] ?? '';
-        if (is_string($serverEnv) && $serverEnv !== '') {
-            return true;
-        }
-
-        return false;
+        return is_string($serverEnv) && $serverEnv !== '';
     }
 
     /**

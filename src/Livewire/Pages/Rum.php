@@ -50,7 +50,7 @@ final class Rum extends Component
         $cutoff = $this->periodCutoff();
 
         $baseQuery = RumEvent::query()->where('occurred_at', '>=', $cutoff);
-        if ($this->device !== null) {
+        if ($this->device instanceof \LaravelVitals\Enums\Device) {
             $baseQuery->where('device', $this->device->value);
         }
 
@@ -120,7 +120,7 @@ final class Rum extends Component
             ->where('occurred_at', '>=', $cutoff)
             ->whereIn('metric', ['LCP', 'INP', 'CLS']);
 
-        if ($this->device !== null) {
+        if ($this->device instanceof \LaravelVitals\Enums\Device) {
             $baseQuery->where('device', $this->device->value);
         }
 
@@ -144,7 +144,7 @@ final class Rum extends Component
         }
 
         // Sort by count descending
-        usort($result, fn ($a, $b) => $b['count'] <=> $a['count']);
+        usort($result, fn (array $a, array $b): int => $b['count'] <=> $a['count']);
 
         return array_slice($result, 0, 20);
     }
@@ -186,7 +186,7 @@ final class Rum extends Component
             ];
         }
 
-        usort($result, fn ($a, $b) => $b['count'] <=> $a['count']);
+        usort($result, fn (array $a, array $b): int => $b['count'] <=> $a['count']);
 
         return array_slice($result, 0, 10);
     }

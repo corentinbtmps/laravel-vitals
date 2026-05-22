@@ -34,7 +34,7 @@ final class BrokenLinksCheck implements SeoCheck
         $links = [];
 
         $context->crawler->filter('a[href]')->each(function ($node) use (&$links): void {
-            $href = (string) ($node->attr('href') ?? '');
+            $href = $node->attr('href') ?? '';
             if (
                 $href === ''
                 || str_starts_with($href, '#')

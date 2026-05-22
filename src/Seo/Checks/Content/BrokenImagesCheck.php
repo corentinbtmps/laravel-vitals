@@ -34,7 +34,7 @@ final class BrokenImagesCheck implements SeoCheck
         $images = [];
 
         $context->crawler->filter('img[src]')->each(function ($node) use (&$images): void {
-            $src = (string) ($node->attr('src') ?? '');
+            $src = $node->attr('src') ?? '';
             if ($src === '' || str_starts_with($src, 'data:')) {
                 return;
             }

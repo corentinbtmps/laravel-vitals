@@ -22,8 +22,6 @@ final class VitalsApiController
 {
     /**
      * GET /vitals/api/v1/audits
-     *
-     * @return JsonResponse
      */
     public function audits(Request $request): JsonResponse
     {
@@ -60,8 +58,6 @@ final class VitalsApiController
 
     /**
      * GET /vitals/api/v1/audits/{audit}
-     *
-     * @return JsonResponse
      */
     public function audit(Request $request, string $audit): JsonResponse
     {
@@ -79,8 +75,6 @@ final class VitalsApiController
 
     /**
      * GET /vitals/api/v1/urls
-     *
-     * @return JsonResponse
      */
     public function urls(Request $request): JsonResponse
     {
@@ -117,8 +111,6 @@ final class VitalsApiController
 
     /**
      * GET /vitals/api/v1/urls/{url}/latest
-     *
-     * @return JsonResponse
      */
     public function urlLatest(Request $request, string $url): JsonResponse
     {
@@ -150,8 +142,6 @@ final class VitalsApiController
 
     /**
      * GET /vitals/api/v1/recommendations
-     *
-     * @return JsonResponse
      */
     public function recommendations(Request $request): JsonResponse
     {

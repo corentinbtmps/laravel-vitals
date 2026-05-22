@@ -53,5 +53,5 @@ it('calculates p75 correctly', function (): void {
     }
 
     Livewire::test(Rum::class)
-        ->assertViewHas('metricCards', fn ($cards) => $cards['LCP']['p75'] === 1800.0);
+        ->assertViewHas('metricCards', fn ($cards): bool => $cards['LCP']['p75'] === 1800.0);
 });

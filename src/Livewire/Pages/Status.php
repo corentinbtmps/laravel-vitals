@@ -103,7 +103,7 @@ final class Status extends Component
         $needs_improvement = $needs;
         $total = $good + $needs_improvement + $poor;
 
-        return compact('good', 'needs_improvement', 'poor', 'total');
+        return ['good' => $good, 'needs_improvement' => $needs_improvement, 'poor' => $poor, 'total' => $total];
     }
 
     /**

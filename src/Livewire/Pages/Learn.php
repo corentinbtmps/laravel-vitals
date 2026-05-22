@@ -52,7 +52,7 @@ final class Learn extends Component
             $keysInCat = array_values(array_filter($allKeys, function (string $k) use ($registry, $cat): bool {
                 $descriptor = $registry->get($k);
 
-                return $descriptor !== null && $descriptor->category === $cat;
+                return $descriptor instanceof \LaravelVitals\Recommendations\RecommendationDescriptor && $descriptor->category === $cat;
             }));
 
             $tiles[$cat] = [
@@ -83,7 +83,7 @@ final class Learn extends Component
 
         foreach ($registry->allKeys() as $key) {
             $descriptor = $registry->get($key);
-            if ($descriptor === null) {
+            if (!$descriptor instanceof \LaravelVitals\Recommendations\RecommendationDescriptor) {
                 continue;
             }
 
@@ -100,7 +100,7 @@ final class Learn extends Component
         }
 
         // Group by category for display
-        $grouped = collect($entries)->groupBy(fn ($e) => $e['descriptor']->category);
+        $grouped = collect($entries)->groupBy(fn ($e): string => $e['descriptor']->category);
 
         return view('vitals::livewire.pages.learn', [
             'grouped'  => $grouped,

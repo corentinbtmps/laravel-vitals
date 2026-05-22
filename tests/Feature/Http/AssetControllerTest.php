@@ -28,7 +28,7 @@ it('serves geist woff2 font files from the package dist directory', function ():
 });
 
 it('does not gate asset routes behind the Authorize middleware', function (): void {
-    \LaravelVitals\Facades\Vitals::authorize(fn () => false);
+    \LaravelVitals\Facades\Vitals::authorize(fn (): false => false);
 
     // Asset routes should still work even when the dashboard gate denies.
     $this->get('/vitals/_assets/dashboard.css')->assertOk();

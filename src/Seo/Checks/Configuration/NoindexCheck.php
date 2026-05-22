@@ -33,7 +33,7 @@ final class NoindexCheck implements SeoCheck
         $metaContent = '';
 
         if ($metaRobots->count() > 0) {
-            $metaContent = strtolower((string) ($metaRobots->first()->attr('content') ?? ''));
+            $metaContent = strtolower($metaRobots->first()->attr('content') ?? '');
         }
 
         // Check X-Robots-Tag header

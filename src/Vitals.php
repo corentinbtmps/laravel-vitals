@@ -67,7 +67,7 @@ final class Vitals
             ? $urlOrLabel
             : Url::where('label', $urlOrLabel)->firstOrFail();
 
-        if ($device === null) {
+        if (!$device instanceof \LaravelVitals\Enums\Device) {
             if ($url->device === Device::Both) {
                 $this->audit($url, Device::Mobile, $sync);
                 return $this->audit($url, Device::Desktop, $sync);
@@ -122,7 +122,7 @@ final class Vitals
         $jobs = [];
 
         foreach (Url::query()->where('enabled', true)->get() as $url) {
-            $devices = $device !== null ? [$device] : ($url->device === Device::Both ? [Device::Mobile, Device::Desktop] : [$url->device]);
+            $devices = $device instanceof \LaravelVitals\Enums\Device ? [$device] : ($url->device === Device::Both ? [Device::Mobile, Device::Desktop] : [$url->device]);
 
             foreach ($devices as $effectiveDevice) {
                 $audit = Audit::create([

@@ -31,12 +31,12 @@ final class AuditSeo extends Component
         $auditModel = Audit::query()->with(['url', 'recommendations'])->findOrFail($this->auditId);
 
         $seoRecos = $auditModel->recommendations
-            ->filter(fn ($r) => $r->source === 'seo')
+            ->filter(fn ($r): bool => $r->source === 'seo')
             ->values();
 
         // Build category-grouped check results for display
         $registry = app(SeoCheckRegistry::class);
-        $checksGrouped = $this->buildGroupedChecks($auditModel, $seoRecos, $registry);
+        $checksGrouped = $this->buildGroupedChecks($seoRecos, $registry);
 
         return view('vitals::livewire.pages.audit-seo', [
             'audit'          => $auditModel,
@@ -56,7 +56,6 @@ final class AuditSeo extends Component
      * @return array<string, array<int, array<string, mixed>>>
      */
     private function buildGroupedChecks(
-        Audit $audit,
         \Illuminate\Database\Eloquent\Collection $seoRecos,
         SeoCheckRegistry $registry,
     ): array {
@@ -81,7 +80,7 @@ final class AuditSeo extends Component
                 'key'         => $check->key(),
                 'category'    => $category,
                 'weight'      => $check->weight(),
-                'status'      => $reco !== null ? $reco->severity->value : 'pass',
+                'status'      => $reco instanceof \Illuminate\Database\Eloquent\Model ? $reco->severity->value : 'pass',
                 'title_key'   => 'vitals::vitals.seo.checks.' . $check->key() . '.title',
                 'actual'      => null,
                 'expected'    => null,
@@ -90,7 +89,7 @@ final class AuditSeo extends Component
                 'detail_items' => null,
             ];
 
-            if ($reco !== null) {
+            if ($reco instanceof \Illuminate\Database\Eloquent\Model) {
                 $params = is_array($reco->translation_params) ? $reco->translation_params : [];
                 $entry['actual']       = $params['actual'] ?? null;
                 $entry['expected']     = $params['expected'] ?? null;

@@ -17,10 +17,10 @@ use Symfony\Component\DomCrawler\Crawler;
  * Orchestrator that fetches the page HTML, parses it, runs all enabled SEO checks,
  * and persists non-passing results as Recommendation rows with source='seo'.
  */
-final class SeoAuditor
+final readonly class SeoAuditor
 {
     public function __construct(
-        private readonly SeoCheckRegistry $registry,
+        private SeoCheckRegistry $registry,
     ) {}
 
     public function run(Audit $audit, LighthouseReport $report): void

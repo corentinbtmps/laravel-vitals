@@ -93,12 +93,10 @@ final class RobotsTxtAllowsIndexingCheck implements SeoCheck
                 continue;
             }
 
-            if ($currentAgent !== null && in_array($currentAgent, ['googlebot', '*'], true)) {
-                if (str_starts_with(strtolower($line), 'disallow:')) {
-                    $disallowed = trim(substr($line, 9));
-                    if ($disallowed !== '' && str_starts_with($path, $disallowed)) {
-                        return true;
-                    }
+            if ($currentAgent !== null && in_array($currentAgent, ['googlebot', '*'], true) && str_starts_with(strtolower($line), 'disallow:')) {
+                $disallowed = trim(substr($line, 9));
+                if ($disallowed !== '' && str_starts_with($path, $disallowed)) {
+                    return true;
                 }
             }
         }

@@ -40,7 +40,7 @@ it('shows routes when telemetry data exists', function (): void {
     Livewire::test(Queries::class)
         ->assertOk()
         ->assertDontSee('No query data yet')
-        ->assertViewHas('routes', fn ($routes) => count($routes) === 1);
+        ->assertViewHas('routes', fn ($routes): bool => count($routes) === 1);
 });
 
 it('period filter works', function (): void {
@@ -67,7 +67,7 @@ it('period filter works', function (): void {
 
     Livewire::test(Queries::class)
         ->set('period', '24h')
-        ->assertViewHas('routes', fn ($routes) => count($routes) === 0);
+        ->assertViewHas('routes', fn ($routes): bool => count($routes) === 0);
 });
 
 it('flags regression when current p75 > 2x previous period p75', function (): void {
@@ -107,6 +107,6 @@ it('shows memory hogs panel when peak_memory_bytes is present', function (): voi
     ]);
 
     Livewire::test(Queries::class)
-        ->assertViewHas('memoryHogs', fn ($hogs) => count($hogs) === 1 && $hogs[0]['memory_p75_mb'] > 0);
+        ->assertViewHas('memoryHogs', fn ($hogs): bool => count($hogs) === 1 && $hogs[0]['memory_p75_mb'] > 0);
 });
 

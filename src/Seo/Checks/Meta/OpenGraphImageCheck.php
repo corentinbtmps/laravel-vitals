@@ -43,7 +43,7 @@ final class OpenGraphImageCheck implements SeoCheck
             );
         }
 
-        $content = (string) ($ogImage->first()->attr('content') ?? '');
+        $content = $ogImage->first()->attr('content') ?? '';
         if (trim($content) === '') {
             return SeoCheckResult::warning(
                 key: $this->key(),

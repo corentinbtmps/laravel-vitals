@@ -13,9 +13,7 @@ use LaravelVitals\Telemetry\TelemetryRecorder;
  */
 function fakeQueryEvent(string $sql, float $timeMs = 2.0, array $bindings = []): QueryExecuted
 {
-    $event = new QueryExecuted($sql, $bindings, $timeMs, app('db')->connection());
-
-    return $event;
+    return new QueryExecuted($sql, $bindings, $timeMs, app('db')->connection());
 }
 
 it('captures query entries in the queries_log when recording is active', function (): void {
