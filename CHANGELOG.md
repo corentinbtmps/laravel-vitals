@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.87] - 2026-05-22
+## [v1.0.0-alpha.88] - 2026-05-22
+
+### Changed
+
+#### Issues "All recommendations" titles inherit severity color, no underline
+
+The title link on each Issues "All recommendations" card was rendering in the global rose accent with the default flux:link underline, regardless of the card's severity tint. Now each card wraps in `<flux:accent :color="$sev->fluxAccentColor()">` so the embedded `<flux:link variant="ghost">` inherits the row's severity color (amber for warning, rose for critical, sky for info) without an underline. The trailing "N occurrences" ghost button picks up the same accent context.
+
+New `Severity::fluxAccentColor()` helper returns the Flux-accent color name per severity (rose / amber / sky).
+
+
 
 ### Fixed
 

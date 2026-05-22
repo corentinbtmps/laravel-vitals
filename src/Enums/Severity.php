@@ -81,6 +81,20 @@ enum Severity: string
     }
 
     /**
+     * Flux accent color for a severity level — used to drive `<flux:accent color="…">`
+     * wrappers so flux:link / flux:button inherit the severity tint instead of the
+     * package's default rose accent.
+     */
+    public function fluxAccentColor(): string
+    {
+        return match ($this) {
+            self::Critical => 'rose',
+            self::Warning  => 'amber',
+            self::Info     => 'sky',
+        };
+    }
+
+    /**
      * Icon text color class for a severity level.
      */
     public function iconTextColor(): string
