@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v1.0.0-alpha.88] - 2026-05-22
+## [v1.0.0-alpha.89] - 2026-05-22
+
+### Changed
+
+- **"Occurrences" icon** swapped from `map-pin` to `rectangle-stack` across all four surfaces (Issues `recommendations-index`, `audit-detail` recommendation card buttons, `issue-detail` "Where this happens" heading, Learn page "X active in your app" link). Stacked rectangles visualize "N copies of this issue" more directly than a single location pin.
+
+
 
 ### Changed
 

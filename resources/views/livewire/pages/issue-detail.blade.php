@@ -70,7 +70,7 @@
     @if (! empty($grouped))
         <div>
             <div class="flex items-center gap-2 mb-4">
-                <flux:icon name="map-pin" class="size-5 text-accent-500" />
+                <flux:icon name="rectangle-stack" class="size-5 text-accent-500" />
                 <h2 class="text-base font-semibold">{{ __('vitals::vitals.issue_detail.where_this_happens') }}</h2>
                 <flux:badge color="amber" size="sm">{{ $occurrenceCount }}</flux:badge>
             </div>

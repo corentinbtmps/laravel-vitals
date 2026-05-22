@@ -41,7 +41,7 @@
                                         href="{{ route('vitals.issue.detail', ['auditKey' => $r->audit_key]) }}"
                                         variant="ghost"
                                         size="xs"
-                                        icon="map-pin"
+                                        icon="rectangle-stack"
                                         class="ml-auto"
                                     >{{ $r->occurrences }} {{ Str::plural(__('vitals::vitals.issue_detail.occurrences_label'), (int) $r->occurrences) }}</flux:button>
                                 </div>

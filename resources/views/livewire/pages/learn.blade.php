@@ -95,7 +95,7 @@
                             <flux:badge color="{{ $sev->fluxBadgeColor() }}" size="sm">{{ $sev->label() }}</flux:badge>
                             @if (($entry['active_count'] ?? 0) > 0)
                                 <flux:link href="{{ route('vitals.issue.detail', ['auditKey' => $entry['key']]) }}" class="text-xs font-semibold inline-flex items-center gap-1">
-                                    <flux:icon name="map-pin" class="size-3" />
+                                    <flux:icon name="rectangle-stack" class="size-3" />
                                     {{ __('vitals::vitals.learn_page.active_in_app', ['count' => $entry['active_count']]) }}
                                 </flux:link>
                             @endif
