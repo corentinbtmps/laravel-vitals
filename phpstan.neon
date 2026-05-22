@@ -17,3 +17,7 @@ parameters:
             # Package views are registered at runtime; view-string cannot be validated statically
             message: '/Parameter .* of function view expects view-string\|null, string given\./'
             identifier: argument.type
+        -
+            # selectRaw is composed from a driver-specific literal expression; safe to embed
+            message: '/Parameter .* of method .*::selectRaw\(\) expects literal-string, non-falsy-string given\./'
+            path: src/Livewire/Pages/Overview.php
