@@ -1,5 +1,5 @@
 {
-    "name": "humantocomputer/laravel-vitals",
+    "name": "corentinbtmps/laravel-vitals",
     "description": "GTMetrix-style Lighthouse audits combined with backend telemetry and host-app source pointers, for Laravel 11/12/13.",
     "keywords": [
         "laravel",
