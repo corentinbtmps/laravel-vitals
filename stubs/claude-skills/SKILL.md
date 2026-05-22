@@ -5,7 +5,7 @@ description: Use when working with the laravel-vitals package - running audits, 
 
 # Laravel Vitals
 
-This skill helps you work effectively with the `humantocomputer/laravel-vitals` package.
+This skill helps you work effectively with the `corentinbtmps/laravel-vitals` package.
 
 ## When to invoke
 

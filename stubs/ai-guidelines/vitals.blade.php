@@ -7,7 +7,7 @@ with the laravel-vitals package, follow these guidelines.
 
 ## What it does
 
-`humantocomputer/laravel-vitals` runs Lighthouse against URLs of the host
+`corentinbtmps/laravel-vitals` runs Lighthouse against URLs of the host
 Laravel app and persists scores, Core Web Vitals, backend telemetry (queries,
 memory, views, jobs), and recommendations enriched with file:line pointers
 into the host source code.
