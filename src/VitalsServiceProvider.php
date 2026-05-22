@@ -137,10 +137,34 @@ final class VitalsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         \Livewire\Livewire::addNamespace('vitals', classNamespace: 'LaravelVitals\\Livewire');
-        \Livewire\Livewire::component('vitals::pages.issues', \LaravelVitals\Livewire\Pages\Issues::class);
-        \Livewire\Livewire::component('vitals::pages.issue-detail', \LaravelVitals\Livewire\Pages\IssueDetail::class);
-        \Livewire\Livewire::component('vitals::pages.insights', \LaravelVitals\Livewire\Pages\Insights::class);
-        \Livewire\Livewire::component('vitals::pages.learn', \LaravelVitals\Livewire\Pages\Learn::class);
+
+        // Explicit registrations: Livewire's namespace auto-resolution misroutes
+        // route-bound full-page components on early v4.0 (resolves them without
+        // the `vitals::` prefix), so we name every dashboard component up-front.
+        $pages = [
+            'audit-compare'       => \LaravelVitals\Livewire\Pages\AuditCompare::class,
+            'audit-detail'        => \LaravelVitals\Livewire\Pages\AuditDetail::class,
+            'audit-seo'           => \LaravelVitals\Livewire\Pages\AuditSeo::class,
+            'budgets'             => \LaravelVitals\Livewire\Pages\Budgets::class,
+            'insights'            => \LaravelVitals\Livewire\Pages\Insights::class,
+            'issue-detail'        => \LaravelVitals\Livewire\Pages\IssueDetail::class,
+            'issues'              => \LaravelVitals\Livewire\Pages\Issues::class,
+            'learn'               => \LaravelVitals\Livewire\Pages\Learn::class,
+            'overview'            => \LaravelVitals\Livewire\Pages\Overview::class,
+            'queries'             => \LaravelVitals\Livewire\Pages\Queries::class,
+            'recommendations-index' => \LaravelVitals\Livewire\Pages\RecommendationsIndex::class,
+            'rum'                 => \LaravelVitals\Livewire\Pages\Rum::class,
+            'self-check'          => \LaravelVitals\Livewire\Pages\SelfCheck::class,
+            'seo'                 => \LaravelVitals\Livewire\Pages\Seo::class,
+            'status'              => \LaravelVitals\Livewire\Pages\Status::class,
+            'url-detail'          => \LaravelVitals\Livewire\Pages\UrlDetail::class,
+            'urls-list'           => \LaravelVitals\Livewire\Pages\UrlsList::class,
+        ];
+
+        foreach ($pages as $name => $class) {
+            \Livewire\Livewire::component('vitals::pages.' . $name, $class);
+        }
+
         \Livewire\Livewire::component('vitals::components.onboarding-banner', \LaravelVitals\Livewire\Components\OnboardingBanner::class);
         \Livewire\Livewire::component('vitals::components.spotlight', \LaravelVitals\Livewire\Components\Spotlight::class);
 
