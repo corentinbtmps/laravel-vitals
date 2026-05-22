@@ -3,8 +3,8 @@
 </p>
 
 [![CI](https://github.com/corentinbtmps/laravel-vitals/actions/workflows/ci.yml/badge.svg)](https://github.com/corentinbtmps/laravel-vitals/actions/workflows/ci.yml)
-[![Latest Stable Version](https://img.shields.io/packagist/v/humantocomputer/laravel-vitals.svg)](https://packagist.org/packages/humantocomputer/laravel-vitals)
-[![License](https://img.shields.io/packagist/l/humantocomputer/laravel-vitals.svg)](LICENSE.md)
+[![Latest Stable Version](https://img.shields.io/packagist/v/corentinbtmps/laravel-vitals.svg)](https://packagist.org/packages/corentinbtmps/laravel-vitals)
+[![License](https://img.shields.io/packagist/l/corentinbtmps/laravel-vitals.svg)](LICENSE.md)
 
 # Laravel Vitals
 
@@ -87,7 +87,7 @@ The `auto` driver (default) tries `local` → `playwright` → `pagespeed` in or
 ## Installation
 
 ```bash
-composer require humantocomputer/laravel-vitals
+composer require corentinbtmps/laravel-vitals
 php artisan vendor:publish --tag=vitals-config
 php artisan migrate
 php artisan vitals:install
@@ -357,7 +357,7 @@ curl -s https://yourapp.com/vitals/api/v1/urls/1/latest \
 
 ```yaml
 # .github/workflows/pr-perf.yml
-- uses: humantocomputer/laravel-vitals/.github/actions/vitals-pr-comment@v1.0.0
+- uses: corentinbtmps/laravel-vitals/.github/actions/vitals-pr-comment@v1.0.0
   with:
     preview-url: ${{ vars.PREVIEW_URL }}
     base-url: https://your-production-app.com
