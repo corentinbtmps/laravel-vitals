@@ -11,9 +11,9 @@
 **Performance auditing, Real User Monitoring, and actionable recommendations — all inside your Laravel app.**
 
 <p align="center">
-  <img src="docs/screenshots/overview-dark.png" alt="Laravel Vitals — Overview dashboard in dark mode" width="900">
+  <img src="docs/screenshots/overview-light.png" alt="Laravel Vitals — Overview dashboard" width="900">
   <br/>
-  <em>Overview dashboard — lens cards with sparklines, onboarding progress, active alerts</em>
+  <em>Overview dashboard — onboarding progress, lens cards with sparklines, recent activity, active alerts</em>
 </p>
 
 ---
@@ -157,7 +157,19 @@ Laravel Vitals ships its own SEO check engine that runs alongside every Lighthou
 | Meta (7) | Meta description, title length, Open Graph image, HTML lang, canonical URL, JSON-LD structured data, invalid head elements |
 | Performance (7) | TTFB ≤ 600ms, HTTP status code, HTML size, image size, JS bundle size, CSS size, gzip/Brotli compression |
 
-Results appear on **`/vitals/audits/{id}/seo`** (per-audit deep view with actual vs expected values, hint text, and links to Google documentation) and on the new **`/vitals/seo`** cross-URL page (aggregated score table, top failing checks by category, period filter).
+Results appear on **`/vitals/audits/{id}/seo`** (per-audit deep view with actual vs expected values, hint text, and links to Google documentation) and on the **`/vitals/seo`** cross-URL page (aggregated score table, top failing checks by category, period filter).
+
+<p align="center">
+  <img src="docs/screenshots/seo-light.png" alt="SEO — average score, per-URL table, top failing checks with category filter" width="900">
+  <br/>
+  <em>SEO — average score across URLs, per-URL custom + Lighthouse scores, top failing checks filtered by category</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/audit-seo-light.png" alt="Per-audit SEO deep view — checks grouped by Configuration / Content / Meta / Performance" width="900">
+  <br/>
+  <em>Per-audit SEO deep view — each check grouped by category, with actual vs expected values and direct links to Google documentation</em>
+</p>
 
 The combined `vitals_seo_score` blends Lighthouse's SEO score (50%) with the weighted pass rate of all custom checks (50%), producing a stricter 0–100 score.
 
@@ -227,9 +239,23 @@ Add `@vitalsRum` to your layout's `<head>` to collect Core Web Vitals (LCP, INP,
 
 ### Database query baselines
 
+<p align="center">
+  <img src="docs/screenshots/queries-light.png" alt="Database queries — per-route Typical / Worst case query counts and times" width="900">
+  <br/>
+  <em>Queries — per-route stats with N+1 badges, plain-language Typical / Worst case labels, and memory-hungry route ranking</em>
+</p>
+
 The `/vitals/queries` page answers a question most teams cannot: "Did this recent deployment slow down the database on route X?"
 
-For each route with telemetry data you get average, p75, and p95 query count and query time. Routes are compared to the previous equivalent period — if you are looking at 7 days, it compares to the 7 days before that. A route is flagged with a regression badge when its current p75 query count is more than double what it was in the baseline period. The page also surfaces the top 5 routes by p75 peak memory — useful for catching routes that spike to 256 MB on 25% of requests before they cause production incidents.
+For each route with telemetry data you get the number of samples, **Typical** (75th percentile) and **Worst case** (95th percentile) for both query count and query time. Routes are compared to the previous equivalent period — if you are looking at 7 days, it compares to the 7 days before that. A route is flagged with a regression badge when its current Typical query count is more than double the baseline. Any route whose audits have triggered N+1 detection gets a red **N+1** badge inline with its name.
+
+Click any route to expand a per-route panel below the table with:
+
+- **Affected URLs** — every URL that hit this route in the period, linking back to URL detail.
+- **Recent audits** — last five audits with this route name, with their queries count and time.
+- **Repeated SQL patterns** — the top SQL patterns the N+1 detector caught on this route, with occurrence count and the exact `file:line` caller (clickable, opens in your IDE).
+
+A "Memory-hungry routes" panel below ranks the top 5 routes by typical peak memory — useful for catching routes that spike to 256 MB on 25% of requests before they cause production incidents.
 
 ---
 
@@ -259,12 +285,12 @@ php artisan vitals:audit --all --sync --fail-on-budget --format=junit > results.
 A Livewire application at `/vitals` — no asset compilation required in your app.
 
 <p align="center">
-  <img src="docs/screenshots/url-detail-dark.png" alt="URL detail — performance trend with score annotations" width="900">
+  <img src="docs/screenshots/audit-detail-light.png" alt="Audit detail — score gauges and Core Web Vitals breakdown" width="900">
   <br/>
-  <em>URL detail — area chart with daily scores, metric toggle, and period selector</em>
+  <em>Audit detail — Performance / Accessibility / Best Practices / SEO score gauges with delta vs previous audit, Core Web Vitals cards, front-end ↔ back-end timing breakdown</em>
 </p>
 
-Seven top-level pages: Overview · URLs · Issues · RUM · Queries · Learn · Budgets. A built-in Cmd+K spotlight searches across URLs, audits, and recommendations anywhere in the dashboard.
+Eight top-level pages: Overview · URLs · Issues · SEO · RUM · Queries · Learn · Budgets. A built-in Cmd+K spotlight searches across URLs, audits, and recommendations anywhere in the dashboard.
 
 **Access control:** available in `local` by default. To allow access in production, define the `viewVitals` gate:
 
@@ -279,14 +305,14 @@ Vitals::authorize(fn ($user) => $user?->is_admin ?? false);
 ### Issues page
 
 <p align="center">
-  <img src="docs/screenshots/issues-dark.png" alt="Issues — Top issues tab with Quick Wins callouts" width="900">
+  <img src="docs/screenshots/issues-light.png" alt="Issues — All recommendations with severity-tinted cards" width="900">
   <br/>
-  <em>Issues — Quick Wins, Worsening URLs, Improving URLs, third-party costs</em>
+  <em>Issues — All recommendations aggregated across audits, each card tinted by severity (amber / rose / sky) with title color matching</em>
 </p>
 
 `/vitals/issues` has two tabs. **Top issues** shows cross-URL quick wins, URLs that are currently worsening or improving, and third-party script cost breakdowns. **All recommendations** aggregates every recommendation across all audits, sorted by frequency — making it easy to find the one fix that would improve the most pages at once.
 
-Each recommendation row links to `/vitals/issues/{audit_key}` — a deep view that shows every occurrence grouped by URL, with the exact file and line where the issue originates in your code. For N+1 queries, this page lists the top 3 repeated SQL patterns with occurrence counts and caller location.
+Each row is a severity-tinted card: amber for warning, rose for critical, sky for info. The title link inherits the card's severity color so the page reads at a glance — no need to parse small badges. Click any title (or the trailing `N occurrences` button) to land on `/vitals/issues/{audit_key}` — a deep view that shows every occurrence grouped by URL, with the exact file and line where the issue originates in your code. For N+1 queries, this page lists the top 3 repeated SQL patterns with occurrence counts and caller location.
 
 Each recommendation includes severity (info / warning / critical), category (Performance, Accessibility, Best Practices, SEO), the source code reference (file + line), a one-sentence fix hint, and links to the relevant web.dev article and Laravel documentation. The package covers Lighthouse findings, Laravel-specific issues (missing `config:cache`, debug mode in production, sync queue, disabled OPcache), and backend signals (N+1 queries with SQL attribution, slow queries, large payloads).
 
@@ -295,12 +321,12 @@ Each recommendation includes severity (info / warning / critical), category (Per
 ### Learn knowledge base
 
 <p align="center">
-  <img src="docs/screenshots/learn-dark.png" alt="Learn — category tiles and recommendation cards" width="900">
+  <img src="docs/screenshots/learn-light.png" alt="Learn — category tiles and severity-tinted recommendation cards" width="900">
   <br/>
-  <em>Learn — ~42 issue types explained with web.dev / Laravel doc links and code samples</em>
+  <em>Learn — 73 issue types explained with web.dev / Laravel doc links, severity-tinted cards, and Recommended / Avoid code samples</em>
 </p>
 
-`/vitals/learn` is a browsable knowledge base of approximately 42 known issue types, grouped by category. Each entry covers what causes the finding, its impact, and how to fix it — with links to web.dev and the relevant Laravel documentation.
+`/vitals/learn` is a browsable knowledge base of every detectable issue, grouped by category (Performance, Accessibility, Best Practices, SEO). Each entry covers what causes the finding, its impact, and how to fix it — with links to web.dev and the relevant Laravel documentation, plus side-by-side **Recommended** / **Avoid** code snippets when relevant. The category tiles at the top double as filters and show the active-in-your-app count per category, so you can spot which class of issues currently bites your project hardest.
 
 ---
 
