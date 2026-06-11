@@ -84,9 +84,7 @@
         "sort-packages": true,
         "policy": {
             "advisories": {
-                "ignore": {
-                    "laravel/framework": "Transitive dev-only dependency (orchestra/testbench + pestphp/pest-plugin-laravel). This library never ships laravel/framework — consumers pin their own version. Unblocks the Laravel 11 CI matrix; advisory blocking stays on for every other package."
-                }
+                "ignore": ["laravel/framework"]
             }
         }
     },
