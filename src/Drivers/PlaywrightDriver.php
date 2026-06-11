@@ -10,6 +10,7 @@ use LaravelVitals\Models\Url;
 use LaravelVitals\Support\AuditException;
 use LaravelVitals\Support\AuditOptions;
 use LaravelVitals\Support\LighthouseReport;
+use LaravelVitals\Support\NodeModuleResolver;
 use LaravelVitals\Support\ProcessFactory;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -79,6 +80,11 @@ final readonly class PlaywrightDriver implements LighthouseDriver
 
     public function isAvailable(): bool
     {
+        return $this->nodeBinaryPresent() && $this->nodePackagesInstalled();
+    }
+
+    private function nodeBinaryPresent(): bool
+    {
         $node = (string) config('vitals.drivers.playwright.node_binary', 'node');
 
         if (str_contains($node, '/')) {
@@ -93,6 +99,20 @@ final readonly class PlaywrightDriver implements LighthouseDriver
         $process->run();
 
         return $process->isSuccessful() && trim($process->getOutput()) !== '';
+    }
+
+    /**
+     * The runner imports `playwright` and `playwright-lighthouse`. A present
+     * `node` binary is not enough — without these packages the audit dies at
+     * runtime with ERR_MODULE_NOT_FOUND, so the availability probe must check
+     * them too (otherwise the auto chain wrongly stops here).
+     */
+    private function nodePackagesInstalled(): bool
+    {
+        return NodeModuleResolver::allInstalled(
+            dirname($this->scriptPath()),
+            ['playwright', 'playwright-lighthouse'],
+        );
     }
 
     private function scriptPath(): string

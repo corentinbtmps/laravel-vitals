@@ -135,7 +135,7 @@ final class DoctorCommand extends Command
         foreach (['local', 'playwright', 'pagespeed'] as $name) {
             try {
                 $available = $manager->driver($name)->isAvailable();
-                $this->check($available ? 'pass' : 'warn', $name, $available ? '' : 'Driver not available');
+                $this->check($available ? 'pass' : 'warn', $name, $available ? '' : $manager->installHint($name));
             } catch (\Throwable $e) {
                 $this->check('fail', $name, $e->getMessage());
             }

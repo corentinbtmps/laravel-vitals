@@ -80,7 +80,21 @@ final class VitalsServiceProvider extends PackageServiceProvider
         $this->app->singleton(\LaravelVitals\Drivers\LighthouseDriverManager::class);
         $this->app->bind(
             \LaravelVitals\Contracts\LighthouseDriver::class,
-            fn ($app) => $app->make(\LaravelVitals\Drivers\LighthouseDriverManager::class)->resolve(),
+            function ($app): \LaravelVitals\Contracts\LighthouseDriver {
+                try {
+                    return $app->make(\LaravelVitals\Drivers\LighthouseDriverManager::class)->resolve();
+                } catch (\InvalidArgumentException $e) {
+                    // Driver *selection* failed (none available / misconfigured).
+                    // Surface it as an audit failure so callers handle it
+                    // gracefully (clean exit + lock release) with the actionable
+                    // install hints, rather than an uncaught exception.
+                    throw new \LaravelVitals\Support\AuditException(
+                        $e->getMessage(),
+                        driver: (string) config('vitals.driver', 'auto'),
+                        previous: $e,
+                    );
+                }
+            },
         );
 
         $this->app->bind(\LaravelVitals\Telemetry\TelemetryRecorder::class);
@@ -123,15 +137,10 @@ final class VitalsServiceProvider extends PackageServiceProvider
             );
         });
 
-        $this->app->singleton(\LaravelVitals\Contracts\ChartRenderer::class, function (): \LaravelVitals\Charts\FluxProChartsRenderer|\LaravelVitals\Charts\ApexChartsRenderer {
-            $configured = (string) config('vitals.ui.charts', 'auto');
-
-            if ($configured === 'flux' || ($configured === 'auto' && class_exists('\\Flux\\Pro\\Charts\\Chart'))) {
-                return new \LaravelVitals\Charts\FluxProChartsRenderer();
-            }
-
-            return new \LaravelVitals\Charts\ApexChartsRenderer();
-        });
+        $this->app->singleton(
+            \LaravelVitals\Contracts\ChartRenderer::class,
+            static fn (): \LaravelVitals\Charts\ApexChartsRenderer => new \LaravelVitals\Charts\ApexChartsRenderer(),
+        );
     }
 
     public function packageBooted(): void

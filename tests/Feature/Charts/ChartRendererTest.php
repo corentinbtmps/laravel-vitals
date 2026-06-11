@@ -32,7 +32,7 @@ it('throws on an unknown chart type', function (): void {
         ->toThrow(\InvalidArgumentException::class);
 });
 
-it('binds ApexChartsRenderer when Flux Pro is not installed', function (): void {
+it('binds ApexChartsRenderer as the chart renderer', function (): void {
     expect(app(\LaravelVitals\Contracts\ChartRenderer::class))
         ->toBeInstanceOf(\LaravelVitals\Charts\ApexChartsRenderer::class);
 });

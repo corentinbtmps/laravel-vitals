@@ -114,8 +114,6 @@ return [
     |--------------------------------------------------------------------------
     | UI toggles
     |--------------------------------------------------------------------------
-    | charts: 'auto' | 'apex' | 'flux'
-    |
     | editor: one of 'vscode', 'cursor', 'phpstorm', 'idea', 'sublime',
     |         'atom', 'textmate', 'macvim', 'emacs', 'nova', 'zed', or null.
     |         Set via VITALS_EDITOR env var to enable "Open in editor" links
@@ -127,7 +125,6 @@ return [
     |         Set via VITALS_EDITOR_URL_TEMPLATE env var.
     */
     'ui' => [
-        'charts'              => 'auto',
         'editor'              => env('VITALS_EDITOR', null),
         'editor_url_template' => env('VITALS_EDITOR_URL_TEMPLATE', null),
     ],

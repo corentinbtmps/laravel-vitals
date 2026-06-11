@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Playwright driver reported itself available with only a Node binary present.** `isAvailable()` now also verifies that the `playwright` and `playwright-lighthouse` npm packages resolve, so the `auto` chain no longer stops on Playwright and then dies at runtime with `ERR_MODULE_NOT_FOUND`. The Node runner also now prints an actionable install message instead of a raw module-resolution stack trace.
+- **`php artisan view:cache` crashed with `Unable to locate a class or view for component [flux::chart.bar]`** when Flux Pro was not installed. The Flux Pro chart views referenced Pro-only components that the view cache compiles unconditionally; they have been removed.
+
+### Changed
+
+- **Charts now always render with ApexCharts.** Flux Pro chart support (`FluxProChartsRenderer`, the `charts/flux/*` views, the `livewire/flux-pro` suggestion, and the `vitals.ui.charts` config key) has been removed. Flux Free remains the dashboard UI.
+- Driver-resolution failures now surface as actionable errors. `vitals:doctor`, the audit commands, and the `auto`/explicit resolution errors all spell out the exact command needed to enable each driver (e.g. `npm install --save-dev playwright playwright-lighthouse && npx playwright install chromium`).
+
+### Upgrade notes
+
+- **Audits silently doing nothing, or failing with a Node/Lighthouse error?** Run `php artisan vitals:doctor` and follow the install hint for your chosen driver. A Node binary alone does **not** make the Playwright driver work — it also needs `npm install --save-dev playwright playwright-lighthouse` followed by `npx playwright install chromium`. See [Driver installation](README.md#driver-installation).
+- If you previously set `vitals.ui.charts` in your published config, the key is now ignored and can be removed; ApexCharts is always used.
+
 ## [v1.0.0] - 2026-05-22
 
 First stable release. A Laravel-native, mono-project performance audit dashboard built on Livewire 4 + Flux Free 2 + Tailwind 4, with full support for Laravel 11 / 12 / 13.

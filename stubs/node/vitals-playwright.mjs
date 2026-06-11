@@ -2,8 +2,22 @@
 // Laravel Vitals — Playwright + Lighthouse runner.
 // Invoked by PlaywrightDriver as: node vitals-playwright.mjs --url=... --device=mobile --headers='{"X-Vitals-Audit-Id":"..."}'
 
-import { chromium } from 'playwright';
-import { playAudit } from 'playwright-lighthouse';
+let chromium, playAudit;
+try {
+    ({ chromium } = await import('playwright'));
+    ({ playAudit } = await import('playwright-lighthouse'));
+} catch {
+    console.error(
+        'Laravel Vitals: the Playwright driver requires the "playwright" and ' +
+        '"playwright-lighthouse" npm packages, which are not installed.\n\n' +
+        'Install them in your project root:\n\n' +
+        '  npm install --save-dev playwright playwright-lighthouse\n' +
+        '  npx playwright install chromium\n\n' +
+        'Or switch drivers via VITALS_DRIVER (local | pagespeed). See ' +
+        'https://github.com/corentinbtmps/laravel-vitals#driver-installation'
+    );
+    process.exit(3);
+}
 
 const args = Object.fromEntries(
     process.argv.slice(2).map(a => {

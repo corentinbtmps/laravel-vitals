@@ -76,11 +76,9 @@ Laravel Vitals runs Google Lighthouse against your own pages, captures what your
 - PHP 8.2 or higher
 - Laravel 11, 12, or 13
 - Livewire 4 and Flux Free 2 (installed automatically by Composer)
-- **Local driver:** Node 18+ and `npm install -g lighthouse`
-- **Playwright driver:** Node 18+ and `npm install playwright playwright-lighthouse` in your project
-- **PageSpeed driver:** a free [Google PageSpeed Insights API key](https://developers.google.com/speed/docs/insights/v5/get-started)
+- **A Lighthouse driver** — at least one of `local`, `playwright`, or `pagespeed` must be installed before audits can run. See [Driver installation](#driver-installation) for exact commands.
 
-The `auto` driver (default) tries `local` → `playwright` → `pagespeed` in order. If your server has Node and the lighthouse CLI, no extra setup is needed.
+The `auto` driver (default) tries `local` → `playwright` → `pagespeed` in order and uses the first one that is actually installed. **A bare Node binary is not enough** — the `playwright` driver also needs its npm packages and a browser, and the `local` driver needs the `lighthouse` CLI. Run `php artisan vitals:doctor` at any time to see which drivers are available and what's missing.
 
 ---
 
@@ -199,6 +197,31 @@ The `local` and `playwright` drivers work behind authentication. The `pagespeed`
 php artisan vitals:audit home --driver=local --device=mobile
 php artisan vitals:audit --all --sync   # all URLs, synchronous (CI-friendly)
 ```
+
+#### Driver installation
+
+Pick **one** driver and install its dependencies. None are installed automatically — Lighthouse and Playwright are external tools, not Composer packages. After installing, run `php artisan vitals:doctor` to confirm the driver reports as available.
+
+**`local`** — the [Lighthouse CLI](https://github.com/GoogleChrome/lighthouse) on your `$PATH` (needs Node 18+ and a Chrome/Chromium install):
+
+```bash
+npm install -g lighthouse
+```
+
+**`playwright`** — the `playwright` + `playwright-lighthouse` npm packages **plus a browser binary**, installed in your project root. The browser step (`npx playwright install chromium`) is required — without it the runner fails at launch:
+
+```bash
+npm install --save-dev playwright playwright-lighthouse
+npx playwright install chromium
+```
+
+**`pagespeed`** — a free [Google PageSpeed Insights API key](https://developers.google.com/speed/docs/insights/v5/get-started). No Node required, but the target URL must be publicly reachable:
+
+```dotenv
+VITALS_PAGESPEED_API_KEY=your-key-here
+```
+
+If you set `VITALS_DRIVER` explicitly and its dependencies are missing, the audit fails fast with the exact install command. In `auto` mode, an uninstalled driver is skipped rather than erroring. Override the binary paths with `VITALS_NODE_BINARY` / `VITALS_LIGHTHOUSE_BINARY` when they live outside `$PATH`.
 
 ---
 
