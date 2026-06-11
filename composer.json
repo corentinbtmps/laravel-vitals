@@ -84,13 +84,9 @@
         "sort-packages": true,
         "policy": {
             "advisories": {
-                "ignore-id": [
-                    "PKSA-mdq4-51ck-6kdq",
-                    "PKSA-8qx3-n5y5-vvnd",
-                    "PKSA-q46n-4fdk-zjr4",
-                    "PKSA-qzrn-rnz3-85w1",
-                    "PKSA-w7xr-vk7n-rstm"
-                ]
+                "ignore": {
+                    "laravel/framework": "Transitive dev-only dependency (orchestra/testbench + pestphp/pest-plugin-laravel). This library never ships laravel/framework — consumers pin their own version. Unblocks the Laravel 11 CI matrix; advisory blocking stays on for every other package."
+                }
             }
         }
     },
