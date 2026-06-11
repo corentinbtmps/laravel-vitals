@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.1] - 2026-06-11
+
 ### Fixed
 
 - **Playwright driver reported itself available with only a Node binary present.** `isAvailable()` now also verifies that the `playwright` and `playwright-lighthouse` npm packages resolve, so the `auto` chain no longer stops on Playwright and then dies at runtime with `ERR_MODULE_NOT_FOUND`. The Node runner also now prints an actionable install message instead of a raw module-resolution stack trace.
