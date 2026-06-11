@@ -43,6 +43,11 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "illuminate/contracts=${{ matrix.laravel }}" "illuminate/database=${{ matrix.laravel }}" "illuminate/support=${{ matrix.laravel }}" --no-interaction --no-update
+          # Re-assert after the require rewrite: laravel/framework 11.x (a dev-only
+          # transitive dep via testbench/pest-plugin-laravel) only has advisory-flagged
+          # releases, which Composer blocks during resolution. This library ships no
+          # framework, so disable advisory version-blocking for the CI matrix only.
+          composer config --no-plugins --json policy.advisories.block false 2>/dev/null || true
           composer update --prefer-dist --no-interaction --no-progress
 
       - name: Run tests

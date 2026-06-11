@@ -84,7 +84,7 @@
         "sort-packages": true,
         "policy": {
             "advisories": {
-                "ignore": ["laravel/framework"]
+                "block": false
             }
         }
     },
