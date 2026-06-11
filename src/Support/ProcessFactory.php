@@ -13,7 +13,7 @@ use Symfony\Component\Process\Process;
 class ProcessFactory
 {
     /**
-     * @param array<string, string|null>|null $env
+     * @param array<string, string|\Stringable|false>|null $env
      */
     public function fromShellCommandline(
         string $command,

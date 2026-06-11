@@ -140,7 +140,7 @@ final class RecommendationBuilder
             if (count($heavyScripts) > 0) {
                 $worst = array_reduce(
                     $heavyScripts,
-                    fn ($carry, $item) => is_array($carry) && (float) ($carry['total_ms'] ?? 0) > (float) ($item['total_ms'] ?? 0) ? $carry : $item,
+                    fn ($carry, $item): mixed => is_array($carry) && (float) ($carry['total_ms'] ?? 0) > (float) ($item['total_ms'] ?? 0) ? $carry : $item,
                 );
                 $this->persistDetail($audit, 'bootup-time-high', [
                     'ms'  => (int) round((float) ($worst['total_ms'] ?? 0)),
