@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.1.0] - 2026-06-16
+
+### Fixed
+
+- **The cross-URL SEO overview (`/vitals/seo`) crashed on PostgreSQL** with `SQLSTATE[42883]: function max(uuid) does not exist`. The "top failing checks" list aggregated `MAX(audit_id)` over the `uuid` primary key, which PostgreSQL has no aggregate for (MySQL/SQLite store UUIDs as text, so it silently worked there). The list is now aggregated in PHP from the already eager-loaded recommendations — fully portable across drivers and one fewer database query.
+
+### Added
+
+- **PostgreSQL is now covered by CI.** A dedicated Postgres lane runs the full Pest suite against `postgres:16`, so driver-specific issues like the `max(uuid)` crash are caught before release. The test harness honours `DB_CONNECTION=pgsql` (and the matching `DB_*` env vars) to switch the suite onto PostgreSQL locally too.
+
 ## [v1.0.1] - 2026-06-11
 
 ### Fixed
