@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **The cross-URL SEO overview (`/vitals/seo`) crashed on PostgreSQL** with `SQLSTATE[42883]: function max(uuid) does not exist`. The "top failing checks" list aggregated `MAX(audit_id)` over the `uuid` primary key, which PostgreSQL has no aggregate for (MySQL/SQLite store UUIDs as text, so it silently worked there). The list is now aggregated in PHP from the already eager-loaded recommendations — fully portable across drivers and one fewer database query.
+PostgreSQL support is now exercised in CI, which surfaced several driver-specific crashes that MySQL/SQLite tolerated silently. All are fixed:
+
+- **The cross-URL SEO overview (`/vitals/seo`) crashed** with `SQLSTATE[42883]: function max(uuid) does not exist`. The "top failing checks" list aggregated `MAX(audit_id)` over the `uuid` primary key, which PostgreSQL has no aggregate for. The list is now aggregated in PHP from the already eager-loaded recommendations — portable across drivers and one fewer database query.
+- **The public status page (`/vitals/status`) crashed** with `SQLSTATE[42703]: column "day" does not exist`. The uptime calculation grouped by a `DATE(...) as day` alias that PostgreSQL cannot reference in `GROUP BY`. It now uses `COUNT(DISTINCT DATE(...))`, which also fixes a latent miscount (the grouped `count()` returned a single group's row count, not the number of active days).
+- **Audit detail pages and the JSON API returned HTTP 500 instead of 404** for malformed ids, because a non-uuid string sent to a `uuid` column (or a non-numeric segment sent to an integer `url` id) throws `SQLSTATE[22P02]` on PostgreSQL. Lookups now validate the id shape first and resolve cleanly to 404. Affects `/vitals/audits/{id}`, `/vitals/audits/{id}/seo`, `/vitals/audits/{a}/compare/{b}`, and `/vitals/api/v1/audits/{id}` + `/urls/{id}/latest`.
 
 ### Added
 
-- **PostgreSQL is now covered by CI.** A dedicated Postgres lane runs the full Pest suite against `postgres:16`, so driver-specific issues like the `max(uuid)` crash are caught before release. The test harness honours `DB_CONNECTION=pgsql` (and the matching `DB_*` env vars) to switch the suite onto PostgreSQL locally too.
+- **PostgreSQL is now covered by CI.** A dedicated Postgres lane runs the full Pest suite against `postgres:16`, so driver-specific issues like the ones above are caught before release. The test harness honours `DB_CONNECTION=pgsql` (and the matching `DB_*` env vars) to switch the suite onto PostgreSQL locally too.
 
 ## [v1.0.1] - 2026-06-11
 

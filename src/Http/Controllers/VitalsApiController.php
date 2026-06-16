@@ -6,6 +6,7 @@ namespace LaravelVitals\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\Recommendation;
@@ -61,7 +62,11 @@ final class VitalsApiController
      */
     public function audit(Request $request, string $audit): JsonResponse
     {
-        $record = Audit::query()->with(['url', 'recommendations'])->find($audit);
+        // Guard malformed ids: querying a uuid column with a non-uuid string
+        // throws on strict drivers (PostgreSQL 22P02) instead of returning null.
+        $record = Str::isUuid($audit)
+            ? Audit::query()->with(['url', 'recommendations'])->find($audit)
+            : null;
 
         if ($record === null) {
             return response()->json(
@@ -114,7 +119,11 @@ final class VitalsApiController
      */
     public function urlLatest(Request $request, string $url): JsonResponse
     {
-        $urlRecord = Url::query()->find($url);
+        // url ids are integers; a non-numeric path segment crashes a strict
+        // driver (PostgreSQL 22P02) rather than simply not matching.
+        $urlRecord = ctype_digit($url)
+            ? Url::query()->find($url)
+            : null;
 
         if ($urlRecord === null) {
             return response()->json(

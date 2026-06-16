@@ -13,6 +13,10 @@ it('runs vitals:doctor and prints all expected check sections', function (): voi
 });
 
 it('returns non-zero when migrations are not run', function (): void {
+    // Drop FK-dependent tables first; PostgreSQL refuses to drop a table that is
+    // still referenced by a foreign key (MySQL/SQLite are lenient in tests).
+    \Illuminate\Support\Facades\Schema::dropIfExists('vitals_audit_recommendations');
+    \Illuminate\Support\Facades\Schema::dropIfExists('vitals_backend_telemetry');
     \Illuminate\Support\Facades\Schema::drop('vitals_audits');
 
     $exit = $this->artisan('vitals:doctor')->run();
@@ -83,6 +87,10 @@ it('quiet mode returns success exit code when all checks pass', function (): voi
 });
 
 it('quiet mode returns failure exit code when checks fail', function (): void {
+    // Drop FK-dependent tables first; PostgreSQL refuses to drop a table that is
+    // still referenced by a foreign key (MySQL/SQLite are lenient in tests).
+    \Illuminate\Support\Facades\Schema::dropIfExists('vitals_audit_recommendations');
+    \Illuminate\Support\Facades\Schema::dropIfExists('vitals_backend_telemetry');
     \Illuminate\Support\Facades\Schema::drop('vitals_audits');
 
     // --quiet (Symfony built-in) silences all output but the exit code still

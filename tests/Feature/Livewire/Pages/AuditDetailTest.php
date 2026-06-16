@@ -44,3 +44,9 @@ it('renders audit details with scores, metrics, and recommendations', function (
         ->assertSeeText('Reduce unused JavaScript')
         ->assertSee('welcome.blade.php');
 });
+
+it('returns 404 for a malformed audit id instead of crashing on strict drivers', function (): void {
+    // A non-uuid id used to reach the uuid column and throw (PostgreSQL 22P02 →
+    // HTTP 500); it must resolve to a clean 404 on every driver.
+    $this->get('/vitals/audits/not-a-valid-uuid')->assertNotFound();
+});

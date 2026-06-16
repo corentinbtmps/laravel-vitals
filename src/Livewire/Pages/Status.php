@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Models\RumEvent;
@@ -49,20 +50,21 @@ final class Status extends Component
     {
         $totalDays = 30;
 
+        // count(distinct DATE(...)) = number of days with at least one event.
+        // (A grouped ->count() would return the first group's row count, not the
+        // day count, and the alias-in-group-by form crashes on PostgreSQL.)
         $activeDays = RumEvent::query()
             ->where('occurred_at', '>=', now()->subDays($totalDays))
-            ->selectRaw("DATE(occurred_at) as day")
-            ->groupBy('day')
-            ->count();
+            ->distinct()
+            ->count(DB::raw('DATE(occurred_at)'));
 
         if ($activeDays === 0) {
             // No RUM data — compute from audits as fallback.
             $activeDays = Audit::query()
                 ->where('status', AuditStatus::Completed)
                 ->where('completed_at', '>=', now()->subDays($totalDays))
-                ->selectRaw("DATE(completed_at) as day")
-                ->groupBy('day')
-                ->count();
+                ->distinct()
+                ->count(DB::raw('DATE(completed_at)'));
         }
 
         return min(100.0, round($activeDays / $totalDays * 100, 2));

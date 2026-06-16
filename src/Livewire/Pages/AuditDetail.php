@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Models\Audit;
 use Livewire\Component;
@@ -20,6 +21,10 @@ final class AuditDetail extends Component
 
     public function render(): View
     {
+        // A malformed (non-uuid) id crashes a strict driver (PostgreSQL 22P02)
+        // before findOrFail can turn it into a clean 404.
+        abort_unless(Str::isUuid($this->auditId), 404);
+
         $auditModel = Audit::query()
             ->with(['url', 'recommendations', 'telemetry'])
             ->findOrFail($this->auditId);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use LaravelVitals\Models\Audit;
 use Livewire\Component;
 
@@ -31,6 +32,9 @@ final class AuditCompare extends Component
 
     public function render(): View
     {
+        // Malformed (non-uuid) ids → clean 404 instead of a strict-driver crash.
+        abort_unless(Str::isUuid($this->auditAId) && Str::isUuid($this->auditBId), 404);
+
         $auditA = Audit::query()->with(['url', 'recommendations', 'telemetry'])->findOrFail($this->auditAId);
         $auditB = Audit::query()->with(['url', 'recommendations', 'telemetry'])->findOrFail($this->auditBId);
 

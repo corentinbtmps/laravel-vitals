@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaravelVitals\Livewire\Pages;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use LaravelVitals\Models\Audit;
 use LaravelVitals\Seo\SeoCheckRegistry;
 use Livewire\Component;
@@ -28,6 +29,9 @@ final class AuditSeo extends Component
 
     public function render(): View
     {
+        // Malformed (non-uuid) id → clean 404 instead of a strict-driver crash.
+        abort_unless(Str::isUuid($this->auditId), 404);
+
         $auditModel = Audit::query()->with(['url', 'recommendations'])->findOrFail($this->auditId);
 
         $seoRecos = $auditModel->recommendations
