@@ -80,3 +80,37 @@ it('can filter top failing checks by category', function (): void {
         ->set('category', 'meta')
         ->assertOk();
 });
+
+it('aggregates top failing checks across multiple urls', function (): void {
+    // Same failing check on two different URLs should count as 2 occurrences.
+    // This path used to run MAX(audit_id) over a uuid column, which crashes on
+    // PostgreSQL (no max(uuid) aggregate) — exercised here against the CI pg lane.
+    foreach (['/a', '/b'] as $i => $path) {
+        $url = Url::create(['label' => "agg-url-{$i}", 'path' => $path]);
+        $audit = Audit::create([
+            'id'           => Str::uuid()->toString(),
+            'url_id'       => $url->id,
+            'driver'       => 'stub',
+            'device'       => 'mobile',
+            'status'       => 'completed',
+            'score_seo'    => 50,
+            'completed_at' => now(),
+        ]);
+
+        Recommendation::create([
+            'audit_id'        => $audit->id,
+            'source'          => 'seo',
+            'audit_key'       => 'seo-meta-description',
+            'category'        => 'seo',
+            'severity'        => 'warning',
+            'title_key'       => 'vitals::vitals.seo.checks.meta-description.title',
+            'description_key' => 'vitals::vitals.seo.checks.meta-description.description',
+            'code_references' => [],
+        ]);
+    }
+
+    Livewire::test(Seo::class)
+        ->assertOk()
+        ->assertSeeText('seo-meta-description')
+        ->assertSeeText('× 2');
+});

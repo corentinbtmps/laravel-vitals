@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Collection;
 use LaravelVitals\Enums\AuditStatus;
 use LaravelVitals\Enums\Period;
 use LaravelVitals\Models\Audit;
-use LaravelVitals\Models\Recommendation;
 use LaravelVitals\Models\Url;
+use LaravelVitals\Support\TopFailingCheck;
 use Livewire\Component;
 
 /**
@@ -52,31 +52,10 @@ final class Seo extends Component
 
         // Top failing checks — counts unique URLs (one row per latest-audit-per-URL),
         // so badges align with the per-URL table above (40 URLs → max 40 occurrences).
-        $latestAuditIds = array_map(static fn (array $row): string => $row['audit']->id, $perUrl);
-
-        $topFailingQuery = Recommendation::query()
-            ->whereIn('audit_id', $latestAuditIds)
-            ->where('source', 'seo');
-
-        if ($this->category !== 'all') {
-            $registry = app(\LaravelVitals\Seo\SeoCheckRegistry::class);
-            $keysInCategory = array_map(
-                fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): string => 'seo-' . $c->key(),
-                array_filter(
-                    $registry->all(),
-                    fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): bool => $c->category()->value === $this->category,
-                ),
-            );
-
-            $topFailingQuery->whereIn('audit_key', $keysInCategory);
-        }
-
-        $topFailing = $topFailingQuery
-            ->selectRaw('audit_key, title_key, severity, COUNT(*) as occurrences, MAX(audit_id) as sample_audit_id')
-            ->groupBy('audit_key', 'title_key', 'severity')
-            ->orderByDesc('occurrences')
-            ->limit(15)
-            ->get();
+        // Aggregated in PHP from the already eager-loaded recommendations: a grouped
+        // SQL query with MAX(audit_id) blows up on PostgreSQL, which has no max(uuid)
+        // aggregate (MySQL/SQLite store UUIDs as text, so it silently works there).
+        $topFailing = $this->buildTopFailing($perUrl);
 
         // Period selector options
         $availablePeriods = Period::availableFor(Period::effectiveRetentionDays());
@@ -88,6 +67,76 @@ final class Seo extends Component
             'topFailing'      => $topFailing,
             'availablePeriods' => $availablePeriods,
         ])->layout('vitals::layouts.dashboard');
+    }
+
+    /**
+     * Aggregate the top failing SEO checks across the latest audit per URL.
+     *
+     * Counts one occurrence per URL (the per-URL rows already collapse to the
+     * latest audit), groups by check identity, and keeps a sample audit id for
+     * the "view" link. Done in PHP so it stays portable across database drivers
+     * (PostgreSQL has no max(uuid) aggregate).
+     *
+     * @param  array<int, array{url: Url, audit: Audit, vitals_seo_score: int|null, lighthouse_seo: int|null, failing_checks: int, grade: string|null}>  $perUrl
+     * @return \Illuminate\Support\Collection<int, TopFailingCheck>
+     */
+    private function buildTopFailing(array $perUrl): \Illuminate\Support\Collection
+    {
+        $keysInCategory = null;
+
+        if ($this->category !== 'all') {
+            $registry = app(\LaravelVitals\Seo\SeoCheckRegistry::class);
+            $keysInCategory = array_map(
+                fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): string => 'seo-' . $c->key(),
+                array_filter(
+                    $registry->all(),
+                    fn (\LaravelVitals\Seo\Contracts\SeoCheck $c): bool => $c->category()->value === $this->category,
+                ),
+            );
+        }
+
+        $meta = [];
+        $counts = [];
+
+        foreach ($perUrl as $row) {
+            foreach ($row['audit']->recommendations as $reco) {
+                if ($reco->source !== 'seo') {
+                    continue;
+                }
+
+                if ($keysInCategory !== null && ! in_array($reco->audit_key, $keysInCategory, true)) {
+                    continue;
+                }
+
+                $key = $reco->audit_key . '|' . $reco->title_key . '|' . $reco->severity->value;
+
+                $meta[$key] ??= [
+                    'audit_key'       => $reco->audit_key,
+                    'title_key'       => $reco->title_key,
+                    'severity'        => $reco->severity,
+                    'sample_audit_id' => $reco->audit_id,
+                ];
+
+                $counts[$key] = ($counts[$key] ?? 0) + 1;
+            }
+        }
+
+        $rows = [];
+
+        foreach ($meta as $key => $info) {
+            $rows[] = new TopFailingCheck(
+                audit_key: $info['audit_key'],
+                title_key: $info['title_key'],
+                severity: $info['severity'],
+                occurrences: $counts[$key],
+                sample_audit_id: $info['sample_audit_id'],
+            );
+        }
+
+        return collect($rows)
+            ->sortByDesc('occurrences')
+            ->take(15)
+            ->values();
     }
 
     /**
