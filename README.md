@@ -212,6 +212,29 @@ It is **static and advisory by design**: it never executes the captured SQL, nev
 ],
 ```
 
+### MCP server — Vitals for AI agents
+
+Laravel Vitals ships a [Model Context Protocol](https://modelcontextprotocol.io) server so AI agents (Claude Code, etc.) can read your performance data and act on it. It's registered automatically as a local (stdio) server named **`vitals`** with three tools:
+
+| Tool | Does |
+|---|---|
+| `latest_audit` | Latest Lighthouse scores, Core Web Vitals, and backend telemetry for a monitored URL |
+| `list_recommendations` | The URL's prioritised findings, each with the exact `file:line` references |
+| `run_audit` | Trigger a fresh audit and return its scores |
+
+So a developer can ask *"audit staging and fix the top three findings"* and the agent round-trips through Vitals to the exact line to change. The server is powered by [`laravel/mcp`](https://github.com/laravel/mcp) (a hard dependency — it ships with the package).
+
+```php
+// config/vitals.php
+'mcp' => [
+    'enabled'         => env('VITALS_MCP_ENABLED', true),
+    'web_route'       => env('VITALS_MCP_WEB_ROUTE', null),   // e.g. '/vitals/mcp' to also serve over HTTP
+    'allow_run_audit' => env('VITALS_MCP_ALLOW_RUN_AUDIT', true),
+],
+```
+
+> `laravel/mcp` is pre-1.0; the tool surface may evolve with it. Set `VITALS_MCP_ENABLED=false` to disable the server entirely, or `VITALS_MCP_ALLOW_RUN_AUDIT=false` to expose read-only tools.
+
 ### Lighthouse audits — three drivers
 
 Lighthouse simulates a page load under realistic mobile conditions and scores Performance, Accessibility, Best Practices, and SEO from 0 to 100.

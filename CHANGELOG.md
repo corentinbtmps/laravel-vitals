@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.3.0] - 2026-07-26
+
 ### Added
 
+- **MCP server for AI agents.** Laravel Vitals now ships a [Model Context Protocol](https://modelcontextprotocol.io) server (`vitals`), powered by `laravel/mcp` (a hard dependency), so agents like Claude Code can query and act on performance data. Three tools: `latest_audit` (scores + Core Web Vitals + backend telemetry for a monitored URL), `list_recommendations` (prioritised findings with their `file:line` references), and `run_audit` (trigger a fresh audit). Registered automatically as a local stdio server; opt into an HTTP endpoint with `vitals.mcp.web_route`. Configure under `vitals.mcp` (`VITALS_MCP_ENABLED`, `VITALS_MCP_ALLOW_RUN_AUDIT`). _`laravel/mcp` is pre-1.0; the tool surface may evolve with it._
 - **Database index advisor.** A new advisor reads the slow queries captured by backend telemetry during an audit, statically parses the columns each query filters / joins / sorts on, and emits a `missing-index` recommendation (with a paste-ready `Schema::table(...)->index(...)` migration) for any that lack an index. It is static and advisory — it never executes the captured SQL, never applies a migration, skips the package's own `vitals_*` tables, and confirms against the live schema that each column exists and is genuinely unindexed before suggesting it. Configure under `vitals.database_advisor` (toggle with `VITALS_DB_ADVISOR_ENABLED`).
 
 ## [v1.2.0] - 2026-07-26

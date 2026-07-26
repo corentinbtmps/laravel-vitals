@@ -203,6 +203,17 @@ final class VitalsServiceProvider extends PackageServiceProvider
             ]);
         }
 
+        // Register the MCP server so AI agents can read audits and run new ones.
+        // Local (stdio) by default; a web endpoint is opt-in via vitals.mcp.web_route.
+        if ((bool) config('vitals.mcp.enabled', true)) {
+            \Laravel\Mcp\Facades\Mcp::local('vitals', \LaravelVitals\Mcp\VitalsServer::class);
+
+            $webRoute = config('vitals.mcp.web_route');
+            if (is_string($webRoute) && $webRoute !== '') {
+                \Laravel\Mcp\Facades\Mcp::web($webRoute, \LaravelVitals\Mcp\VitalsServer::class);
+            }
+        }
+
         if ((bool) config('vitals.telemetry.auto_register', true)) {
             $router = $this->app->make(\Illuminate\Routing\Router::class);
             $router->pushMiddlewareToGroup('web', \LaravelVitals\Http\Middleware\CaptureVitalsTelemetry::class);
