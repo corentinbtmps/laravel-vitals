@@ -238,6 +238,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | MCP server
+    |--------------------------------------------------------------------------
+    | Exposes Vitals to AI agents (Claude Code, etc.) over the Model Context
+    | Protocol. Registered as a local (stdio) server named "vitals"; set a
+    | web_route to also serve it over HTTP. Tools: latest_audit,
+    | list_recommendations, run_audit.
+    */
+    'mcp' => [
+        'enabled'         => env('VITALS_MCP_ENABLED', true),
+
+        // Path for an HTTP-transport server, e.g. '/vitals/mcp'. null = local only.
+        'web_route'       => env('VITALS_MCP_WEB_ROUTE', null),
+
+        // Allow the run_audit tool to trigger fresh (synchronous) audits.
+        'allow_run_audit' => env('VITALS_MCP_ALLOW_RUN_AUDIT', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Notifications
     |--------------------------------------------------------------------------
     */

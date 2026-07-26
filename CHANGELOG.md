@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **MCP server for AI agents.** Laravel Vitals now ships a [Model Context Protocol](https://modelcontextprotocol.io) server (`vitals`), powered by `laravel/mcp` (a hard dependency), so agents like Claude Code can query and act on performance data. Three tools: `latest_audit` (scores + Core Web Vitals + backend telemetry for a monitored URL), `list_recommendations` (prioritised findings with their `file:line` references), and `run_audit` (trigger a fresh audit). Registered automatically as a local stdio server; opt into an HTTP endpoint with `vitals.mcp.web_route`. Configure under `vitals.mcp` (`VITALS_MCP_ENABLED`, `VITALS_MCP_ALLOW_RUN_AUDIT`). _`laravel/mcp` is pre-1.0; the tool surface may evolve with it._
+
 ## [v1.2.0] - 2026-07-26
 
 ### Added
