@@ -555,6 +555,7 @@ return [
             'content'       => 'Content',
             'meta'          => 'Meta',
             'performance'   => 'Performance',
+            'agentic'       => 'Agent readiness',
         ],
         'checks' => [
             'noindex' => [
@@ -671,6 +672,46 @@ return [
                 'title'       => 'Response compressed',
                 'description' => 'Serving HTML without gzip or Brotli compression wastes bandwidth and slows TTFB.',
                 'hint'        => 'Enable gzip or Brotli compression in your web server or CDN.',
+            ],
+            'llms-txt' => [
+                'title'       => 'llms.txt present and well-formed',
+                'description' => 'An /llms.txt file gives AI agents a concise, machine-readable map of your site.',
+                'hint'        => 'Publish a markdown /llms.txt with an H1 title, a short summary, and links to key pages.',
+            ],
+            'ai-bots-allowed' => [
+                'title'       => 'AI agents allowed to crawl',
+                'description' => 'robots.txt blocks known AI crawlers from the site — agents cannot read your content.',
+                'hint'        => 'Remove the root Disallow for AI user-agents in robots.txt, unless you block them on purpose.',
+            ],
+            'sitemap-declared' => [
+                'title'       => 'Sitemap discoverable',
+                'description' => 'Agents rely on a sitemap to discover your pages efficiently.',
+                'hint'        => 'Add a Sitemap: directive to robots.txt or expose a reachable /sitemap.xml.',
+            ],
+            'accessible-names' => [
+                'title'       => 'Interactive elements have accessible names',
+                'description' => 'Agents act through the accessibility tree; unnamed controls are unusable to them.',
+                'hint'        => 'Give every link, button, and form control text, an aria-label, or a title.',
+            ],
+            'layout-stability' => [
+                'title'       => 'Layout is stable (CLS)',
+                'description' => 'Content that shifts during load breaks the coordinates agents click on.',
+                'hint'        => 'Reserve space for images, embeds, and dynamic content to keep CLS low.',
+            ],
+            'webmcp-available' => [
+                'title'       => 'WebMCP tools exposed',
+                'description' => 'WebMCP lets agents call your page as tools instead of scraping the UI.',
+                'hint'        => 'Register tools with navigator.modelContext.registerTool or annotate elements declaratively.',
+            ],
+            'webmcp-forms' => [
+                'title'       => 'Forms expose declarative WebMCP',
+                'description' => 'Annotated forms let an agent submit them reliably without guessing fields.',
+                'hint'        => 'Add declarative WebMCP annotations to your forms so agents can operate them.',
+            ],
+            'webmcp-schema' => [
+                'title'       => 'WebMCP tools declare an input schema',
+                'description' => 'Tools without an input schema are hard for an agent to call correctly.',
+                'hint'        => 'Give every registered WebMCP tool an inputSchema describing its parameters.',
             ],
         ],
     ],

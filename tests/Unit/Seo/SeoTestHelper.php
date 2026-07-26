@@ -23,6 +23,7 @@ final class SeoTestHelper
         array $headers = [],
         array $reportMetrics = [],
         string $rawJson = '{}',
+        array $agentic = [],
     ): SeoCheckContext {
         $url = Url::create(['label' => 'test-' . Str::random(6), 'path' => '/']);
         $audit = Audit::create([
@@ -68,6 +69,7 @@ final class SeoTestHelper
             response: $mockResponse,
             html: $html,
             crawler: new Crawler($html),
+            agentic: $agentic,
         );
     }
 }

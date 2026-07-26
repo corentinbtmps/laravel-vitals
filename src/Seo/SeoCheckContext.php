@@ -15,9 +15,16 @@ use Symfony\Component\DomCrawler\Crawler;
  *
  * Holds the fetched HTML, the parsed DOM crawler, the raw HTTP response
  * (for headers), the LighthouseReport (for derived metrics), and the Url model.
+ *
+ * `agentic` carries agent-readiness signals captured by the driver in a live
+ * browser session (e.g. WebMCP tool registration). It is empty for drivers that
+ * cannot observe a live page — agentic checks degrade to a warning in that case.
  */
 final readonly class SeoCheckContext
 {
+    /**
+     * @param array<string, mixed> $agentic
+     */
     public function __construct(
         public Audit $audit,
         public Url $url,
@@ -25,5 +32,6 @@ final readonly class SeoCheckContext
         public Response $response,
         public string $html,
         public Crawler $crawler,
+        public array $agentic = [],
     ) {}
 }

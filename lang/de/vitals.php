@@ -549,6 +549,7 @@ return [
             'content'       => 'Inhalt',
             'meta'          => 'Meta',
             'performance'   => 'Performance',
+            'agentic'       => 'Agenten-Bereitschaft',
         ],
         'checks' => [
             'noindex' => [
@@ -665,6 +666,46 @@ return [
                 'title'       => 'Antwort komprimiert',
                 'description' => 'HTML ohne gzip- oder Brotli-Komprimierung verschwendet Bandbreite.',
                 'hint'        => 'Aktivieren Sie gzip- oder Brotli-Komprimierung in Ihrem Webserver oder CDN.',
+            ],
+            'llms-txt' => [
+                'title'       => 'llms.txt vorhanden und wohlgeformt',
+                'description' => 'Eine /llms.txt-Datei gibt KI-Agenten eine knappe, maschinenlesbare Übersicht Ihrer Website.',
+                'hint'        => 'Veröffentlichen Sie eine /llms.txt in Markdown mit H1-Titel, kurzer Zusammenfassung und Links zu Schlüsselseiten.',
+            ],
+            'ai-bots-allowed' => [
+                'title'       => 'KI-Agenten dürfen crawlen',
+                'description' => 'robots.txt blockiert bekannte KI-Crawler – Agenten können Ihre Inhalte nicht lesen.',
+                'hint'        => 'Entfernen Sie das Root-Disallow für KI-User-Agents in robots.txt, sofern nicht absichtlich blockiert.',
+            ],
+            'sitemap-declared' => [
+                'title'       => 'Sitemap auffindbar',
+                'description' => 'Agenten nutzen eine Sitemap, um Ihre Seiten effizient zu entdecken.',
+                'hint'        => 'Fügen Sie eine Sitemap:-Direktive zur robots.txt hinzu oder stellen Sie eine erreichbare /sitemap.xml bereit.',
+            ],
+            'accessible-names' => [
+                'title'       => 'Interaktive Elemente mit zugänglichen Namen',
+                'description' => 'Agenten handeln über den Accessibility-Baum; unbenannte Steuerelemente sind für sie unbrauchbar.',
+                'hint'        => 'Geben Sie jedem Link, Button und Formularfeld Text, ein aria-label oder ein title.',
+            ],
+            'layout-stability' => [
+                'title'       => 'Layout ist stabil (CLS)',
+                'description' => 'Inhalte, die beim Laden verrutschen, verfälschen die Koordinaten, auf die Agenten klicken.',
+                'hint'        => 'Reservieren Sie Platz für Bilder, Embeds und dynamische Inhalte, um den CLS niedrig zu halten.',
+            ],
+            'webmcp-available' => [
+                'title'       => 'WebMCP-Tools verfügbar',
+                'description' => 'WebMCP lässt Agenten Ihre Seite als Tools aufrufen, statt die Oberfläche zu scrapen.',
+                'hint'        => 'Registrieren Sie Tools mit navigator.modelContext.registerTool oder annotieren Sie Elemente deklarativ.',
+            ],
+            'webmcp-forms' => [
+                'title'       => 'Formulare bieten deklaratives WebMCP',
+                'description' => 'Annotierte Formulare lassen einen Agenten sie zuverlässig absenden, ohne Felder zu erraten.',
+                'hint'        => 'Fügen Sie Ihren Formularen deklarative WebMCP-Annotationen hinzu, damit Agenten sie bedienen können.',
+            ],
+            'webmcp-schema' => [
+                'title'       => 'WebMCP-Tools deklarieren ein Eingabeschema',
+                'description' => 'Tools ohne Eingabeschema sind für einen Agenten schwer korrekt aufzurufen.',
+                'hint'        => 'Geben Sie jedem registrierten WebMCP-Tool ein inputSchema, das seine Parameter beschreibt.',
             ],
         ],
     ],

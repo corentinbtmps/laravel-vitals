@@ -144,9 +144,9 @@ That's it. You now have a Lighthouse score, backend telemetry, and a list of rec
 
 ## Features
 
-### SEO checks (22 Google-aligned)
+### SEO and agent-readiness checks (30 signals)
 
-Laravel Vitals ships its own SEO check engine that runs alongside every Lighthouse audit. Unlike Lighthouse's built-in SEO score (which covers ~8 signals), the custom checks cover 22 areas — every one a Google-documented ranking signal, no Yoast-style heuristics:
+Laravel Vitals ships its own SEO check engine that runs alongside every Lighthouse audit. Unlike Lighthouse's built-in SEO score (which covers ~8 signals), the custom checks cover 30 areas — 22 Google-documented ranking signals plus 8 agent-readiness checks aligned with [Lighthouse's agentic-browsing audits](https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring) and [Cloudflare's "agent ready" checks](https://isitagentready.com/) — no Yoast-style heuristics:
 
 | Category | Checks |
 |---|---|
@@ -154,8 +154,13 @@ Laravel Vitals ships its own SEO check engine that runs alongside every Lighthou
 | Content (5) | H1 uniqueness, HTTPS resources, image alt text, broken links (samples ≤ 30), broken images |
 | Meta (7) | Meta description, title length, Open Graph image, HTML lang, canonical URL, JSON-LD structured data, invalid head elements |
 | Performance (7) | TTFB ≤ 600ms, HTTP status code, HTML size, image size, JS bundle size, CSS size, gzip/Brotli compression |
+| Agent readiness (8) | `llms.txt` present & well-formed, AI bots allowed in robots.txt, sitemap discoverable, accessible names on interactive elements, layout stability (CLS), WebMCP tools exposed, forms expose declarative WebMCP, WebMCP tools declare an input schema |
 
-Results appear on **`/vitals/audits/{id}/seo`** (per-audit deep view with actual vs expected values, hint text, and links to Google documentation) and on the **`/vitals/seo`** cross-URL page (aggregated score table, top failing checks by category, period filter).
+> **Agent readiness** answers "can an AI agent read and operate this page?" — the emerging sibling of SEO. The first five checks are static and run on any driver. The three **WebMCP** checks need a live browser session, so they only measure under the **Playwright driver**; on other drivers they pass with a "not measured" note. Agent-readiness checks carry low weights so an emerging-web miss never tanks your SEO score, and the whole group can be toggled off with `VITALS_SEO_AGENTIC_ENABLED=false`.
+>
+> _WebMCP is still an emerging standard — the driver's declarative/imperative detection selectors are best-effort and may need updates as the spec settles._
+
+Results appear on **`/vitals/audits/{id}/seo`** (per-audit deep view with actual vs expected values, hint text, and links to documentation) and on the **`/vitals/seo`** cross-URL page (aggregated score table, top failing checks by category, period filter).
 
 <p align="center">
   <img src="docs/screenshots/seo-light.png" alt="SEO — average score, per-URL table, top failing checks with category filter" width="900">
@@ -166,7 +171,7 @@ Results appear on **`/vitals/audits/{id}/seo`** (per-audit deep view with actual
 <p align="center">
   <img src="docs/screenshots/audit-seo-light.png" alt="Per-audit SEO deep view — checks grouped by Configuration / Content / Meta / Performance" width="900">
   <br/>
-  <em>Per-audit SEO deep view — each check grouped by category, with actual vs expected values and direct links to Google documentation</em>
+  <em>Per-audit SEO deep view — each check grouped by category (Configuration / Content / Meta / Performance / Agent readiness), with actual vs expected values and direct links to documentation</em>
 </p>
 
 The combined `vitals_seo_score` blends Lighthouse's SEO score (50%) with the weighted pass rate of all custom checks (50%), producing a stricter 0–100 score.
@@ -177,6 +182,12 @@ The combined `vitals_seo_score` blends Lighthouse's SEO score (50%) with the wei
     'enabled'         => env('VITALS_SEO_ENABLED', true),
     'thresholds'      => ['title_max_chars' => 60, 'ttfb_ms' => 600],
     'disabled_checks' => [],  // e.g. ['broken-links', 'css-size']
+    'agentic'         => [
+        'enabled'            => env('VITALS_SEO_AGENTIC_ENABLED', true),
+        'llms_txt_min_chars' => 200,
+        'cls_max'            => 0.1,
+        'ai_bots'            => ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended'],
+    ],
 ],
 ```
 

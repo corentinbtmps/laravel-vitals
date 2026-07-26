@@ -17,12 +17,16 @@ final readonly class LighthouseReport
      * @param array{lcp_ms: float|null, cls: float|null, inp_ms: float|null, ttfb_ms: float|null, fcp_ms: float|null, si_ms: float|null, tbt_ms: float|null} $metrics
      * @param array<int, array<string, mixed>> $audits   non-passed Lighthouse audit entries
      * @param string $rawJson                            full Lighthouse JSON for archival on disk
+     * @param array<string, mixed> $agentic             agent-readiness signals captured in the same
+     *                                                  browser session (e.g. WebMCP tool registration);
+     *                                                  empty for drivers that cannot observe a live page.
      */
     public function __construct(
         public array $scores,
         public array $metrics,
         public array $audits,
         public string $rawJson,
+        public array $agentic = [],
     ) {
     }
 
@@ -36,8 +40,23 @@ final readonly class LighthouseReport
         /** @var array<string, mixed> $decoded */
         $decoded = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
 
-        $categories = $decoded['categories'] ?? [];
-        $audits     = $decoded['audits'] ?? [];
+        // The Playwright driver may wrap the Lighthouse result as { lhr, agentic }
+        // to carry agent-readiness signals (WebMCP) observed in the same live page
+        // session. Every other driver emits the bare Lighthouse result, so we treat
+        // the decoded payload as the LHR itself when no wrapper is present.
+        $agentic = [];
+        $lhr     = $decoded;
+
+        if (isset($decoded['lhr']) && is_array($decoded['lhr'])) {
+            $lhr     = $decoded['lhr'];
+            $agentic = is_array($decoded['agentic'] ?? null) ? $decoded['agentic'] : [];
+            // Archive only the Lighthouse result on disk so extractDetails() and any
+            // downstream consumer keep receiving the raw LHR shape they expect.
+            $json = json_encode($lhr, JSON_THROW_ON_ERROR);
+        }
+
+        $categories = $lhr['categories'] ?? [];
+        $audits     = $lhr['audits'] ?? [];
 
         $scores = [
             'performance'    => self::scoreFor($categories, 'performance'),
@@ -61,7 +80,7 @@ final readonly class LighthouseReport
             static fn (array $a): bool => isset($a['score']) && is_numeric($a['score']) && (float) $a['score'] < 0.9,
         ));
 
-        return new self($scores, $metrics, $nonPassed, $json);
+        return new self($scores, $metrics, $nonPassed, $json, $agentic);
     }
 
     /**

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.2.0] - 2026-07-26
+
+### Added
+
+- **Agent-readiness checks in the SEO engine.** A new `Agent readiness` category adds 8 checks (30 total) aligned with [Lighthouse's agentic-browsing audits](https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring) and [Cloudflare's "agent ready" checks](https://isitagentready.com/): `llms.txt` presence & quality, AI bots allowed in `robots.txt`, sitemap discoverability, accessible names on interactive elements, layout stability (CLS), and — via the Playwright driver's live browser session — WebMCP tools exposed, forms exposing declarative WebMCP, and WebMCP tools declaring an input schema. They surface as their own section on `/vitals/audits/{id}/seo` and in the `/vitals/seo` category filter, carry low weights, and can be disabled as a group via `VITALS_SEO_AGENTIC_ENABLED=false` (or per-check through `vitals.seo.disabled_checks`). Configure thresholds and the tracked AI-bot list under `vitals.seo.agentic`.
+- **WebMCP detection in the Playwright driver.** The Node runner now probes the page for WebMCP tool exposure in an isolated browser context after the Lighthouse audit, and wraps its output as `{ lhr, agentic }`; `LighthouseReport` unwraps this to expose an `agentic` payload. The probe is fully isolated — any failure leaves the Lighthouse result byte-for-byte unchanged — and every other driver keeps emitting the bare Lighthouse result. The three WebMCP checks pass with a "not measured" note when no live signal is available. _WebMCP is still an emerging standard; the detection heuristics are best-effort._
+
 ## [v1.1.1] - 2026-06-16
 
 ### Fixed

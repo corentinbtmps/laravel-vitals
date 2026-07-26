@@ -51,7 +51,7 @@
 
     {{-- Category-grouped checks --}}
     @php
-        $categoryOrder = ['configuration', 'content', 'meta', 'performance'];
+        $categoryOrder = ['configuration', 'content', 'meta', 'performance', 'agentic'];
         $statusIcon = [
             'critical' => 'x-circle',
             'warning'  => 'exclamation-triangle',

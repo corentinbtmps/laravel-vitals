@@ -124,7 +124,7 @@
 
             {{-- Category tabs --}}
             <flux:radio.group wire:model.live="category" variant="segmented" size="sm">
-                @foreach (['all', 'configuration', 'content', 'meta', 'performance'] as $cat)
+                @foreach (['all', 'configuration', 'content', 'meta', 'performance', 'agentic'] as $cat)
                     <flux:radio
                         value="{{ $cat }}"
                         :label="$cat === 'all' ? __('vitals::vitals.actions.all_categories') : __('vitals::vitals.seo.categories.' . $cat)"

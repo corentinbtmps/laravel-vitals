@@ -60,6 +60,7 @@ final readonly class SeoAuditor
             response: $response,
             html: $html,
             crawler: $crawler,
+            agentic: $report->agentic,
         );
 
         foreach ($this->registry->enabled() as $check) {

@@ -191,7 +191,10 @@ return [
     |--------------------------------------------------------------------------
     | SEO checks subsystem
     |--------------------------------------------------------------------------
-    | 22 checks aligned with Google 2026 best practices.
+    | 30 checks: 22 aligned with Google 2026 best practices + 8 agent-readiness
+    | checks aligned with Lighthouse agentic-browsing and Cloudflare agent-ready.
+    | The 3 WebMCP checks require the Playwright driver (live browser session);
+    | on other drivers they pass with a "not measured" note.
     |
     | css_max_bytes default (15 KB) is opinionated — raise this for large apps.
     */
@@ -214,6 +217,23 @@ return [
 
         // Disable specific checks by key (e.g., ['broken-links', 'structured-data'])
         'disabled_checks' => [],
+
+        // Agent-readiness checks (llms.txt, AI-bot rules, accessibility tree, CLS,
+        // and — with the Playwright driver — WebMCP). Aligned with Lighthouse's
+        // agentic-browsing audits and Cloudflare's "agent ready" checks.
+        'agentic' => [
+            'enabled'            => env('VITALS_SEO_AGENTIC_ENABLED', true),
+            'llms_txt_min_chars' => 200,
+            'cls_max'            => 0.1,
+            'ai_bots'            => [
+                'GPTBot',
+                'ClaudeBot',
+                'PerplexityBot',
+                'Google-Extended',
+                'CCBot',
+                'anthropic-ai',
+            ],
+        ],
     ],
 
     /*

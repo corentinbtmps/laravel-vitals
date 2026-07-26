@@ -549,6 +549,7 @@ return [
             'content'       => 'Contenido',
             'meta'          => 'Meta',
             'performance'   => 'Rendimiento',
+            'agentic'       => 'Preparación para agentes',
         ],
         'checks' => [
             'noindex' => [
@@ -665,6 +666,46 @@ return [
                 'title'       => 'Respuesta comprimida',
                 'description' => 'Servir HTML sin compresión gzip o Brotli desperdicia ancho de banda.',
                 'hint'        => 'Active la compresión gzip o Brotli en su servidor web o CDN.',
+            ],
+            'llms-txt' => [
+                'title'       => 'llms.txt presente y bien formado',
+                'description' => 'Un archivo /llms.txt ofrece a los agentes de IA un mapa conciso y legible por máquina de tu sitio.',
+                'hint'        => 'Publica un /llms.txt en markdown con un título H1, un resumen breve y enlaces a las páginas clave.',
+            ],
+            'ai-bots-allowed' => [
+                'title'       => 'Agentes de IA autorizados a rastrear',
+                'description' => 'robots.txt bloquea rastreadores de IA conocidos: los agentes no pueden leer tu contenido.',
+                'hint'        => 'Elimina el Disallow raíz para los user-agents de IA en robots.txt, salvo que los bloquees a propósito.',
+            ],
+            'sitemap-declared' => [
+                'title'       => 'Sitemap detectable',
+                'description' => 'Los agentes se apoyan en un sitemap para descubrir tus páginas de forma eficiente.',
+                'hint'        => 'Añade una directiva Sitemap: a robots.txt o expón un /sitemap.xml accesible.',
+            ],
+            'accessible-names' => [
+                'title'       => 'Elementos interactivos con nombres accesibles',
+                'description' => 'Los agentes actúan mediante el árbol de accesibilidad; los controles sin nombre les resultan inutilizables.',
+                'hint'        => 'Da a cada enlace, botón y campo de formulario un texto, un aria-label o un title.',
+            ],
+            'layout-stability' => [
+                'title'       => 'Diseño estable (CLS)',
+                'description' => 'El contenido que se desplaza durante la carga altera las coordenadas donde hacen clic los agentes.',
+                'hint'        => 'Reserva espacio para imágenes, embeds y contenido dinámico para mantener bajo el CLS.',
+            ],
+            'webmcp-available' => [
+                'title'       => 'Herramientas WebMCP expuestas',
+                'description' => 'WebMCP permite que los agentes llamen a tu página como herramientas en lugar de scrapear la interfaz.',
+                'hint'        => 'Registra herramientas con navigator.modelContext.registerTool o anota elementos de forma declarativa.',
+            ],
+            'webmcp-forms' => [
+                'title'       => 'Formularios que exponen WebMCP declarativo',
+                'description' => 'Los formularios anotados permiten a un agente enviarlos de forma fiable, sin adivinar los campos.',
+                'hint'        => 'Añade anotaciones WebMCP declarativas a tus formularios para que los agentes los operen.',
+            ],
+            'webmcp-schema' => [
+                'title'       => 'Las herramientas WebMCP declaran un esquema de entrada',
+                'description' => 'Las herramientas sin esquema de entrada son difíciles de invocar correctamente para un agente.',
+                'hint'        => 'Da a cada herramienta WebMCP registrada un inputSchema que describa sus parámetros.',
             ],
         ],
     ],

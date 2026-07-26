@@ -4,9 +4,18 @@ declare(strict_types=1);
 
 namespace LaravelVitals\Seo;
 
+use LaravelVitals\Seo\Checks\Agentic\AccessibleNamesCheck;
+use LaravelVitals\Seo\Checks\Agentic\AiBotsAllowedCheck;
+use LaravelVitals\Seo\Checks\Agentic\LayoutStabilityCheck;
+use LaravelVitals\Seo\Checks\Agentic\LlmsTxtCheck;
+use LaravelVitals\Seo\Checks\Agentic\SitemapDeclaredCheck;
+use LaravelVitals\Seo\Checks\Agentic\WebMcpAvailableCheck;
+use LaravelVitals\Seo\Checks\Agentic\WebMcpFormsCheck;
+use LaravelVitals\Seo\Checks\Agentic\WebMcpSchemaValidCheck;
 use LaravelVitals\Seo\Checks\Configuration\NoindexCheck;
 use LaravelVitals\Seo\Checks\Configuration\NofollowCheck;
 use LaravelVitals\Seo\Checks\Configuration\RobotsTxtAllowsIndexingCheck;
+use LaravelVitals\Seo\Enums\SeoCheckCategory;
 use LaravelVitals\Seo\Checks\Content\BrokenImagesCheck;
 use LaravelVitals\Seo\Checks\Content\BrokenLinksCheck;
 use LaravelVitals\Seo\Checks\Content\H1Check;
@@ -67,6 +76,16 @@ final class SeoCheckRegistry
             new JavaScriptSizeCheck(),
             new CssSizeCheck(),
             new CompressionCheck(),
+
+            // Agentic (agent-readiness — llms.txt, AI-bot rules, a11y tree, CLS, WebMCP)
+            new LlmsTxtCheck(),
+            new AiBotsAllowedCheck(),
+            new SitemapDeclaredCheck(),
+            new AccessibleNamesCheck(),
+            new LayoutStabilityCheck(),
+            new WebMcpAvailableCheck(),
+            new WebMcpFormsCheck(),
+            new WebMcpSchemaValidCheck(),
         ];
     }
 
@@ -77,11 +96,19 @@ final class SeoCheckRegistry
      */
     public function enabled(): array
     {
-        $disabledKeys = (array) config('vitals.seo.disabled_checks', []);
+        $disabledKeys   = (array) config('vitals.seo.disabled_checks', []);
+        $agenticEnabled = (bool) config('vitals.seo.agentic.enabled', true);
 
         return array_values(array_filter(
             $this->all(),
-            static fn (SeoCheck $check): bool => ! in_array($check->key(), $disabledKeys, true),
+            static function (SeoCheck $check) use ($disabledKeys, $agenticEnabled): bool {
+                if (in_array($check->key(), $disabledKeys, true)) {
+                    return false;
+                }
+
+                // Agent-readiness checks can be switched off as a group.
+                return $agenticEnabled || $check->category() !== SeoCheckCategory::Agentic;
+            },
         ));
     }
 }

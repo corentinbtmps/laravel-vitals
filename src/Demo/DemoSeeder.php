@@ -250,7 +250,18 @@ final class DemoSeeder
                 ? [['key' => 'meta-description', 'severity' => Severity::Warning, 'actual' => '187 chars', 'expected' => '≤ 160 chars', 'weight' => 9]]
                 : []);
 
-        foreach ($seoFindings as $finding) {
+        // Agent-readiness demo findings so the "Agent readiness" category is populated too.
+        $agenticFindings = $profile === 'bad'
+            ? [
+                ['key' => 'llms-txt',         'severity' => Severity::Warning, 'actual' => 'No /llms.txt found',        'expected' => 'A markdown /llms.txt for AI agents', 'weight' => 4],
+                ['key' => 'accessible-names', 'severity' => Severity::Warning, 'actual' => '4 of 12 controls unnamed',  'expected' => 'every interactive element named',    'weight' => 4],
+                ['key' => 'webmcp-available', 'severity' => Severity::Warning, 'actual' => 'No WebMCP tools exposed',   'expected' => 'at least one WebMCP tool',           'weight' => 3],
+            ]
+            : (mt_rand(0, 1) === 0
+                ? [['key' => 'llms-txt', 'severity' => Severity::Warning, 'actual' => 'present but weak: no links', 'expected' => 'H1, links, and 200+ characters', 'weight' => 4]]
+                : []);
+
+        foreach (array_merge($seoFindings, $agenticFindings) as $finding) {
             Recommendation::create([
                 'audit_id'           => $audit->id,
                 'source'             => 'seo',

@@ -136,6 +136,14 @@ final class AuditSeo extends Component
             'js-size'              => 'https://developers.google.com/search/docs/appearance/page-experience',
             'css-size'             => 'https://developers.google.com/search/docs/appearance/page-experience',
             'compression'          => 'https://developers.google.com/search/docs/appearance/page-experience',
+            'llms-txt'             => 'https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring',
+            'ai-bots-allowed'      => 'https://isitagentready.com/',
+            'sitemap-declared'     => 'https://isitagentready.com/',
+            'accessible-names'     => 'https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring',
+            'layout-stability'     => 'https://web.dev/articles/cls',
+            'webmcp-available'     => 'https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring',
+            'webmcp-forms'         => 'https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring',
+            'webmcp-schema'        => 'https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring',
             default                => null,
         };
     }

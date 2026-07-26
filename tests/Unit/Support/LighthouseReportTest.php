@@ -62,6 +62,37 @@ it('throws on malformed JSON', function (): void {
         ->toThrow(\JsonException::class);
 });
 
+it('exposes an empty agentic payload for a bare Lighthouse report', function (): void {
+    $report = LighthouseReport::fromLighthouseJson(json_encode([
+        'categories' => [],
+        'audits'     => [],
+    ], JSON_THROW_ON_ERROR));
+
+    expect($report->agentic)->toBe([]);
+});
+
+it('unwraps a { lhr, agentic } payload from the Playwright driver', function (): void {
+    $lhr = [
+        'categories' => ['seo' => ['score' => 1.0]],
+        'audits'     => ['cumulative-layout-shift' => ['numericValue' => 0.04]],
+    ];
+
+    $wrapped = json_encode([
+        'lhr'     => $lhr,
+        'agentic' => ['webmcp' => ['declarativeTools' => 2, 'formsAnnotated' => 1, 'formsTotal' => 1]],
+    ], JSON_THROW_ON_ERROR);
+
+    $report = LighthouseReport::fromLighthouseJson($wrapped);
+
+    // Lighthouse data is still normalised from the inner lhr...
+    expect($report->scores['seo'])->toBe(100)
+        ->and($report->metrics['cls'])->toBe(0.04)
+        // ...the agentic signals are surfaced...
+        ->and($report->agentic)->toBe(['webmcp' => ['declarativeTools' => 2, 'formsAnnotated' => 1, 'formsTotal' => 1]])
+        // ...and only the inner Lighthouse result is archived, so extractDetails() still works.
+        ->and($report->rawJson)->toBe(json_encode($lhr, JSON_THROW_ON_ERROR));
+});
+
 // ─── extractDetails ───────────────────────────────────────────────────────────
 
 it('returns null from extractDetails when given malformed JSON', function (): void {
