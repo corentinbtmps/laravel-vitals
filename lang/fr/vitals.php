@@ -261,6 +261,10 @@ return [
             'title'       => 'Requêtes SQL lentes détectées',
             'description' => 'Une ou plusieurs requêtes ont dépassé le seuil de slow-query pendant cet audit.',
         ],
+        'missing-index' => [
+            'title'       => 'Index de base de données manquant (:count suggéré·s)',
+            'description' => 'Des requêtes lentes filtrent, joignent ou trient sur des colonnes sans index. Vérifiez chaque suggestion — l\'ordre des colonnes composites et le coût en écriture comptent — avant d\'ajouter une migration.',
+        ],
         'slow-views' => [
             'title'       => 'Vues Blade lentes détectées',
             'description' => 'Une vue rendue a pris plus longtemps que le seuil configuré.',

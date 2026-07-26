@@ -40,6 +40,7 @@ it('runs the audit, persists raw JSON, and updates the audit row', function (): 
         app(RecommendationBuilder::class),
         app(VitalsNotifier::class),
         app(SeoAuditor::class),
+        app(\LaravelVitals\Database\IndexAdvisor::class),
     );
 
     $audit->refresh();
@@ -72,7 +73,7 @@ it('marks the audit failed when the driver throws', function (): void {
         public function isAvailable(): bool { return true; }
     };
 
-    expect(fn () => (new RunAuditJob($audit->id))->handle($boomDriver, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class), app(SeoAuditor::class)))
+    expect(fn () => (new RunAuditJob($audit->id))->handle($boomDriver, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class), app(SeoAuditor::class), app(\LaravelVitals\Database\IndexAdvisor::class)))
         ->toThrow(\LaravelVitals\Support\AuditException::class);
 
     $audit->refresh();
@@ -108,7 +109,7 @@ it('injects the X-Vitals-Audit-Id header into AuditOptions passed to the driver'
         public function isAvailable(): bool { return true; }
     };
 
-    (new RunAuditJob($audit->id))->handle($spy, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class), app(SeoAuditor::class));
+    (new RunAuditJob($audit->id))->handle($spy, app(ReportRepository::class), app(RecommendationBuilder::class), app(VitalsNotifier::class), app(SeoAuditor::class), app(\LaravelVitals\Database\IndexAdvisor::class));
 
     expect($spy->captured)->not->toBeNull()
         ->and($spy->captured->extraHeaders)->toHaveKey('X-Vitals-Audit-Id')

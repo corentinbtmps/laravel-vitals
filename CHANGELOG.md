@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Database index advisor.** A new advisor reads the slow queries captured by backend telemetry during an audit, statically parses the columns each query filters / joins / sorts on, and emits a `missing-index` recommendation (with a paste-ready `Schema::table(...)->index(...)` migration) for any that lack an index. It is static and advisory — it never executes the captured SQL, never applies a migration, skips the package's own `vitals_*` tables, and confirms against the live schema that each column exists and is genuinely unindexed before suggesting it. Configure under `vitals.database_advisor` (toggle with `VITALS_DB_ADVISOR_ENABLED`).
+
 ## [v1.2.0] - 2026-07-26
 
 ### Added

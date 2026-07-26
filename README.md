@@ -191,6 +191,27 @@ The combined `vitals_seo_score` blends Lighthouse's SEO score (50%) with the wei
 ],
 ```
 
+### Database index advisor
+
+Every audit already captures the backend query log and its slow queries via signed-header telemetry. The index advisor reads those slow queries, statically parses the columns each one **filters, joins, or sorts on**, and — for any that have no index — emits a `missing-index` recommendation with a ready-to-paste migration:
+
+```php
+Schema::table('orders', fn (Blueprint $t) => $t->index('customer_id'));
+```
+
+It is **static and advisory by design**: it never executes the captured SQL, never applies a migration, and skips its own `vitals_*` tables. The schema is introspected to confirm each column actually exists and is genuinely unindexed, so parser guesses can't produce false suggestions. Because composite-column order and write cost are judgement calls, every suggestion is something you review — not auto-apply.
+
+```php
+// config/vitals.php
+'database_advisor' => [
+    'enabled'           => env('VITALS_DB_ADVISOR_ENABLED', true),
+    'connection'        => env('VITALS_DB_ADVISOR_CONNECTION', null), // null = default connection
+    'min_query_time_ms' => 0.0,
+    'max_suggestions'   => 20,
+    'ignore_tables'     => [],
+],
+```
+
 ### Lighthouse audits — three drivers
 
 Lighthouse simulates a page load under realistic mobile conditions and scores Performance, Accessibility, Best Practices, and SEO from 0 to 100.

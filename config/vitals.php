@@ -238,6 +238,31 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Database index advisor
+    |--------------------------------------------------------------------------
+    | Statically analyses the slow queries captured during an audit and suggests
+    | indexes for filtered / joined / sorted columns that have none. Advisory
+    | only — it never runs the captured SQL and never applies a migration.
+    */
+    'database_advisor' => [
+        'enabled'           => env('VITALS_DB_ADVISOR_ENABLED', true),
+
+        // Connection to introspect (null = the app's default connection).
+        'connection'        => env('VITALS_DB_ADVISOR_CONNECTION', null),
+
+        // Only analyse queries at least this slow (ms). 0 = every captured slow query.
+        'min_query_time_ms' => 0.0,
+
+        // Cap the number of index suggestions per audit.
+        'max_suggestions'   => 20,
+
+        // Tables to never suggest indexes for (the package's own vitals_* tables
+        // are always excluded).
+        'ignore_tables'     => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Notifications
     |--------------------------------------------------------------------------
     */

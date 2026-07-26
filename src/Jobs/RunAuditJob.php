@@ -45,6 +45,7 @@ final class RunAuditJob implements ShouldQueue
         \LaravelVitals\Recommendations\RecommendationBuilder $builder,
         \LaravelVitals\Notifications\Channels\VitalsNotifier $notifier,
         \LaravelVitals\Seo\SeoAuditor $seoAuditor,
+        \LaravelVitals\Database\IndexAdvisor $indexAdvisor,
     ): void
     {
         $audit = Audit::with('url')->findOrFail($this->auditId);
@@ -103,6 +104,9 @@ final class RunAuditJob implements ShouldQueue
 
             // Run custom SEO checks and persist as Recommendation rows (source='seo')
             $seoAuditor->run($audit->refresh(), $report);
+
+            // Suggest DB indexes from the slow queries captured during this audit (source='database')
+            $indexAdvisor->run($audit->refresh(), $telemetry);
 
             $notifier->send('audit_completed', new \LaravelVitals\Notifications\AuditCompleted($audit->refresh()));
         } catch (AuditException $e) {

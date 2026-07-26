@@ -267,6 +267,10 @@ return [
             'title'       => 'Slow database queries detected',
             'description' => 'One or more queries exceeded the slow-query threshold during this audit.',
         ],
+        'missing-index' => [
+            'title'       => 'Missing database index (:count suggested)',
+            'description' => 'Slow queries filtered, joined, or sorted on columns without an index. Review each suggestion — composite order and write cost matter — before adding a migration.',
+        ],
         'slow-views' => [
             'title'       => 'Slow Blade views detected',
             'description' => 'A rendered view took longer than the configured threshold.',

@@ -261,6 +261,10 @@ return [
             'title'       => 'Langsame Datenbankabfragen erkannt',
             'description' => 'Eine oder mehrere Abfragen haben den Slow-Query-Schwellenwert während dieses Audits überschritten.',
         ],
+        'missing-index' => [
+            'title'       => 'Fehlender Datenbankindex (:count vorgeschlagen)',
+            'description' => 'Langsame Abfragen filtern, verknüpfen oder sortieren auf Spalten ohne Index. Prüfe jeden Vorschlag — Reihenfolge zusammengesetzter Indizes und Schreibkosten zählen — bevor du eine Migration hinzufügst.',
+        ],
         'slow-views' => [
             'title'       => 'Langsame Blade-Views erkannt',
             'description' => 'Eine gerenderte View hat länger als der konfigurierte Schwellenwert gedauert.',

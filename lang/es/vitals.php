@@ -261,6 +261,10 @@ return [
             'title'       => 'Consultas SQL lentas detectadas',
             'description' => 'Una o más consultas excedieron el umbral de slow-query durante este audit.',
         ],
+        'missing-index' => [
+            'title'       => 'Falta un índice de base de datos (:count sugerido/s)',
+            'description' => 'Consultas lentas que filtran, unen u ordenan por columnas sin índice. Revisa cada sugerencia — el orden de los índices compuestos y el coste de escritura importan — antes de añadir una migración.',
+        ],
         'slow-views' => [
             'title'       => 'Vistas Blade lentas detectadas',
             'description' => 'Una vista renderizada tomó más tiempo que el umbral configurado.',

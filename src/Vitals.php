@@ -104,6 +104,7 @@ final class Vitals
                 app(\LaravelVitals\Recommendations\RecommendationBuilder::class),
                 app(\LaravelVitals\Notifications\Channels\VitalsNotifier::class),
                 app(\LaravelVitals\Seo\SeoAuditor::class),
+                app(\LaravelVitals\Database\IndexAdvisor::class),
             );
         } else {
             dispatch($job);
