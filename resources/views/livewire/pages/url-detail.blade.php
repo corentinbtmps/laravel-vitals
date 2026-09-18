@@ -1,6 +1,6 @@
 <div class="space-y-6">
     <flux:breadcrumbs class="mb-4">
-        <flux:breadcrumbs.item href="{{ route('vitals.urls') }}">URLs</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item :href="route('vitals.urls')">URLs</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>{{ $urlModel->label }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 

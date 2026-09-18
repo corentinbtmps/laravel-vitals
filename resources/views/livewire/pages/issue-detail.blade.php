@@ -1,6 +1,6 @@
 <div class="space-y-6">
     <flux:breadcrumbs class="mb-4">
-        <flux:breadcrumbs.item href="{{ route('vitals.issues') }}">{{ __('vitals::vitals.pages.issues.title') }}</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item :href="route('vitals.issues')">{{ __('vitals::vitals.pages.issues.title') }}</flux:breadcrumbs.item>
         <flux:breadcrumbs.item>{{ __($descriptor->titleKey) }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
 

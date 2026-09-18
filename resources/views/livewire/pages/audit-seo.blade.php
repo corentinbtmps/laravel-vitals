@@ -1,9 +1,9 @@
 <div class="space-y-6">
     <flux:breadcrumbs class="mb-4">
-        <flux:breadcrumbs.item href="{{ route('vitals.urls') }}">URLs</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item :href="route('vitals.urls')">URLs</flux:breadcrumbs.item>
         @if ($audit->url)
-            <flux:breadcrumbs.item href="{{ route('vitals.url', $audit->url->id) }}">{{ $audit->url->label }}</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item href="{{ route('vitals.audit', $audit->id) }}">{{ __('vitals::vitals.seo.audit') }}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('vitals.url', $audit->url->id)">{{ $audit->url->label }}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item :href="route('vitals.audit', $audit->id)">{{ __('vitals::vitals.seo.audit') }}</flux:breadcrumbs.item>
         @endif
         <flux:breadcrumbs.item>{{ __('vitals::vitals.seo.title') }}</flux:breadcrumbs.item>
     </flux:breadcrumbs>
